@@ -1,0 +1,19 @@
+{
+  "Cards": [
+    {
+      "id": 0,
+      "cardname" : "Shield",
+      "attack": 1.3,
+      "defense": 2.0,
+      "health": 3.0
+    },
+    {
+      "id": 1,
+      "cardname" : "Sword",
+      "attack": 4.0,
+      "defense": 5.0,
+      "health": 6.0
+    }
+  ]
+}
+

@@ -1,0 +1,126 @@
+using Google.Protobuf;
+using Google.Protobuf.Protocol;
+using ServerCore;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+
+// MSG ID로 취급되던 내용을 enum으로 관리한다.
+public enum PacketId : ushort
+{
+    //PKT_C_LOGIN = 1000,
+        PKT_C_LOGIN = 1000,
+        PKT_S_LOGIN = 1001,
+        PKT_C_ENTER_GAME = 1002,
+        PKT_C_LEAVE_GAME = 1003,
+        PKT_S_ENTER_GAME = 1004,
+        PKT_S_SPAWN = 1005,
+        PKT_C_SPAWN = 1006,
+        PKT_C_MOVE = 1007,
+        PKT_S_MOVE = 1008,
+        PKT_C_SKILL = 1009,
+        PKT_S_SKILL = 1010,
+}
+
+public class PacketManager
+{
+    #region Singleton
+    static PacketManager _instance = new PacketManager();
+    public static PacketManager Instance { get { return _instance; } }
+    #endregion
+
+    Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>> _onRecv = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>>();
+    Dictionary<ushort, Action<PacketSession, IMessage>> _handler = new Dictionary<ushort, Action<PacketSession, IMessage>>();
+
+    public Action<PacketSession, IMessage, ushort> CustomHandler { get; set; }
+
+    PacketManager()
+    {
+        UnityEngine.Debug.Log("[PacketManager] Constructor Called");
+        Register();
+        UnityEngine.Debug.Log("[PacketManager] Register Done");
+    }
+
+    public void Register()
+    {
+        //UnityEngine.Debug.Log("Register in PacketHandler");
+        _onRecv.Add((ushort)PacketId.PKT_S_LOGIN, MakePacket<S_LOGIN>);
+        _handler.Add((ushort)PacketId.PKT_S_LOGIN, PacketHandler.S_LOGINHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_ENTER_GAME, MakePacket<S_ENTER_GAME>);
+        _handler.Add((ushort)PacketId.PKT_S_ENTER_GAME, PacketHandler.S_ENTER_GAMEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_SPAWN, MakePacket<S_SPAWN>);
+        _handler.Add((ushort)PacketId.PKT_S_SPAWN, PacketHandler.S_SPAWNHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MOVE, MakePacket<S_MOVE>);
+        _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
+        _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
+
+        UnityEngine.Debug.Log($"PacketManager Instance HashCode: {this.GetHashCode()}");
+
+        //foreach (var kvp in _onRecv)
+        //{
+        //    UnityEngine.Debug.Log($"_onRecv Registered id={kvp.Key}, target={kvp.Value?.Method?.Name}");
+        //}
+    }
+
+    public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
+    {
+        ushort count = 0;
+
+        ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+        count += 2;
+        ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+        count += 2;
+        UnityEngine.Debug.Log($"[OnRecvPacket] size={size}, id={id}");
+
+        Action<PacketSession, ArraySegment<byte>, ushort> action = null;
+        if (_onRecv.TryGetValue(id, out action))
+        {
+            UnityEngine.Debug.Log($"OnRecvPacket id : {id}");
+            action.Invoke(session, buffer, id);
+            UnityEngine.Debug.Log("[InvokeAfter]");
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("_onRecv TryGetValue is nullptr");
+        }
+    }
+
+    void MakePacket<T>(PacketSession session, ArraySegment<byte> buffer, ushort id) where T : IMessage, new()
+    {
+        UnityEngine.Debug.Log($"[MakePacket ENTRY] id={id}, typeof(T)={typeof(T)}");
+        UnityEngine.Debug.Log($"MakePacket Instance HashCode: {this.GetHashCode()}");
+        T pkt = new T();
+        pkt.MergeFrom(buffer.Array, buffer.Offset + 4, buffer.Count - 4);
+
+        if (CustomHandler != null)
+        {
+            CustomHandler.Invoke(session, pkt, id);
+        }
+        else
+        {
+            Action<PacketSession, IMessage> action = null;
+            if (_handler.TryGetValue(id, out action))
+            {
+                UnityEngine.Debug.Log($"MakePacket<{typeof(T).Name}> id={id}");
+                action.Invoke(session, pkt);
+            }
+            else
+                UnityEngine.Debug.LogError($"MakePacket Invoke Error : {id}");
+        }
+    }
+
+    public Action<PacketSession, IMessage> GetPacketHandler(ushort id)
+    {
+        Action<PacketSession, IMessage> action = null;
+        if (_handler.TryGetValue(id, out action))
+            return action;
+        return null;
+    }
+
+    private bool Handle_INVALID(PacketSession session, byte[] buffer, int length)
+    {
+        // Invalid 패킷 처리 로직
+        return false;
+    }
+}

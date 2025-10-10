@@ -1,0 +1,106 @@
+{
+    "stats": [
+      {
+        "type": "MeleeMinion",    
+
+        "basicAttackPower": "12",
+        "attackSpeed" : "10",
+        "attackRange" : "1.1",
+        "recognitionRange" : "10",
+    
+        "maxHealth" : "546",
+        "defensePower" : "0",
+        "nowBattery" : "-100",
+    
+        "speed" : "4",
+    
+        "gold" : "150",
+        "experience" : "100"
+      },
+      {
+        "type": "RangeMinion",    
+
+        "basicAttackPower": "28",
+        "attackSpeed": "5",
+        "attackRange": "5.5",
+        "recognitionRange": "10",
+
+        "maxHealth": "348",
+        "defensePower": "0",
+        "nowBattery": "-100",
+
+        "speed": "4",
+
+        "gold" : "200",
+        "experience" : "100"
+      },
+      {
+        "type": "SuperMinion",
+        
+        "basicAttackPower": "39.5",
+        "attackSpeed" : "7.5",
+        "attackRange" : "1.1",
+        "recognitionRange" : "10",
+
+        "maxHealth" : "1020",
+        "defensePower" : "0",
+        "nowBattery" : "-100",
+
+        "speed" : "4",
+
+        "gold" : "200",
+        "experience" : "100"
+      },
+      {
+        "type": "Tower",    
+
+        "basicAttackPower": "187",
+        "attackSpeed" : "7.5",
+        "attackRange" : "7.5",
+        "recognitionRange" : "7.5",
+
+        "maxHealth" : "1500",
+        "defensePower" : "55",
+        "nowBattery" : "-100",
+
+        "speed" : "0",
+
+        "gold" : "3000",
+        "experience" : "6000"
+      },
+      {
+        "type": "Nexus",
+        
+        "basicAttackPower": "0",
+        "attackSpeed" : "1",
+        "attackRange" : "0",
+        "recognitionRange" : "0",
+
+        "maxHealth" : "5500",
+        "defensePower" : "0",
+        "nowBattery" : "-100",
+
+        "speed" : "0",
+
+        "gold" : "0",
+        "experience" : "0"
+      },
+      {
+        "type": "Neutral",
+        
+        "basicAttackPower": "50",
+        "attackSpeed" : "10",
+        "attackRange" : "8.5",
+        "recognitionRange" : "8.5",
+
+        "maxHealth" : "3600",
+        "defensePower" : "20",
+        "nowBattery" : "-100",
+
+        "speed" : "0",
+
+        "gold" : "4000",
+        "experience" : "6000"
+      }
+    ]
+  } 

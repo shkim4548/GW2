@@ -1,0 +1,127 @@
+{
+    "stats": [
+      {
+        "type": "Police",
+
+        "basicAttackPower": "60",
+        "attackSpeed": "1",
+        "attackRange": "5",
+        "attackType": "LongRange",
+
+        "maxHealth": "600",
+        "healthRegeneration": "0.1",
+        "defensePower": "5",
+
+        "level": "1",
+        "experience": "0",
+        "levelUpEX": "540",
+        "levelUpAP": "1",
+        "levelUpAS": "0.02",
+        "levelUpHP": "10",
+        "levelUpHR": "0.1",
+        "levelUpDP": "5",
+
+        "speed": "4",
+
+        "nowState": "Health",
+
+        "manaRegen": "0.25",
+        "maxMana": "3",
+
+        "gold": "1400"
+      },
+
+      {
+        "type": "Firefighter",
+
+        "basicAttackPower": "60",
+        "attackSpeed": "1",
+        "attackRange": "1.8",
+        "attackType": "ShortRange",
+
+        "maxHealth": "600",
+        "healthRegeneration": "0.1",
+        "defensePower": "5",
+
+        "level": "1",
+        "experience": "0",
+        "levelUpEX": "540",
+        "levelUpAP": "1",
+        "levelUpAS": "0.02",
+        "levelUpHP": "10",
+        "levelUpHR": "0.1",
+        "levelUpDP": "5",
+
+        "speed": "4",
+
+        "nowState": "Health",
+
+        "manaRegen": "0.25",
+        "maxMana": "3",
+
+        "gold": "1400"
+      },
+
+      {
+        "type": "Lightsabre",
+
+        "basicAttackPower": "60",
+        "attackSpeed": "1",
+        "attackRange": "2",
+        "attackType": "ShortRange",
+
+        "maxHealth": "600",
+        "healthRegeneration": "0.1",
+        "defensePower": "5",
+
+        "level": "1",
+        "experience": "0",
+        "levelUpEX": "540",
+        "levelUpAP": "1",
+        "levelUpAS": "0.02",
+        "levelUpHP": "10",
+        "levelUpHR": "0.1",
+        "levelUpDP": "5",
+
+        "speed": "4",
+
+        "nowState": "Health",
+
+        "manaRegen": "0.25",
+        "maxMana": "3",
+
+        "gold": "1400"
+      },
+
+      {
+        "type": "Monk",
+
+        "basicAttackPower": "60",
+        "attackSpeed": "1",
+        "attackRange": "4",
+        "attackType": "LongRange",
+
+        "maxHealth": "600",
+        "healthRegeneration": "0.1",
+        "defensePower": "5",
+
+        "level": "1",
+        "experience": "0",
+        "levelUpEX": "540",
+        "levelUpAP": "1",
+        "levelUpAS": "0.02",
+        "levelUpHP": "10",
+        "levelUpHR": "0.1",
+        "levelUpDP": "5",
+
+        "speed": "4",
+
+        "nowState": "Health",
+
+        "manaRegen": "0.25",
+        "maxMana": "3",
+
+        "gold": "1400"
+      }
+    ]
+  } 

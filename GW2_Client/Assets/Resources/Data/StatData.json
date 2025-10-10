@@ -1,0 +1,40 @@
+{
+    "stats": [
+      {
+        "name": "Police",
+        "moveSpeed": "100",
+        "attackPower": "10",
+        "attackSpeed" : "10",
+        "attackRange" : "10",
+        "defence" : "10",
+        "Health" : "10",
+        "HealthRecover" : "10",
+        "EnergyRecoverSpeed" : "10",
+        "RewardRange" : "10"
+      },
+      {
+        "name": "Soldier",
+        "moveSpeed": "100",
+        "attackPower": "10",
+        "attackSpeed" : "10",
+        "attackRange" : "10",
+        "defence" : "10",
+        "Health" : "10",
+        "HealthRecover" : "10",
+        "EnergyRecoverSpeed" : "10",
+        "RewardRange" : "10"
+      },
+      {
+        "name": "LightSabre",
+        "moveSpeed": "100",
+        "attackPower": "10",
+        "attackSpeed" : "10",
+        "attackRange" : "10",
+        "defence" : "10",
+        "Health" : "10",
+        "HealthRecover" : "10",
+        "EnergyRecoverSpeed" : "10",
+        "RewardRange" : "10"
+      }
+    ]
+  } 

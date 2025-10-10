@@ -1,0 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class UI_LobbyScene : UI_Scene
+{
+    
+
+    enum Buttons
+    {
+        EnterMulti_1vs1,
+        EnterMulti_2vs2,
+        EnterSingle,
+    }
+
+    public override void Init()
+    {
+        base.Init();
+        Bind<Button>(typeof(Buttons));
+
+        GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClick1vs1);
+        GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClick2vs2);
+        GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClickSingle);
+    }
+
+    public void OnClick1vs1(PointerEventData data)
+    {
+        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        sceneService.LoadScene(Define.Scene.Game);
+    }
+
+    public void OnClick2vs2(PointerEventData data)
+    {
+        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        sceneService.LoadScene(Define.Scene.Game);
+    }
+
+    public void OnClickSingle(PointerEventData data)
+    {
+        // TODO : TEST만 하기 때문에 그냥 Single플레이만 넘겨버린다.
+        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        sceneService.LoadScene(Define.Scene.Game);
+    }
+}

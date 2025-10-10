@@ -1,0 +1,61 @@
+{
+  "decks": [
+    {
+      "id": "1",
+      "cards": [
+        "JobCard_Grenade",
+
+        "Card_HealthPotion",
+        "Card_Enhancement",
+        "Card_Shield",
+        "Card_Purify",
+        "Card_HackingGrenade",
+        "Card_InvincibleWeapon",
+        "Card_Cannon"
+
+      ]
+    },
+    {
+      "id": "2",
+      "cards": [
+        "JobCard_Charge",
+
+        "Card_HealthPotion",
+        "Card_Enhancement",
+        "Card_Shield",
+        "Card_Purify",
+        "Card_HackingGrenade",
+        "Card_InvincibleWeapon",
+        "Card_Cannon"
+      ]
+    },
+    {
+      "id": "3",
+      "cards": [
+        "JobCard_WindBlade",
+
+        "Card_HealthPotion",
+        "Card_Enhancement",
+        "Card_Shield",
+        "Card_Purify",
+        "Card_HackingGrenade",
+        "Card_InvincibleWeapon",
+        "Card_Cannon"
+      ]
+    },
+    {
+      "id": "4",
+      "cards": [
+        "JobCard_DeadlySpeed",
+
+        "Card_HealthPotion",
+        "Card_Enhancement",
+        "Card_Shield",
+        "Card_Purify",
+        "Card_HackingGrenade",
+        "Card_InvincibleWeapon",
+        "Card_Cannon"
+      ]
+    }
+  ]
+}

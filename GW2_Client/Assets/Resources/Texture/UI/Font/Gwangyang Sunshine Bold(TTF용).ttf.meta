@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: c5e7937748c94a248adb71299717164b
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gwangyang Sunshine
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: d054ed5a17ff9bb4883f33302325682f, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
