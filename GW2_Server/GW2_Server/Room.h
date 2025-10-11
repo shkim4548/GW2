@@ -16,7 +16,6 @@ public:
 public:
 	// Handlers
 	bool HandleEnterPlayer(PlayerRef player);
-	bool HandleMove(Protocol::C_MOVE pkt);
 	void HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
 
 private:

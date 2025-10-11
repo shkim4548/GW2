@@ -25,28 +25,27 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = n
 static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\nEnum.proto\022\010Protocol*m\n\nObjectType\022\024\n\020"
+  "\n\nEnum.proto\022\010Protocol*Q\n\nObjectType\022\024\n\020"
   "OBJECT_TYPE_NONE\020\000\022\030\n\024OBJECT_TYPE_CREATU"
-  "RE\020\001\022\032\n\026OBJECT_TYPE_PROJECTILE\020\002\022\023\n\017OBJE"
-  "CT_TYPE_ENV\020\003*r\n\014CreatureType\022\026\n\022CREATUR"
-  "E_TYPE_NONE\020\000\022\030\n\024CREATURE_TYPE_PLAYER\020\001\022"
-  "\031\n\025CREATURE_TYPE_MONSTER\020\002\022\025\n\021CREATURE_T"
-  "YPE_NPC\020\003*h\n\nPlayerType\022\024\n\020PLAYER_TYPE_N"
-  "ONE\020\000\022\026\n\022PLAYER_TYPE_KNIGHT\020\001\022\024\n\020PLAYER_"
-  "TYPE_MAGE\020\002\022\026\n\022PLAYER_TYPE_ARCHER\020\003*\210\001\n\t"
-  "MoveState\022\023\n\017MOVE_STATE_NONE\020\000\022\023\n\017MOVE_S"
-  "TATE_IDLE\020\001\022\022\n\016MOVE_STATE_RUN\020\002\022\023\n\017MOVE_"
-  "STATE_JUMP\020\003\022\024\n\020MOVE_STATE_SKILL\020\004\022\022\n\016MO"
-  "VE_STATE_DIE\020\005*\\\n\tSkillType\022\021\n\rSKILL_ID_"
-  "NONE\020\000\022\023\n\017SKILL_ID_ATTACK\020\001\022\022\n\016SKILL_ID_"
-  "FIRST\020\002\022\023\n\017SKILL_ID_SECOND\020\003*>\n\010CampType"
-  "\022\016\n\nCAMP_HUMAN\020\000\022\017\n\013CAMP_CYBORG\020\001\022\021\n\rCAM"
-  "P_NEUTURAL\020\002B\027\252\002\024Google.Protobuf.Enumb\006p"
-  "roto3"
+  "RE\020\001\022\023\n\017OBJECT_TYPE_ENV\020\002*r\n\014CreatureTyp"
+  "e\022\026\n\022CREATURE_TYPE_NONE\020\000\022\030\n\024CREATURE_TY"
+  "PE_PLAYER\020\001\022\031\n\025CREATURE_TYPE_MONSTER\020\002\022\025"
+  "\n\021CREATURE_TYPE_NPC\020\003*h\n\nPlayerType\022\024\n\020P"
+  "LAYER_TYPE_NONE\020\000\022\026\n\022PLAYER_TYPE_KNIGHT\020"
+  "\001\022\024\n\020PLAYER_TYPE_MAGE\020\002\022\026\n\022PLAYER_TYPE_A"
+  "RCHER\020\003*\210\001\n\tMoveState\022\023\n\017MOVE_STATE_NONE"
+  "\020\000\022\023\n\017MOVE_STATE_IDLE\020\001\022\022\n\016MOVE_STATE_RU"
+  "N\020\002\022\023\n\017MOVE_STATE_JUMP\020\003\022\024\n\020MOVE_STATE_S"
+  "KILL\020\004\022\022\n\016MOVE_STATE_DIE\020\005*\\\n\tSkillType\022"
+  "\021\n\rSKILL_ID_NONE\020\000\022\023\n\017SKILL_ID_ATTACK\020\001\022"
+  "\022\n\016SKILL_ID_FIRST\020\002\022\023\n\017SKILL_ID_SECOND\020\003"
+  "*>\n\010CampType\022\016\n\nCAMP_HUMAN\020\000\022\017\n\013CAMP_CYB"
+  "ORG\020\001\022\021\n\rCAMP_NEUTURAL\020\002B\027\252\002\024Google.Prot"
+  "obuf.Enumb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Enum_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Enum_2eproto = {
-  false, false, 685, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
+  false, false, 657, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
   &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
   schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
   nullptr, file_level_enum_descriptors_Enum_2eproto, file_level_service_descriptors_Enum_2eproto,
@@ -67,7 +66,6 @@ bool ObjectType_IsValid(int value) {
     case 0:
     case 1:
     case 2:
-    case 3:
       return true;
     default:
       return false;

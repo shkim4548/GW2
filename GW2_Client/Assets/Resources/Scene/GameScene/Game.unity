@@ -448,7 +448,7 @@ GameObject:
   - component: {fileID: 89248604}
   - component: {fileID: 89248603}
   m_Layer: 0
-  m_Name: BootStrapper
+  m_Name: '@BootStrapper'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2261,7 +2261,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 717498111}
-  - component: {fileID: 717498112}
   - component: {fileID: 717498113}
   m_Layer: 0
   m_Name: '@GameScene'
@@ -2285,18 +2284,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &717498112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 717498110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b14624c7c788c945bd222f39a347b8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &717498113
 MonoBehaviour:
   m_ObjectHideFlags: 0

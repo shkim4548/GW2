@@ -37,10 +37,6 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 	return false;
 }
 
-bool Room::HandleMove(Protocol::C_MOVE pkt)
-{
-	return false;
-}
 
 void Room::HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt)
 {

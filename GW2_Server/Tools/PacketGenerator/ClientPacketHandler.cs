@@ -3,7 +3,6 @@ using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 
 // MSG ID로 취급되던 내용을 enum으로 관리한다.
 public enum PacketId : ushort
@@ -16,10 +15,12 @@ public enum PacketId : ushort
         PKT_S_ENTER_GAME = 1004,
         PKT_S_SPAWN = 1005,
         PKT_C_SPAWN = 1006,
-        PKT_C_MOVE = 1007,
-        PKT_S_MOVE = 1008,
-        PKT_C_SKILL = 1009,
-        PKT_S_SKILL = 1010,
+        PKT_C_MOVE_START = 1007,
+        PKT_C_MOVE_END = 1008,
+        PKT_S_MOVE_START = 1009,
+        PKT_S_MOVE_END = 1010,
+        PKT_C_SKILL = 1011,
+        PKT_S_SKILL = 1012,
 }
 
 public class PacketManager
@@ -49,8 +50,10 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_ENTER_GAME, PacketHandler.S_ENTER_GAMEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SPAWN, MakePacket<S_SPAWN>);
         _handler.Add((ushort)PacketId.PKT_S_SPAWN, PacketHandler.S_SPAWNHandler);
-        _onRecv.Add((ushort)PacketId.PKT_S_MOVE, MakePacket<S_MOVE>);
-        _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_START, MakePacket<S_MOVE_START>);
+        _handler.Add((ushort)PacketId.PKT_S_MOVE_START, PacketHandler.S_MOVE_STARTHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_END, MakePacket<S_MOVE_END>);
+        _handler.Add((ushort)PacketId.PKT_S_MOVE_END, PacketHandler.S_MOVE_ENDHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
     }

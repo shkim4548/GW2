@@ -8,8 +8,6 @@ public abstract class BaseScene : MonoBehaviour
 {
     [Inject]
     IResourceService _resourceService;
-    [Inject]
-    protected Lazy<IUIService> _uiService;
 
     public Define.Scene SceneType { get; protected set; } = Define.Scene.Unknown;
 

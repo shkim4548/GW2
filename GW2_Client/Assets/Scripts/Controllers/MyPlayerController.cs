@@ -121,10 +121,6 @@ public class MyPlayerController : PlayerController
 
     protected override void MakeSendPacket(float delay)
     {
-        C_MOVE movePacket = new C_MOVE();
-        movePacket.Info.X = this.transform.position.x;
-        movePacket.Info.Y = this.transform.position.y;
-        movePacket.Info.Z = this.transform.position.z;
         //movePacket.Info.Yaw = this.transform.rotation;
     }
 }

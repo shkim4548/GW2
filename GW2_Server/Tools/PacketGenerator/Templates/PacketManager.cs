@@ -3,7 +3,6 @@ using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 
 // MSG ID로 취급되던 내용을 enum으로 관리한다.
 public enum PacketId : ushort

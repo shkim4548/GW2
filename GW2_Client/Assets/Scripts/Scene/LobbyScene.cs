@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class LobbyScene : BaseScene
 {
-    //[LazyInject]
-    //public Lazy<IUIService> _uiService;
+    public IUIService _uiService;
 
     protected override void Init()
     {
         base.Init();
-        _uiService.Value.ShowSceneUI<UI_LobbyScene>();
+        _uiService = DI.Container.Resolve<IUIService>();
+        _uiService.ShowSceneUI<UI_LobbyScene>();
     }
 
     public override void Clear()

@@ -32,22 +32,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
-	uint64 index = pkt.playerindex();
-
-	// TODO : Validation
-
-	// DB ����� �׻� �ּ�ȭ �ؾ��Ѵ�
-	//PlayerRef player = gameSession->_players[index];	// READ_ONLY?
-	gameSession->_currentPlayer = gameSession->_players[index];	// READ ONLY
-	gameSession->_room = GRoom;
-
-	GRoom->DoAsync(&Room::Enter, gameSession->_currentPlayer);	// ���� Ŭ������ ��� �Լ��� ȣ���ϴ� ������� ����
-
-	Protocol::S_ENTER_GAME enterGamePkt;
-	enterGamePkt.set_success(true);
-	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(enterGamePkt);
-	gameSession->_currentPlayer->ownerSession->Send(sendBuffer);
+	cout << "C_ENTER_GAME_RECV" << endl;
 
 	return true;
 }
@@ -63,10 +48,14 @@ bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt)
 	return true;
 }
 
-bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
+bool Handle_C_MOVE_START(PacketSessionRef& session, Protocol::C_MOVE_START& pkt)
 {
+	return false;
+}
 
-	return true;
+bool Handle_C_MOVE_END(PacketSessionRef& session, Protocol::C_MOVE_END& pkt)
+{
+	return false;
 }
 
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
