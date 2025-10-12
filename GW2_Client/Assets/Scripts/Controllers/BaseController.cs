@@ -8,12 +8,11 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
-    //[Inject]
     protected IInputService _inputService;
     [Inject]
     protected INetworkService _networkService;
 
-    public int Id { get; set; }
+    public ulong Id { get; set; }
     public float _sendPacketDelay = 0.2f;
 
     protected Animator _animator;
@@ -58,6 +57,7 @@ public class BaseController : MonoBehaviour
 
     public void Start()
     {
+        _inputService = DI.Container.Resolve<IInputService>();
         Init();
     }
 
@@ -71,12 +71,14 @@ public class BaseController : MonoBehaviour
 
     public virtual void Init()
     {
+
         _animator = GetComponent<Animator>();
         _baseLayer = _animator.GetLayerIndex("BaseLayer");
         _lowerLayer = _animator.GetLayerIndex("LowerLayer");
 
         _animator.SetLayerWeight(_baseLayer, 1f);
         _animator.SetLayerWeight(_lowerLayer, 1f);
+
     }
 
     public virtual void UpdateIdle() { }

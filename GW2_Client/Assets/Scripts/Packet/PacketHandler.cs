@@ -10,7 +10,9 @@ public class PacketHandler
 {
     public static void S_ENTER_GAMEHandler(PacketSession session, IMessage message)
     {
-        
+        S_ENTER_GAME enterGamePkt = message as S_ENTER_GAME;
+        var objectService = DI.Container.Resolve<IObjectService>();
+        objectService.Add(enterGamePkt.Player);
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)

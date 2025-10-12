@@ -7,9 +7,6 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{37e6aaa6-0769-426b-aa67-d42e60cd791c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Protocol">
-      <UniqueIdentifier>{603496b5-138a-4725-951a-b0a8ee8dfe85}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameContents">
       <UniqueIdentifier>{1e549e80-6bc9-4a04-b856-c69b7c48146b}</UniqueIdentifier>
     </Filter>
@@ -21,6 +18,9 @@
     </Filter>
     <Filter Include="Object">
       <UniqueIdentifier>{20db2729-9d78-4bf2-83e8-a17bb50edd03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packet\Protocol">
+      <UniqueIdentifier>{603496b5-138a-4725-951a-b0a8ee8dfe85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectUtils.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,19 +87,25 @@
     <ClInclude Include="Player.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Enum.proto">
-      <Filter>Protocol</Filter>
+      <Filter>Packet\Protocol</Filter>
     </None>
     <None Include="..\Common\Protobuf\bin\Protocol.proto">
-      <Filter>Protocol</Filter>
+      <Filter>Packet\Protocol</Filter>
     </None>
     <None Include="..\Common\Protobuf\bin\Struct.proto">
-      <Filter>Protocol</Filter>
+      <Filter>Packet\Protocol</Filter>
     </None>
     <None Include="..\Common\Protobuf\bin\GenPackets.bat">
-      <Filter>Protocol</Filter>
+      <Filter>Packet\Protocol</Filter>
+    </None>
+    <None Include="..\Tools\PacketGenerator\MakeExe.bat">
+      <Filter>Packet\Protocol</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

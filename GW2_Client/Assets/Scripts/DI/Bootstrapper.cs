@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using Google.Protobuf.Protocol;
 using UnityEngine;
 
-// 전역 Network Service 관리자
+// 전역 Service 관리자
 public class Bootstrapper : MonoBehaviour
 {
     //public static DIContainer GlobalContainer { get; private set; }
@@ -27,6 +27,8 @@ public class Bootstrapper : MonoBehaviour
         DI.Container.Register<IUIService, UIService>(Define.ServiceLifetime.Singleton);
         DI.Container.Register<IResourceService, ResourceService>(Define.ServiceLifetime.Singleton);
         DI.Container.Register<ISceneService, SceneService>(Define.ServiceLifetime.Singleton);
+        DI.Container.Register<IObjectService, ObjectService>(Define.ServiceLifetime.Singleton);
+        DI.Container.Register<IInputService, InputService>(Define.ServiceLifetime.Singleton);
         //Container.RegisterSingleton<IAudioService, AudioService>();
 
         // 등록된 것을 미리 꺼내두기
