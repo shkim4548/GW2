@@ -16,20 +16,22 @@ Room::~Room()
 
 void Room::Enter(PlayerRef player)
 {
-	_players[player->playerId] = player;
+	_players[player->_playerId] = player;
 }
 
 void Room::Leave(PlayerRef player)
 {
-	_players.erase(player->playerId);
+	_players.erase(player->_playerId);
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer)
 {
-	for (auto& p : _players)
-	{
-		p.second->ownerSession->Send(sendBuffer);
-	}
+
+}
+
+void Room::InitNavigation()
+{
+
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)

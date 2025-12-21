@@ -13,13 +13,7 @@ void GameSession::OnConnected()
 void GameSession::OnDisconnected()
 {
 	GSessionManager.Remove(static_pointer_cast<GameSession>(shared_from_this()));
-	if (_currentPlayer)
-	{
-		if (auto room = _room.lock())	//weak 포인터를 shared 포인터로 lock을 통해 변환
-			room->DoAsync(&Room::Leave, _currentPlayer);
-	}
-	_currentPlayer = nullptr;	// 기존의 ref카운트를 날려버린다.
-	_players.clear();
+	//_players.clear();
 }
 
 void GameSession::OnRecvPacket(BYTE* buffer, int32 len)

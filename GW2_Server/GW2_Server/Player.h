@@ -2,9 +2,12 @@
 class Player
 {
 public:
-	uint64 playerId = 0;
+	int32 GetPlayerId() { return _playerId; }
+
+public:
+	int64 _playerId = 0;
 	string name;
 	Protocol::PlayerType type = Protocol::PLAYER_TYPE_NONE;
-	GameSessionRef ownerSession;	// Cycle
+	weak_ptr<GameSession> _ownerSession;	// Cycle
 };
 

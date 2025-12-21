@@ -55,6 +55,22 @@
     <ClCompile Include="ObjectUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="GameLogic.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="NavmeshLoader.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationSystem.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Lobby.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -89,6 +105,22 @@
     </ClInclude>
     <ClInclude Include="ObjectUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="NavmeshLoader.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationSystem.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Lobby.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

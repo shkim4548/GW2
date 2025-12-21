@@ -63,3 +63,6 @@ sysinfo.txt
 crashlytics-build.properties
 
 .vsconfig
+
+# gitignore obj except
+/[Aa]ssets/NavMeshExport/

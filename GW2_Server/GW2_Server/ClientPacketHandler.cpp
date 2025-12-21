@@ -20,7 +20,7 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 // DB는 우선 빼고, 간단하게 닉네임만 던져주자
 bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 {
-	cout << "LoginPacket Recv" << endl;
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_Login] LoginPacketRecv : ");
 	cout << pkt.nickname() << endl;
 	
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
@@ -64,10 +64,21 @@ bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt)
 
 bool Handle_C_MOVE_START(PacketSessionRef& session, Protocol::C_MOVE_START& pkt)
 {
-	const Protocol::PosInfo* startPos = &pkt.start();
-	const Protocol::PosInfo* destPos = &pkt.dest();
-	cout << startPos->x() << ' ' << startPos->y() << ' ' << startPos->z() << endl;
+	// 검증도 여기서 해줘야한다.
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->_currentPlayer;
+	if (player == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE_START] : session's PlayerRef is nullptr");
+		return false;
+	}
+	
+	// 핵 검증 -> 벽 통과 검사
 
+	// 핵 검증 -> 속도가 너무 빠르면 핵의심
+	//if(pkt.speed() > player->)
+
+	// 이동 승인
 	return true;
 }
 
