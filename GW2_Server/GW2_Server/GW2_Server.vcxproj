@@ -183,7 +183,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GameLogic.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameSession.cpp" />
     <ClCompile Include="GameSessionManager.cpp" />
     <ClCompile Include="GW2_Server.cpp" />
@@ -217,7 +216,6 @@
   <ItemGroup>
     <ClInclude Include="Enum.pb.h" />
     <ClInclude Include="GameLogic.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="GameSessionManager.h" />
     <ClInclude Include="GenProcedures.h" />

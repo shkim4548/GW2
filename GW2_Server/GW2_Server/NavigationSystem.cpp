@@ -375,3 +375,8 @@ void Navigation::NavigationSystem::PrintGrid() const
 	}
 }
 
+void Navigation::NavigationSystem::PrintPath()
+{
+
+}
+

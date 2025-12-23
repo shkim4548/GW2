@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='utf8'?>
+<nuitka-compilation-report nuitka_version="2.8.9" nuitka_commercial_version="not installed" mode="onefile" completion="exception">
+  <exception exception_type="UnicodeDecodeError" exception_value="'utf-8' codec can't decode byte 0xbd in position 185: invalid start byte">
+Traceback (most recent call last):
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\MainControl.py", line 1214, in main
+    _main()
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\MainControl.py", line 1033, in _main
+    main_module = _createMainModule()
+                  ^^^^^^^^^^^^^^^^^^^
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\MainControl.py", line 159, in _createMainModule
+    main_module = buildMainModuleTree(
+                  ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\tree\Building.py", line 1215, in buildMainModuleTree
+    module = buildModule(
+             ^^^^^^^^^^^^
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\tree\Building.py", line 1367, in buildModule
+    ) = readSourceCodeFromFilenameWithInformation(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\tree\SourceHandling.py", line 178, in readSourceCodeFromFilenameWithInformation
+    source_code = _readSourceCodeFromFilename3(source_filename)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Dev\unity\GW2\GW2_Server\Tools\PacketGenerator\env\Lib\site-packages\nuitka\tree\SourceHandling.py", line 71, in _readSourceCodeFromFilename3
+    return source_file.read()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\codecs.py", line 322, in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xbd in position 185: invalid start byte
+</exception>
+  <performance>
+    <memory_usage name="after_launch" value="42217472" />
+  </performance>
+  <data_file name="Templates\PacketHandler.h" source="${cwd}\Templates\PacketHandler.h" size="2168" reason="specified data dir 'Templates' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="Templates\PacketManager.cs" source="${cwd}\Templates\PacketManager.cs" size="2878" reason="specified data dir 'Templates' on command line" tags="user,copy,data-dir-contents" />
+  <data_composer blob_size="None" />
+  <command_line>
+    <option value="--standalone" />
+    <option value="--onefile" />
+    <option value="--include-data-dir=Templates=Templates" />
+    <option value="PacketGenerator.py" />
+  </command_line>
+  <plugins>
+    <plugin name="anti-bloat" user_enabled="no" />
+    <plugin name="data-files" user_enabled="no" />
+    <plugin name="delvewheel" user_enabled="no" />
+    <plugin name="dll-files" user_enabled="no" />
+    <plugin name="eventlet" user_enabled="no" />
+    <plugin name="gevent" user_enabled="no" />
+    <plugin name="gi" user_enabled="no" />
+    <plugin name="glfw" user_enabled="no" />
+    <plugin name="implicit-imports" user_enabled="no" />
+    <plugin name="kivy" user_enabled="no" />
+    <plugin name="matplotlib" user_enabled="no" />
+    <plugin name="multiprocessing" user_enabled="no" />
+    <plugin name="options-nanny" user_enabled="no" />
+    <plugin name="pbr-compat" user_enabled="no" />
+    <plugin name="pkg-resources" user_enabled="no" />
+    <plugin name="playwright" user_enabled="no" />
+    <plugin name="pywebview" user_enabled="no" />
+    <plugin name="spacy" user_enabled="no" />
+    <plugin name="transformers" user_enabled="no" />
+  </plugins>
+  <onefile cache_mode="temporary" unpack_dir="{TEMP}\onefile_{PID}_{TIME}" />
+  <distributions />
+  <python python_exe="${sys.prefix}\Scripts\python.exe" python_flavor="CPython Official" python_version="3.12.10" os_name="Windows" os_release="11" arch_name="x86_64" filesystem_encoding="utf-8">
+    <search_path>
+      <path value="${cwd}" />
+      <path value="${sys.real_prefix}\DLLs" />
+      <path value="${sys.real_prefix}\Lib" />
+      <path value="${sys.real_prefix}" />
+      <path value="${sys.prefix}" />
+      <path value="${sys.prefix}\Lib\site-packages" />
+    </search_path>
+  </python>
+  <output run_filename="failed too early" />
+</nuitka-compilation-report>

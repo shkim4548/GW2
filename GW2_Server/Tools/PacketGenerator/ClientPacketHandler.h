@@ -17,8 +17,11 @@ enum : uint16
 	PKT_C_MOVE_END = 1008,
 	PKT_S_MOVE_START = 1009,
 	PKT_S_MOVE_END = 1010,
-	PKT_C_SKILL = 1011,
-	PKT_S_SKILL = 1012,
+	PKT_S_MOVE_CORRECT = 1011,
+	PKT_C_SKILL = 1012,
+	PKT_S_SKILL = 1013,
+	PKT_C_ENTER_LOBBY = 1014,
+	PKT_S_ENTER_LOBBY = 1015,
 };
 
 // Custom Handlers
@@ -30,6 +33,7 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 	bool Handle_C_MOVE_START(PacketSessionRef& session, Protocol::C_MOVE_START& pkt);
 	bool Handle_C_MOVE_END(PacketSessionRef& session, Protocol::C_MOVE_END& pkt);
 	bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt);
+	bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt);
 
 class ClientPacketHandler
 {
@@ -45,6 +49,7 @@ public:
 		GPacketHandler[PKT_C_MOVE_START] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_MOVE_START>(Handle_C_MOVE_START, session, buffer, len); };
 		GPacketHandler[PKT_C_MOVE_END] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_MOVE_END>(Handle_C_MOVE_END, session, buffer, len); };
 		GPacketHandler[PKT_C_SKILL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SKILL>(Handle_C_SKILL, session, buffer, len); };
+		GPacketHandler[PKT_C_ENTER_LOBBY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_LOBBY>(Handle_C_ENTER_LOBBY, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -57,7 +62,9 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_SPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_SPAWN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_START& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_START); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_END& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_END); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_CORRECT& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_CORRECT); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_SKILL& pkt) { return MakeSendBuffer(pkt, PKT_S_SKILL); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_LOBBY& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_LOBBY); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

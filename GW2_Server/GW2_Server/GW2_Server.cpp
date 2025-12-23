@@ -9,6 +9,7 @@
 #include <tchar.h>
 #include "Protocol.pb.h"
 #include "Job.h"
+#include "Lobby.h"
 #include "Room.h"
 #include "Player.h"
 #include "DBConnectionPool.h"
@@ -48,40 +49,6 @@ int main()
 	DBSynchronizer dbSync(*dbConn);
 	dbSync.Synchronize(L"GameDB.xml");
 
-	// //insert
-	//{
-	//	WCHAR name[] = L"Rookiss";	// 너무 많은 복사를 방지하기 위해 따로 정의, 실전에선 크게 하지 않아도 될 작업
-	//	SP::InsertGold insertGold(*dbConn);
-	//	insertGold.In_Gold(100);
-	//	insertGold.In_Name(name);
-	//	insertGold.In_CreateDate(TIMESTAMP_STRUCT{ 2023,7,14 });
-	//	insertGold.Execute();
-	//}
-
-	// select
-	//{
-	//	SP::GetGold getGold(*dbConn);
-	//	getGold.In_Gold(100);
-
-	//	int32 id = 0;
-	//	int32 gold = 0;
-	//	WCHAR name[100];
-	//	TIMESTAMP_STRUCT date;
-
-	//	getGold.Out_Id(OUT id);
-	//	getGold.Out_Gold(OUT gold);
-	//	getGold.Out_Name(OUT name);
-	//	getGold.Out_CreateDate(OUT date);
-
-	//	getGold.Execute();
-
-	//	while (getGold.Fetch())
-	//	{
-	//		GConsoleLogger->WriteStdOut(Color::BLUE,
-	//			L"ID[%d] Gold[%d] Name[%s]\n", id, gold, name);
-	//	}
-	//}
-
 	ClientPacketHandler::Init();
 
 	ServerServiceRef service = MakeShared<ServerService>(
@@ -89,6 +56,9 @@ int main()
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>, // TODO : SessionManager 등
 		100);
+	
+	// 로비 초기화
+	GLobby->LobbyInit();
 
 	ASSERT_CRASH(service->Start());
 

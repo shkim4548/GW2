@@ -48,6 +48,16 @@ public class PacketHandler
         throw new NotImplementedException();
     }
 
+    internal static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_MOVE_CORRECTHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
     internal static void S_MOVE_ENDHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();

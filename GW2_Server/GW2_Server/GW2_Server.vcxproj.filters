@@ -64,7 +64,6 @@
     <ClCompile Include="NavigationSystem.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Lobby.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
@@ -115,7 +114,6 @@
     <ClInclude Include="NavigationSystem.h">
       <Filter>GameContents</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Lobby.h">
       <Filter>GameContents</Filter>
     </ClInclude>

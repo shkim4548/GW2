@@ -13,7 +13,7 @@ PacketHandlerFunc GPacketHandler[UINT16_MAX];
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 {
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-	// TODO : Log
+	GConsoleLogger->WriteStdOut(Color::RED, L"[Handle_Invalid] Invalid Packet");
 	return false;
 }
 
@@ -88,6 +88,11 @@ bool Handle_C_MOVE_END(PacketSessionRef& session, Protocol::C_MOVE_END& pkt)
 }
 
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
+{
+	return false;
+}
+
+bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt)
 {
 	return false;
 }

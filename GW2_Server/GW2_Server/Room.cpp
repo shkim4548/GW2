@@ -16,12 +16,10 @@ Room::~Room()
 
 void Room::Enter(PlayerRef player)
 {
-	_players[player->_playerId] = player;
 }
 
 void Room::Leave(PlayerRef player)
 {
-	_players.erase(player->_playerId);
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer)
