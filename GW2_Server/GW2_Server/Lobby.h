@@ -23,7 +23,7 @@ public:
 	unordered_map<int32, RoomRef> GetRoomList();
 	weak_ptr<Room> GetRoomById(int32 roomId);
 
-	RoomRef MakeRoom(wstring roomName);
+	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);
 	void EnterRoom(int32 roomId, int64 playerId);
 

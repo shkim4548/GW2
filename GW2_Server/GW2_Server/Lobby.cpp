@@ -27,7 +27,7 @@ void Lobby::LobbyInit()
 	// 로비를 만들어서 줍시다
 	if (_rooms.empty())
 	{
-		RoomRef room = MakeRoom(L"DefaultRoom");
+		RoomRef room = MakeRoom("DefaultRoom");
 	}
 	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] LobbyInit : Create Room\n");
 }
@@ -59,7 +59,7 @@ weak_ptr<Room> Lobby::GetRoomById(int32 roomId)
 	return _rooms[roomId];
 }
 
-RoomRef Lobby::MakeRoom(wstring roomName)
+RoomRef Lobby::MakeRoom(string roomName)
 {
 	// 방을 하나 만들어서 로비의 목록에 저장한다.
 	RoomRef newRoom = MakeShared<Room>();

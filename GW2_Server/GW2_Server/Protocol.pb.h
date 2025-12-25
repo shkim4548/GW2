@@ -2606,26 +2606,26 @@ class S_ENTER_LOBBY final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomInfoFieldNumber = 2,
+    kRoomInfosFieldNumber = 2,
     kPlayerIdFieldNumber = 1,
   };
-  // .Protocol.RoomInfo roomInfo = 2;
-  bool has_roominfo() const;
+  // repeated .Protocol.RoomInfo roomInfos = 2;
+  int roominfos_size() const;
   private:
-  bool _internal_has_roominfo() const;
+  int _internal_roominfos_size() const;
   public:
-  void clear_roominfo();
-  const ::Protocol::RoomInfo& roominfo() const;
-  PROTOBUF_NODISCARD ::Protocol::RoomInfo* release_roominfo();
-  ::Protocol::RoomInfo* mutable_roominfo();
-  void set_allocated_roominfo(::Protocol::RoomInfo* roominfo);
+  void clear_roominfos();
+  ::Protocol::RoomInfo* mutable_roominfos(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >*
+      mutable_roominfos();
   private:
-  const ::Protocol::RoomInfo& _internal_roominfo() const;
-  ::Protocol::RoomInfo* _internal_mutable_roominfo();
+  const ::Protocol::RoomInfo& _internal_roominfos(int index) const;
+  ::Protocol::RoomInfo* _internal_add_roominfos();
   public:
-  void unsafe_arena_set_allocated_roominfo(
-      ::Protocol::RoomInfo* roominfo);
-  ::Protocol::RoomInfo* unsafe_arena_release_roominfo();
+  const ::Protocol::RoomInfo& roominfos(int index) const;
+  ::Protocol::RoomInfo* add_roominfos();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >&
+      roominfos() const;
 
   // int32 playerId = 1;
   void clear_playerid();
@@ -2643,7 +2643,7 @@ class S_ENTER_LOBBY final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::Protocol::RoomInfo* roominfo_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo > roominfos_;
   int32_t playerid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -3743,90 +3743,41 @@ inline void S_ENTER_LOBBY::set_playerid(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_ENTER_LOBBY.playerId)
 }
 
-// .Protocol.RoomInfo roomInfo = 2;
-inline bool S_ENTER_LOBBY::_internal_has_roominfo() const {
-  return this != internal_default_instance() && roominfo_ != nullptr;
+// repeated .Protocol.RoomInfo roomInfos = 2;
+inline int S_ENTER_LOBBY::_internal_roominfos_size() const {
+  return roominfos_.size();
 }
-inline bool S_ENTER_LOBBY::has_roominfo() const {
-  return _internal_has_roominfo();
+inline int S_ENTER_LOBBY::roominfos_size() const {
+  return _internal_roominfos_size();
 }
-inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::_internal_roominfo() const {
-  const ::Protocol::RoomInfo* p = roominfo_;
-  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::RoomInfo&>(
-      ::Protocol::_RoomInfo_default_instance_);
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::mutable_roominfos(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_LOBBY.roomInfos)
+  return roominfos_.Mutable(index);
 }
-inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::roominfo() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.roomInfo)
-  return _internal_roominfo();
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >*
+S_ENTER_LOBBY::mutable_roominfos() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_LOBBY.roomInfos)
+  return &roominfos_;
 }
-inline void S_ENTER_LOBBY::unsafe_arena_set_allocated_roominfo(
-    ::Protocol::RoomInfo* roominfo) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(roominfo_);
-  }
-  roominfo_ = roominfo;
-  if (roominfo) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_ENTER_LOBBY.roomInfo)
+inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::_internal_roominfos(int index) const {
+  return roominfos_.Get(index);
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::release_roominfo() {
-  
-  ::Protocol::RoomInfo* temp = roominfo_;
-  roominfo_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
+inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::roominfos(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.roomInfos)
+  return _internal_roominfos(index);
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::unsafe_arena_release_roominfo() {
-  // @@protoc_insertion_point(field_release:Protocol.S_ENTER_LOBBY.roomInfo)
-  
-  ::Protocol::RoomInfo* temp = roominfo_;
-  roominfo_ = nullptr;
-  return temp;
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::_internal_add_roominfos() {
+  return roominfos_.Add();
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::_internal_mutable_roominfo() {
-  
-  if (roominfo_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Protocol::RoomInfo>(GetArenaForAllocation());
-    roominfo_ = p;
-  }
-  return roominfo_;
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::add_roominfos() {
+  ::Protocol::RoomInfo* _add = _internal_add_roominfos();
+  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_LOBBY.roomInfos)
+  return _add;
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::mutable_roominfo() {
-  ::Protocol::RoomInfo* _msg = _internal_mutable_roominfo();
-  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_LOBBY.roomInfo)
-  return _msg;
-}
-inline void S_ENTER_LOBBY::set_allocated_roominfo(::Protocol::RoomInfo* roominfo) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(roominfo_);
-  }
-  if (roominfo) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
-            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(roominfo));
-    if (message_arena != submessage_arena) {
-      roominfo = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, roominfo, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  roominfo_ = roominfo;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_LOBBY.roomInfo)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >&
+S_ENTER_LOBBY::roominfos() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_LOBBY.roomInfos)
+  return roominfos_;
 }
 
 #ifdef __GNUC__

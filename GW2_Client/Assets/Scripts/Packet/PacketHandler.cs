@@ -26,6 +26,11 @@ public class PacketHandler
         // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
         var sceneService = DI.Container.Resolve<ISceneService>();
         sceneService.LoadScene(Define.Scene.Lobby);
+
+        // 로그인 완료시 Lobby 입장 요청
+        C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
+        var networkService = DI.Container.Resolve<INetworkService>();
+        networkService.Send(enterLobbyRequest);
     }
 
     public static void S_MOVEHandler(PacketSession session, IMessage message)
@@ -50,7 +55,13 @@ public class PacketHandler
 
     internal static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
+        Debug.Log("S_ENTER_LOBBY");
+        for(int i = 0; i< lobbyPkt.RoomInfos.Count; ++i)
+        {
+            Debug.Log(lobbyPkt.RoomInfos[i].RoomId);
+            Debug.Log(lobbyPkt.RoomInfos[i].RommName);
+        }
     }
 
     internal static void S_MOVE_CORRECTHandler(PacketSession session, IMessage message)

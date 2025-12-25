@@ -207,7 +207,7 @@ struct C_ENTER_LOBBYDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT C_ENTER_LOBBYDefaultTypeInternal _C_ENTER_LOBBY_default_instance_;
 constexpr S_ENTER_LOBBY::S_ENTER_LOBBY(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : roominfo_(nullptr)
+  : roominfos_()
   , playerid_(0){}
 struct S_ENTER_LOBBYDefaultTypeInternal {
   constexpr S_ENTER_LOBBYDefaultTypeInternal()
@@ -344,7 +344,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_LOBBY, playerid_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_LOBBY, roominfo_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_LOBBY, roominfos_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -406,10 +406,10 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "skill_id\030\001 \001(\005\022\021\n\ttarget_id\030\002 \001(\003\022\023\n\013att"
   "acker_id\030\003 \001(\003\"C\n\007S_SKILL\022\020\n\010skill_id\030\001 "
   "\001(\005\022\021\n\ttarget_id\030\002 \001(\003\022\023\n\013attacker_id\030\003 "
-  "\001(\003\"\017\n\rC_ENTER_LOBBY\"G\n\rS_ENTER_LOBBY\022\020\n"
-  "\010playerId\030\001 \001(\005\022$\n\010roomInfo\030\002 \001(\0132\022.Prot"
-  "ocol.RoomInfoB\033\252\002\030Google.Protobuf.Protoc"
-  "olb\006proto3"
+  "\001(\003\"\017\n\rC_ENTER_LOBBY\"H\n\rS_ENTER_LOBBY\022\020\n"
+  "\010playerId\030\001 \001(\005\022%\n\troomInfos\030\002 \003(\0132\022.Pro"
+  "tocol.RoomInfoB\033\252\002\030Google.Protobuf.Proto"
+  "colb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -417,7 +417,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 970, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  false, false, 971, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
   &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 16,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
@@ -3451,22 +3451,15 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_ENTER_LOBBY::GetClassData() 
 
 class S_ENTER_LOBBY::_Internal {
  public:
-  static const ::Protocol::RoomInfo& roominfo(const S_ENTER_LOBBY* msg);
 };
 
-const ::Protocol::RoomInfo&
-S_ENTER_LOBBY::_Internal::roominfo(const S_ENTER_LOBBY* msg) {
-  return *msg->roominfo_;
-}
-void S_ENTER_LOBBY::clear_roominfo() {
-  if (GetArenaForAllocation() == nullptr && roominfo_ != nullptr) {
-    delete roominfo_;
-  }
-  roominfo_ = nullptr;
+void S_ENTER_LOBBY::clear_roominfos() {
+  roominfos_.Clear();
 }
 S_ENTER_LOBBY::S_ENTER_LOBBY(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  roominfos_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -3474,22 +3467,15 @@ S_ENTER_LOBBY::S_ENTER_LOBBY(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:Protocol.S_ENTER_LOBBY)
 }
 S_ENTER_LOBBY::S_ENTER_LOBBY(const S_ENTER_LOBBY& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      roominfos_(from.roominfos_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_roominfo()) {
-    roominfo_ = new ::Protocol::RoomInfo(*from.roominfo_);
-  } else {
-    roominfo_ = nullptr;
-  }
   playerid_ = from.playerid_;
   // @@protoc_insertion_point(copy_constructor:Protocol.S_ENTER_LOBBY)
 }
 
 inline void S_ENTER_LOBBY::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&roominfo_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&playerid_) -
-    reinterpret_cast<char*>(&roominfo_)) + sizeof(playerid_));
+playerid_ = 0;
 }
 
 S_ENTER_LOBBY::~S_ENTER_LOBBY() {
@@ -3501,7 +3487,6 @@ S_ENTER_LOBBY::~S_ENTER_LOBBY() {
 
 inline void S_ENTER_LOBBY::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete roominfo_;
 }
 
 void S_ENTER_LOBBY::ArenaDtor(void* object) {
@@ -3520,10 +3505,7 @@ void S_ENTER_LOBBY::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && roominfo_ != nullptr) {
-    delete roominfo_;
-  }
-  roominfo_ = nullptr;
+  roominfos_.Clear();
   playerid_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -3542,11 +3524,16 @@ const char* S_ENTER_LOBBY::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.RoomInfo roomInfo = 2;
+      // repeated .Protocol.RoomInfo roomInfos = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_roominfo(), ptr);
-          CHK_(ptr);
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_roominfos(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -3585,12 +3572,12 @@ uint8_t* S_ENTER_LOBBY::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_playerid(), target);
   }
 
-  // .Protocol.RoomInfo roomInfo = 2;
-  if (this->_internal_has_roominfo()) {
+  // repeated .Protocol.RoomInfo roomInfos = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_roominfos_size()); i < n; i++) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::roominfo(this), target, stream);
+      InternalWriteMessage(2, this->_internal_roominfos(i), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3609,11 +3596,11 @@ size_t S_ENTER_LOBBY::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .Protocol.RoomInfo roomInfo = 2;
-  if (this->_internal_has_roominfo()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *roominfo_);
+  // repeated .Protocol.RoomInfo roomInfos = 2;
+  total_size += 1UL * this->_internal_roominfos_size();
+  for (const auto& msg : this->roominfos_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // int32 playerId = 1;
@@ -3643,9 +3630,7 @@ void S_ENTER_LOBBY::MergeFrom(const S_ENTER_LOBBY& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_roominfo()) {
-    _internal_mutable_roominfo()->::Protocol::RoomInfo::MergeFrom(from._internal_roominfo());
-  }
+  roominfos_.MergeFrom(from.roominfos_);
   if (from._internal_playerid() != 0) {
     _internal_set_playerid(from._internal_playerid());
   }
@@ -3666,12 +3651,8 @@ bool S_ENTER_LOBBY::IsInitialized() const {
 void S_ENTER_LOBBY::InternalSwap(S_ENTER_LOBBY* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_ENTER_LOBBY, playerid_)
-      + sizeof(S_ENTER_LOBBY::playerid_)
-      - PROTOBUF_FIELD_OFFSET(S_ENTER_LOBBY, roominfo_)>(
-          reinterpret_cast<char*>(&roominfo_),
-          reinterpret_cast<char*>(&other->roominfo_));
+  roominfos_.InternalSwap(&other->roominfos_);
+  swap(playerid_, other->playerid_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata S_ENTER_LOBBY::GetMetadata() const {

@@ -18,6 +18,5 @@ public:
 
 public:
 	atomic<PlayerRef> _currentPlayer;
-	//atomic<shared_ptr<Player>> _currentPlayer;
-	//weak_ptr<class Room> _room;
+	weak_ptr<class Room> _room;
 };

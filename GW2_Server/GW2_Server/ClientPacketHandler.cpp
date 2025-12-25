@@ -2,7 +2,9 @@
 #include "ClientPacketHandler.h"
 #include "Player.h"
 #include "Room.h"
-//#include "Protocol.pb.h"
+#include "Lobby.h"
+#include "ObjectUtils.h"
+#include "Protocol.pb.h"
 #include "Struct.pb.h"
 #include "GameSession.h"
 
@@ -94,5 +96,24 @@ bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
 
 bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt)
 {
-	return false;
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_ENTER_LOBBY] Enter Lobby Packet Recv\n");
+	Protocol::S_ENTER_LOBBY lobbyPkt;
+
+	unordered_map<int32, RoomRef> rooms = GLobby->GetRoomList();
+	vector<int32> roomIds;
+	for (auto& [roomId, room] : rooms)
+	{
+		Protocol::RoomInfo* roomInfo = lobbyPkt.add_roominfos();
+		roomInfo->set_roomid(roomId);
+		roomInfo->set_rommname(room->GetRoomName());
+	}
+
+	PlayerRef newPlayer = ObjectUtils::CreatePlayer(static_pointer_cast<GameSession>(session));
+	GLobby->OnClientEnter(newPlayer);
+	lobbyPkt.set_playerid(newPlayer->GetPlayerId());
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(lobbyPkt);
+	session->Send(sendBuffer);
+
+	return true;
 }

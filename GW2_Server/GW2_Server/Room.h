@@ -17,8 +17,8 @@ public:
 
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
 	int32 GetRoomId() { return _roomId; }
-	void SetRoomName(wstring roomName) { _roomName = roomName; }
-	wstring GetRoomName() { return _roomName; }
+	void SetRoomName(string roomName) { _roomName = roomName; }
+	string GetRoomName() { return _roomName; }
 
 public:
 	// Handlers
@@ -30,7 +30,11 @@ private:
 private:
 	unordered_map<int32, weak_ptr<Player>> _players;
 	int32 _roomId;
-	wstring _roomName;
+	string _roomName;
+
+	// ¸Ê Á¤º¸
+	unique_ptr<class NavmeshLoader> _navmeshLoader;
+	shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
 };
 
 extern shared_ptr<Room> GRoom;

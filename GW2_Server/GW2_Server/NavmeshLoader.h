@@ -9,6 +9,7 @@ struct OBJ_CollisionMesh
 
 class NavmeshLoader
 {
+public:
 	void LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh);
 };
 
