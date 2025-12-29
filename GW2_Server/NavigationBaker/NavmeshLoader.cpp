@@ -1,7 +1,9 @@
-#include "pch.h"
 #include "NavmeshLoader.h"
+#include "Types.h"
 #include <fstream>
 #include <sstream>
+#include "GameMath.h"
+using namespace std;
 
 void NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
 {
@@ -9,7 +11,6 @@ void NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
 
     if (!file.is_open())
     {
-        GConsoleLogger->WriteStdErr(Color::RED, L"Error : Cannot open Obj file\n");
         return;
     }
 

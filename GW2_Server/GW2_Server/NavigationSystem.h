@@ -1,6 +1,7 @@
 #pragma once
+#include "GameLogic.h"
 
-struct Vector3;
+struct GameMath::Vector3;
 struct Triangle;
 
 namespace Navigation
@@ -35,7 +36,7 @@ namespace Navigation
 		int32 width;
 		int32 height;
 		float cellSize;
-		Vector3 origin;
+		GameMath::Vector3 origin;
 
 		vector<GridCell> cells;
 		GridCell& At(int32 x, int32 z)
@@ -50,18 +51,18 @@ namespace Navigation
 	class NavigationSystem
 	{
 	public:
-		void Build(const vector<Vector3> vertices, const vector<int32>& indices);
+		void Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices);
 		bool GetGroundHeight(float x, float z, float& OUT outY);
-		bool CanMoveStraight(Vector3 start, Vector3 end);
+		bool CanMoveStraight(GameMath::Vector3 start, GameMath::Vector3 end);
 		// 뮐러 트럼보 교차 알고리즘
-		optional<HitResult> RayIntersects(const Ray& ray, const Vector3& v1, const Vector3& v2, const Vector3& v3, bool cullBackFace = false);
+		optional<HitResult> RayIntersects(const Ray& ray, const GameMath::Vector3& v1, const GameMath::Vector3& v2, const GameMath::Vector3& v3, bool cullBackFace = false);
 		bool RaycastWorld(const Ray& ray, float maxDistance, bool cullBackFace, RaycastHit& outHit);
 
 		// Grid Logic
-		void BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, Vector3 origin);
+		void BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin);
 		void BuildCells(WalkableGrid& grid);
 		void BuildConnections(WalkableGrid& grid);
-		Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
+		GameMath::Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
 		void BuildGrid(float cellSize);
 
 		// A Star

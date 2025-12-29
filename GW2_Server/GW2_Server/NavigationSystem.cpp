@@ -6,7 +6,7 @@
 #undef max
 
 // indices는 0-2-1 기준의 삼각 인덱스 배열 형태로 들어온다.
-void Navigation::NavigationSystem::Build(const vector<Vector3> vertices, const vector<int32>& indices)
+void Navigation::NavigationSystem::Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices)
 {
 	_allTriangles.clear();
 	_allTriangles.reserve(indices.size() / 3);
@@ -19,10 +19,10 @@ void Navigation::NavigationSystem::Build(const vector<Vector3> vertices, const v
 		tri.v3 = vertices[indices[i + 2]];
 
 		// 법선 계산
-		Vector3 e1 = tri.v2 - tri.v1;
-		Vector3 e2 = tri.v3 - tri.v1;
-		Vector3 t = e1.Vector3::Cross(e2);
-		tri.normal = Vector3::GetNormalVector(t);
+		GameMath::Vector3 e1 = tri.v2 - tri.v1;
+		GameMath::Vector3 e2 = tri.v3 - tri.v1;
+		GameMath::Vector3 t = e1.GameMath::Vector3::Cross(e2);
+		tri.normal = GameMath::Vector3::GetNormalVector(t);
 
 		_allTriangles.push_back(tri);
 	}
@@ -31,8 +31,8 @@ void Navigation::NavigationSystem::Build(const vector<Vector3> vertices, const v
 bool Navigation::NavigationSystem::GetGroundHeight(float x, float z, float& OUT outY)
 {
 	Ray ray;
-	ray.origin = Vector3(x, 10000.0f, z);
-	ray.dir = Vector3(0, -1, 0);
+	ray.origin = GameMath::Vector3(x, 10000.0f, z);
+	ray.dir = GameMath::Vector3(0, -1, 0);
 
 	RaycastHit hit;
 	if (!RaycastWorld(ray,	FLT_MAX, /*cullBackFace=*/false, hit))
@@ -45,15 +45,15 @@ bool Navigation::NavigationSystem::GetGroundHeight(float x, float z, float& OUT 
 }
 
 
-bool Navigation::NavigationSystem::CanMoveStraight(Vector3 start, Vector3 end)
+bool Navigation::NavigationSystem::CanMoveStraight(GameMath::Vector3 start, GameMath::Vector3 end)
 {
-	Vector3 dir = end - start;
+	GameMath::Vector3 dir = end - start;
 	float length = dir.Length();
 
 	if (length <= 0.0001f)
 		return true;
 
-	dir = Vector3::GetNormalVector(dir);
+	dir = GameMath::Vector3::GetNormalVector(dir);
 
 	Ray ray;
 	ray.origin = start;
@@ -80,14 +80,14 @@ bool Navigation::NavigationSystem::CanMoveStraight(Vector3 start, Vector3 end)
 	Raycasting
 -------------------*/
 
-optional<HitResult> Navigation::NavigationSystem::RayIntersects(const Ray& ray, const Vector3& v1, const Vector3& v2, const Vector3& v3, bool cullBackFace)
+optional<HitResult> Navigation::NavigationSystem::RayIntersects(const Ray& ray, const GameMath::Vector3& v1, const GameMath::Vector3& v2, const GameMath::Vector3& v3, bool cullBackFace)
 {
 	// 삼각형의 모서리 벡터 계산
-	Vector3 edge1 = v2 - v1;
-	Vector3 edge2 = v3 - v1;
+	GameMath::Vector3 edge1 = v2 - v1;
+	GameMath::Vector3 edge2 = v3 - v1;
 
 	// ray.dir & edge2의 외적을 계산한다
-	Vector3 h = ray.dir.Cross(edge2);
+	GameMath::Vector3 h = ray.dir.Cross(edge2);
 
 	// a = e1 * h
 	float a = edge1.Dot(h);
@@ -113,7 +113,7 @@ optional<HitResult> Navigation::NavigationSystem::RayIntersects(const Ray& ray, 
 	float f = 1.0f / a;
 
 	// s = O -v1
-	Vector3 s = ray.origin - v1;
+	GameMath::Vector3 s = ray.origin - v1;
 
 	// 6) u = f * (s · h)
 	float u = f * s.Dot(h);
@@ -122,7 +122,7 @@ optional<HitResult> Navigation::NavigationSystem::RayIntersects(const Ray& ray, 
 		return nullopt;
 
 	// q = s x e1
-	Vector3 q = s.Cross(edge1);
+	GameMath::Vector3 q = s.Cross(edge1);
 
 	// 8) v = f * (D · q)
 	float v = f * ray.dir.Dot(q);
@@ -145,7 +145,7 @@ optional<HitResult> Navigation::NavigationSystem::RayIntersects(const Ray& ray, 
 	hit.position = ray.origin + ray.dir * t;
 
 	// 삼각형의 법선, 반환시 정규화 하는 것이 편리하다.
-	hit.normal = Vector3::GetNormalVector(edge1.Cross(edge2));
+	hit.normal = GameMath::Vector3::GetNormalVector(edge1.Cross(edge2));
 	return hit;
 }
 
@@ -180,7 +180,7 @@ bool Navigation::NavigationSystem::RaycastWorld(const Ray& ray, float maxDistanc
 	return hasHit;
 }
 
-void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, Vector3 origin)
+void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin)
 {
 	// grid cell 초기화
 	grid.width = width;
@@ -254,12 +254,12 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 			if (!cell.walkable == false)
 				continue;
 
-			Vector3 from = GridToWorld(grid, x, z);
+			GameMath::Vector3 from = GridToWorld(grid, x, z);
 
 			// North
 			if (z + 1 < grid.height && grid.At(x, z + 1).walkable)
 			{
-				Vector3 to = GridToWorld(grid, x, z + 1);
+				GameMath::Vector3 to = GridToWorld(grid, x, z + 1);
 				if (CanMoveStraight(from, to))
 					cell.neighbors[DIR_NORTH] = true;
 			}
@@ -267,7 +267,7 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 			// East
 			if (x + 1 < grid.width && grid.At(x + 1, z).walkable)
 			{
-				Vector3 to = GridToWorld(grid, x, z + 1);
+				GameMath::Vector3 to = GridToWorld(grid, x, z + 1);
 				if (CanMoveStraight(from, to))
 				{
 					cell.neighbors[DIR_EAST] = true;
@@ -277,7 +277,7 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 			// South
 			if (z > 0 && grid.At(x, z - 1).walkable)
 			{
-				Vector3 to = GridToWorld(grid, x + 1, z);
+				GameMath::Vector3 to = GridToWorld(grid, x + 1, z);
 				if (CanMoveStraight(from, to))
 				{
 					cell.neighbors[DIR_SOUTH] = true;
@@ -287,7 +287,7 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 			// West
 			if (x > 0 && grid.At(x - 1, z).walkable)
 			{
-				Vector3 to = GridToWorld(grid, x - 1, z);
+				GameMath::Vector3 to = GridToWorld(grid, x - 1, z);
 				if (CanMoveStraight(from, to))
 				{
 					cell.neighbors[DIR_WEST] = true;
@@ -297,13 +297,13 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 	}
 }
 
-Vector3 Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int32 z)
+GameMath::Vector3 Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int32 z)
 {
 	float worldX = grid.origin._x + (x + 0.5f) * grid.cellSize;
 	float worldZ = grid.origin._z + (z + 0.5f) * grid.cellSize;
 	float y = grid.At(x, z).height;
 
-	return Vector3(worldX, y, worldZ);
+	return GameMath::Vector3(worldX, y, worldZ);
 }
 
 void Navigation::NavigationSystem::BuildGrid(float cellSize)
@@ -318,7 +318,7 @@ void Navigation::NavigationSystem::BuildGrid(float cellSize)
 
 	for (const Triangle& tri : _allTriangles)
 	{
-		for (const Vector3& v : { tri.v1, tri.v2, tri.v3 })
+		for (const GameMath::Vector3& v : { tri.v1, tri.v2, tri.v3 })
 		{
 			_mapMinX = std::min(_mapMinX, v._x);
 			_mapMaxX = std::max(_mapMaxX, v._x);

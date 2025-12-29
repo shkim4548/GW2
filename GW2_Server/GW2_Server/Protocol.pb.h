@@ -548,6 +548,7 @@ class C_ENTER_GAME final :
 
   enum : int {
     kPlayerIndexFieldNumber = 1,
+    kRoomIdFieldNumber = 2,
   };
   // uint64 playerIndex = 1;
   void clear_playerindex();
@@ -558,6 +559,15 @@ class C_ENTER_GAME final :
   void _internal_set_playerindex(uint64_t value);
   public:
 
+  // int32 roomId = 2;
+  void clear_roomid();
+  int32_t roomid() const;
+  void set_roomid(int32_t value);
+  private:
+  int32_t _internal_roomid() const;
+  void _internal_set_roomid(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_ENTER_GAME)
  private:
   class _Internal;
@@ -566,6 +576,7 @@ class C_ENTER_GAME final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   uint64_t playerindex_;
+  int32_t roomid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -694,6 +705,7 @@ class C_LEAVE_GAME final :
 
   enum : int {
     kPlayerIndexFieldNumber = 1,
+    kRoomIdFieldNumber = 2,
   };
   // int64 player_index = 1;
   void clear_player_index();
@@ -704,6 +716,15 @@ class C_LEAVE_GAME final :
   void _internal_set_player_index(int64_t value);
   public:
 
+  // int32 roomId = 2;
+  void clear_roomid();
+  int32_t roomid() const;
+  void set_roomid(int32_t value);
+  private:
+  int32_t _internal_roomid() const;
+  void _internal_set_roomid(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_LEAVE_GAME)
  private:
   class _Internal;
@@ -712,6 +733,7 @@ class C_LEAVE_GAME final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   int64_t player_index_;
+  int32_t roomid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -2758,6 +2780,26 @@ inline void C_ENTER_GAME::set_playerindex(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_ENTER_GAME.playerIndex)
 }
 
+// int32 roomId = 2;
+inline void C_ENTER_GAME::clear_roomid() {
+  roomid_ = 0;
+}
+inline int32_t C_ENTER_GAME::_internal_roomid() const {
+  return roomid_;
+}
+inline int32_t C_ENTER_GAME::roomid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ENTER_GAME.roomId)
+  return _internal_roomid();
+}
+inline void C_ENTER_GAME::_internal_set_roomid(int32_t value) {
+  
+  roomid_ = value;
+}
+inline void C_ENTER_GAME::set_roomid(int32_t value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ENTER_GAME.roomId)
+}
+
 // -------------------------------------------------------------------
 
 // C_LEAVE_GAME
@@ -2780,6 +2822,26 @@ inline void C_LEAVE_GAME::_internal_set_player_index(int64_t value) {
 inline void C_LEAVE_GAME::set_player_index(int64_t value) {
   _internal_set_player_index(value);
   // @@protoc_insertion_point(field_set:Protocol.C_LEAVE_GAME.player_index)
+}
+
+// int32 roomId = 2;
+inline void C_LEAVE_GAME::clear_roomid() {
+  roomid_ = 0;
+}
+inline int32_t C_LEAVE_GAME::_internal_roomid() const {
+  return roomid_;
+}
+inline int32_t C_LEAVE_GAME::roomid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_LEAVE_GAME.roomId)
+  return _internal_roomid();
+}
+inline void C_LEAVE_GAME::_internal_set_roomid(int32_t value) {
+  
+  roomid_ = value;
+}
+inline void C_LEAVE_GAME::set_roomid(int32_t value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_LEAVE_GAME.roomId)
 }
 
 // -------------------------------------------------------------------

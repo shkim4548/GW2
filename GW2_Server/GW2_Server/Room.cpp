@@ -10,18 +10,22 @@ shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확
 
 Room::Room()
 {
+
 }
 
 Room::~Room()
 {
+
 }
 
 void Room::Enter(PlayerRef player)
 {
+
 }
 
 void Room::Leave(PlayerRef player)
 {
+
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer)
@@ -31,10 +35,10 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 
 void Room::InitNavigation()
 {
-	// 읽어온 네비게이션 정보 초기화
-	_collisionMesh = MakeShared<OBJ_CollisionMesh>();
-	_navmeshLoader = make_unique<NavmeshLoader>();
-	_navmeshLoader->LoadObjFile("../Resources/navmesh_collision.obj", *_collisionMesh);
+	// 읽어온 네비게이션 정보를 방으로 가져온다.
+
+
+	// TODO : 로딩 시간에 이것이 처리될 수 있도록 해야한다. -> 엄청나게 느리기 때문이다.
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)

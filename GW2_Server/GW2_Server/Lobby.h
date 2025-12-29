@@ -32,6 +32,10 @@ private:
 	unordered_map<int32, RoomRef> _rooms;
 	unordered_map<int32, PlayerRef> _lobbyPlayers;
 	int32 _id = 0;
+
+	// ¸Ê Á¤º¸
+	unique_ptr<class NavmeshLoader> _navmeshLoader;
+	shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
 };
 
 extern shared_ptr<Lobby> GLobby;

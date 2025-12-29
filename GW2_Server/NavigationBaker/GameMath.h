@@ -1,37 +1,15 @@
 #pragma once
-#define M_PI 3.14159265358979323846
+#include <cmath>
+#include "Types.h"
+#include <iostream>
+#include <vector>
+#include <optional>
+#define OUT 
+using namespace std;
 
-namespace GameMath
-{
-
-
+namespace GameMath {
 	/*--------------------
-		Quaternion
-	---------------------*/
-
-	struct Quaternion
-	{
-	public:
-		Quaternion() : _x(0), _y(0), _z(0), _w(0) {
-		}
-		Quaternion(float x, float y, float z, float w) : _x(x), _y(y), _z(z), _w(w) {
-		};
-
-	public:
-		static Quaternion Euler(float pitch, float yaw, float roll)
-		{
-			return Quaternion();
-		}
-
-	public:
-		float _x;
-		float _y;
-		float _z;
-		float _w;
-	};
-
-	/*--------------------
-		Vector3
+			Vector3
 	---------------------*/
 
 	struct Vector3
@@ -72,8 +50,8 @@ namespace GameMath
 		float GetDistance(const Vector3& other) const {
 			return (float)std::sqrt((_x - other._x) * (_x - other._x) + (_z - other._z) * (_z - other._z));
 		}
-		Protocol::PosInfo GetPositionFromVector(Vector3 v, float yaw = 0);
-		static Vector3 GetVectorFromPosition(Protocol::PosInfo* pos);
+		//Protocol::PosInfo GetPositionFromVector(Vector3 v, float yaw = 0);
+		//static Vector3 GetVectorFromPosition(Protocol::PosInfo* pos);
 		static Vector3 YawToDirectionVector(float yaw);
 		static float DirectionVectorToYaw(Vector3 dir);
 		static Vector3 Lerp(Vector3 start, Vector3 end, float t);
@@ -93,13 +71,8 @@ namespace GameMath
 		float _y;
 		float _z;
 	};
+
 }
-
-/*-----------------
-	Raycasting
--------------------*/
-
-namespace GameMath { struct Vector3; }
 
 struct Triangle
 {
@@ -107,7 +80,7 @@ struct Triangle
 	GameMath::Vector3 normal;
 };
 
-struct Ray 
+struct Ray
 {
 	GameMath::Vector3 origin;
 	GameMath::Vector3 dir;
@@ -129,7 +102,83 @@ struct HitResult
 	GameMath::Vector3 normal;		// 삼각형 법선
 };
 
-class GameLogic
+namespace Navigation
 {
-	
-};
+	/*-------------
+		GridCell
+	---------------*/
+	struct GridCell
+	{
+		bool walkable = false;
+		float height = 0.0f;
+
+		// 4방향 탐색
+		bool neighbors[4] = { false, false, false, false };
+
+		// grid index
+		int32 x;
+		int32 z;
+	};
+
+	enum Dir
+	{
+		DIR_NORTH = 0,
+		DIR_EAST = 1,
+		DIR_SOUTH = 2,
+		DIR_WEST = 3,
+	};
+
+	class WalkableGrid
+	{
+	public:
+		int32 width;
+		int32 height;
+		float cellSize;
+		GameMath::Vector3 origin;
+
+		vector<GridCell> cells;
+		GridCell& At(int32 x, int32 z)
+		{
+			return cells[z * width + x];
+		}
+	};
+
+	/*---------------------
+		Navigation Logic
+	-----------------------*/
+	class NavigationSystem
+	{
+	public:
+		void Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices);
+		bool GetGroundHeight(float x, float z, float& OUT outY);
+		bool CanMoveStraight(GameMath::Vector3 start, GameMath::Vector3 end);
+		// 뮐러 트럼보 교차 알고리즘
+		optional<HitResult> RayIntersects(const Ray& ray, const GameMath::Vector3& v1, const GameMath::Vector3& v2, const GameMath::Vector3& v3, bool cullBackFace = false);
+		bool RaycastWorld(const Ray& ray, float maxDistance, bool cullBackFace, RaycastHit& outHit);
+
+		// Grid Logic
+		void BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin);
+		void BuildCells(WalkableGrid& grid);
+		void BuildConnections(WalkableGrid& grid);
+		GameMath::Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
+		void BuildGrid(float cellSize);
+
+		// A Star
+
+		// DEBUG
+		void PrintGrid() const;
+		void PrintPath();
+
+	private:
+		vector<Triangle> _allTriangles;
+		vector<GridCell> _cells;
+
+		int32 _gridRows = 0;
+		int32 _gridCols = 0;
+		float _cellSize = 5.0f;
+		float _mapMinX;
+		float _mapMinZ;
+		float _mapMaxX;
+		float _mapMaxZ;
+	};
+}

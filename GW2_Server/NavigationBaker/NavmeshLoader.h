@@ -1,5 +1,6 @@
 #pragma once
-#include "GameLogic.h"
+#include <vector>
+#include "GameMath.h"
 
 struct OBJ_CollisionMesh
 {

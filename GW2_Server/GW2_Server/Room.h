@@ -32,9 +32,7 @@ private:
 	int32 _roomId;
 	string _roomName;
 
-	// ¸Ê Á¤º¸
-	unique_ptr<class NavmeshLoader> _navmeshLoader;
-	shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
+
 };
 
 extern shared_ptr<Room> GRoom;

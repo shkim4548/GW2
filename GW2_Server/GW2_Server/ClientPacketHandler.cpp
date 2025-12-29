@@ -48,7 +48,12 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	posInfo->set_yaw(0);
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
-
+	
+	int targetRoom = pkt.roomid();
+	weak_ptr<Room> room = GLobby->GetRoomById(targetRoom);
+	
+	room.lock()->InitNavigation();
+	//cout << "GetRoomId : " << targetRoom << endl;
 	SEND_PACKET(enterPkt);
 	return true;
 }
