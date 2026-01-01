@@ -131,12 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameMath.cpp" />
+    <ClCompile Include="NavmeshMaker.cpp" />
+    <ClCompile Include="ToolMath.cpp" />
     <ClCompile Include="NavigationBaker.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameMath.h" />
+    <ClInclude Include="NavmeshMaker.h" />
+    <ClInclude Include="ToolMath.h" />
     <ClInclude Include="NavmeshLoader.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>

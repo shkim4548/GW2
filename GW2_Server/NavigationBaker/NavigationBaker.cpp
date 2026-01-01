@@ -5,10 +5,13 @@
 #include "Types.h"
 #include <vector>
 #include <fstream>
-#include "GameMath.h"
+#include "ToolMath.h"
 #include "NavmeshLoader.h"
+#include "NavmeshMaker.h"
 using namespace std;
 
+unique_ptr<class NavmeshLoader> _navmeshLoader;
+shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
 
 void SaveNavBinary(const vector<Triangle>& triangles, const Navigation::WalkableGrid& grid, const string& path)
 {
@@ -66,5 +69,34 @@ bool LoadNavBinary(const string& path, vector<Triangle>& outTriangles, Navigatio
 int main()
 {
     cout << "Navigation now Backing!" << endl;
+    shared_ptr<OBJ_CollisionMesh> mesh = make_shared<OBJ_CollisionMesh>();
+    shared_ptr<NavmeshLoader> loader = make_shared<NavmeshLoader>();
+    loader->LoadObjFile("../../GW2_Client/Assets/NavMeshExport/navmesh_collision.obj", *mesh);
     
+    vector<GameMath::Vector3> vertices;
+    vector<int32> indices;
+    Navigation::NavigationSystem navSystem;
+    // 2. Triangle 생성
+    navSystem.Build(vertices, indices);
+    const float cellSize = 0.5f;
+    // 3. Grid 생성
+    navSystem.BuildGrid(cellSize);
+
+    // 4. Walkable Grid 생성
+    Navigation::WalkableGrid grid;
+    navSystem.BuildWalkableGrid(
+        grid,
+        navSystem.GetGroundVertical(),
+        navSystem.GetGroundWidth(),
+        cellSize,
+        navSystem.GetGridOrigin()
+    );
+
+    // 5. Binary 저장
+    //SaveNavBinary(grid);
+    SaveNavBinary(
+        navSystem.GetAllTriangles(),  // const vector<Triangle>&
+        grid,
+        "map.navbin"
+    );
 }

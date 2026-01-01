@@ -5,18 +5,24 @@
     <ClCompile Include="NavmeshLoader.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="GameMath.cpp">
+    <ClCompile Include="ToolMath.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="NavmeshMaker.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameMath.h">
+    <ClInclude Include="ToolMath.h">
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="NavmeshLoader.h">
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="Types.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="NavmeshMaker.h">
       <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>
