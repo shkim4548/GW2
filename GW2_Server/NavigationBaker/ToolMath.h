@@ -4,8 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <nlohmann/json.hpp>
 #define OUT 
 using namespace std;
+using json = nlohmann::json;
 
 namespace GameMath 
 {
@@ -61,6 +63,8 @@ namespace GameMath
 			return _x * o._x + _y * o._y + _z * o._z;
 		}
 		float Length() const;
+
+
 
 	public:
 		// 출력용 함수

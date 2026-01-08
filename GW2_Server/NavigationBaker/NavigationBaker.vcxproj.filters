@@ -11,6 +11,7 @@
     <ClCompile Include="NavmeshMaker.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="jsonHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ToolMath.h">
@@ -25,6 +26,7 @@
     <ClInclude Include="NavmeshMaker.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="jsonHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">

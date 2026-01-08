@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Room.h"
 #include "NavmeshLoader.h"
+#include "NavigationSystem.h"
 #include <unordered_map>
 
 LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -24,18 +25,31 @@ Lobby::~Lobby()
 
 void Lobby::LobbyInit()
 {
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] LobbyInit : Load Navigation mesh start... now loading\n");
-	_collisionMesh = MakeShared<OBJ_CollisionMesh>();
-	_navmeshLoader = make_unique<NavmeshLoader>();
-	_navmeshLoader->LoadObjFile("../Resources/navmesh_collision.obj", *_collisionMesh);
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] LobbyInit : Load Navigation mesh finish\n");
+	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
 
-	// 게임룸을 만들어서 줍시다
-	if (_rooms.empty())
+	GConsoleLogger->WriteStdOut(
+		Color::YELLOW,
+		L"[Lobby] Load NavGrid start\n"
+	);
+
+	bool ok = _navmeshLoader->LoadNavGridBin(
+		"D:\\Dev\\unity\\GW2\\GW2_Client\\Assets\\NavMeshExport\\navgrid.bin",
+		*_walkableGrid
+	);
+
+	if (!ok)
 	{
-		RoomRef room = MakeRoom("DefaultRoom");
+		GConsoleLogger->WriteStdOut(
+			Color::RED,
+			L"[Lobby] NavGrid load failed\n"
+		);
+		return;
 	}
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] LobbyInit : Create Room\n");
+
+	GConsoleLogger->WriteStdOut(
+		Color::YELLOW,
+		L"[Lobby] NavGrid load complete\n"
+	);
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

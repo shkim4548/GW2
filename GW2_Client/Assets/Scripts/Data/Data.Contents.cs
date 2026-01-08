@@ -10,4 +10,22 @@ namespace Data
     {
 
     }
+
+    [Serializable]
+    public struct GridCell
+    {
+        public bool walkable;
+        public float height;
+    }
+
+    [Serializable]
+    public class NavGridData
+    {
+        public int width;
+        public int height;
+        public float cellSize;
+        public Vector3 origin;
+        public GridCell[] cells;
+    }
+
 }

@@ -64,3 +64,5 @@ float GameMath::Vector3::Length() const
 {
 	return std::sqrt(_x * _x + _y * _y + _z * _z);
 }
+
+

@@ -362,6 +362,24 @@ void Navigation::NavigationSystem::BuildGrid(float cellSize)
 	}
 }
 
+void Navigation::NavigationSystem::InitNavmesh(vector<Triangle>&& triangles, WalkableGrid&& grid)
+{
+	// 기존 데이터 제거
+	_allTriangles.clear();
+	_grids.cells.clear();
+
+	// 소유권 이전 (copy 없음)
+	_allTriangles = std::move(triangles);
+	_grids = std::move(grid);
+
+	// 방어적 검증 (디버그용)
+	assert(!_allTriangles.empty());
+	assert(_grids.width > 0);
+	assert(_grids.height > 0);
+	assert(_grids.cells.size() ==
+		static_cast<size_t>(_grids.width * _grids.height));
+}
+
 void Navigation::NavigationSystem::PrintGrid() const
 {
 	for (int32 z = _gridCols - 1; z >= 0; --z)

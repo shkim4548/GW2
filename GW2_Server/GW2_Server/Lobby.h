@@ -8,6 +8,7 @@
 
 class Room;
 class Player;
+namespace Navigation { class NavigationSystem; class WalkableGrid; }
 
 class Lobby : public JobQueue
 {
@@ -36,6 +37,8 @@ private:
 	// ¸Ê Á¤º¸
 	unique_ptr<class NavmeshLoader> _navmeshLoader;
 	shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
+	shared_ptr<Navigation::NavigationSystem> _navigationSystem;
+	shared_ptr<Navigation::WalkableGrid> _walkableGrid;
 };
 
 extern shared_ptr<Lobby> GLobby;

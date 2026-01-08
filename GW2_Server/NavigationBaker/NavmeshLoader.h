@@ -1,18 +1,24 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include "ToolMath.h"
+
+namespace Navigation { class WalkableGrid; }
 
 struct OBJ_CollisionMesh
 {
-	vector<GameMath::Vector3> Vertices;
-	vector<Triangle> Triangles;
+	vector<GameMath::Vector3> vertices;
+	vector<int32> indices;
 };
 
-class NavmeshLoader
+struct NavmeshCacheHeader
 {
-public:
-	void LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh);
+	uint32 magic;   // 파일 식별자
+	uint32 version; // 포맷 버전
+	uint32 triangleCount;
+	uint32 cellCount;
 };
+
 
 struct GameMath::Vector3;
 struct Triangle;
@@ -56,6 +62,7 @@ namespace Navigation
 		{
 			return cells[z * width + x];
 		}
+
 	};
 
 	/*---------------------
@@ -106,4 +113,29 @@ namespace Navigation
 
 	};
 
+
+	class NavmeshLoader
+	{
+	public:
+		void LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh);
+		void SaveGridToJsonFile(const WalkableGrid& grid, const string& path);
+		bool SaveNavmeshCache(const vector<Triangle>& triangles, const Navigation::WalkableGrid& grid, const string& path);
+
+	public:
+		// JSON 헬퍼 함수
+		static json ToJson(const GameMath::Vector3& v);
+		static GameMath::Vector3 FromJsonVector3(const json& j);
+		void TriangleToJson(ostream& out, const Triangle& t);
+		void GridCellToJson(ostream& out, const Navigation::GridCell& c);
+		void GridToJson(ostream& out, const Navigation::WalkableGrid& grid);
+		
+		inline void WriteVec3(std::ostream& out, const GameMath::Vector3& v)
+		{
+			out << "{"
+				<< "\"x\":" << v._x << ","
+				<< "\"y\":" << v._y << ","
+				<< "\"z\":" << v._z
+				<< "}";
+		}
+	};
 }

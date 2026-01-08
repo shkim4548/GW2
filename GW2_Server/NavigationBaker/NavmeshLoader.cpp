@@ -4,10 +4,11 @@
 #include <sstream>
 #include <filesystem>
 #include "ToolMath.h"
+#include <nlohmann/json.hpp>
 using namespace std;
 namespace fs = std::filesystem;
 
-void NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
+void Navigation::NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
 {
     ifstream file(filePath);
 
@@ -31,7 +32,7 @@ void NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
         {
             GameMath::Vector3 v;
             ss >> v._x >> v._y >> v._z;
-            mesh.Vertices.push_back(v);
+            mesh.vertices.push_back(v);
         }
         else if (tag == "f")
         {
@@ -48,17 +49,162 @@ void NavmeshLoader::LoadObjFile(const char* filePath, OBJ_CollisionMesh& mesh)
                     return idx - 1; // OBJ는 1-based
                 };
 
-            Triangle tri;
-            tri.v1 = mesh.Vertices[ToIndex(a)];
-            tri.v2 = mesh.Vertices[ToIndex(b)];
-            tri.v3 = mesh.Vertices[ToIndex(c)];
-            mesh.Triangles.push_back(tri);
+            /*Triangle tri;
+            tri.v1 = mesh.vertices[ToIndex(a)];
+            tri.v2 = mesh.vertices[ToIndex(b)];
+            tri.v3 = mesh.vertices[ToIndex(c)];
+            mesh.indices.push_back(tri);*/
+			mesh.indices.push_back(ToIndex(a));
+			mesh.indices.push_back(ToIndex(b));
+			mesh.indices.push_back(ToIndex(c));
         }
     }
 
     cout << "OBJ Loading Complete. Vertices: "
-        << mesh.Vertices.size() << ", Faces: "
-        << mesh.Triangles.size() << endl;
+        << mesh.vertices.size() << ", Faces: "
+        << mesh.indices.size() << endl;
+}
+
+void Navigation::NavmeshLoader::SaveGridToJsonFile(const WalkableGrid& grid, const string& path)
+{
+	std::ofstream out(path, std::ios::out | std::ios::trunc);
+	if (!out.is_open())
+	{
+		std::cout << "[SaveGridToJson] Failed to open file\n";
+		return;
+	}
+
+	out << "{\n";
+	out << "  \"grid\": {\n";
+	out << "    \"width\": " << grid.width << ",\n";
+	out << "    \"height\": " << grid.height << ",\n";
+	out << "    \"cellSize\": " << grid.cellSize << ",\n";
+
+	out << "    \"origin\": { "
+		<< "\"x\": " << grid.origin._x << ", "
+		<< "\"y\": " << grid.origin._y << ", "
+		<< "\"z\": " << grid.origin._z << " },\n";
+
+	out << "    \"cells\": [\n";
+
+	for (size_t i = 0; i < grid.cells.size(); ++i)
+	{
+		const GridCell& c = grid.cells[i];
+
+		out << "      {\n";
+		out << "        \"x\": " << c.x << ",\n";
+		out << "        \"z\": " << c.z << ",\n";
+		out << "        \"walkable\": " << (c.walkable ? "true" : "false") << ",\n";
+		out << "        \"height\": " << c.height << ",\n";
+
+		out << "        \"neighbors\": ["
+			<< c.neighbors[0] << ", "
+			<< c.neighbors[1] << ", "
+			<< c.neighbors[2] << ", "
+			<< c.neighbors[3] << "]\n";
+
+		out << "      }";
+
+		if (i + 1 < grid.cells.size())
+			out << ",";
+
+		out << "\n";
+	}
+
+	out << "    ]\n";
+	out << "  }\n";
+	out << "}\n";
+
+	out.close();
+}
+
+bool Navigation::NavmeshLoader::SaveNavmeshCache(const vector<Triangle>& triangles, const Navigation::WalkableGrid& grid, const string& path)
+{
+	ofstream out(path, ios::binary | ios::trunc);
+	if (!out.is_open())
+		return false;
+
+	NavmeshCacheHeader header;
+	header.magic = 0x4E415643; // 'NAVC'
+	header.version = 1;
+	header.triangleCount = (uint32)triangles.size();
+	header.cellCount = (uint32)grid.cells.size();
+
+	out.write((char*)&header, sizeof(header));
+	out.write((char*)triangles.data(),
+		sizeof(Triangle) * triangles.size());
+	out.write((char*)grid.cells.data(),
+		sizeof(GridCell) * grid.cells.size());
+
+	out.close();
+	return true;
+}
+
+json Navigation::NavmeshLoader::ToJson(const GameMath::Vector3& v)
+{
+	return json::array({ v._x, v._y, v._z });
+}
+
+GameMath::Vector3 Navigation::NavmeshLoader::FromJsonVector3(const json& j)
+{
+	return { j[0].get<float>(),	j[1].get<float>(), j[2].get<float>() };
+}
+
+void Navigation::NavmeshLoader::TriangleToJson(ostream& out, const Triangle& t)
+{
+	out << "{";
+
+	out << "\"v1\":";
+	WriteVec3(out, t.v1);
+	out << ",";
+
+	out << "\"v2\":";
+	WriteVec3(out, t.v2);
+	out << ",";
+
+	out << "\"v3\":";
+	WriteVec3(out, t.v3);
+	out << ",";
+
+	out << "\"normal\":";
+	WriteVec3(out, t.normal);
+
+	out << "}";
+}
+
+void Navigation::NavmeshLoader::GridCellToJson(ostream& out, const Navigation::GridCell& c)
+{
+	out << "{";
+	out << "\"x\":" << c.x << ",";
+	out << "\"z\":" << c.z << ",";
+	out << "\"walkable\":" << (c.walkable ? "true" : "false") << ",";
+	out << "\"height\":" << c.height << ",";
+	out << "\"neighbors\":["
+		<< (c.neighbors[0] ? 1 : 0) << ","
+		<< (c.neighbors[1] ? 1 : 0) << ","
+		<< (c.neighbors[2] ? 1 : 0) << ","
+		<< (c.neighbors[3] ? 1 : 0)
+		<< "]";
+	out << "}";
+}
+
+void Navigation::NavmeshLoader::GridToJson(ostream& out, const Navigation::WalkableGrid& grid)
+{
+	out << "\"width\":" << grid.width << ",";
+	out << "\"height\":" << grid.height << ",";
+	out << "\"cellSize\":" << grid.cellSize << ",";
+	out << "\"origin\":";
+	WriteVec3(out, grid.origin);
+	out << ",\"cells\":[\n";
+
+	for (size_t i = 0; i < grid.cells.size(); ++i)
+	{
+		GridCellToJson(out, grid.cells[i]);
+		if (i + 1 < grid.cells.size())
+			out << ",\n";
+	}
+
+	out << "]\n";
 }
 
 // indices는 0-2-1 기준의 삼각 인덱스 배열 형태로 들어온다.

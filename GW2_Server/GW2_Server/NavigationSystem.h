@@ -1,4 +1,5 @@
 #pragma once
+//#include <memory>
 #include "GameLogic.h"
 
 struct GameMath::Vector3;
@@ -9,6 +10,12 @@ namespace Navigation
 	/*-------------
 		GridCell
 	---------------*/
+	struct FileHeader
+	{
+		uint32 magic;	// NRGD
+		uint16 version;	// 1
+	};
+
 	struct GridCell
 	{
 		bool walkable = false;
@@ -65,6 +72,14 @@ namespace Navigation
 		GameMath::Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
 		void BuildGrid(float cellSize);
 
+		vector<Triangle>& GetAllTriangles() { return _allTriangles; }
+		WalkableGrid GetGridCells() { return _grids; }
+		int32 GetGroundVertical() { return _gridCols; }
+		int32 GetGroundWidth() { return _gridRows; }
+		GameMath::Vector3 GetGridOrigin() { return GameMath::Vector3(_mapMinX, 0.0f, _mapMinZ); }
+
+		void InitNavmesh(vector<Triangle>&& triangles, WalkableGrid&& grid);
+
 		// A Star
 
 		// DEBUG
@@ -74,6 +89,7 @@ namespace Navigation
 	private:
 		vector<Triangle> _allTriangles;
 		vector<GridCell> _cells;
+		WalkableGrid _grids;
 
 		int32 _gridRows = 0;
 		int32 _gridCols = 0;

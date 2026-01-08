@@ -72,9 +72,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>D:\Dev\unity\GW2\GW2_Server\GW2_ServerCore;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Dev\unity\GW2\GW2_Server\NavigationBaker\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>D:\Dev\unity\GW2\GW2_Server\GW2_ServerCore;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Dev\unity\GW2\GW2_Server\NavigationBaker\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -131,12 +133,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="jsonHelper.cpp" />
     <ClCompile Include="NavmeshMaker.cpp" />
     <ClCompile Include="ToolMath.cpp" />
     <ClCompile Include="NavigationBaker.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jsonHelper.h" />
     <ClInclude Include="NavmeshMaker.h" />
     <ClInclude Include="ToolMath.h" />
     <ClInclude Include="NavmeshLoader.h" />
