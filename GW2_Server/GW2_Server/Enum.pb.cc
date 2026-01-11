@@ -18,7 +18,7 @@
 PROTOBUF_PRAGMA_INIT_SEG
 namespace Protocol {
 }  // namespace Protocol
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[6];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[8];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
@@ -40,12 +40,15 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\021\n\rSKILL_ID_NONE\020\000\022\023\n\017SKILL_ID_ATTACK\020\001\022"
   "\022\n\016SKILL_ID_FIRST\020\002\022\023\n\017SKILL_ID_SECOND\020\003"
   "*>\n\010CampType\022\016\n\nCAMP_HUMAN\020\000\022\017\n\013CAMP_CYB"
-  "ORG\020\001\022\021\n\rCAMP_NEUTURAL\020\002B\027\252\002\024Google.Prot"
-  "obuf.Enumb\006proto3"
+  "ORG\020\001\022\021\n\rCAMP_NEUTURAL\020\002*\036\n\tCellFlags\022\021\n"
+  "\rCELL_WALKABLE\020\000*I\n\tCellLinks\022\016\n\nLINK_NO"
+  "RTH\020\000\022\r\n\tLINK_EAST\020\001\022\016\n\nLINK_SOUTH\020\002\022\r\n\t"
+  "LINK_WEST\020\003B\027\252\002\024Google.Protobuf.Enumb\006pr"
+  "oto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Enum_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Enum_2eproto = {
-  false, false, 657, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
+  false, false, 764, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
   &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
   schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
   nullptr, file_level_enum_descriptors_Enum_2eproto, file_level_service_descriptors_Enum_2eproto,
@@ -147,6 +150,35 @@ bool CampType_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellFlags_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[6];
+}
+bool CellFlags_IsValid(int value) {
+  switch (value) {
+    case 0:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellLinks_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[7];
+}
+bool CellLinks_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
       return true;
     default:
       return false;

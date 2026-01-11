@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -95,5 +96,23 @@ public class Define
         Shop,
         Warehouse,
         Hospital,
+    }
+
+    public enum Dir : byte
+    {
+        North = 0,
+        East = 1,
+        South = 2,
+        West = 3
+    }
+
+    [Flags]
+    public enum CellLinks : byte
+    {
+        None = 0,
+        North = 1 << 0,
+        East = 1 << 1,
+        South = 1 << 2,
+        West = 1 << 3,
     }
 }

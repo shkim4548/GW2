@@ -218,6 +218,57 @@ inline bool CampType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CampType>(
     CampType_descriptor(), name, value);
 }
+enum CellFlags : int {
+  CELL_WALKABLE = 0,
+  CellFlags_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CellFlags_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CellFlags_IsValid(int value);
+constexpr CellFlags CellFlags_MIN = CELL_WALKABLE;
+constexpr CellFlags CellFlags_MAX = CELL_WALKABLE;
+constexpr int CellFlags_ARRAYSIZE = CellFlags_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellFlags_descriptor();
+template<typename T>
+inline const std::string& CellFlags_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CellFlags>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CellFlags_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CellFlags_descriptor(), enum_t_value);
+}
+inline bool CellFlags_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CellFlags* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CellFlags>(
+    CellFlags_descriptor(), name, value);
+}
+enum CellLinks : int {
+  LINK_NORTH = 0,
+  LINK_EAST = 1,
+  LINK_SOUTH = 2,
+  LINK_WEST = 3,
+  CellLinks_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CellLinks_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CellLinks_IsValid(int value);
+constexpr CellLinks CellLinks_MIN = LINK_NORTH;
+constexpr CellLinks CellLinks_MAX = LINK_WEST;
+constexpr int CellLinks_ARRAYSIZE = CellLinks_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellLinks_descriptor();
+template<typename T>
+inline const std::string& CellLinks_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CellLinks>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CellLinks_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CellLinks_descriptor(), enum_t_value);
+}
+inline bool CellLinks_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CellLinks* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CellLinks>(
+    CellLinks_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -269,6 +320,16 @@ template <> struct is_proto_enum< ::Protocol::CampType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CampType>() {
   return ::Protocol::CampType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CellFlags> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CellFlags>() {
+  return ::Protocol::CellFlags_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CellLinks> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CellLinks>() {
+  return ::Protocol::CellLinks_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

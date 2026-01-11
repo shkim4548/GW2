@@ -37,11 +37,13 @@ namespace Google.Protobuf.Enum {
             "TU9WRV9TVEFURV9ESUUQBSpcCglTa2lsbFR5cGUSEQoNU0tJTExfSURfTk9O",
             "RRAAEhMKD1NLSUxMX0lEX0FUVEFDSxABEhIKDlNLSUxMX0lEX0ZJUlNUEAIS",
             "EwoPU0tJTExfSURfU0VDT05EEAMqPgoIQ2FtcFR5cGUSDgoKQ0FNUF9IVU1B",
-            "ThAAEg8KC0NBTVBfQ1lCT1JHEAESEQoNQ0FNUF9ORVVUVVJBTBACQheqAhRH",
-            "b29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
+            "ThAAEg8KC0NBTVBfQ1lCT1JHEAESEQoNQ0FNUF9ORVVUVVJBTBACKh4KCUNl",
+            "bGxGbGFncxIRCg1DRUxMX1dBTEtBQkxFEAAqSQoJQ2VsbExpbmtzEg4KCkxJ",
+            "TktfTk9SVEgQABINCglMSU5LX0VBU1QQARIOCgpMSU5LX1NPVVRIEAISDQoJ",
+            "TElOS19XRVNUEANCF6oCFEdvb2dsZS5Qcm90b2J1Zi5FbnVtYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.ObjectType), typeof(global::Google.Protobuf.Enum.CreatureType), typeof(global::Google.Protobuf.Enum.PlayerType), typeof(global::Google.Protobuf.Enum.MoveState), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.CampType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.ObjectType), typeof(global::Google.Protobuf.Enum.CreatureType), typeof(global::Google.Protobuf.Enum.PlayerType), typeof(global::Google.Protobuf.Enum.MoveState), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.CampType), typeof(global::Google.Protobuf.Enum.CellFlags), typeof(global::Google.Protobuf.Enum.CellLinks), }, null, null));
     }
     #endregion
 
@@ -87,6 +89,17 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("CAMP_HUMAN")] CampHuman = 0,
     [pbr::OriginalName("CAMP_CYBORG")] CampCyborg = 1,
     [pbr::OriginalName("CAMP_NEUTURAL")] CampNeutural = 2,
+  }
+
+  public enum CellFlags {
+    [pbr::OriginalName("CELL_WALKABLE")] CellWalkable = 0,
+  }
+
+  public enum CellLinks {
+    [pbr::OriginalName("LINK_NORTH")] LinkNorth = 0,
+    [pbr::OriginalName("LINK_EAST")] LinkEast = 1,
+    [pbr::OriginalName("LINK_SOUTH")] LinkSouth = 2,
+    [pbr::OriginalName("LINK_WEST")] LinkWest = 3,
   }
 
   #endregion
