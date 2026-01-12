@@ -33,7 +33,7 @@ void Lobby::LobbyInit()
 	);
 
 	bool ok = _navmeshLoader->LoadNavGridBin(
-		"D:\\Dev\\unity\\GW2\\GW2_Client\\Assets\\NavMeshExport\\navgrid.bin",
+		"D:\\Develope\\unity\\GW2\\GW2_Client\\Assets\\NavMeshExport\\navgrid.bin",
 		*_walkableGrid
 	);
 

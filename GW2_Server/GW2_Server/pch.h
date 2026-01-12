@@ -3,7 +3,7 @@
 #define WIN32_LEAN_AND_MEAN // ���� ������ �ʴ� ������ Windows ������� �����մϴ�.
 
 #ifdef _DEBUG
-#pragma comment(lib, "TR_ServerCore\\Debug\\TR_ServerCore.lib")
+#pragma comment(lib, "ServerCore\\Debug\\GW2_ServerCore.lib")
 #pragma comment(lib, "Protobuf\\Debug\\libprotobufd.lib")
 #else
 #pragma comment(lib, "ServerCore\\Release\\TR_ServerCore.lib")
