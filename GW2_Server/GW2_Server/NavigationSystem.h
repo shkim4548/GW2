@@ -52,6 +52,33 @@ namespace Navigation
 		}
 	};
 
+	/*----------------
+		A Star Node
+	------------------*/
+	struct AStarNode
+	{
+		int32 x;
+		int32 z;
+
+		float g;
+		float h;
+		float f;
+
+		AStarNode* parent = nullptr;
+	};
+
+	struct NodeKey
+	{
+		int32 x;
+		int32 z;
+		bool operator==(const NodeKey& o) const { return x == o.x && z == o.z; }
+	};
+
+	struct NodeKeyHash
+	{
+		size_t operator()(const NodeKey& k) const { return (k.x << 16) ^ k.z; }
+	};
+
 	/*---------------------
 		Navigation Logic
 	-----------------------*/
@@ -81,6 +108,9 @@ namespace Navigation
 		void InitNavmesh(vector<Triangle>&& triangles, WalkableGrid&& grid);
 
 		// A Star
+		void Init(WalkableGrid&& grid);
+		bool FindPath(int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath);
+		inline float Heuristic(int32 x1, int32 z1, int32 x2, int32 z2) { return abs(x1 - x2) + abs(z1 - z2); }
 
 		// DEBUG
 		void PrintGrid() const;
