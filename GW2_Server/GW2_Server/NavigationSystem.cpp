@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameLogic.h"
+#include "Object.h"
 #include "NavigationSystem.h"
 
 #undef min
@@ -306,6 +307,11 @@ GameMath::Vector3 Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, 
 	return GameMath::Vector3(worldX, y, worldZ);
 }
 
+bool Navigation::NavigationSystem::WorldToGrid(GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
+{
+	return WorldToGridImpl(_grids, worldPos._x, worldPos._z, x, z);
+}
+
 void Navigation::NavigationSystem::BuildGrid(float cellSize)
 {
 	_cellSize = cellSize;
@@ -480,6 +486,41 @@ bool Navigation::NavigationSystem::FindPath(int32 startX, int32 startZ, int32 en
 	return false;
 }
 
+Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget)
+{
+	if (unit.GetPosVector().GetDistance(clientStart) > 0.5f)
+	{
+		return { false, unit.GetPosVector() };
+	}
+
+	int32 gx, gz;
+	if (!WorldToGrid(clientTarget, gx, gz))
+	{
+		return { false, unit.GetPosVector() };
+	}
+
+	GridCell& cell = _grids.At(gx, gz);
+	if (!cell.walkable)
+	{
+		return { false, unit.GetPosVector() };
+	}
+
+	// 최대 이동 가능 거리 = 이동 속도 * 허용 시간
+	Protocol::StatInfo stat = unit.GetStatInfo();
+	float moveSpeed = static_cast<float>(stat.speed());
+	float maxDist = moveSpeed * MAX_COMMAND_TIME;
+	float dist = unit.GetPosVector().GetDistance(clientTarget);
+
+	if (dist > maxDist)
+	{
+		clientTarget = unit.GetPosVector() + GameMath::Vector3::GetNormalVector(clientTarget - unit.GetPosVector()) * maxDist;
+	}
+
+	return { true, clientTarget };
+	
+	
+}
+
 void Navigation::NavigationSystem::PrintGrid() const
 {
 	for (int32 z = _gridCols - 1; z >= 0; --z)
@@ -496,5 +537,24 @@ void Navigation::NavigationSystem::PrintGrid() const
 void Navigation::NavigationSystem::PrintPath()
 {
 
+}
+
+bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& x, int32 z)
+{
+	float localX = worldX - grid.origin._x;
+	float localZ = worldZ - grid.origin._z;
+
+	if (localX < 0.0f || localZ < 0.0f)
+		return false;
+
+	int32 gx = static_cast<int32>(localX / grid.cellSize);
+	int32 gz = static_cast<int32>(localZ / grid.cellSize);
+
+	if (gx < 0 || gz < 0 || gx >= grid.width || gz >= grid.height)
+		return false;
+
+	x = gx;
+	z = gz;
+	return true;
 }
 

@@ -238,6 +238,7 @@
     <None Include="..\Common\Protobuf\bin\Protocol.proto" />
     <None Include="..\Common\Protobuf\bin\Struct.proto" />
     <None Include="..\Tools\PacketGenerator\MakeExe.bat" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\Common\Protobuf\bin\Enum.proto" />

@@ -69,35 +69,20 @@ bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt)
 	return true;
 }
 
-bool Handle_C_MOVE_START(PacketSessionRef& session, Protocol::C_MOVE_START& pkt)
-{
-	// 검증도 여기서 해줘야한다.
-	auto gameSession = static_pointer_cast<GameSession>(session);
-	PlayerRef player = gameSession->_currentPlayer;
-	if (player == nullptr)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE_START] : session's PlayerRef is nullptr");
-		return false;
-	}
-	
-	// 핵 검증 -> 벽 통과 검사
-
-	// 핵 검증 -> 속도가 너무 빠르면 핵의심
-	//if(pkt.speed() > player->)
-
-	// 이동 승인
-	return true;
-}
-
-bool Handle_C_MOVE_END(PacketSessionRef& session, Protocol::C_MOVE_END& pkt)
-{
-	return false;
-}
-
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
 {
 	return false;
 }
+
+bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
+{
+	shared_ptr<Object> unit = MakeShared<Object>();
+	int64 id = pkt.id();
+	
+	
+	return false;
+}
+
 
 bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt)
 {

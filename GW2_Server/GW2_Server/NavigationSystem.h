@@ -4,6 +4,7 @@
 
 struct GameMath::Vector3;
 struct Triangle;
+class Object;
 
 namespace Navigation
 {
@@ -79,6 +80,15 @@ namespace Navigation
 		size_t operator()(const NodeKey& k) const { return (k.x << 16) ^ k.z; }
 	};
 
+	/*------------------
+		MoveValidation
+	--------------------*/
+	struct MoveValidationResult
+	{
+		bool accepted;
+		GameMath::Vector3 approvedTarget;
+	};
+
 	/*---------------------
 		Navigation Logic
 	-----------------------*/
@@ -97,6 +107,7 @@ namespace Navigation
 		void BuildCells(WalkableGrid& grid);
 		void BuildConnections(WalkableGrid& grid);
 		GameMath::Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
+		bool WorldToGrid(GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z);
 		void BuildGrid(float cellSize);
 
 		vector<Triangle>& GetAllTriangles() { return _allTriangles; }
@@ -112,9 +123,15 @@ namespace Navigation
 		bool FindPath(int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath);
 		inline float Heuristic(int32 x1, int32 z1, int32 x2, int32 z2) { return abs(x1 - x2) + abs(z1 - z2); }
 
+		// 위치 보정
+		MoveValidationResult ValidateMove(const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget);
+
 		// DEBUG
 		void PrintGrid() const;
 		void PrintPath();
+
+	private:
+		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT x, int32 OUT z);
 
 	private:
 		vector<Triangle> _allTriangles;

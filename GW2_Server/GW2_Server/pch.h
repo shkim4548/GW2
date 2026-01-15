@@ -32,3 +32,5 @@ using LobbyRef = shared_ptr<class Lobby>;
 #define SEND_PACKET(pkt)	\
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(pkt);	\
 	session->Send(sendBuffer);
+
+constexpr float MAX_COMMAND_TIME = 0.2f;

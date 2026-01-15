@@ -137,6 +137,7 @@
     <None Include="..\Tools\PacketGenerator\MakeExe.bat">
       <Filter>Packet\Protocol</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="GameDB.xml">
