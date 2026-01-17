@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Dev\\unity\\DotnetWebServer\\GameServerAdmin\\GameServerAdmin\\GameServerAdmin.csproj",
+      "projectUniqueName": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\GameServerAdmin.csproj",
       "projectName": "GameServerAdmin",
-      "projectPath": "D:\\Dev\\unity\\DotnetWebServer\\GameServerAdmin\\GameServerAdmin\\GameServerAdmin.csproj",
+      "projectPath": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\GameServerAdmin.csproj",
       "packagesPath": "C:\\Users\\shkim\\.nuget\\packages\\",
-      "outputPath": "D:\\Dev\\unity\\DotnetWebServer\\GameServerAdmin\\GameServerAdmin\\obj\\",
+      "outputPath": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,5 +1,4 @@
 #pragma once
-//#include <memory>
 #include "GameLogic.h"
 
 struct GameMath::Vector3;
@@ -111,7 +110,7 @@ namespace Navigation
 		void BuildGrid(float cellSize);
 
 		vector<Triangle>& GetAllTriangles() { return _allTriangles; }
-		WalkableGrid GetGridCells() { return _grids; }
+		WalkableGrid& GetGridCells() { return _grids; }
 		int32 GetGroundVertical() { return _gridCols; }
 		int32 GetGroundWidth() { return _gridRows; }
 		GameMath::Vector3 GetGridOrigin() { return GameMath::Vector3(_mapMinX, 0.0f, _mapMinZ); }

@@ -23,6 +23,7 @@ public:
 
 	unordered_map<int32, RoomRef> GetRoomList();
 	weak_ptr<Room> GetRoomById(int32 roomId);
+	weak_ptr<Navigation::NavigationSystem> GetNavigationSystem() { return _navigationSystem; }
 
 	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);

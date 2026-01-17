@@ -76,10 +76,24 @@ bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
 
 bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 {
-	shared_ptr<Object> unit = MakeShared<Object>();
-	int64 id = pkt.id();
+	int32 roomId = pkt.room_id();
+	weak_ptr<Room> room = GLobby->GetRoomById(roomId);
+	if (room.lock() == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr");
+		return false;
+	}
 	
-	
+	// Room을 얻어내고 해당 Room에서 player를 가져온다
+	int32 playerId = pkt.object_id();
+	PlayerRef player = room.lock()->GetPlayerById(playerId).lock();
+	if (player == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] player is nullptr");
+		return false;
+	}
+
+	room.lock()->HandleMovePlayer(player, pkt);
 	return false;
 }
 

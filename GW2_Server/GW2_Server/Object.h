@@ -2,6 +2,8 @@
 #include "GameLogic.h"
 
 namespace GameMath{ struct Vector3; }
+namespace Navigation {  struct GridCell;  class NavigationSystem; }
+using NavPath = std::vector<Navigation::GridCell*>;
 
 class Object
 {
@@ -15,6 +17,13 @@ public:
 	Protocol::StatInfo GetStatInfo() const { return _statInfo; }
 
 	void SetObjectId(int64 id) { _objectId = id; }
+	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }
+
+	// Navigation
+	void SetPath(const NavPath& path);
+	bool GetIsMoving() const { return _isMoving; }
+	void UpdateMovement(float deltaTime);
+	//void SetPosInfo(GameMath:Vector3 posVector) { _posVector = posVector;}
 public:
 	
 
@@ -23,5 +32,10 @@ protected:
 	Protocol::PosInfo _pos;
 	Protocol::StatInfo _statInfo;
 	GameMath::Vector3 _posVector;
+	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
+
+	bool _isMoving = false;
+	NavPath _path;
+	size_t  _pathIndex = 0;
 };
 

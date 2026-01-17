@@ -1325,12 +1325,13 @@ class C_MOVE final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kStartPosFieldNumber = 2,
-    kTargetPosFieldNumber = 3,
-    kIdFieldNumber = 1,
-    kClientTimeFieldNumber = 4,
+    kStartPosFieldNumber = 3,
+    kTargetPosFieldNumber = 4,
+    kRoomIdFieldNumber = 1,
+    kObjectIdFieldNumber = 2,
+    kClientTimeFieldNumber = 5,
   };
-  // .Protocol.PosInfo start_pos = 2;
+  // .Protocol.PosInfo start_pos = 3;
   bool has_start_pos() const;
   private:
   bool _internal_has_start_pos() const;
@@ -1348,7 +1349,7 @@ class C_MOVE final :
       ::Protocol::PosInfo* start_pos);
   ::Protocol::PosInfo* unsafe_arena_release_start_pos();
 
-  // .Protocol.PosInfo target_pos = 3;
+  // .Protocol.PosInfo target_pos = 4;
   bool has_target_pos() const;
   private:
   bool _internal_has_target_pos() const;
@@ -1366,16 +1367,25 @@ class C_MOVE final :
       ::Protocol::PosInfo* target_pos);
   ::Protocol::PosInfo* unsafe_arena_release_target_pos();
 
-  // int32 id = 1;
-  void clear_id();
-  int32_t id() const;
-  void set_id(int32_t value);
+  // int32 room_id = 1;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
   private:
-  int32_t _internal_id() const;
-  void _internal_set_id(int32_t value);
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
   public:
 
-  // int32 client_time = 4;
+  // int32 object_id = 2;
+  void clear_object_id();
+  int32_t object_id() const;
+  void set_object_id(int32_t value);
+  private:
+  int32_t _internal_object_id() const;
+  void _internal_set_object_id(int32_t value);
+  public:
+
+  // int32 client_time = 5;
   void clear_client_time();
   int32_t client_time() const;
   void set_client_time(int32_t value);
@@ -1393,7 +1403,8 @@ class C_MOVE final :
   typedef void DestructorSkippable_;
   ::Protocol::PosInfo* start_pos_;
   ::Protocol::PosInfo* target_pos_;
-  int32_t id_;
+  int32_t room_id_;
+  int32_t object_id_;
   int32_t client_time_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -1522,12 +1533,13 @@ class S_MOVE final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kServerInfoFieldNumber = 2,
-    kIdFieldNumber = 1,
-    kServerTimeFieldNumber = 3,
-    kCorrectedFieldNumber = 4,
+    kServerInfoFieldNumber = 3,
+    kRoomIdFieldNumber = 1,
+    kObjectIdFieldNumber = 2,
+    kServerTimeFieldNumber = 4,
+    kCorrectedFieldNumber = 5,
   };
-  // .Protocol.PosInfo server_info = 2;
+  // .Protocol.PosInfo server_info = 3;
   bool has_server_info() const;
   private:
   bool _internal_has_server_info() const;
@@ -1545,16 +1557,25 @@ class S_MOVE final :
       ::Protocol::PosInfo* server_info);
   ::Protocol::PosInfo* unsafe_arena_release_server_info();
 
-  // int32 id = 1;
-  void clear_id();
-  int32_t id() const;
-  void set_id(int32_t value);
+  // int32 room_id = 1;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
   private:
-  int32_t _internal_id() const;
-  void _internal_set_id(int32_t value);
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
   public:
 
-  // int32 server_time = 3;
+  // int32 object_id = 2;
+  void clear_object_id();
+  int32_t object_id() const;
+  void set_object_id(int32_t value);
+  private:
+  int32_t _internal_object_id() const;
+  void _internal_set_object_id(int32_t value);
+  public:
+
+  // int32 server_time = 4;
   void clear_server_time();
   int32_t server_time() const;
   void set_server_time(int32_t value);
@@ -1563,7 +1584,7 @@ class S_MOVE final :
   void _internal_set_server_time(int32_t value);
   public:
 
-  // bool corrected = 4;
+  // bool corrected = 5;
   void clear_corrected();
   bool corrected() const;
   void set_corrected(bool value);
@@ -1580,7 +1601,8 @@ class S_MOVE final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::Protocol::PosInfo* server_info_;
-  int32_t id_;
+  int32_t room_id_;
+  int32_t object_id_;
   int32_t server_time_;
   bool corrected_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2576,27 +2598,47 @@ C_SPAWN::players() const {
 
 // C_MOVE
 
-// int32 id = 1;
-inline void C_MOVE::clear_id() {
-  id_ = 0;
+// int32 room_id = 1;
+inline void C_MOVE::clear_room_id() {
+  room_id_ = 0;
 }
-inline int32_t C_MOVE::_internal_id() const {
-  return id_;
+inline int32_t C_MOVE::_internal_room_id() const {
+  return room_id_;
 }
-inline int32_t C_MOVE::id() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_MOVE.id)
-  return _internal_id();
+inline int32_t C_MOVE::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_MOVE.room_id)
+  return _internal_room_id();
 }
-inline void C_MOVE::_internal_set_id(int32_t value) {
+inline void C_MOVE::_internal_set_room_id(int32_t value) {
   
-  id_ = value;
+  room_id_ = value;
 }
-inline void C_MOVE::set_id(int32_t value) {
-  _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.C_MOVE.id)
+inline void C_MOVE::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_MOVE.room_id)
 }
 
-// .Protocol.PosInfo start_pos = 2;
+// int32 object_id = 2;
+inline void C_MOVE::clear_object_id() {
+  object_id_ = 0;
+}
+inline int32_t C_MOVE::_internal_object_id() const {
+  return object_id_;
+}
+inline int32_t C_MOVE::object_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_MOVE.object_id)
+  return _internal_object_id();
+}
+inline void C_MOVE::_internal_set_object_id(int32_t value) {
+  
+  object_id_ = value;
+}
+inline void C_MOVE::set_object_id(int32_t value) {
+  _internal_set_object_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_MOVE.object_id)
+}
+
+// .Protocol.PosInfo start_pos = 3;
 inline bool C_MOVE::_internal_has_start_pos() const {
   return this != internal_default_instance() && start_pos_ != nullptr;
 }
@@ -2682,7 +2724,7 @@ inline void C_MOVE::set_allocated_start_pos(::Protocol::PosInfo* start_pos) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_MOVE.start_pos)
 }
 
-// .Protocol.PosInfo target_pos = 3;
+// .Protocol.PosInfo target_pos = 4;
 inline bool C_MOVE::_internal_has_target_pos() const {
   return this != internal_default_instance() && target_pos_ != nullptr;
 }
@@ -2768,7 +2810,7 @@ inline void C_MOVE::set_allocated_target_pos(::Protocol::PosInfo* target_pos) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_MOVE.target_pos)
 }
 
-// int32 client_time = 4;
+// int32 client_time = 5;
 inline void C_MOVE::clear_client_time() {
   client_time_ = 0;
 }
@@ -2792,27 +2834,47 @@ inline void C_MOVE::set_client_time(int32_t value) {
 
 // S_MOVE
 
-// int32 id = 1;
-inline void S_MOVE::clear_id() {
-  id_ = 0;
+// int32 room_id = 1;
+inline void S_MOVE::clear_room_id() {
+  room_id_ = 0;
 }
-inline int32_t S_MOVE::_internal_id() const {
-  return id_;
+inline int32_t S_MOVE::_internal_room_id() const {
+  return room_id_;
 }
-inline int32_t S_MOVE::id() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.id)
-  return _internal_id();
+inline int32_t S_MOVE::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.room_id)
+  return _internal_room_id();
 }
-inline void S_MOVE::_internal_set_id(int32_t value) {
+inline void S_MOVE::_internal_set_room_id(int32_t value) {
   
-  id_ = value;
+  room_id_ = value;
 }
-inline void S_MOVE::set_id(int32_t value) {
-  _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_MOVE.id)
+inline void S_MOVE::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MOVE.room_id)
 }
 
-// .Protocol.PosInfo server_info = 2;
+// int32 object_id = 2;
+inline void S_MOVE::clear_object_id() {
+  object_id_ = 0;
+}
+inline int32_t S_MOVE::_internal_object_id() const {
+  return object_id_;
+}
+inline int32_t S_MOVE::object_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.object_id)
+  return _internal_object_id();
+}
+inline void S_MOVE::_internal_set_object_id(int32_t value) {
+  
+  object_id_ = value;
+}
+inline void S_MOVE::set_object_id(int32_t value) {
+  _internal_set_object_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MOVE.object_id)
+}
+
+// .Protocol.PosInfo server_info = 3;
 inline bool S_MOVE::_internal_has_server_info() const {
   return this != internal_default_instance() && server_info_ != nullptr;
 }
@@ -2898,7 +2960,7 @@ inline void S_MOVE::set_allocated_server_info(::Protocol::PosInfo* server_info) 
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_MOVE.server_info)
 }
 
-// int32 server_time = 3;
+// int32 server_time = 4;
 inline void S_MOVE::clear_server_time() {
   server_time_ = 0;
 }
@@ -2918,7 +2980,7 @@ inline void S_MOVE::set_server_time(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_MOVE.server_time)
 }
 
-// bool corrected = 4;
+// bool corrected = 5;
 inline void S_MOVE::clear_corrected() {
   corrected_ = false;
 }
