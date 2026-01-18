@@ -27,21 +27,20 @@ namespace Google.Protobuf.Struct {
             "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIm4KB1Bvc0lu",
             "Zm8SEQoJb2JqZWN0X2lkGAEgASgEEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJ",
             "CgF6GAQgASgCEgsKA3lhdxgFIAEoAhIiCgVzdGF0ZRgGIAEoDjITLlByb3Rv",
-            "Y29sLk1vdmVTdGF0ZSLTAQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
+            "Y29sLk1vdmVTdGF0ZSKkAQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
             "KAQSKQoLb2JqZWN0X3R5cGUYAiABKA4yFC5Qcm90b2NvbC5PYmplY3RUeXBl",
-            "Ei0KDWNyZWF0dXJlX3R5cGUYAyABKA4yFi5Qcm90b2NvbC5DcmVhdHVyZVR5",
-            "cGUSDAoEbmFtZRgEIAEoCRIjCghwb3NfaW5mbxgFIAEoCzIRLlByb3RvY29s",
-            "LlBvc0luZm8SJQoJc3RhdF9pbmZvGAYgASgLMhIuUHJvdG9jb2wuU3RhdElu",
-            "Zm8iRQoIU3RhdEluZm8SCgoCaHAYASABKAQSDgoGbWF4X2hwGAIgASgEEg4K",
-            "BmF0dGFjaxgDIAEoBBINCgVzcGVlZBgEIAEoBCIuCgtWZWN0b3IzSW5mbxIJ",
-            "CgF4GAEgASgCEgkKAXkYAiABKAISCQoBehgDIAEoAiIsCghSb29tSW5mbxIO",
-            "CgZyb29tSWQYASABKAUSEAoIcm9tbU5hbWUYAiABKAlCGaoCFkdvb2dsZS5Q",
-            "cm90b2J1Zi5TdHJ1Y3RiBnByb3RvMw=="));
+            "EgwKBG5hbWUYAyABKAkSIwoIcG9zX2luZm8YBCABKAsyES5Qcm90b2NvbC5Q",
+            "b3NJbmZvEiUKCXN0YXRfaW5mbxgFIAEoCzISLlByb3RvY29sLlN0YXRJbmZv",
+            "IkUKCFN0YXRJbmZvEgoKAmhwGAEgASgEEg4KBm1heF9ocBgCIAEoBBIOCgZh",
+            "dHRhY2sYAyABKAQSDQoFc3BlZWQYBCABKAQiLgoLVmVjdG9yM0luZm8SCQoB",
+            "eBgBIAEoAhIJCgF5GAIgASgCEgkKAXoYAyABKAIiLAoIUm9vbUluZm8SDgoG",
+            "cm9vbUlkGAEgASgFEhAKCHJvbW1OYW1lGAIgASgJQhmqAhZHb29nbGUuUHJv",
+            "dG9idWYuU3RydWN0YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.PosInfo), global::Google.Protobuf.Struct.PosInfo.Parser, new[]{ "ObjectId", "X", "Y", "Z", "Yaw", "State" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "ObjectType", "CreatureType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.Vector3Info), global::Google.Protobuf.Struct.Vector3Info.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.RoomInfo), global::Google.Protobuf.Struct.RoomInfo.Parser, new[]{ "RoomId", "RommName" }, null, null, null, null)
@@ -461,7 +460,6 @@ namespace Google.Protobuf.Struct {
     public ObjectInfo(ObjectInfo other) : this() {
       objectId_ = other.objectId_;
       objectType_ = other.objectType_;
-      creatureType_ = other.creatureType_;
       name_ = other.name_;
       posInfo_ = other.posInfo_ != null ? other.posInfo_.Clone() : null;
       statInfo_ = other.statInfo_ != null ? other.statInfo_.Clone() : null;
@@ -498,20 +496,8 @@ namespace Google.Protobuf.Struct {
       }
     }
 
-    /// <summary>Field number for the "creature_type" field.</summary>
-    public const int CreatureTypeFieldNumber = 3;
-    private global::Google.Protobuf.Enum.CreatureType creatureType_ = global::Google.Protobuf.Enum.CreatureType.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Google.Protobuf.Enum.CreatureType CreatureType {
-      get { return creatureType_; }
-      set {
-        creatureType_ = value;
-      }
-    }
-
     /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 4;
+    public const int NameFieldNumber = 3;
     private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -523,7 +509,7 @@ namespace Google.Protobuf.Struct {
     }
 
     /// <summary>Field number for the "pos_info" field.</summary>
-    public const int PosInfoFieldNumber = 5;
+    public const int PosInfoFieldNumber = 4;
     private global::Google.Protobuf.Struct.PosInfo posInfo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -535,7 +521,7 @@ namespace Google.Protobuf.Struct {
     }
 
     /// <summary>Field number for the "stat_info" field.</summary>
-    public const int StatInfoFieldNumber = 6;
+    public const int StatInfoFieldNumber = 5;
     private global::Google.Protobuf.Struct.StatInfo statInfo_;
     /// <summary>
     /// ...
@@ -566,7 +552,6 @@ namespace Google.Protobuf.Struct {
       }
       if (ObjectId != other.ObjectId) return false;
       if (ObjectType != other.ObjectType) return false;
-      if (CreatureType != other.CreatureType) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(PosInfo, other.PosInfo)) return false;
       if (!object.Equals(StatInfo, other.StatInfo)) return false;
@@ -579,7 +564,6 @@ namespace Google.Protobuf.Struct {
       int hash = 1;
       if (ObjectId != 0UL) hash ^= ObjectId.GetHashCode();
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) hash ^= ObjectType.GetHashCode();
-      if (CreatureType != global::Google.Protobuf.Enum.CreatureType.None) hash ^= CreatureType.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
       if (statInfo_ != null) hash ^= StatInfo.GetHashCode();
@@ -609,20 +593,16 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(16);
         output.WriteEnum((int) ObjectType);
       }
-      if (CreatureType != global::Google.Protobuf.Enum.CreatureType.None) {
-        output.WriteRawTag(24);
-        output.WriteEnum((int) CreatureType);
-      }
       if (Name.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteString(Name);
       }
       if (posInfo_ != null) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(34);
         output.WriteMessage(PosInfo);
       }
       if (statInfo_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(StatInfo);
       }
       if (_unknownFields != null) {
@@ -643,20 +623,16 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(16);
         output.WriteEnum((int) ObjectType);
       }
-      if (CreatureType != global::Google.Protobuf.Enum.CreatureType.None) {
-        output.WriteRawTag(24);
-        output.WriteEnum((int) CreatureType);
-      }
       if (Name.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteString(Name);
       }
       if (posInfo_ != null) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(34);
         output.WriteMessage(PosInfo);
       }
       if (statInfo_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(42);
         output.WriteMessage(StatInfo);
       }
       if (_unknownFields != null) {
@@ -674,9 +650,6 @@ namespace Google.Protobuf.Struct {
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ObjectType);
-      }
-      if (CreatureType != global::Google.Protobuf.Enum.CreatureType.None) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CreatureType);
       }
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
@@ -704,9 +677,6 @@ namespace Google.Protobuf.Struct {
       }
       if (other.ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         ObjectType = other.ObjectType;
-      }
-      if (other.CreatureType != global::Google.Protobuf.Enum.CreatureType.None) {
-        CreatureType = other.CreatureType;
       }
       if (other.Name.Length != 0) {
         Name = other.Name;
@@ -746,22 +716,18 @@ namespace Google.Protobuf.Struct {
             ObjectType = (global::Google.Protobuf.Enum.ObjectType) input.ReadEnum();
             break;
           }
-          case 24: {
-            CreatureType = (global::Google.Protobuf.Enum.CreatureType) input.ReadEnum();
-            break;
-          }
-          case 34: {
+          case 26: {
             Name = input.ReadString();
             break;
           }
-          case 42: {
+          case 34: {
             if (posInfo_ == null) {
               PosInfo = new global::Google.Protobuf.Struct.PosInfo();
             }
             input.ReadMessage(PosInfo);
             break;
           }
-          case 50: {
+          case 42: {
             if (statInfo_ == null) {
               StatInfo = new global::Google.Protobuf.Struct.StatInfo();
             }
@@ -791,22 +757,18 @@ namespace Google.Protobuf.Struct {
             ObjectType = (global::Google.Protobuf.Enum.ObjectType) input.ReadEnum();
             break;
           }
-          case 24: {
-            CreatureType = (global::Google.Protobuf.Enum.CreatureType) input.ReadEnum();
-            break;
-          }
-          case 34: {
+          case 26: {
             Name = input.ReadString();
             break;
           }
-          case 42: {
+          case 34: {
             if (posInfo_ == null) {
               PosInfo = new global::Google.Protobuf.Struct.PosInfo();
             }
             input.ReadMessage(PosInfo);
             break;
           }
-          case 50: {
+          case 42: {
             if (statInfo_ == null) {
               StatInfo = new global::Google.Protobuf.Struct.StatInfo();
             }

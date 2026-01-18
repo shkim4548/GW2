@@ -405,14 +405,13 @@ class ObjectInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 4,
-    kPosInfoFieldNumber = 5,
-    kStatInfoFieldNumber = 6,
+    kNameFieldNumber = 3,
+    kPosInfoFieldNumber = 4,
+    kStatInfoFieldNumber = 5,
     kObjectIdFieldNumber = 1,
     kObjectTypeFieldNumber = 2,
-    kCreatureTypeFieldNumber = 3,
   };
-  // string name = 4;
+  // string name = 3;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -426,7 +425,7 @@ class ObjectInfo final :
   std::string* _internal_mutable_name();
   public:
 
-  // .Protocol.PosInfo pos_info = 5;
+  // .Protocol.PosInfo pos_info = 4;
   bool has_pos_info() const;
   private:
   bool _internal_has_pos_info() const;
@@ -444,7 +443,7 @@ class ObjectInfo final :
       ::Protocol::PosInfo* pos_info);
   ::Protocol::PosInfo* unsafe_arena_release_pos_info();
 
-  // .Protocol.StatInfo stat_info = 6;
+  // .Protocol.StatInfo stat_info = 5;
   bool has_stat_info() const;
   private:
   bool _internal_has_stat_info() const;
@@ -480,15 +479,6 @@ class ObjectInfo final :
   void _internal_set_object_type(::Protocol::ObjectType value);
   public:
 
-  // .Protocol.CreatureType creature_type = 3;
-  void clear_creature_type();
-  ::Protocol::CreatureType creature_type() const;
-  void set_creature_type(::Protocol::CreatureType value);
-  private:
-  ::Protocol::CreatureType _internal_creature_type() const;
-  void _internal_set_creature_type(::Protocol::CreatureType value);
-  public:
-
   // @@protoc_insertion_point(class_scope:Protocol.ObjectInfo)
  private:
   class _Internal;
@@ -501,7 +491,6 @@ class ObjectInfo final :
   ::Protocol::StatInfo* stat_info_;
   uint64_t object_id_;
   int object_type_;
-  int creature_type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Struct_2eproto;
 };
@@ -1189,27 +1178,7 @@ inline void ObjectInfo::set_object_type(::Protocol::ObjectType value) {
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.object_type)
 }
 
-// .Protocol.CreatureType creature_type = 3;
-inline void ObjectInfo::clear_creature_type() {
-  creature_type_ = 0;
-}
-inline ::Protocol::CreatureType ObjectInfo::_internal_creature_type() const {
-  return static_cast< ::Protocol::CreatureType >(creature_type_);
-}
-inline ::Protocol::CreatureType ObjectInfo::creature_type() const {
-  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.creature_type)
-  return _internal_creature_type();
-}
-inline void ObjectInfo::_internal_set_creature_type(::Protocol::CreatureType value) {
-  
-  creature_type_ = value;
-}
-inline void ObjectInfo::set_creature_type(::Protocol::CreatureType value) {
-  _internal_set_creature_type(value);
-  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.creature_type)
-}
-
-// string name = 4;
+// string name = 3;
 inline void ObjectInfo::clear_name() {
   name_.ClearToEmpty();
 }
@@ -1260,7 +1229,7 @@ inline void ObjectInfo::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.name)
 }
 
-// .Protocol.PosInfo pos_info = 5;
+// .Protocol.PosInfo pos_info = 4;
 inline bool ObjectInfo::_internal_has_pos_info() const {
   return this != internal_default_instance() && pos_info_ != nullptr;
 }
@@ -1350,7 +1319,7 @@ inline void ObjectInfo::set_allocated_pos_info(::Protocol::PosInfo* pos_info) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.pos_info)
 }
 
-// .Protocol.StatInfo stat_info = 6;
+// .Protocol.StatInfo stat_info = 5;
 inline bool ObjectInfo::_internal_has_stat_info() const {
   return this != internal_default_instance() && stat_info_ != nullptr;
 }

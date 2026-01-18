@@ -40,10 +40,10 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 
-	objectInfo->set_creature_type(Protocol::CREATURE_TYPE_NONE);
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
 	objectInfo->set_object_id(1);
-	posInfo->set_x(0);
-	posInfo->set_y(0);
+	posInfo->set_x(72.5);
+	posInfo->set_y(2.3);
 	posInfo->set_z(0);
 	posInfo->set_yaw(0);
 	objectInfo->set_allocated_pos_info(posInfo);

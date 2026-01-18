@@ -19,6 +19,9 @@ public class MyPlayerController : PlayerController
     public override void Init()
     {
         base.Init();
+        // CameraController ¹ÙÀÎµù
+        FindObjectOfType<CameraController>().SetPlayer(this);
+
         _navAgent = GetComponent<NavMeshAgent>();
         _inputService = DI.Container.Resolve<IInputService>();
 

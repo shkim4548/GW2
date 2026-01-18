@@ -38,11 +38,25 @@ public class ObjectService : IObjectService
         Debug.Log($"[ObjectService] ObjectType : {objectType}");
         if (objectType == ObjectType.None)
         {
+            Debug.LogError($"[ObjectService] Adding Type is invalid!");
+        }
+        else if (objectType == ObjectType.Player)
+        {
             Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
             // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
             _resourceService = DI.Container.Resolve<IResourceService>();
             go = _resourceService.Instantiate("Player/Police");
+            go.transform.position = initPos;
             _objects.Add(objectId, go);
+
+        }
+        else if (objectType == ObjectType.Monster)
+        {
+            
+        }
+        else
+        {
+            Debug.LogError($"[ObjectService] Adding Type is invalid!");
         }
     }
 

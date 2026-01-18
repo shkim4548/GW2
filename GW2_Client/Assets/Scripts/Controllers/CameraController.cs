@@ -11,9 +11,9 @@ public class CameraController : MonoBehaviour
     Vector3 _delta = new Vector3(0.0f, 6.0f, -5.0f);
 
     [SerializeField]
-    GameObject _player = null;
+    MyPlayerController _player = null;
 
-    public void SetPlayer(GameObject player) { _player = player; }
+    public void SetPlayer(MyPlayerController player) { _player = player; }
 
     void Start()
     {
@@ -24,8 +24,9 @@ public class CameraController : MonoBehaviour
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (_player.IsValid() == false)
+            if (_player == null)
             {
+                Debug.LogError("[CameraController] MyPlayer Controller is nullptr");
                 return;
             }
 

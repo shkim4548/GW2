@@ -42,8 +42,6 @@ constexpr ObjectInfo::ObjectInfo(
   , stat_info_(nullptr)
   , object_id_(uint64_t{0u})
   , object_type_(0)
-
-  , creature_type_(0)
 {}
 struct ObjectInfoDefaultTypeInternal {
   constexpr ObjectInfoDefaultTypeInternal()
@@ -122,7 +120,6 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, object_type_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, creature_type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, name_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, pos_info_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, stat_info_),
@@ -157,9 +154,9 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::PosInfo)},
   { 12, -1, -1, sizeof(::Protocol::ObjectInfo)},
-  { 24, -1, -1, sizeof(::Protocol::StatInfo)},
-  { 34, -1, -1, sizeof(::Protocol::Vector3Info)},
-  { 43, -1, -1, sizeof(::Protocol::RoomInfo)},
+  { 23, -1, -1, sizeof(::Protocol::StatInfo)},
+  { 33, -1, -1, sizeof(::Protocol::Vector3Info)},
+  { 42, -1, -1, sizeof(::Protocol::RoomInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -174,25 +171,23 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"n\n\007"
   "PosInfo\022\021\n\tobject_id\030\001 \001(\004\022\t\n\001x\030\002 \001(\002\022\t\n"
   "\001y\030\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\013\n\003yaw\030\005 \001(\002\022\"\n\005stat"
-  "e\030\006 \001(\0162\023.Protocol.MoveState\"\323\001\n\nObjectI"
+  "e\030\006 \001(\0162\023.Protocol.MoveState\"\244\001\n\nObjectI"
   "nfo\022\021\n\tobject_id\030\001 \001(\004\022)\n\013object_type\030\002 "
-  "\001(\0162\024.Protocol.ObjectType\022-\n\rcreature_ty"
-  "pe\030\003 \001(\0162\026.Protocol.CreatureType\022\014\n\004name"
-  "\030\004 \001(\t\022#\n\010pos_info\030\005 \001(\0132\021.Protocol.PosI"
-  "nfo\022%\n\tstat_info\030\006 \001(\0132\022.Protocol.StatIn"
-  "fo\"E\n\010StatInfo\022\n\n\002hp\030\001 \001(\004\022\016\n\006max_hp\030\002 \001"
-  "(\004\022\016\n\006attack\030\003 \001(\004\022\r\n\005speed\030\004 \001(\004\".\n\013Vec"
-  "tor3Info\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001("
-  "\002\",\n\010RoomInfo\022\016\n\006roomId\030\001 \001(\005\022\020\n\010rommNam"
-  "e\030\002 \001(\tB\031\252\002\026Google.Protobuf.Structb\006prot"
-  "o3"
+  "\001(\0162\024.Protocol.ObjectType\022\014\n\004name\030\003 \001(\t\022"
+  "#\n\010pos_info\030\004 \001(\0132\021.Protocol.PosInfo\022%\n\t"
+  "stat_info\030\005 \001(\0132\022.Protocol.StatInfo\"E\n\010S"
+  "tatInfo\022\n\n\002hp\030\001 \001(\004\022\016\n\006max_hp\030\002 \001(\004\022\016\n\006a"
+  "ttack\030\003 \001(\004\022\r\n\005speed\030\004 \001(\004\".\n\013Vector3Inf"
+  "o\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\",\n\010Ro"
+  "omInfo\022\016\n\006roomId\030\001 \001(\005\022\020\n\010rommName\030\002 \001(\t"
+  "B\031\252\002\026Google.Protobuf.Structb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Struct_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto = {
-  false, false, 562, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
+  false, false, 515, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
   &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 5,
   schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
   file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto, file_level_service_descriptors_Struct_2eproto,
@@ -603,8 +598,8 @@ ObjectInfo::ObjectInfo(const ObjectInfo& from)
     stat_info_ = nullptr;
   }
   ::memcpy(&object_id_, &from.object_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&creature_type_) -
-    reinterpret_cast<char*>(&object_id_)) + sizeof(creature_type_));
+    static_cast<size_t>(reinterpret_cast<char*>(&object_type_) -
+    reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
   // @@protoc_insertion_point(copy_constructor:Protocol.ObjectInfo)
 }
 
@@ -615,8 +610,8 @@ name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&pos_info_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&creature_type_) -
-    reinterpret_cast<char*>(&pos_info_)) + sizeof(creature_type_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&object_type_) -
+    reinterpret_cast<char*>(&pos_info_)) + sizeof(object_type_));
 }
 
 ObjectInfo::~ObjectInfo() {
@@ -659,8 +654,8 @@ void ObjectInfo::Clear() {
   }
   stat_info_ = nullptr;
   ::memset(&object_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&creature_type_) -
-      reinterpret_cast<char*>(&object_id_)) + sizeof(creature_type_));
+      reinterpret_cast<char*>(&object_type_) -
+      reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -687,18 +682,9 @@ const char* ObjectInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.CreatureType creature_type = 3;
+      // string name = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_creature_type(static_cast<::Protocol::CreatureType>(val));
-        } else
-          goto handle_unusual;
-        continue;
-      // string name = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Protocol.ObjectInfo.name"));
@@ -706,17 +692,17 @@ const char* ObjectInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.PosInfo pos_info = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+      // .Protocol.PosInfo pos_info = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_pos_info(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.StatInfo stat_info = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+      // .Protocol.StatInfo stat_info = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_stat_info(), ptr);
           CHK_(ptr);
         } else
@@ -764,37 +750,30 @@ uint8_t* ObjectInfo::_InternalSerialize(
       2, this->_internal_object_type(), target);
   }
 
-  // .Protocol.CreatureType creature_type = 3;
-  if (this->_internal_creature_type() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      3, this->_internal_creature_type(), target);
-  }
-
-  // string name = 4;
+  // string name = 3;
   if (!this->_internal_name().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "Protocol.ObjectInfo.name");
     target = stream->WriteStringMaybeAliased(
-        4, this->_internal_name(), target);
+        3, this->_internal_name(), target);
   }
 
-  // .Protocol.PosInfo pos_info = 5;
+  // .Protocol.PosInfo pos_info = 4;
   if (this->_internal_has_pos_info()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        5, _Internal::pos_info(this), target, stream);
+        4, _Internal::pos_info(this), target, stream);
   }
 
-  // .Protocol.StatInfo stat_info = 6;
+  // .Protocol.StatInfo stat_info = 5;
   if (this->_internal_has_stat_info()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        6, _Internal::stat_info(this), target, stream);
+        5, _Internal::stat_info(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -813,21 +792,21 @@ size_t ObjectInfo::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 4;
+  // string name = 3;
   if (!this->_internal_name().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_name());
   }
 
-  // .Protocol.PosInfo pos_info = 5;
+  // .Protocol.PosInfo pos_info = 4;
   if (this->_internal_has_pos_info()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *pos_info_);
   }
 
-  // .Protocol.StatInfo stat_info = 6;
+  // .Protocol.StatInfo stat_info = 5;
   if (this->_internal_has_stat_info()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -843,12 +822,6 @@ size_t ObjectInfo::ByteSizeLong() const {
   if (this->_internal_object_type() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_object_type());
-  }
-
-  // .Protocol.CreatureType creature_type = 3;
-  if (this->_internal_creature_type() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_creature_type());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -888,9 +861,6 @@ void ObjectInfo::MergeFrom(const ObjectInfo& from) {
   if (from._internal_object_type() != 0) {
     _internal_set_object_type(from._internal_object_type());
   }
-  if (from._internal_creature_type() != 0) {
-    _internal_set_creature_type(from._internal_creature_type());
-  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -916,8 +886,8 @@ void ObjectInfo::InternalSwap(ObjectInfo* other) {
       &other->name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ObjectInfo, creature_type_)
-      + sizeof(ObjectInfo::creature_type_)
+      PROTOBUF_FIELD_OFFSET(ObjectInfo, object_type_)
+      + sizeof(ObjectInfo::object_type_)
       - PROTOBUF_FIELD_OFFSET(ObjectInfo, pos_info_)>(
           reinterpret_cast<char*>(&pos_info_),
           reinterpret_cast<char*>(&other->pos_info_));
