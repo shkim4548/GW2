@@ -95,7 +95,7 @@ public class BaseController : MonoBehaviour
 
         // Protobuf의 Enum을 사용
         // node, fadeTime, layerIndex
-        Debug.Log($"State in UpdateAnimation {State}");
+        //Debug.Log($"State in UpdateAnimation {State}");
         switch (State)
         {
             case MoveState.Die:

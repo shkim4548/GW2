@@ -29,6 +29,14 @@ public:
 	void DeleteRoom(int32 roomId);
 	void EnterRoom(int32 roomId, int64 playerId);
 
+	/*--------------------
+		called by main
+	----------------------*/
+	void Run();
+
+private:
+	void LobbyTick(float deltaTime);
+
 private:
 	// object 단위에서 자신의 소속 room을 갖고 있다.
 	unordered_map<int32, RoomRef> _rooms;

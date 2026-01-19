@@ -30,6 +30,7 @@ public class ObjectService : IObjectService
     public void Add(ObjectInfo info, bool myPlayer = false)
     {
         ulong objectId = info.ObjectId;
+        ulong roomId = info.RoomId;
         GameObject go;
         if (_objects.TryGetValue(objectId, out go))
             return;
@@ -42,13 +43,24 @@ public class ObjectService : IObjectService
         }
         else if (objectType == ObjectType.Player)
         {
-            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-            // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
-            _resourceService = DI.Container.Resolve<IResourceService>();
-            go = _resourceService.Instantiate("Player/Police");
-            go.transform.position = initPos;
-            _objects.Add(objectId, go);
+            if (myPlayer)
+            {
+                Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+                // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
+                _resourceService = DI.Container.Resolve<IResourceService>();
+                go = _resourceService.Instantiate("Player/Police");
+                //go.transform.position = initPos;
+                MyPlayer = go.GetComponent<MyPlayerController>();
+                MyPlayer.transform.position = initPos;
+                MyPlayer.Id = objectId;
+                MyPlayer.RoomId = (int)roomId;
 
+                _objects.Add(objectId, go);
+            }
+            else
+            {
+
+            }
         }
         else if (objectType == ObjectType.Monster)
         {

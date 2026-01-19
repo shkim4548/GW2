@@ -24,23 +24,22 @@ namespace Google.Protobuf.Enum {
     static EnumReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpFbnVtLnByb3RvEghQcm90b2NvbCqCAQoKT2JqZWN0VHlwZRIUChBPQkpF",
-            "Q1RfVFlQRV9OT05FEAASGAoUT0JKRUNUX1RZUEVfQ1JFQVRVUkUQARIWChJP",
-            "QkpFQ1RfVFlQRV9QTEFZRVIQAhIXChNPQkpFQ1RfVFlQRV9NT05TVEVSEAMS",
-            "EwoPT0JKRUNUX1RZUEVfRU5WEAQqiQEKClBsYXllclR5cGUSFAoQUExBWUVS",
-            "X1RZUEVfTk9ORRAAEhYKElBMQVlFUl9UWVBFX1BPTElDRRABEhQKEFBMQVlF",
-            "Ul9UWVBFX01PTksQAhIaChZQTEFZRVJfVFlQRV9MSUdIVFNBQlJFEAMSGwoX",
-            "UExBWUVSX1RZUEVfRklSRUZJR0hURVIQBCqIAQoJTW92ZVN0YXRlEhMKD01P",
-            "VkVfU1RBVEVfTk9ORRAAEhMKD01PVkVfU1RBVEVfSURMRRABEhIKDk1PVkVf",
-            "U1RBVEVfUlVOEAISEwoPTU9WRV9TVEFURV9KVU1QEAMSFAoQTU9WRV9TVEFU",
-            "RV9TS0lMTBAEEhIKDk1PVkVfU1RBVEVfRElFEAUqXAoJU2tpbGxUeXBlEhEK",
-            "DVNLSUxMX0lEX05PTkUQABITCg9TS0lMTF9JRF9BVFRBQ0sQARISCg5TS0lM",
-            "TF9JRF9GSVJTVBACEhMKD1NLSUxMX0lEX1NFQ09ORBADKj4KCENhbXBUeXBl",
-            "Eg4KCkNBTVBfSFVNQU4QABIPCgtDQU1QX0NZQk9SRxABEhEKDUNBTVBfTkVV",
-            "VFVSQUwQAioeCglDZWxsRmxhZ3MSEQoNQ0VMTF9XQUxLQUJMRRAAKkkKCUNl",
-            "bGxMaW5rcxIOCgpMSU5LX05PUlRIEAASDQoJTElOS19FQVNUEAESDgoKTElO",
-            "S19TT1VUSBACEg0KCUxJTktfV0VTVBADQheqAhRHb29nbGUuUHJvdG9idWYu",
-            "RW51bWIGcHJvdG8z"));
+            "CgpFbnVtLnByb3RvEghQcm90b2NvbCpoCgpPYmplY3RUeXBlEhQKEE9CSkVD",
+            "VF9UWVBFX05PTkUQABIWChJPQkpFQ1RfVFlQRV9QTEFZRVIQAhIXChNPQkpF",
+            "Q1RfVFlQRV9NT05TVEVSEAMSEwoPT0JKRUNUX1RZUEVfRU5WEAQqiQEKClBs",
+            "YXllclR5cGUSFAoQUExBWUVSX1RZUEVfTk9ORRAAEhYKElBMQVlFUl9UWVBF",
+            "X1BPTElDRRABEhQKEFBMQVlFUl9UWVBFX01PTksQAhIaChZQTEFZRVJfVFlQ",
+            "RV9MSUdIVFNBQlJFEAMSGwoXUExBWUVSX1RZUEVfRklSRUZJR0hURVIQBCqI",
+            "AQoJTW92ZVN0YXRlEhMKD01PVkVfU1RBVEVfTk9ORRAAEhMKD01PVkVfU1RB",
+            "VEVfSURMRRABEhIKDk1PVkVfU1RBVEVfUlVOEAISEwoPTU9WRV9TVEFURV9K",
+            "VU1QEAMSFAoQTU9WRV9TVEFURV9TS0lMTBAEEhIKDk1PVkVfU1RBVEVfRElF",
+            "EAUqXAoJU2tpbGxUeXBlEhEKDVNLSUxMX0lEX05PTkUQABITCg9TS0lMTF9J",
+            "RF9BVFRBQ0sQARISCg5TS0lMTF9JRF9GSVJTVBACEhMKD1NLSUxMX0lEX1NF",
+            "Q09ORBADKj4KCENhbXBUeXBlEg4KCkNBTVBfSFVNQU4QABIPCgtDQU1QX0NZ",
+            "Qk9SRxABEhEKDUNBTVBfTkVVVFVSQUwQAioeCglDZWxsRmxhZ3MSEQoNQ0VM",
+            "TF9XQUxLQUJMRRAAKkkKCUNlbGxMaW5rcxIOCgpMSU5LX05PUlRIEAASDQoJ",
+            "TElOS19FQVNUEAESDgoKTElOS19TT1VUSBACEg0KCUxJTktfV0VTVBADQheq",
+            "AhRHb29nbGUuUHJvdG9idWYuRW51bWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.ObjectType), typeof(global::Google.Protobuf.Enum.PlayerType), typeof(global::Google.Protobuf.Enum.MoveState), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.CampType), typeof(global::Google.Protobuf.Enum.CellFlags), typeof(global::Google.Protobuf.Enum.CellLinks), }, null, null));
@@ -51,7 +50,6 @@ namespace Google.Protobuf.Enum {
   #region Enums
   public enum ObjectType {
     [pbr::OriginalName("OBJECT_TYPE_NONE")] None = 0,
-    [pbr::OriginalName("OBJECT_TYPE_CREATURE")] Creature = 1,
     [pbr::OriginalName("OBJECT_TYPE_PLAYER")] Player = 2,
     [pbr::OriginalName("OBJECT_TYPE_MONSTER")] Monster = 3,
     [pbr::OriginalName("OBJECT_TYPE_ENV")] Env = 4,

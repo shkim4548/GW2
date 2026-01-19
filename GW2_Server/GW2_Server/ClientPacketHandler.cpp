@@ -15,7 +15,7 @@ PacketHandlerFunc GPacketHandler[UINT16_MAX];
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 {
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-	GConsoleLogger->WriteStdOut(Color::RED, L"[Handle_Invalid] Invalid Packet");
+	GConsoleLogger->WriteStdOut(Color::RED, L"[Handle_Invalid] Invalid Packet\n");
 	return false;
 }
 
@@ -80,6 +80,7 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	weak_ptr<Room> room = GLobby->GetRoomById(roomId);
 	if (room.lock() == nullptr)
 	{
+		//cout << roomId << endl;
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr");
 		return false;
 	}
@@ -92,7 +93,8 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] player is nullptr");
 		return false;
 	}
-
+	//DEBUG
+	cout << "[Handle_C_MOVE] " << pkt.object_id() << ", " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
 	room.lock()->HandleMovePlayer(player, pkt);
 	return false;
 }

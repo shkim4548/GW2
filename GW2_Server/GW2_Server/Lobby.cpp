@@ -1,14 +1,11 @@
 #include "pch.h"
 #include "Lobby.h"
 
-#include "pch.h"
 #include "ObjectUtils.h"
-#include "Lobby.h"
 #include "Player.h"
 #include "Room.h"
 #include "NavmeshLoader.h"
 #include "NavigationSystem.h"
-#include <unordered_map>
 
 LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다.
 
@@ -105,4 +102,9 @@ void Lobby::EnterRoom(int32 roomId, int64 playerId)
 	}
 	_lobbyPlayers.erase(playerId);
 	_rooms[roomId]->Enter(player);
+}
+
+void Lobby::LobbyTick(float deltaTime)
+{
+
 }

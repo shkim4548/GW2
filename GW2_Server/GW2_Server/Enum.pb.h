@@ -58,7 +58,6 @@ namespace Protocol {
 
 enum ObjectType : int {
   OBJECT_TYPE_NONE = 0,
-  OBJECT_TYPE_CREATURE = 1,
   OBJECT_TYPE_PLAYER = 2,
   OBJECT_TYPE_MONSTER = 3,
   OBJECT_TYPE_ENV = 4,

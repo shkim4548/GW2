@@ -1,5 +1,6 @@
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
+using Google.Protobuf.Struct;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class MyPlayerController : PlayerController
 
     GameObject _target;
     NavMeshAgent _navAgent;
+    public int RoomId { get; set; }
 
     public override void Init()
     {
@@ -24,6 +26,7 @@ public class MyPlayerController : PlayerController
 
         _navAgent = GetComponent<NavMeshAgent>();
         _inputService = DI.Container.Resolve<IInputService>();
+        _networkService = DI.Container.Resolve<INetworkService>();
 
         _inputService.MouseAction -= OnMouseEvent;
         _inputService.MouseAction += OnMouseEvent;
@@ -52,9 +55,27 @@ public class MyPlayerController : PlayerController
             else
             {
                 float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
-                //transform.position += dir.normalized * moveDist;
-                //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
-                _navAgent.SetDestination(_destPos);
+                //_navAgent.SetDestination(_destPos);
+                // 현위치 기록
+                PosInfo nowPos = new PosInfo();
+                nowPos.X = this.transform.position.x;
+                nowPos.Y = this.transform.position.y;
+                nowPos.Z = this.transform.position.z;
+                
+                PosInfo targetPos = new PosInfo();
+                targetPos.X = _destPos.x;
+                targetPos.Y = _destPos.y;
+                targetPos.Z = _destPos.z;
+
+                C_MOVE movePkt = new C_MOVE();
+                movePkt.RoomId = (int)RoomId;
+                movePkt.ObjectId = (int)this.Id;
+                movePkt.StartPos = nowPos;
+                movePkt.TargetPos = targetPos;
+
+                _networkService.Send(movePkt);
+                Debug.Log($"movePkt : {movePkt.RoomId}, {movePkt.ObjectId}");
+
                 //Debug.Log(_destPos);
             }
         }

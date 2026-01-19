@@ -405,13 +405,14 @@ class ObjectInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 3,
-    kPosInfoFieldNumber = 4,
-    kStatInfoFieldNumber = 5,
-    kObjectIdFieldNumber = 1,
-    kObjectTypeFieldNumber = 2,
+    kNameFieldNumber = 4,
+    kPosInfoFieldNumber = 5,
+    kStatInfoFieldNumber = 6,
+    kRoomIdFieldNumber = 1,
+    kObjectIdFieldNumber = 2,
+    kObjectTypeFieldNumber = 3,
   };
-  // string name = 3;
+  // string name = 4;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -425,7 +426,7 @@ class ObjectInfo final :
   std::string* _internal_mutable_name();
   public:
 
-  // .Protocol.PosInfo pos_info = 4;
+  // .Protocol.PosInfo pos_info = 5;
   bool has_pos_info() const;
   private:
   bool _internal_has_pos_info() const;
@@ -443,7 +444,7 @@ class ObjectInfo final :
       ::Protocol::PosInfo* pos_info);
   ::Protocol::PosInfo* unsafe_arena_release_pos_info();
 
-  // .Protocol.StatInfo stat_info = 5;
+  // .Protocol.StatInfo stat_info = 6;
   bool has_stat_info() const;
   private:
   bool _internal_has_stat_info() const;
@@ -461,7 +462,16 @@ class ObjectInfo final :
       ::Protocol::StatInfo* stat_info);
   ::Protocol::StatInfo* unsafe_arena_release_stat_info();
 
-  // uint64 object_id = 1;
+  // uint64 room_id = 1;
+  void clear_room_id();
+  uint64_t room_id() const;
+  void set_room_id(uint64_t value);
+  private:
+  uint64_t _internal_room_id() const;
+  void _internal_set_room_id(uint64_t value);
+  public:
+
+  // uint64 object_id = 2;
   void clear_object_id();
   uint64_t object_id() const;
   void set_object_id(uint64_t value);
@@ -470,7 +480,7 @@ class ObjectInfo final :
   void _internal_set_object_id(uint64_t value);
   public:
 
-  // .Protocol.ObjectType object_type = 2;
+  // .Protocol.ObjectType object_type = 3;
   void clear_object_type();
   ::Protocol::ObjectType object_type() const;
   void set_object_type(::Protocol::ObjectType value);
@@ -489,6 +499,7 @@ class ObjectInfo final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   ::Protocol::PosInfo* pos_info_;
   ::Protocol::StatInfo* stat_info_;
+  uint64_t room_id_;
   uint64_t object_id_;
   int object_type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1138,7 +1149,27 @@ inline void PosInfo::set_state(::Protocol::MoveState value) {
 
 // ObjectInfo
 
-// uint64 object_id = 1;
+// uint64 room_id = 1;
+inline void ObjectInfo::clear_room_id() {
+  room_id_ = uint64_t{0u};
+}
+inline uint64_t ObjectInfo::_internal_room_id() const {
+  return room_id_;
+}
+inline uint64_t ObjectInfo::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.room_id)
+  return _internal_room_id();
+}
+inline void ObjectInfo::_internal_set_room_id(uint64_t value) {
+  
+  room_id_ = value;
+}
+inline void ObjectInfo::set_room_id(uint64_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.room_id)
+}
+
+// uint64 object_id = 2;
 inline void ObjectInfo::clear_object_id() {
   object_id_ = uint64_t{0u};
 }
@@ -1158,7 +1189,7 @@ inline void ObjectInfo::set_object_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.object_id)
 }
 
-// .Protocol.ObjectType object_type = 2;
+// .Protocol.ObjectType object_type = 3;
 inline void ObjectInfo::clear_object_type() {
   object_type_ = 0;
 }
@@ -1178,7 +1209,7 @@ inline void ObjectInfo::set_object_type(::Protocol::ObjectType value) {
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.object_type)
 }
 
-// string name = 3;
+// string name = 4;
 inline void ObjectInfo::clear_name() {
   name_.ClearToEmpty();
 }
@@ -1229,7 +1260,7 @@ inline void ObjectInfo::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.name)
 }
 
-// .Protocol.PosInfo pos_info = 4;
+// .Protocol.PosInfo pos_info = 5;
 inline bool ObjectInfo::_internal_has_pos_info() const {
   return this != internal_default_instance() && pos_info_ != nullptr;
 }
@@ -1319,7 +1350,7 @@ inline void ObjectInfo::set_allocated_pos_info(::Protocol::PosInfo* pos_info) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.pos_info)
 }
 
-// .Protocol.StatInfo stat_info = 5;
+// .Protocol.StatInfo stat_info = 6;
 inline bool ObjectInfo::_internal_has_stat_info() const {
   return this != internal_default_instance() && stat_info_ != nullptr;
 }

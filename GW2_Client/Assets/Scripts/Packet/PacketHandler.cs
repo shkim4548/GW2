@@ -11,8 +11,12 @@ public class PacketHandler
     public static void S_ENTER_GAMEHandler(PacketSession session, IMessage message)
     {
         S_ENTER_GAME enterGamePkt = message as S_ENTER_GAME;
+        int roomId = (int)enterGamePkt.Player.RoomId;
+        
         var objectService = DI.Container.Resolve<IObjectService>();
-        objectService.Add(enterGamePkt.Player);
+        // EnterGame으로 받았으면 무조건 내 플레이어 캐릭터다
+        objectService.Add(enterGamePkt.Player, true);
+
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)
