@@ -47,6 +47,10 @@ void Lobby::LobbyInit()
 		Color::YELLOW,
 		L"[Lobby] NavGrid load complete\n"
 	);
+
+	MakeRoom("TestRoom");
+	GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
+	cout << _rooms.size() << endl;
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

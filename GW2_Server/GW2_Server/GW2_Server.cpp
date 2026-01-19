@@ -58,7 +58,7 @@ int main()
 		100);
 	
 	// 로비 초기화
-	GLobby->LobbyInit();
+	GLobby->DoAsync(&Lobby::LobbyInit);
 
 	ASSERT_CRASH(service->Start());
 

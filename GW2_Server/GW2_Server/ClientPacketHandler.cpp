@@ -36,25 +36,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	Protocol::S_ENTER_GAME enterPkt;
-	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
-	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
-
-	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
-	objectInfo->set_object_id(1);
-	posInfo->set_x(72.5);
-	posInfo->set_y(2.3);
-	posInfo->set_z(0);
-	posInfo->set_yaw(0);
-	objectInfo->set_allocated_pos_info(posInfo);
-	enterPkt.set_allocated_player(objectInfo);
-	
-	int targetRoom = pkt.roomid();
-	weak_ptr<Room> room = GLobby->GetRoomById(targetRoom);
-	
-	room.lock()->InitNavigation();
-	//cout << "GetRoomId : " << targetRoom << endl;
-	SEND_PACKET(enterPkt);
+	//GLobby->EnterRoom(pkt.roomid, pkt.playerId);
 	return true;
 }
 
@@ -77,8 +59,8 @@ bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
 bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 {
 	int32 roomId = pkt.room_id();
-	weak_ptr<Room> room = GLobby->GetRoomById(roomId);
-	if (room.lock() == nullptr)
+	auto room = GLobby->GetRoomById(roomId).lock();
+	if (!room)
 	{
 		//cout << roomId << endl;
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr");
@@ -87,15 +69,16 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	
 	// Room을 얻어내고 해당 Room에서 player를 가져온다
 	int32 playerId = pkt.object_id();
-	PlayerRef player = room.lock()->GetPlayerById(playerId).lock();
+	PlayerRef player = room->GetPlayerById(playerId).lock();
 	if (player == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] player is nullptr");
 		return false;
 	}
+
 	//DEBUG
 	cout << "[Handle_C_MOVE] " << pkt.object_id() << ", " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
-	room.lock()->HandleMovePlayer(player, pkt);
+	room->HandleMovePlayer(player, pkt);
 	return false;
 }
 

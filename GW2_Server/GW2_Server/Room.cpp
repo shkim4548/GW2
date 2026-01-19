@@ -4,10 +4,11 @@
 #include "GameSession.h"
 #include "NavigationSystem.h"
 #include "NavmeshLoader.h"
+#include "ClientPacketHandler.h"
 #include "Lobby.h"
 
 // 공용으로 사용할 전역 룸
-shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
+//shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
 
 Room::Room()
 {
@@ -16,30 +17,70 @@ Room::Room()
 
 Room::~Room()
 {
-
+	_players.clear();
 }
 
-void Room::Enter(PlayerRef player)
+bool Room::Enter(PlayerRef player)
+{
+	if (player == nullptr)
+	{
+		return false;
+	}
+
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
+	int32 playerId = player->GetPlayerId();
+	_players.emplace(playerId, player);
+
+	Protocol::S_ENTER_GAME enterPkt;
+	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
+	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+	objectInfo->set_object_id(playerId);
+	posInfo->set_x(72.5);
+	posInfo->set_y(2.3);
+	posInfo->set_x(0);
+	posInfo->set_yaw(0);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
+
+	Broadcast(sendBuffer);
+	return true;
+}
+
+void Room::Leave(int32 playerId)
 {
 
 }
 
-void Room::Leave(PlayerRef player)
+void Room::Broadcast(SendBufferRef sendBuffer, int32 exceptId)
 {
+	for (auto& p : _players)
+	{
+		PlayerRef player = dynamic_pointer_cast<Player>(p.second);
+		if (player == nullptr)
+		{
+			GConsoleLogger->WriteStdErr(Color::RED, L"[Room::Broadcast] player is nullptr\n");
+			continue;
+		}
 
-}
+		if (player->GetPlayerId() == exceptId)
+		{
+			continue;
+		}
 
-void Room::Broadcast(SendBufferRef sendBuffer)
-{
-
+		if (GameSessionRef session = player->GetSession().lock())
+		{
+			//cout << "Broadcast" << '\n';
+			session->Send(sendBuffer);
+		}
+	}
 }
 
 void Room::InitNavigation()
 {
-	// 읽어온 네비게이션 정보를 방으로 가져온다.
-
-
-	// TODO : 로딩 시간에 이것이 처리될 수 있도록 해야한다. -> 엄청나게 느리기 때문이다.
+	
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)

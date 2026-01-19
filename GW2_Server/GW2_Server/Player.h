@@ -12,7 +12,7 @@ public:
 	void SetPlayerId(int32 id) { _objectId = id; }
 	void SetSession(GameSessionRef session) { _session = session; }
 	int64 GetPlayerId() { return _objectId; }
-	//weak_ptr<GameSession> GetSession() { return _ownerSession.load(); }
+	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
 
 private:

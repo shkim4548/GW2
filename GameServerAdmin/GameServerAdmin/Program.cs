@@ -1,3 +1,4 @@
+
 namespace GameServerAdmin
 {
     public class Program

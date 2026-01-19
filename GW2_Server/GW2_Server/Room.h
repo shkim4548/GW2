@@ -11,9 +11,9 @@ public:
 	Room();
 	virtual ~Room();
 
-	void Enter(PlayerRef player);
-	void Leave(PlayerRef player);
-	void Broadcast(SendBufferRef sendBuffer);
+	bool Enter(PlayerRef player);
+	void Leave(int32 playerId);
+	void Broadcast(SendBufferRef sendBuffer, int32 exceptId = -1);
 
 	void InitNavigation();
 
@@ -33,7 +33,7 @@ public:
 private:
 
 private:
-	unordered_map<int32, weak_ptr<Player>> _players;
+	unordered_map<int32, PlayerRef> _players;
 	int32 _roomId;
 	string _roomName;
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
