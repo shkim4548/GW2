@@ -11,11 +11,14 @@ public interface INetworkService
     public void Send(IMessage packet);
     public void Init();
     public void Update();
+    public void SetNetworkId(int id);
+    public int GetNetworkId();
 }
 
 public class NetworkService : INetworkService
 { 
     ServerSession _session = new ServerSession();
+    int _networkId = -1;
 
     public void Send(IMessage packet)
     {
@@ -51,5 +54,15 @@ public class NetworkService : INetworkService
                 handler.Invoke(_session, packet.Message);
         }
         //Debug.Log("Network Service Update");
+    }
+
+    public void SetNetworkId(int id)
+    {
+        _networkId = id;
+    }
+
+    public int GetNetworkId()
+    {
+        return _networkId;
     }
 }

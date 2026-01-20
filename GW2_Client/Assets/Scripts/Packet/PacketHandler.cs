@@ -14,9 +14,9 @@ public class PacketHandler
         int roomId = (int)enterGamePkt.Player.RoomId;
         
         var objectService = DI.Container.Resolve<IObjectService>();
-        // EnterGame으로 받았으면 무조건 내 플레이어 캐릭터다
+        Debug.Log($"[PacketHandler] After OBjectService");
+        // TEST : EnterGame으로 받았으면 무조건 내 플레이어 캐릭터다
         objectService.Add(enterGamePkt.Player, true);
-
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)
@@ -60,11 +60,15 @@ public class PacketHandler
     internal static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
     {
         S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
-        Debug.Log("S_ENTER_LOBBY");
+        var networkService = DI.Container.Resolve<INetworkService>();
+        networkService.SetNetworkId(lobbyPkt.PlayerId);
+        
+        // DEBUG
         for(int i = 0; i< lobbyPkt.RoomInfos.Count; ++i)
         {
-            Debug.Log(lobbyPkt.RoomInfos[i].RoomId);
-            Debug.Log(lobbyPkt.RoomInfos[i].RommName);
+            Debug.Log($"[S_ENTER_LOBBY] Lobby Packet PlayerId : {lobbyPkt.PlayerId}");
+            Debug.Log($"[S_ENTER_LOBBY] Lobby Packet RoomId : {lobbyPkt.RoomInfos[i].RoomId}");
+            Debug.Log($"[S_ENTER_LOBBY] Lobby Packet RoomName : {lobbyPkt.RoomInfos[i].RommName}");
         }
     }
 

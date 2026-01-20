@@ -1,7 +1,10 @@
-﻿using GameServerAdmin.Domain;
+﻿using GameServerAdmin.Domain.Accounts;
+using GameServerAdmin.Domain.Admins;
+using GameServerAdmin.Domain.Posts;
+using GameServerAdmin.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
-namespace GameServerAdmin.Infrastructure
+namespace GameServerAdmin.Infrastructure.Persistence
 {
     public class AppDbContext : DbContext
     {

@@ -36,7 +36,10 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	//GLobby->EnterRoom(pkt.roomid, pkt.playerId);
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_EnterGame] OnRecv Packet\n");
+	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_EnterGame] Request player id : ");
+	cout << pkt.playerindex() << endl;
 	return true;
 }
 
@@ -62,6 +65,7 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	auto room = GLobby->GetRoomById(roomId).lock();
 	if (!room)
 	{
+		// 현재 에러가 발생하는 부분은 여기거든
 		//cout << roomId << endl;
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr");
 		return false;

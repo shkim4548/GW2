@@ -49,6 +49,10 @@ public class ObjectService : IObjectService
                 // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
                 _resourceService = DI.Container.Resolve<IResourceService>();
                 go = _resourceService.Instantiate("Player/Police");
+                if(go == null)
+                {
+                    Debug.LogError("resourceService instantiate failed");
+                }
                 //go.transform.position = initPos;
                 MyPlayer = go.GetComponent<MyPlayerController>();
                 MyPlayer.transform.position = initPos;

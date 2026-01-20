@@ -101,6 +101,7 @@ void Lobby::EnterRoom(int32 roomId, int64 playerId)
 	PlayerRef player = _lobbyPlayers[playerId];
 	if (player == nullptr)
 	{
+		// 에러 발생 부분
 		GConsoleLogger->WriteStdErr(Color::RED, L"[EnterRoom] player is nullptr\n");
 		return;
 	}

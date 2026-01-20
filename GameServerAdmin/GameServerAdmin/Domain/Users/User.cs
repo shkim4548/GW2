@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GameServerAdmin.Domain
+namespace GameServerAdmin.Domain.Users
 {
     [Table("user")]
 

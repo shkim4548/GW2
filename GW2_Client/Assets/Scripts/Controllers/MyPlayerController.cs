@@ -33,6 +33,7 @@ public class MyPlayerController : PlayerController
 
         _inputService.KeyAction -= OnKeyEvent;
         _inputService.KeyAction += OnKeyEvent;
+        Id = (ulong)_networkService.GetNetworkId();
     }
 
     public override void UpdateIdle()
