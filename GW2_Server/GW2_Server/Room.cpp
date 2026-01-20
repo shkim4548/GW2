@@ -44,7 +44,6 @@ bool Room::Enter(PlayerRef player)
 	enterPkt.set_allocated_player(objectInfo);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
-
 	Broadcast(sendBuffer);
 	return true;
 }

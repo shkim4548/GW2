@@ -16,6 +16,7 @@ public class MyPlayerController : PlayerController
 
     GameObject _target;
     NavMeshAgent _navAgent;
+
     public int RoomId { get; set; }
 
     public override void Init()
@@ -33,6 +34,7 @@ public class MyPlayerController : PlayerController
 
         _inputService.KeyAction -= OnKeyEvent;
         _inputService.KeyAction += OnKeyEvent;
+
         Id = (ulong)_networkService.GetNetworkId();
     }
 

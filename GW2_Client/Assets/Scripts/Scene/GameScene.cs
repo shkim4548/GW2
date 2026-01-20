@@ -14,7 +14,10 @@ public class GameScene : BaseScene
         INetworkService network = DI.Container.Resolve<INetworkService>();
 
         //_resourceService.Instantiate("Player/Police");
+        // TODO : 하드코딩된 RoomId 변경
         C_ENTER_GAME enterGamePkt = new C_ENTER_GAME();
+        enterGamePkt.PlayerIndex = (ulong)network.GetNetworkId();
+        enterGamePkt.RoomId = 0;
         network.Send(enterGamePkt);
     }
 
