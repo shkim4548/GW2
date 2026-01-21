@@ -521,22 +521,78 @@ Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(cons
 	
 }
 
-void Navigation::NavigationSystem::PrintGrid() const
+void Navigation::NavigationSystem::PrintGrid(WalkableGrid& grids) const
 {
-	for (int32 z = _gridCols - 1; z >= 0; --z)
+	cout << "[PrintGrid] called\n";
+	cout << "width=" << grids.width
+		<< " height=" << grids.height
+		<< " cells=" << grids.cells.size()
+		<< endl;
+
+	for (int z = grids.height - 1; z >= 0; --z) // Unity Z√‡ ∫∏¡§
 	{
-		for (int32 x = 0; x < _gridRows; ++x)
+		for (int x = 0; x < grids.width; ++x)
 		{
-			const GridCell& cell = _cells[z * _gridRows + x];
-			cout << cell.walkable ? "[ ]" : "[X]";
+			const GridCell& cell = grids.cells[z * grids.width + x];
+			cout << (cell.walkable ? '.' : '#');
 		}
 		cout << '\n';
 	}
+	cout << "PrintGrid End" << endl;
 }
 
 void Navigation::NavigationSystem::PrintPath()
 {
 
+}
+
+void Navigation::NavigationSystem::PrintGridSummary(const Navigation::WalkableGrid& grid)
+{
+	size_t walkableCount = 0;
+
+	for (const auto& cell : grid.cells)
+	{
+		if (cell.walkable)
+			++walkableCount;
+	}
+
+	const size_t total = grid.cells.size();
+	const float ratio = (total > 0) ? (static_cast<float>(walkableCount) / total * 100.0f) : 0.0f;
+	cout << "[NavGrid Summary] "
+		<< "W=" << grid.width
+		<< " H=" << grid.height
+		<< " CellSize=" << grid.cellSize
+		<< " Total=" << total
+		<< " Walkable=" << walkableCount
+		<< " (" << ratio << "%)"
+		<< endl;
+}
+
+void Navigation::NavigationSystem::PrintSampleCells(const Navigation::WalkableGrid& grid)
+{
+	int32 samples[][2] =
+	{
+		{0, 0},
+		{grid.width / 2, grid.height / 2},
+		{grid.width - 1, grid.height - 1}
+	};
+
+	for (auto& s : samples)
+	{
+		int x = s[0];
+		int z = s[1];
+
+		const auto& cell = grid.At(x, z);
+
+		float wx = grid.origin._x + (x + 0.5f) * grid.cellSize;
+		float wz = grid.origin._z + (z + 0.5f) * grid.cellSize;
+
+		cout << "[SampleCell] "
+			<< "Grid(" << x << "," << z << ") "
+			<< "World(" << wx << ", " << wz << ") "
+			<< "Walkable=" << cell.walkable
+			<< endl;
+	}
 }
 
 bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& x, int32 z)

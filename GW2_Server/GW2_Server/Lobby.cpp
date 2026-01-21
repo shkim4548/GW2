@@ -51,6 +51,16 @@ void Lobby::LobbyInit()
 	MakeRoom("TestRoom");
 	GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 	cout << _rooms.size() << endl;
+
+	// DEBUG
+	Navigation::NavigationSystem navSystem;
+	cout << "[NavGrid Loaded]\n";
+	cout << "width     : " << _walkableGrid->width << "\n";
+	cout << "height    : " << _walkableGrid->height << "\n";
+	cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
+	cout << "cellCount : " << _walkableGrid->cells.size() << endl;
+			navSystem.PrintGridSummary(*_walkableGrid);
+	//navSystem.PrintGrid(*_walkableGrid);
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

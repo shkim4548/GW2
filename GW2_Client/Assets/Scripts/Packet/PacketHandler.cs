@@ -39,7 +39,7 @@ public class PacketHandler
 
     public static void S_MOVEHandler(PacketSession session, IMessage message)
     {
-
+        
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)

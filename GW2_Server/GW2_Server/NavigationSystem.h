@@ -15,10 +15,10 @@ namespace Navigation
 		uint32 magic;	// NRGD
 		uint16 version;	// 1
 	};
-
+#pragma pack(push, 1)
 	struct GridCell
 	{
-		bool walkable = false;
+		uint8 walkable = false;
 		float height = 0.0f;
 
 		// 4¹æÇâ Å½»ö
@@ -28,7 +28,7 @@ namespace Navigation
 		int32 x;
 		int32 z;
 	};
-
+#pragma pack(pop)
 	enum Dir
 	{
 		DIR_NORTH = 0,
@@ -47,6 +47,11 @@ namespace Navigation
 
 		vector<GridCell> cells;
 		GridCell& At(int32 x, int32 z)
+		{
+			return cells[z * width + x];
+		}
+
+		const GridCell& At(int32 x, int32 z) const
 		{
 			return cells[z * width + x];
 		}
@@ -126,8 +131,10 @@ namespace Navigation
 		MoveValidationResult ValidateMove(const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget);
 
 		// DEBUG
-		void PrintGrid() const;
+		void PrintGrid(WalkableGrid& grids) const;
 		void PrintPath();
+		void PrintGridSummary(const Navigation::WalkableGrid& grid);
+		void PrintSampleCells(const Navigation::WalkableGrid& grid);
 
 	private:
 		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT x, int32 OUT z);

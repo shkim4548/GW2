@@ -23,19 +23,22 @@ namespace Data
     }
 
     [Serializable]
-    public struct GridCell
-    {
-        public byte flags;   // bit 0: walkable
-        public byte links;   // 4πÊ«‚ neighbors bitmask
-        public float height;
-    }
-
-
-    [Serializable]
     public struct NavGridData
     {
         public NavGridHeader header;
         public GridCell[] cells;
     }
 
+    [Serializable]
+    public struct GridCell
+    {
+        public byte walkable;   // 0 or 1
+        public float height;    // NavMesh hit y
+        public byte n0;         // +X
+        public byte n1;         // -X
+        public byte n2;         // +Z
+        public byte n3;         // -Z
+        public int x;
+        public int z;
+    }
 }

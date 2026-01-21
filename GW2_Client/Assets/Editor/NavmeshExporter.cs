@@ -1,65 +1,101 @@
 using System.IO;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NavMeshExporter : EditorWindow
+public class NavGridExporter : EditorWindow
 {
-    private static string EXPORT_PATH = Application.dataPath + "/NavMeshExport/navmesh_collision.obj";
+    private const int MAGIC = 0x4E524744; // 'NRGD'
+    private const int VERSION = 1;
 
-    [MenuItem("Tools/Export/Export NavMesh to OBJ")]
-    public static void ExportNavMesh()
+    private static float cellSize = 0.5f;
+    private static float sampleHeight = 2.0f;
+
+    [MenuItem("Tools/Export/Export NavGrid (Binary)")]
+    public static void ExportNavGrid()
     {
-        // 1. Unity NavMesh 데이터 추출
-        // NavMesh 영역의 삼각형 분할(Triangulation) 정보를 가져옵니다.
-        NavMeshTriangulation navMeshData = NavMesh.CalculateTriangulation();
-
-        if (navMeshData.vertices == null || navMeshData.vertices.Length == 0)
+        // -----------------------------
+        // 1. Scene Bounds 계산
+        // -----------------------------
+        var renderers = GameObject.FindObjectsOfType<Renderer>();
+        if (renderers.Length == 0)
         {
-            Debug.LogError("현재 씬에 유효한 NavMesh 데이터가 없습니다.");
+            Debug.LogError("Scene에 Renderer가 없습니다.");
             return;
         }
 
-        // 2. OBJ 파일 포맷으로 변환 시작
-        StringBuilder objBuilder = new StringBuilder();
+        Bounds bounds = renderers[0].bounds;
+        foreach (var r in renderers)
+            bounds.Encapsulate(r.bounds);
 
-        // 2-A. 주석 및 헤더
-        objBuilder.AppendLine("# Exported NavMesh data from Unity to OBJ format");
-        objBuilder.AppendLine($"# Vertices: {navMeshData.vertices.Length}, Faces: {navMeshData.indices.Length / 3}");
+        Vector3 origin = new Vector3(
+            bounds.min.x,
+            bounds.min.y,
+            bounds.min.z
+        );
 
-        // 2-B. 정점 (v) 정보 기록
-        // 정점 위치(Vector3)를 OBJ 포맷에 맞게 기록합니다.
-        foreach (Vector3 vertex in navMeshData.vertices)
+        int width = Mathf.CeilToInt(bounds.size.x / cellSize);
+        int height = Mathf.CeilToInt(bounds.size.z / cellSize);
+
+        Debug.Log($"[NavGrid] width={width}, height={height}, cellSize={cellSize}");
+        Debug.Log($"[NavGrid] origin={origin}");
+
+        // -----------------------------
+        // 2. Grid Walkable 판정
+        // -----------------------------
+        bool[] walkables = new bool[width * height];
+
+        for (int z = 0; z < height; ++z)
         {
-            // Unity의 좌표계를 OBJ 파일에 맞게 변환할 필요가 있다면 여기서 처리합니다.
-            // 기본적으로 X Y Z 순으로 기록합니다.
-            objBuilder.AppendLine($"v {vertex.x:F6} {vertex.y:F6} {vertex.z:F6}");
+            for (int x = 0; x < width; ++x)
+            {
+                Vector3 worldPos = new Vector3(
+                    origin.x + (x + 0.5f) * cellSize,
+                    origin.y + sampleHeight,
+                    origin.z + (z + 0.5f) * cellSize
+                );
+
+                bool walkable = NavMesh.SamplePosition(
+                    worldPos,
+                    out NavMeshHit hit,
+                    cellSize * 0.5f,
+                    NavMesh.AllAreas
+                );
+
+                walkables[z * width + x] = walkable;
+            }
         }
 
-        // 2-C. 면 (f) 정보 기록
-        // 삼각형(3개의 인덱스)을 순회하며 Face 정보를 기록합니다.
-        // **중요**: OBJ 파일의 인덱스는 1부터 시작합니다. (Unity는 0부터 시작)
-        for (int i = 0; i < navMeshData.indices.Length; i += 3)
-        {
-            // 인덱스 값에 1을 더해 OBJ 포맷에 맞춥니다.
-            int v1 = navMeshData.indices[i] + 1;
-            int v2 = navMeshData.indices[i + 1] + 1;
-            int v3 = navMeshData.indices[i + 2] + 1;
+        // -----------------------------
+        // 3. Binary Export
+        // -----------------------------
+        string exportDir = Application.dataPath + "/NavMeshExport";
+        if (!Directory.Exists(exportDir))
+            Directory.CreateDirectory(exportDir);
 
-            objBuilder.AppendLine($"f {v1} {v2} {v3}");
+        string path = exportDir + "/navgrid.bin";
+
+        using (BinaryWriter bw = new BinaryWriter(File.Open(path, FileMode.Create)))
+        {
+            // Header
+            bw.Write(MAGIC);
+            bw.Write(VERSION);
+
+            // Grid Meta
+            bw.Write(width);
+            bw.Write(height);
+            bw.Write(cellSize);
+
+            bw.Write(origin.x);
+            bw.Write(origin.y);
+            bw.Write(origin.z);
+
+            // Cell Data
+            for (int i = 0; i < walkables.Length; ++i)
+                bw.Write((byte)(walkables[i] ? 1 : 0));
         }
 
-        // 3. 파일 저장
-        string directoryPath = Path.GetDirectoryName(EXPORT_PATH);
-        if (!Directory.Exists(directoryPath))
-        {
-            Directory.CreateDirectory(directoryPath);
-        }
-
-        File.WriteAllText(EXPORT_PATH, objBuilder.ToString());
-
-        Debug.Log($"OBJ 파일 추출 완료! 경로: {EXPORT_PATH}");
+        Debug.Log($"NavGrid Export 완료: {path}");
         AssetDatabase.Refresh();
     }
 }

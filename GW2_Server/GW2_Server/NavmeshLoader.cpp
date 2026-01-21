@@ -151,29 +151,63 @@ bool NavmeshLoader::LoadNavGridBin(const string& path, Navigation::WalkableGrid&
     if (!in.is_open())
         return false;
 
-    Navigation::FileHeader header{};
-    in.read(reinterpret_cast<char*>(&header), sizeof(header));
+    // -----------------------------
+    // 1. File Header
+    // -----------------------------
+    uint32 magic = 0;
+    uint32 version = 0;
 
-    if (header.magic != 0x4E524744) // 'NRGD'
+    in.read(reinterpret_cast<char*>(&magic), sizeof(uint32));
+    in.read(reinterpret_cast<char*>(&version), sizeof(uint32));
+
+    if (!in || magic != 0x4E524744) // 'NRGD'
         return false;
 
-    if (header.version != 1)
+    if (version != 1)
         return false;
 
-    // Grid meta
-    in.read(reinterpret_cast<char*>(&outGrid.width), sizeof(int32));
-    in.read(reinterpret_cast<char*>(&outGrid.height), sizeof(int32));
-    in.read(reinterpret_cast<char*>(&outGrid.cellSize), sizeof(float));
-    in.read(reinterpret_cast<char*>(&outGrid.origin), sizeof(GameMath::Vector3));
+    // -----------------------------
+    // 2. Grid Meta
+    // -----------------------------
+    int32 width = 0;
+    int32 height = 0;
+    float cellSize = 0.0f;
+    float ox = 0.0f, oy = 0.0f, oz = 0.0f;
+
+    in.read(reinterpret_cast<char*>(&width), sizeof(int32));
+    in.read(reinterpret_cast<char*>(&height), sizeof(int32));
+    in.read(reinterpret_cast<char*>(&cellSize), sizeof(float));
+    in.read(reinterpret_cast<char*>(&ox), sizeof(float));
+    in.read(reinterpret_cast<char*>(&oy), sizeof(float));
+    in.read(reinterpret_cast<char*>(&oz), sizeof(float));
+
+    if (!in || width <= 0 || height <= 0)
+        return false;
+
+    outGrid.width = width;
+    outGrid.height = height;
+    outGrid.cellSize = cellSize;
+    outGrid.origin = GameMath::Vector3{ ox, oy, oz };
 
     const size_t cellCount =
-        static_cast<size_t>(outGrid.width) * outGrid.height;
+        static_cast<size_t>(width) * static_cast<size_t>(height);
 
+    outGrid.cells.clear();
     outGrid.cells.resize(cellCount);
 
-    // 핵심: 단 한 번에 읽는다
-    in.read(reinterpret_cast<char*>(outGrid.cells.data()),
-        sizeof(Navigation::GridCell) * cellCount);
+    // -----------------------------
+    // 3. Cell Data (walkable only)
+    // -----------------------------
+    for (size_t i = 0; i < cellCount; ++i)
+    {
+        uint8 walkable = 0;
+        in.read(reinterpret_cast<char*>(&walkable), sizeof(uint8));
+
+        if (!in)
+            return false;
+
+        outGrid.cells[i].walkable = (walkable != 0);
+    }
 
     return true;
 }

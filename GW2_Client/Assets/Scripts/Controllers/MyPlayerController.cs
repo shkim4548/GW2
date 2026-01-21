@@ -77,7 +77,8 @@ public class MyPlayerController : PlayerController
                 movePkt.TargetPos = targetPos;
 
                 _networkService.Send(movePkt);
-                Debug.Log($"movePkt : {movePkt.RoomId}, {movePkt.ObjectId}");
+                //Debug.Log($"movePkt : {movePkt.RoomId}, {movePkt.ObjectId}");
+                Debug.Log($"movePkt destPos, startPos: {_destPos}, {this.transform.position}");
 
                 //Debug.Log(_destPos);
             }

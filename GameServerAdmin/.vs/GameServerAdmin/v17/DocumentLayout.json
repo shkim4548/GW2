@@ -58,8 +58,7 @@
               "RelativeToolTip": "GameServerAdmin\\Controllers\\AdminController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T07:19:32.231Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-20T07:19:32.231Z"
             },
             {
               "$type": "Document",
@@ -71,8 +70,7 @@
               "RelativeToolTip": "GameServerAdmin\\Models\\Admin\\AdminResponse.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T06:51:03.359Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-20T06:51:03.359Z"
             },
             {
               "$type": "Document",
@@ -84,8 +82,7 @@
               "RelativeToolTip": "GameServerAdmin\\Models\\Admin\\AdminCreateRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T06:50:45.924Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-20T06:50:45.924Z"
             },
             {
               "$type": "Document",
@@ -95,7 +92,7 @@
               "RelativeDocumentMoniker": "GameServerAdmin\\Program.cs",
               "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Program.cs",
               "RelativeToolTip": "GameServerAdmin\\Program.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAgwDIAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwDUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-15T15:04:20.613Z",
               "EditorCaption": ""
@@ -110,8 +107,7 @@
               "RelativeToolTip": "GameServerAdmin\\Infrastructure\\Persistence\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T13:16:40.137Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T13:16:40.137Z"
             },
             {
               "$type": "Document",
@@ -123,8 +119,7 @@
               "RelativeToolTip": "GameServerAdmin\\Domain\\Posts\\Post.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:04:19.176Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T08:04:19.176Z"
             },
             {
               "$type": "Document",
@@ -136,8 +131,7 @@
               "RelativeToolTip": "GameServerAdmin\\Domain\\Admins\\Admin.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:03:57.687Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T08:03:57.687Z"
             },
             {
               "$type": "Document",
@@ -149,8 +143,7 @@
               "RelativeToolTip": "GameServerAdmin\\Domain\\Users\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:03:39.019Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T08:03:39.019Z"
             },
             {
               "$type": "Document",
@@ -162,8 +155,7 @@
               "RelativeToolTip": "GameServerAdmin\\Domain\\Accounts\\Account.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T07:56:41.048Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T07:56:41.048Z"
             }
           ]
         }
