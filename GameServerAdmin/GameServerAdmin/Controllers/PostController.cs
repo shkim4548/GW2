@@ -47,4 +47,18 @@ public class PostController : ControllerBase
 
         return Ok(post);
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(PostUpdateRequest request)
+    {
+        await _postService.UpdateAsync(request);
+        return Ok();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> SoftDelete(int id)
+    {
+        await _postService.SoftDeleteAsync(id);
+        return Ok();
+    }
 }

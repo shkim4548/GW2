@@ -1,9 +1,11 @@
 ﻿using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
+using GameServerAdmin.Models.Posts;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Application.Posts;
 
+// DTO의 데이터 할당은 Service의 책임범위이므로 Controller에 노출되어서는 안된다.
 public class PostService
 {
     private readonly AppDbContext _db;
@@ -54,4 +56,42 @@ public class PostService
             CreatedAt = post.CreatedAt
         };
     }
+
+    public async Task UpdateAsync(PostUpdateRequest request)
+    {
+        var post = await _db.Posts
+            .FirstOrDefaultAsync(p =>
+            p.PostId == request.PostId && !p.IsDeleted);
+
+        if(post == null)
+        {
+            throw new InvalidOperationException("수정할 Post가 존재하지 않습니다");
+        }
+
+        // 도메인 수정
+        post.Title = request.Title;
+        post.Content = request.Content;
+        post.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task SoftDeleteAsync(int postId)
+    {
+        var post = await _db.Posts
+            .FirstOrDefaultAsync(p =>
+                p.PostId == postId &&
+                !p.IsDeleted);
+
+        if (post == null)
+        {
+            throw new InvalidOperationException("삭제할 Post가 존재하지 않습니다.");
+        }
+
+        post.IsDeleted = true;
+        post.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+    }
+
 }

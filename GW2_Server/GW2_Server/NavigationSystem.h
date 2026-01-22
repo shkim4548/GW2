@@ -65,11 +65,12 @@ namespace Navigation
 		int32 x;
 		int32 z;
 
-		float g;
-		float h;
-		float f;
+		int32 g;   // start ¡æ here
+		int32 h;   // here ¡æ goal
+		int32 f;   // g + h
 
-		AStarNode* parent = nullptr;
+		int32 parentX;
+		int32 parentZ;
 	};
 
 	struct NodeKey

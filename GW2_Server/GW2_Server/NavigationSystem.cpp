@@ -428,97 +428,7 @@ void Navigation::NavigationSystem::Init(WalkableGrid&& grid)
 
 bool Navigation::NavigationSystem::FindPath(int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
 {
-	outPath.clear();
-
-	if (!_grids.At(startX, startZ).walkable ||
-		!_grids.At(endX, endZ).walkable)
-		return false;
-
-	unordered_map<NodeKey, AStarNode*, NodeKeyHash> allNodes;
-	unordered_set<NodeKey, NodeKeyHash> closed;
-
-	auto cmp = [](AStarNode* a, AStarNode* b)
-		{
-			return a->f > b->f;
-		};
-
-	priority_queue<AStarNode*, vector<AStarNode*>, decltype(cmp)> open(cmp);
-
-	AStarNode* start = new AStarNode{ startX, startZ };
-	start->g = 0;
-	start->h = Heuristic(startX, startZ, endX, endZ);
-	start->f = start->h;
-
-	open.push(start);
-	allNodes[{startX, startZ}] = start;
-
-	while (!open.empty())
-	{
-		AStarNode* cur = open.top();
-		open.pop();
-
-		NodeKey ck{ cur->x, cur->z };
-		if (closed.count(ck))
-			continue;
-
-		closed.insert(ck);
-
-		if (cur->x == endX && cur->z == endZ)
-		{
-			// 경로 복원
-			while (cur)
-			{
-				outPath.push_back(&_grids.At(cur->x, cur->z));
-				cur = cur->parent;
-			}
-			reverse(outPath.begin(), outPath.end());
-			return true;
-		}
-
-		GridCell& cell = _grids.At(cur->x, cur->z);
-
-		static const int dx[4] = { 0, 1, 0, -1 };
-		static const int dz[4] = { -1, 0, 1, 0 };
-
-		for (int dir = 0; dir < 4; dir++)
-		{
-			if (!cell.neighbors[dir])
-				continue;
-
-			int nx = cur->x + dx[dir];
-			int nz = cur->z + dz[dir];
-
-			NodeKey nk{ nx, nz };
-			if (closed.count(nk))
-				continue;
-
-			GridCell& nextCell = _grids.At(nx, nz);
-
-			float cost = cur->g + 1.0f;
-			// 선택: 높이 비용
-			cost += fabs(nextCell.height - cell.height) * 0.2f;
-
-			AStarNode*& node = allNodes[nk];
-			if (!node)
-			{
-				node = new AStarNode{ nx, nz };
-				node->g = cost;
-				node->h = Heuristic(nx, nz, endX, endZ);
-				node->f = node->g + node->h;
-				node->parent = cur;
-				open.push(node);
-			}
-			else if (cost < node->g)
-			{
-				node->g = cost;
-				node->f = cost + node->h;
-				node->parent = cur;
-				open.push(node);
-			}
-		}
-	}
-
-	return false;
+	
 }
 
 Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(const WalkableGrid& grid, const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget)
@@ -552,8 +462,6 @@ Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(cons
 	}
 
 	return { true, clientTarget };
-	
-	
 }
 
 void Navigation::NavigationSystem::PrintGrid(WalkableGrid& grids) const
