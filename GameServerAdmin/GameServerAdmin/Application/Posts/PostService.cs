@@ -1,6 +1,6 @@
 ﻿using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
-using GameServerAdmin.Models.Posts;
+using GameServerAdmin.Models.Posts.AdminApi;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Application.Posts;

@@ -1,4 +1,4 @@
-﻿namespace GameServerAdmin.Models.Admins
+﻿namespace GameServerAdmin.Models.Backoffice.AdminApi
 {
     public class AdminResponse
     {

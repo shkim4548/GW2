@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GameServerAdmin.Models.Posts;
+namespace GameServerAdmin.Models.Posts.AdminApi;
 
 public class PostUpdateRequest
 {

@@ -1,10 +1,9 @@
 ﻿using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Infrastructure.Persistence;
-using GameServerAdmin.Models.Admin;
-using GameServerAdmin.Models.Admins;
+using GameServerAdmin.Models.Backoffice.AdminApi;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GameServerAdmin.Controllers
+namespace GameServerAdmin.Controllers.Backoffice
 {
     [ApiController]
     [Route("api/admins")]

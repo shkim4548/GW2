@@ -1,9 +1,9 @@
 ﻿using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Domain.Posts;
-using GameServerAdmin.Models.Posts;
+using GameServerAdmin.Models.Posts.AdminApi;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GameServerAdmin.Controllers;
+namespace GameServerAdmin.Controllers.Public;
 
 [ApiController]
 [Route("api/posts")]
