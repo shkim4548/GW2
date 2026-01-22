@@ -110,8 +110,8 @@ namespace Navigation
 		void BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin);
 		void BuildCells(WalkableGrid& grid);
 		void BuildConnections(WalkableGrid& grid);
-		GameMath::Vector3 GridToWorld(WalkableGrid& grid, int32 x, int32 z);
-		bool WorldToGrid(GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z);
+		bool GridToWorld(WalkableGrid& grid, int32 x, int32 z, GameMath::Vector3& OUT worldPos);
+		bool WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z);
 		void BuildGrid(float cellSize);
 
 		vector<Triangle>& GetAllTriangles() { return _allTriangles; }
@@ -128,16 +128,18 @@ namespace Navigation
 		inline float Heuristic(int32 x1, int32 z1, int32 x2, int32 z2) { return abs(x1 - x2) + abs(z1 - z2); }
 
 		// 위치 보정
-		MoveValidationResult ValidateMove(const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget);
+		MoveValidationResult ValidateMove(const WalkableGrid& grid, const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget);
 
 		// DEBUG
 		void PrintGrid(WalkableGrid& grids) const;
 		void PrintPath();
 		void PrintGridSummary(const Navigation::WalkableGrid& grid);
 		void PrintSampleCells(const Navigation::WalkableGrid& grid);
+		void VerifyWorldGridInvariant(Navigation::WalkableGrid& grid);
+		void DebugTestWorldPos(GameMath::Vector3& worldPos, Navigation::WalkableGrid& grid);
 
 	private:
-		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT x, int32 OUT z);
+		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT X, int32& OUT Z);
 
 	private:
 		vector<Triangle> _allTriangles;

@@ -61,6 +61,7 @@ void Lobby::LobbyInit()
 	cout << "cellCount : " << _walkableGrid->cells.size() << endl;
 			navSystem.PrintGridSummary(*_walkableGrid);
 	//navSystem.PrintGrid(*_walkableGrid);
+		navSystem.VerifyWorldGridInvariant(*_walkableGrid);
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

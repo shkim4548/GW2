@@ -246,70 +246,105 @@ void Navigation::NavigationSystem::BuildCells(WalkableGrid& grid)
 
 void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 {
-	// obj 파일 기반의 Grid의 핵심부
 	for (int32 z = 0; z < grid.height; ++z)
 	{
 		for (int32 x = 0; x < grid.width; ++x)
 		{
 			GridCell& cell = grid.At(x, z);
-			if (!cell.walkable == false)
+
+			if (!cell.walkable)
 				continue;
 
-			GameMath::Vector3 from = GridToWorld(grid, x, z);
+			GameMath::Vector3 from;
+			if (!GridToWorld(grid, x, z, from))
+				continue;
 
-			// North
+			// North (x, z+1)
 			if (z + 1 < grid.height && grid.At(x, z + 1).walkable)
 			{
-				GameMath::Vector3 to = GridToWorld(grid, x, z + 1);
-				if (CanMoveStraight(from, to))
-					cell.neighbors[DIR_NORTH] = true;
+				GameMath::Vector3 to;
+				if (GridToWorld(grid, x, z + 1, to))
+				{
+					if (CanMoveStraight(from, to))
+						cell.neighbors[DIR_NORTH] = true;
+				}
 			}
 
-			// East
+			// East (x+1, z)
 			if (x + 1 < grid.width && grid.At(x + 1, z).walkable)
 			{
-				GameMath::Vector3 to = GridToWorld(grid, x, z + 1);
-				if (CanMoveStraight(from, to))
+				GameMath::Vector3 to;
+				if (GridToWorld(grid, x + 1, z, to))
 				{
-					cell.neighbors[DIR_EAST] = true;
+					if (CanMoveStraight(from, to))
+						cell.neighbors[DIR_EAST] = true;
 				}
 			}
 
-			// South
+			// South (x, z-1)
 			if (z > 0 && grid.At(x, z - 1).walkable)
 			{
-				GameMath::Vector3 to = GridToWorld(grid, x + 1, z);
-				if (CanMoveStraight(from, to))
+				GameMath::Vector3 to;
+				if (GridToWorld(grid, x, z - 1, to))
 				{
-					cell.neighbors[DIR_SOUTH] = true;
+					if (CanMoveStraight(from, to))
+						cell.neighbors[DIR_SOUTH] = true;
 				}
 			}
 
-			// West
+			// West (x-1, z)
 			if (x > 0 && grid.At(x - 1, z).walkable)
 			{
-				GameMath::Vector3 to = GridToWorld(grid, x - 1, z);
-				if (CanMoveStraight(from, to))
+				GameMath::Vector3 to;
+				if (GridToWorld(grid, x - 1, z, to))
 				{
-					cell.neighbors[DIR_WEST] = true;
+					if (CanMoveStraight(from, to))
+						cell.neighbors[DIR_WEST] = true;
 				}
 			}
 		}
 	}
+
 }
 
-GameMath::Vector3 Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int32 z)
+bool Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int32 z, GameMath::Vector3& OUT worldPos)
 {
+	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
+		return false;
+
+	const GridCell& cell = grid.At(x, z);
+
+	if (!cell.walkable)
+		return false;
+
 	float worldX = grid.origin._x + (x + 0.5f) * grid.cellSize;
 	float worldZ = grid.origin._z + (z + 0.5f) * grid.cellSize;
-	float y = grid.At(x, z).height;
 
-	return GameMath::Vector3(worldX, y, worldZ);
+	worldPos = GameMath::Vector3(worldX, cell.height, worldZ);
+	return true;
 }
 
-bool Navigation::NavigationSystem::WorldToGrid(GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
+bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
 {
-	return WorldToGridImpl(_grids, worldPos._x, worldPos._z, x, z);
+	bool ok = WorldToGridImpl(grid, worldPos._x, worldPos._z, x, z);
+
+	if (!ok)
+	{
+		x = -1;
+		z = -1;
+		return false;
+	}
+
+	// 방어적 범위 체크 (Impl 신뢰하지 않음)
+	if (x < 0 || z < 0 ||
+		x >= grid.width || z >= grid.height)
+	{
+		x = -1;
+		z = -1;
+		return false;
+	}
+
+	return true;
 }
 
 void Navigation::NavigationSystem::BuildGrid(float cellSize)
@@ -486,7 +521,7 @@ bool Navigation::NavigationSystem::FindPath(int32 startX, int32 startZ, int32 en
 	return false;
 }
 
-Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget)
+Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(const WalkableGrid& grid, const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget)
 {
 	if (unit.GetPosVector().GetDistance(clientStart) > 0.5f)
 	{
@@ -494,7 +529,7 @@ Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(cons
 	}
 
 	int32 gx, gz;
-	if (!WorldToGrid(clientTarget, gx, gz))
+	if (!WorldToGrid(grid, clientTarget, gx, gz))
 	{
 		return { false, unit.GetPosVector() };
 	}
@@ -595,22 +630,65 @@ void Navigation::NavigationSystem::PrintSampleCells(const Navigation::WalkableGr
 	}
 }
 
-bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& x, int32 z)
+void Navigation::NavigationSystem::VerifyWorldGridInvariant(Navigation::WalkableGrid& grid)
 {
-	float localX = worldX - grid.origin._x;
-	float localZ = worldZ - grid.origin._z;
+	for (int32 z = 0; z < grid.height; ++z)
+	{
+		for (int32 x = 0; x < grid.width; ++x)
+		{
+			// 갈 수 없는 곳이라면 굳이 교차검증을 할 필요가 없다.
+			if (grid.At(x, z).walkable == 0)
+				continue;
+			
+			// 갈 수 있는 곳이니까 Grid에서 World 좌표로 변환
+			GameMath::Vector3 w1;
+			if (!GridToWorld(grid, x, z, w1))
+			{
+				return;
+			}
+			
+			int32 gx, gz;
+			bool ok = WorldToGrid(grid, w1, gx, gz);
+			if (ok == false || gx != x || gz != z)
+			{
+				GConsoleLogger->WriteStdErr(Color::RED, L"[NavGrid ERROR] RoundTrip failed (%d,%d)->(%d,%d)\n", x, z, gx, gz);
+				ASSERT_CRASH(ok);
+				return;
+			}
+		}
+	}
+	GConsoleLogger->WriteStdOut(Color::GREEN,	L"[NavGrid] World/Grid round-trip OK\n");
+}
 
-	if (localX < 0.0f || localZ < 0.0f)
+void Navigation::NavigationSystem::DebugTestWorldPos(GameMath::Vector3& worldPos, Navigation::WalkableGrid& grid)
+{
+	int32 x, z;
+	if (!WorldToGrid(grid, worldPos, x, z))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[DebugTestWroldToPos] WorldTo Grid Fail");
+		return;
+	}
+
+	const GridCell& cell = grid.At(x, z);
+	//GameMath::Vector3 center = GridToWorld();
+
+	//GConsoleLogger->WriteStdOut()
+}
+
+bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& X, int32& Z)
+{
+	float localX = (worldX - grid.origin._x) / grid.cellSize;
+	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
+
+	// 핵심: floor 사용
+	int32 x = static_cast<int32>(std::floor(localX));
+	int32 z = static_cast<int32>(std::floor(localZ));
+
+	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
 		return false;
 
-	int32 gx = static_cast<int32>(localX / grid.cellSize);
-	int32 gz = static_cast<int32>(localZ / grid.cellSize);
-
-	if (gx < 0 || gz < 0 || gx >= grid.width || gz >= grid.height)
-		return false;
-
-	x = gx;
-	z = gz;
+	X = x;
+	Z = z;
 	return true;
 }
 

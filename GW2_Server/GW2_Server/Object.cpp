@@ -27,34 +27,5 @@ void Object::SetPath(const NavPath& path)
 
 void Object::UpdateMovement(float deltaTime)
 {
-if (!_isMoving || _pathIndex >= _path.size())
-		return;
 
-	const float speed = GetStatInfo().speed();
-	const float maxMove = speed * deltaTime;
-
-	Navigation::GridCell* cell = _path[_pathIndex];
-
-	GameMath::Vector3 targetPos =
-		_navigationSystem.lock()->GridToWorld(
-			_navigationSystem.lock()->GetGridCells(),
-			cell->x,
-			cell->z
-		);
-
-	float dist = _posVector.GetDistance(targetPos);
-
-	if (dist <= maxMove)
-	{
-		_posVector = targetPos;
-		_pathIndex++;
-
-		if (_pathIndex >= _path.size())
-			_isMoving = false;
-	}
-	else
-	{
-		GameMath::Vector3 dir = GameMath::Vector3::GetNormalVector((targetPos - _posVector));
-		_posVector = _posVector + (dir * maxMove);
-	}
 }

@@ -111,7 +111,7 @@ bool Room::HandleMovePlayer(PlayerRef player, Protocol::C_MOVE movePkt)
 
 	// 이제 Navigation System을 사용해보자
 	int32 sx, sz, tx, tz;
-	if (!_navigationSystem.lock()->WorldToGrid(startPosVector, sx, sz) || !_navigationSystem.lock()->WorldToGrid(endPosVector, tx, tz))
+	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), startPosVector, sx, sz) || !_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), endPosVector, tx, tz))
 	{
 		player->SetPosInfo(player->GetPosInfo());
 		return false;
