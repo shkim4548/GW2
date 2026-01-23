@@ -60,17 +60,14 @@ namespace Navigation
 	/*----------------
 		A Star Node
 	------------------*/
-	struct AStarNode
+	struct NodeRecord
 	{
-		int32 x;
-		int32 z;
-
-		int32 g;   // start → here
-		int32 h;   // here → goal
-		int32 f;   // g + h
-
-		int32 parentX;
+		int32 g;          // 시작점 → 여기까지의 실제 비용
+		int32 f;          // g + h
+		int32 parentX;    // 경로 복원용
 		int32 parentZ;
+		bool opened;
+		bool closed;
 	};
 
 	struct NodeKey
@@ -83,6 +80,18 @@ namespace Navigation
 	struct NodeKeyHash
 	{
 		size_t operator()(const NodeKey& k) const { return (k.x << 16) ^ k.z; }
+	};
+
+	struct OpenNode
+	{
+		int32 x;
+		int32 z;
+		int32 f;
+
+		bool operator<(const OpenNode& other) const
+		{
+			return f > other.f;
+		}
 	};
 
 	/*------------------
@@ -124,9 +133,10 @@ namespace Navigation
 		void InitNavmesh(vector<Triangle>&& triangles, WalkableGrid&& grid);
 
 		// A Star
-		void Init(WalkableGrid&& grid);
-		bool FindPath(int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath);
+		void Init(WalkableGrid& grid);
+		bool FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath);
 		inline float Heuristic(int32 x1, int32 z1, int32 x2, int32 z2) { return abs(x1 - x2) + abs(z1 - z2); }
+		inline int32 Index(const WalkableGrid& grid, int32 x, int32 z) { return z * grid.width + x; }
 
 		// 위치 보정
 		MoveValidationResult ValidateMove(const WalkableGrid& grid, const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget);

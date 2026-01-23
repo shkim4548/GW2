@@ -3,7 +3,7 @@
 #include "JobQueue.h"
 #include "Protocol.pb.h"
 
-namespace Navigation { class NavigationSystem; }
+namespace Navigation { class NavigationSystem; struct GridCell; }
 
 class Room : public JobQueue
 {
@@ -14,8 +14,6 @@ public:
 	bool Enter(PlayerRef player);
 	void Leave(int32 playerId);
 	void Broadcast(SendBufferRef sendBuffer, int32 exceptId = -1);
-
-	void InitNavigation();
 
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
 	int32 GetRoomId() { return _roomId; }
@@ -28,9 +26,11 @@ public:
 	// Handlers
 	bool HandleEnterPlayer(PlayerRef player);
 	void HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
-	bool HandleMovePlayer(PlayerRef player, Protocol::C_MOVE movePkt);
+	void HandleMovePlayer(Protocol::C_MOVE movePkt);
 
 private:
+	// internal
+	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
 
 private:
 	unordered_map<int32, PlayerRef> _players;

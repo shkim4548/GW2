@@ -421,14 +421,116 @@ void Navigation::NavigationSystem::InitNavmesh(vector<Triangle>&& triangles, Wal
 		static_cast<size_t>(_grids.width * _grids.height));
 }
 
-void Navigation::NavigationSystem::Init(WalkableGrid&& grid)
+void Navigation::NavigationSystem::Init(WalkableGrid& grid)
 {
 	_grids = move(grid);
 }
 
-bool Navigation::NavigationSystem::FindPath(int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
+bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
 {
-	
+	outPath.clear();
+
+	const int32 W = grid.width;
+	const int32 H = grid.height;
+
+	vector<NodeRecord> records(W * H);
+
+	// ÃÊ±âÈ­
+	for (auto& r : records)
+	{
+		r.g = INT32_MAX;
+		r.f = INT32_MAX;
+		r.parentX = -1;
+		r.parentZ = -1;
+		r.opened = false;
+		r.closed = false;
+	}
+
+	auto startIdx = Index(grid, startX, startZ);
+	auto& startRec = records[startIdx];
+
+	startRec.g = 0;
+	startRec.f = Heuristic(startX, startZ, endX, endZ);
+	startRec.opened = true;
+
+	priority_queue<OpenNode> open;
+	open.push({ startX, startZ, startRec.f });
+
+	while (!open.empty())
+	{
+		OpenNode cur = open.top();
+		open.pop();
+
+		int32 cx = cur.x;
+		int32 cz = cur.z;
+		int32 cidx = Index(grid, cx, cz);
+		NodeRecord& current = records[cidx];
+
+		if (current.closed)
+			continue;
+
+		current.closed = true;
+
+		// µµÂø
+		if (cx == endX && cz == endZ)
+		{
+			// Path reconstruction
+			int32 x = cx;
+			int32 z = cz;
+
+			while (!(x == startX && z == startZ))
+			{
+				outPath.push_back(const_cast<GridCell*>(& grid.At(x, z)));
+				NodeRecord& r = records[Index(grid, x, z)];
+				int32 px = r.parentX;
+				int32 pz = r.parentZ;
+				x = px;
+				z = pz;
+			}
+
+			outPath.push_back(const_cast<GridCell*>(&grid.At(startX, startZ)));
+			std::reverse(outPath.begin(), outPath.end());
+			return true;
+		}
+
+		const GridCell& cell = grid.At(cx, cz);
+
+		static const int dx[4] = { 0, 1, 0, -1 };
+		static const int dz[4] = { 1, 0, -1, 0 };
+
+		for (int dir = 0; dir < 4; ++dir)
+		{
+			if (!cell.neighbors[dir])
+				continue;
+
+			int32 nx = cx + dx[dir];
+			int32 nz = cz + dz[dir];
+
+			if (nx < 0 || nz < 0 || nx >= W || nz >= H)
+				continue;
+
+			int32 nidx = Index(grid, nx, nz);
+			NodeRecord& nr = records[nidx];
+
+			if (nr.closed)
+				continue;
+
+			int32 newG = current.g + 1;
+
+			if (!nr.opened || newG < nr.g)
+			{
+				nr.g = newG;
+				nr.f = newG + Heuristic(nx, nz, endX, endZ);
+				nr.parentX = cx;
+				nr.parentZ = cz;
+				nr.opened = true;
+
+				open.push({ nx, nz, nr.f });
+			}
+		}
+	}
+
+	return false;
 }
 
 Navigation::MoveValidationResult Navigation::NavigationSystem::ValidateMove(const WalkableGrid& grid, const Object& unit, GameMath::Vector3& clientStart, GameMath::Vector3& clientTarget)

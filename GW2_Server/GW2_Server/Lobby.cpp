@@ -59,9 +59,10 @@ void Lobby::LobbyInit()
 	cout << "height    : " << _walkableGrid->height << "\n";
 	cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
 	cout << "cellCount : " << _walkableGrid->cells.size() << endl;
-			navSystem.PrintGridSummary(*_walkableGrid);
+	navSystem.PrintGridSummary(*_walkableGrid);
 	//navSystem.PrintGrid(*_walkableGrid);
-		navSystem.VerifyWorldGridInvariant(*_walkableGrid);
+	navSystem.VerifyWorldGridInvariant(*_walkableGrid);
+	navSystem.Init(*_walkableGrid);
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

@@ -14,11 +14,21 @@ public:
 	int64 GetPlayerId() { return _objectId; }
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
+	// Contents
+	
 
 private:
+	// Server System
 	string name;
 	Protocol::PlayerType type = Protocol::PLAYER_TYPE_NONE;
 	atomic<weak_ptr<GameSession>> _session;
 	int32 roomId;
+
+	// Contents
+	Protocol::PosInfo pos;
+	GameMath::Vector3 posVector;
+	vector<GameMath::Vector3> path;
+	int32 currentPathIndex;
+	float moveSpeed;
 };
 

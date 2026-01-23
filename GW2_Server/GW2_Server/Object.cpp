@@ -29,3 +29,8 @@ void Object::UpdateMovement(float deltaTime)
 {
 
 }
+
+void Object::RequestMove(const vector<GameMath::Vector3>& path)
+{
+	// TODO : 여기부터 다시보도록 하겠다에 언급된 부분부터 다시봐야함
+}

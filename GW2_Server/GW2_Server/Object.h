@@ -3,13 +3,13 @@
 
 namespace GameMath{ struct Vector3; }
 namespace Navigation {  struct GridCell;  class NavigationSystem; }
-using NavPath = std::vector<Navigation::GridCell*>;
+using NavPath = std::vector<GameMath::Vector3>;
 
-class Object
+class Object : public enable_shared_from_this<Object>
 {
 public:
 	Object();
-	virtual ~Object();
+	virtual ~Object() = default;
 
 	int32 GetObjectId() { return _objectId; }
 	Protocol::PosInfo GetPosInfo() { return _pos; }
@@ -23,9 +23,14 @@ public:
 	void SetPath(const NavPath& path);
 	bool GetIsMoving() const { return _isMoving; }
 	void UpdateMovement(float deltaTime);
+	void RequestMove(const vector<GameMath::Vector3>& path);
 	//void SetPosInfo(GameMath:Vector3 posVector) { _posVector = posVector;}
-public:
+
+	// Astar
 	
+public:
+	NavPath _path;
+	size_t  _pathIndex = 0;
 
 protected:
 	int64 _objectId = 0;
@@ -35,7 +40,14 @@ protected:
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 
 	bool _isMoving = false;
-	NavPath _path;
-	size_t  _pathIndex = 0;
+
+	enum class MoveState
+	{
+		Idle,
+		Moving
+	};
+
+	MoveState _moveState = MoveState::Idle;
+	float _moveSpeed = 5.f;
 };
 
