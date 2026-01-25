@@ -18,6 +18,15 @@ GameMath::Vector3 GameMath::Vector3::GetNormalVector(Vector3 v)
 	return Vector3();
 }
 
+GameMath::Vector3 GameMath::Vector3::Normalized()
+{
+	float len = Length();
+	if (len < 1e-6f)
+		return Vector3{ 0,0,0 };
+
+	return Vector3{ _x / len, _y / len, _z / len };
+}
+
 Protocol::PosInfo GameMath::Vector3::GetPositionFromVector(Vector3 v, float yaw)
 {
 	Protocol::PosInfo ret;

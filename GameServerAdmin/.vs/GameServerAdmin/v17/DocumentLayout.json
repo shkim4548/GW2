@@ -1,70 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\",
+  "WorkspaceRootPath": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\backofice\\postadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\controllers\\backofice\\postadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\backoffice\\postadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\controllers\\backoffice\\postadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\backofice\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\controllers\\backofice\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\infrastructure\\persistence\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\infrastructure\\persistence\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\application\\posts\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\application\\posts\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\application\\posts\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\application\\posts\\postdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\application\\posts\\postdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\deletedpostdetailresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\deletedpostdetailresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\backoffice\\adminapi\\admincreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\backoffice\\adminapi\\admincreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\adminpostlistitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\adminpostlistitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\backoffice\\adminapi\\adminresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\backoffice\\adminapi\\adminresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\deletedpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\deletedpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\postcreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\postcreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\postupdaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\postupdaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\publicapi\\publicpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\publicapi\\publicpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\public\\postcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\public\\postcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\controllers\\public\\postcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\domain\\admins\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\domain\\admins\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\controllers\\backoffice\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\controllers\\backoffice\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\domain\\posts\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\domain\\posts\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\domain\\users\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\domain\\users\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\develope\\unity\\gw2\\gameserveradmin\\gameserveradmin\\domain\\accounts\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\domain\\accounts\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|d:\\dev\\unity\\gw2\\gameserveradmin\\gameserveradmin\\models\\posts\\adminapi\\postcreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1A2BC89-3358-495F-850F-50A1B9C7B7E9}|GameServerAdmin\\GameServerAdmin.csproj|solutionrelative:gameserveradmin\\models\\posts\\adminapi\\postcreaterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -74,212 +42,128 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 6,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "PublicPostResponse.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\PublicApi\\PublicPostResponse.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\PublicApi\\PublicPostResponse.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\PublicApi\\PublicPostResponse.cs",
-              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\PublicApi\\PublicPostResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T08:09:33.028Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "PostUpdateRequest.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostUpdateRequest.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostUpdateRequest.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostUpdateRequest.cs",
-              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostUpdateRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-22T06:27:46.323Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "PostCreateRequest.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
-              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T06:29:29.009Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "PostService.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostService.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Application\\Posts\\PostService.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostService.cs",
-              "RelativeToolTip": "GameServerAdmin\\Application\\Posts\\PostService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T06:17:26.272Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AdminController.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backofice\\AdminController.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Controllers\\Backofice\\AdminController.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backofice\\AdminController.cs",
-              "RelativeToolTip": "GameServerAdmin\\Controllers\\Backofice\\AdminController.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAnwCEAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T07:19:32.231Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "AdminResponse.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminResponse.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminResponse.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminResponse.cs",
-              "RelativeToolTip": "GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAA0AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T06:51:03.359Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AdminCreateRequest.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminCreateRequest.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminCreateRequest.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminCreateRequest.cs",
-              "RelativeToolTip": "GameServerAdmin\\Models\\Backoffice\\AdminApi\\AdminCreateRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T06:50:45.924Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "PostDto.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostDto.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Application\\Posts\\PostDto.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostDto.cs",
-              "RelativeToolTip": "GameServerAdmin\\Application\\Posts\\PostDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T06:17:42.121Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Infrastructure\\Persistence\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Infrastructure\\Persistence\\AppDbContext.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Infrastructure\\Persistence\\AppDbContext.cs",
-              "RelativeToolTip": "GameServerAdmin\\Infrastructure\\Persistence\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAcAAAAAAAAAA==",
+              "Title": "DeletedPostDetailResponse.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostDetailResponse.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostDetailResponse.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostDetailResponse.cs",
+              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostDetailResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwsAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T13:16:40.137Z",
+              "WhenOpened": "2026-01-25T10:39:45.238Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "PostAdminController.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backofice\\PostAdminController.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Controllers\\Backofice\\PostAdminController.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backofice\\PostAdminController.cs",
-              "RelativeToolTip": "GameServerAdmin\\Controllers\\Backofice\\PostAdminController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backoffice\\PostAdminController.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Controllers\\Backoffice\\PostAdminController.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backoffice\\PostAdminController.cs",
+              "RelativeToolTip": "GameServerAdmin\\Controllers\\Backoffice\\PostAdminController.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAuwFgAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-22T07:42:25Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 1,
+              "Title": "PostService.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostService.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Application\\Posts\\PostService.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Application\\Posts\\PostService.cs",
+              "RelativeToolTip": "GameServerAdmin\\Application\\Posts\\PostService.cs",
+              "ViewState": "AgIAAK0AAAAAAAAAAAAuwMsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T05:40:26.961Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AdminPostListItemDto.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\AdminPostListItemDto.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\AdminPostListItemDto.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\AdminPostListItemDto.cs",
+              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\AdminPostListItemDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T06:03:54.217Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DeletedPostResponse.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostResponse.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostResponse.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostResponse.cs",
+              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\DeletedPostResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:18:53.202Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "PostController.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Public\\PostController.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Public\\PostController.cs",
               "RelativeDocumentMoniker": "GameServerAdmin\\Controllers\\Public\\PostController.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Public\\PostController.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Public\\PostController.cs",
               "RelativeToolTip": "GameServerAdmin\\Controllers\\Public\\PostController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAADwvy8AAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T06:16:13.309Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-25T05:40:57.088Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Admin.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Admins\\Admin.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Domain\\Admins\\Admin.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Admins\\Admin.cs",
-              "RelativeToolTip": "GameServerAdmin\\Domain\\Admins\\Admin.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAWAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backoffice\\AdminController.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Controllers\\Backoffice\\AdminController.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Controllers\\Backoffice\\AdminController.cs",
+              "RelativeToolTip": "GameServerAdmin\\Controllers\\Backoffice\\AdminController.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAuwCoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:03:57.687Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-25T06:29:43.747Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Post.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Posts\\Post.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Domain\\Posts\\Post.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Posts\\Post.cs",
-              "RelativeToolTip": "GameServerAdmin\\Domain\\Posts\\Post.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA1AAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "PostCreateRequest.cs",
+              "DocumentMoniker": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
+              "RelativeDocumentMoniker": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
+              "ToolTip": "D:\\Dev\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
+              "RelativeToolTip": "GameServerAdmin\\Models\\Posts\\AdminApi\\PostCreateRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:04:19.176Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Program.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Program.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Program.cs",
-              "RelativeToolTip": "GameServerAdmin\\Program.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAgwDUAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-15T15:04:20.613Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "User.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Users\\User.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Domain\\Users\\User.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Users\\User.cs",
-              "RelativeToolTip": "GameServerAdmin\\Domain\\Users\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T08:03:39.019Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Account.cs",
-              "DocumentMoniker": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Accounts\\Account.cs",
-              "RelativeDocumentMoniker": "GameServerAdmin\\Domain\\Accounts\\Account.cs",
-              "ToolTip": "D:\\Develope\\unity\\GW2\\GameServerAdmin\\GameServerAdmin\\Domain\\Accounts\\Account.cs",
-              "RelativeToolTip": "GameServerAdmin\\Domain\\Accounts\\Account.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T07:56:41.048Z"
+              "WhenOpened": "2026-01-25T06:03:58.785Z"
             }
           ]
         }

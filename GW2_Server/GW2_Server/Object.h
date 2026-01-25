@@ -9,7 +9,7 @@ class Object : public enable_shared_from_this<Object>
 {
 public:
 	Object();
-	virtual ~Object() = default;
+	virtual ~Object();
 
 	int32 GetObjectId() { return _objectId; }
 	Protocol::PosInfo GetPosInfo() { return _pos; }
@@ -22,10 +22,9 @@ public:
 	// Navigation
 	void SetPath(const NavPath& path);
 	bool GetIsMoving() const { return _isMoving; }
-	void UpdateMovement(float deltaTime);
+	bool UpdateMovement(float deltaTime);
 	void RequestMove(const vector<GameMath::Vector3>& path);
-	//void SetPosInfo(GameMath:Vector3 posVector) { _posVector = posVector;}
-
+	
 	// Astar
 	
 public:

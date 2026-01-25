@@ -264,3 +264,8 @@ D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuck
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.MvcApplicationPartsAssemblyInfo.cs
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.MvcApplicationPartsAssemblyInfo.cs

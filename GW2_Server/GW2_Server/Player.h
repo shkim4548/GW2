@@ -15,7 +15,6 @@ public:
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
 	// Contents
-	
 
 private:
 	// Server System

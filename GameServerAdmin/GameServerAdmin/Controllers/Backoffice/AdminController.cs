@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Domain.Admins;
+﻿using GameServerAdmin.Application.Posts;
+using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Backoffice.AdminApi;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ namespace GameServerAdmin.Controllers.Backoffice
     public class AdminController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
+
         public AdminController(AppDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -37,6 +39,8 @@ namespace GameServerAdmin.Controllers.Backoffice
                 CreatedAt = admin.CreatedAt
             });
         }
+
+
 
         // TEMP
         private string HashPassword(string password)

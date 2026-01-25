@@ -70,6 +70,9 @@
     <ClCompile Include="Object.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Minion.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -118,6 +121,9 @@
       <Filter>GameContents</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Minion.h">
       <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>

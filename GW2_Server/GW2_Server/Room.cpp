@@ -30,6 +30,7 @@ bool Room::Enter(PlayerRef player)
 	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
 	int32 playerId = player->GetPlayerId();
 	_players.emplace(playerId, player);
+	_objects.emplace(playerId, player);
 
 	Protocol::S_ENTER_GAME enterPkt;
 	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
@@ -148,4 +149,18 @@ void Room::HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCel
 	player->_path = move(worldPath);
 	player->_pathIndex = 0;
 
+}
+
+void Room::UpdateRoom(float deltaTime)
+{
+	for (auto& [id, obj] : _objects)
+	{
+		bool moved = obj->UpdateMovement(deltaTime);
+		if (moved)
+		{
+			
+		}
+		
+
+	}
 }

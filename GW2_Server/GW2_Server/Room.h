@@ -31,8 +31,10 @@ public:
 private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
+	void UpdateRoom(float deltaTime);
 
 private:
+	unordered_map<int32, ObjectRef> _objects;
 	unordered_map<int32, PlayerRef> _players;
 	int32 _roomId;
 	string _roomName;

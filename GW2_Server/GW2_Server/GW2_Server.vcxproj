@@ -188,6 +188,7 @@
     <ClCompile Include="GameSessionManager.cpp" />
     <ClCompile Include="GW2_Server.cpp" />
     <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="Minion.cpp" />
     <ClCompile Include="NavigationSystem.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="GameSessionManager.h" />
     <ClInclude Include="GenProcedures.h" />
     <ClInclude Include="Lobby.h" />
+    <ClInclude Include="Minion.h" />
     <ClInclude Include="NavigationSystem.h" />
     <ClInclude Include="NavmeshLoader.h" />
     <ClInclude Include="Object.h" />

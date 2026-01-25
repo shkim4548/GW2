@@ -69,6 +69,7 @@ namespace GameMath
 	public:
 		static float GetMagnitude(Vector3 v);
 		static Vector3 GetNormalVector(Vector3 v);
+		Vector3 Normalized();
 		float GetDistance(const Vector3& other) const {
 			return (float)std::sqrt((_x - other._x) * (_x - other._x) + (_z - other._z) * (_z - other._z));
 		}

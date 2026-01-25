@@ -33,6 +33,14 @@ namespace GameServerAdmin.Controllers.BackOffice
             return Ok(await _postService.CreateAsync(post));
         }
 
+        // READ
+        [HttpGet("admin/posts")]
+        public async Task<IActionResult> GetPostsForAdmin()
+        {
+            var posts = await _postService.GetAllPostsForAdminAsync();
+            return Ok(posts);
+        }
+
         // UPDATE
         [HttpPut]
         public async Task<IActionResult> Update(PostUpdateRequest request)
@@ -47,6 +55,38 @@ namespace GameServerAdmin.Controllers.BackOffice
         {
             await _postService.SoftDeleteAsync(id);
             return Ok();
+        }
+
+        // Restore
+        [HttpPatch("{id:int}/restore")]
+        public async Task<IActionResult> Restore(int id)
+        {
+            await _postService.RestoreAsync(id);
+            return Ok();
+        }
+
+        // DELETED POSTS LIST GET
+        [HttpGet("deleted")]
+        public async Task<IActionResult> GetDeletedPosted()
+        {
+            var posts = await _postService.GetDeletedPostAsync();
+            return Ok(posts);
+        }
+
+        [HttpGet("deleted{id:int}")]
+        public async Task<IActionResult> GetDeletedPost(int id)
+        {
+            var post = await _postService.GetDeletedPostAsync(id);
+            return Ok(post);
+        }
+
+        // HARD RESET
+        [HttpDelete]
+        public async Task<IActionResult> HardDeleted(int id)
+        {
+            await _postService.HardDeleteAsync(id);
+            // 성공했지만 반환할 데이터가 없기 때문에 return No Content
+            return NoContent();
         }
     }
 }

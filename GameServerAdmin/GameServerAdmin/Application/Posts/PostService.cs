@@ -63,7 +63,7 @@ public class PostService
             .FirstOrDefaultAsync(p =>
             p.PostId == request.PostId && !p.IsDeleted);
 
-        if(post == null)
+        if (post == null)
         {
             throw new InvalidOperationException("수정할 Post가 존재하지 않습니다");
         }
@@ -94,4 +94,111 @@ public class PostService
         await _db.SaveChangesAsync();
     }
 
+    // 사용자용 조회 코드
+    public async Task<List<Post>> GetActivePostsAsync()
+    {
+        return await _db.Posts
+            .Where(p => !p.IsDeleted)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+    }
+
+    // Admin용 조회 코드
+    public async Task<List<AdminPostListItemDto>> GetAllPostsForAdminAsync()
+    {
+        return await _db.Posts
+         .OrderByDescending(p => p.CreatedAt)
+         .Select(p => new AdminPostListItemDto
+         {
+             PostId = p.PostId,
+             PostType = p.PostType,
+             Title = p.Title,
+             IsDeleted = p.IsDeleted,
+             CreatedAt = p.CreatedAt,
+             UpdatedAt = p.UpdatedAt
+         })
+         .ToListAsync();
+    }
+
+    // Admin용 복원
+    public async Task RestoreAsync(int postId)
+    {
+        var post = await _db.Posts
+            .FirstOrDefaultAsync(p => p.PostId == postId);
+
+        if (post == null)
+        {
+            throw new Exception("Post not found");
+        }
+
+        if (!post.IsDeleted)
+        {
+            throw new Exception("Post is not deleted");
+        }
+
+        post.IsDeleted = false;
+        post.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+    }
+
+    // Admin용 하드 삭제를 위한 목록 조회
+    public async Task<IReadOnlyList<DeletedPostResponse>> GetDeletedPostAsync()
+    {
+        return await _db.Posts
+            .Where(p => p.IsDeleted)
+            .OrderByDescending(p => p.UpdatedAt)
+            .Select(p => new DeletedPostResponse
+            {
+                PostId = p.PostId,
+                PostType = p.PostType,
+                Title = p.Title,
+                AuthorId = p.AuthorId,
+                AuthorType = p.AuthorType,
+                UpdatedAt = p.UpdatedAt ?? p.CreatedAt,
+            }).ToListAsync();
+    }
+
+    // SOFT DELETE 내용 상세 조회
+    public async Task<DeletedPostDetailResponse> GetDeletedPostAsync(int postId)
+    {
+        var post = await _db.Posts
+            .FirstOrDefaultAsync(p => p.PostId == postId && p.IsDeleted);
+
+        if (post == null)
+        {
+            throw new Exception("Deleted post not found");
+        }
+
+        return new DeletedPostDetailResponse
+        {
+            PostId = post.PostId,
+            PostType = post.PostType,
+            Title = post.Title,
+            Content = post.Content,
+            AuthorType = post.AuthorType,
+            AuthorId = post.AuthorId,
+            CreatedAt = post.CreatedAt,
+            UpdatedAt = post.UpdatedAt
+        };
+    }
+
+    public async Task HardDeleteAsync(int postId)
+    {
+        var post = await _db.Posts
+            .FirstOrDefaultAsync(p => p.PostId == postId);
+
+        if (post == null)
+        {
+            throw new Exception("Post not Found");
+        }
+
+        if (!post.IsDeleted)
+        {
+            throw new Exception("Post must be soft-deleted before hard delete");
+        }
+
+        _db.Posts.Remove(post);
+        await _db.SaveChangesAsync();
+    }
 }
