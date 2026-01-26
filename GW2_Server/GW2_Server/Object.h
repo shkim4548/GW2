@@ -25,6 +25,7 @@ public:
 	bool GetIsMoving() const { return _isMoving; }
 	bool UpdateMovement(float deltaTime);
 	void RequestMove(const vector<GameMath::Vector3>& path);
+	void PostUpdate();
 	
 	// Astar
 	
@@ -40,10 +41,7 @@ protected:
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 
 	bool _isMoving = false;
-
-	Protocol::MoveState _moveState;
-
-	Protocol::MoveState _moveState = MoveState::Idle;
+	Protocol::MoveState _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	float _moveSpeed = 5.f;
 };
 

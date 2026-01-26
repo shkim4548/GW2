@@ -99,7 +99,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 
 	// World -> Grid
 	int32 sx, sz, tx, tz;
-	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), startWorld, sx, sz));
+	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), startWorld, sx, sz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
 		return;
@@ -155,16 +155,21 @@ void Room::UpdateRoom(float deltaTime)
 {
 	for (auto& [id, obj] : _objects)
 	{
-		bool moved = obj->UpdateMovement(deltaTime);
-		if (moved)
+		bool movedThisTick = obj->UpdateMovement(deltaTime);
+
+		if (movedThisTick)
 		{
-			
+			BroadcastMoving(obj);
 		}
-		
-		if (obj->GetIsMoving())
+
+		// 이동 종료 감지
+		if (obj->GetIsMoving() &&
+			obj->GetMoveState() == Protocol::MoveState::MOVE_STATE_IDLE)
 		{
-			
+			BroadcastMovingEnd(obj);
 		}
+
+		obj->PostUpdate();
 	}
 }
 
@@ -173,9 +178,22 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	// Moving Start
 	Protocol::S_MOVE movePkt;
 	movePkt.set_object_id(obj->GetObjectId());
-	movePkt
+	// TODO : POS는 & 형태로 가져오는 것이 유리할 것이다
+	Protocol::PosInfo* pos = movePkt.mutable_server_info();
+	*pos = obj->GetPosInfo();
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(movePkt);
+	Broadcast(sendBuffer);
 }
 
 void Room::BroadcastMovingEnd(const ObjectRef& obj)
 {
+	// Moving End
+	Protocol::S_MOVE_END endMovePkt;
+	endMovePkt.set_object_id(obj->GetObjectId());
+	Protocol::PosInfo* pos = endMovePkt.mutable_final_pos();
+	*pos = obj->GetPosInfo();
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
+	Broadcast(sendBuffer);
 }

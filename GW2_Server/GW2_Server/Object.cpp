@@ -28,7 +28,7 @@ void Object::SetPath(const NavPath& path)
 bool Object::UpdateMovement(float deltaTime)
 {
 	// 상태부터 우선 체크한다.
-	if (_moveState != MoveState::Moving)
+	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
 	{
 		return false;
 	}
@@ -36,7 +36,7 @@ bool Object::UpdateMovement(float deltaTime)
 	// 경로 유효성 체크
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
-		_moveState = MoveState::Idle;
+		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 		return false;
 	}
 
@@ -75,4 +75,9 @@ void Object::RequestMove(const vector<GameMath::Vector3>& path)
 	_path = path;
 	_pathIndex = 0;
 	_isMoving = true;
+}
+
+void Object::PostUpdate()
+{
+	_isMoving = (_moveState == Protocol::MOVE_STATE_RUN);
 }

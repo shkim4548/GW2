@@ -80,7 +80,7 @@ namespace GameServerAdmin.Controllers.BackOffice
             return Ok(post);
         }
 
-        // HARD RESET
+        // HARD DELETE
         [HttpDelete]
         public async Task<IActionResult> HardDeleted(int id)
         {

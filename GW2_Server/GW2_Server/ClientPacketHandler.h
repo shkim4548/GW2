@@ -15,10 +15,11 @@ enum : uint16
 	PKT_C_SPAWN = 1006,
 	PKT_C_MOVE = 1007,
 	PKT_S_MOVE = 1008,
-	PKT_C_SKILL = 1009,
-	PKT_S_SKILL = 1010,
-	PKT_C_ENTER_LOBBY = 1011,
-	PKT_S_ENTER_LOBBY = 1012,
+	PKT_S_MOVE_END = 1009,
+	PKT_C_SKILL = 1010,
+	PKT_S_SKILL = 1011,
+	PKT_C_ENTER_LOBBY = 1012,
+	PKT_S_ENTER_LOBBY = 1013,
 };
 
 // Custom Handlers
@@ -56,6 +57,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_SPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_SPAWN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_END& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_END); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_SKILL& pkt) { return MakeSendBuffer(pkt, PKT_S_SKILL); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_LOBBY& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_LOBBY); }
 
