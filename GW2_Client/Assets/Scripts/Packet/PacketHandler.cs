@@ -39,7 +39,12 @@ public class PacketHandler
 
     public static void S_MOVEHandler(PacketSession session, IMessage message)
     {
-        
+        S_MOVE movePkt = message as S_MOVE;
+        var objectService = DI.Container.Resolve<IObjectService>();
+
+        int targetId = movePkt.ObjectId;
+
+        //objectService.FindById()
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)

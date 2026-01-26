@@ -1,12 +1,30 @@
 ﻿using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Posts.AdminApi;
+using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GameServerAdmin.Application.Posts;
 
+public interface IPostService
+{
+    Task<PostDto> CreateAsync(Post post);
+    Task<List<PostDto>> GetAllAsync();
+    Task<PostDto?> GetByIdAsync(int postId);
+    Task UpdateAsync(PostUpdateRequest request);
+    Task SoftDeleteAsync(int postId);
+    Task<List<Post>> GetActivePostsAsync();
+    Task<List<AdminPostListItemDto>> GetAllPostsForAdminAsync();
+    Task RestoreAsync(int postId);
+    Task HardDeleteAsync(int postId);
+    Task<IReadOnlyList<DeletedPostResponse>> GetDeletedPostAsync();
+    Task<DeletedPostDetailResponse> GetDeletedPostAsync(int postId);
+    Task<PagedResponse<AdminPostListItemResponse>> GetAdminPostListAsync(AdminPostListQuery query);
+}
+
 // DTO의 데이터 할당은 Service의 책임범위이므로 Controller에 노출되어서는 안된다.
-public class PostService
+public class PostService : IPostService
 {
     private readonly AppDbContext _db;
 
@@ -200,5 +218,55 @@ public class PostService
 
         _db.Posts.Remove(post);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<PagedResponse<AdminPostListItemResponse>> GetAdminPostListAsync(AdminPostListQuery query)
+    {
+        var postsQuery = _db.Posts.AsQueryable();
+
+        if (query.IsDeleted.HasValue)
+        {
+            postsQuery = postsQuery.Where(p => p.IsDeleted == query.IsDeleted.Value);
+        }
+
+        var totalCount = await postsQuery.CountAsync();
+        var items = await postsQuery
+            .OrderByDescending(p => p.PostId)
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .Select(p => new AdminPostListItemResponse
+            {
+                PostId = p.PostId,
+                PostType = p.PostType,
+                Title = p.Title,
+                IsDeleted = p.IsDeleted,
+                CreatedAt = p.CreatedAt
+            })
+            .ToListAsync();
+
+        return new PagedResponse<AdminPostListItemResponse>
+        {
+            TotalCount = totalCount,
+            Items = items
+        };
+    }
+
+    public async Task<PublicPostDetailResponse> GetPublicPostAsync(int postId)
+    {
+        var post = await _db.Posts
+            .Where(p => !p.IsDeleted && p.PostId == postId)
+            .Select(p => new PublicPostDetailResponse
+            {
+                PostId = p.PostId,
+                PostType = p.PostType,
+                Title = p.Title,
+                Content = p.Content,
+                CreatedAt = p.CreatedAt
+            }).FirstOrDefaultAsync();
+
+        if (post == null)
+            throw new Exception("Post Not Found");
+
+        return post;
     }
 }

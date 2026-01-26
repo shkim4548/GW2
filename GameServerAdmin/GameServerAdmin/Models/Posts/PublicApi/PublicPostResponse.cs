@@ -2,6 +2,7 @@
 
 namespace GameServerAdmin.Models.Posts.PublicApi;
 
+// 이건 INSERT용
 public sealed class PublicPostResponse
 {
     public long PostId { get; init; }

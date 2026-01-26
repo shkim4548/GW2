@@ -15,15 +15,13 @@ public enum PacketId : ushort
         PKT_S_ENTER_GAME = 1004,
         PKT_S_SPAWN = 1005,
         PKT_C_SPAWN = 1006,
-        PKT_C_MOVE_START = 1007,
-        PKT_C_MOVE_END = 1008,
-        PKT_S_MOVE_START = 1009,
-        PKT_S_MOVE_END = 1010,
-        PKT_S_MOVE_CORRECT = 1011,
-        PKT_C_SKILL = 1012,
-        PKT_S_SKILL = 1013,
-        PKT_C_ENTER_LOBBY = 1014,
-        PKT_S_ENTER_LOBBY = 1015,
+        PKT_C_MOVE = 1007,
+        PKT_S_MOVE = 1008,
+        PKT_S_MOVE_END = 1009,
+        PKT_C_SKILL = 1010,
+        PKT_S_SKILL = 1011,
+        PKT_C_ENTER_LOBBY = 1012,
+        PKT_S_ENTER_LOBBY = 1013,
 }
 
 public class PacketManager
@@ -53,12 +51,10 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_ENTER_GAME, PacketHandler.S_ENTER_GAMEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SPAWN, MakePacket<S_SPAWN>);
         _handler.Add((ushort)PacketId.PKT_S_SPAWN, PacketHandler.S_SPAWNHandler);
-        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_START, MakePacket<S_MOVE_START>);
-        _handler.Add((ushort)PacketId.PKT_S_MOVE_START, PacketHandler.S_MOVE_STARTHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MOVE, MakePacket<S_MOVE>);
+        _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_MOVE_END, MakePacket<S_MOVE_END>);
         _handler.Add((ushort)PacketId.PKT_S_MOVE_END, PacketHandler.S_MOVE_ENDHandler);
-        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_CORRECT, MakePacket<S_MOVE_CORRECT>);
-        _handler.Add((ushort)PacketId.PKT_S_MOVE_CORRECT, PacketHandler.S_MOVE_CORRECTHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, MakePacket<S_ENTER_LOBBY>);

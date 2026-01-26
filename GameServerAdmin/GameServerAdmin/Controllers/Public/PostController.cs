@@ -2,6 +2,7 @@
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace GameServerAdmin.Controllers.Public;
 
@@ -60,5 +61,13 @@ public class PostController : ControllerBase
     {
         await _postService.SoftDeleteAsync(id);
         return Ok();
+    }
+
+
+    [HttpGet("posts/{id:int}")]
+    public async Task<IActionResult> GetPublicPost(int id)
+    {
+        var post = await _postService.GetPublicPostAsync(id);
+        return Ok(post);
     }
 }

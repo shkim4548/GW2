@@ -10,7 +10,7 @@ namespace GameServerAdmin.Controllers.BackOffice
     [Route("api/admin/posts")]
     public class PostAdminController : ControllerBase
     {
-        private readonly PostService _postService;
+        private readonly IPostService _postService;
 
         public PostAdminController(PostService postService)
         {
@@ -87,6 +87,14 @@ namespace GameServerAdmin.Controllers.BackOffice
             await _postService.HardDeleteAsync(id);
             // 성공했지만 반환할 데이터가 없기 때문에 return No Content
             return NoContent();
+        }
+
+        // PAGED QUERY
+        [HttpGet]
+        public async Task<ActionResult<PagedResponse<AdminPostListItemResponse>>> GetList([FromQuery] AdminPostListQuery query)
+        {
+            var result = await _postService.GetAdminPostListAsync(query);
+            return Ok(result);
         }
     }
 }
