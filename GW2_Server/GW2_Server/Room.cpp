@@ -161,6 +161,21 @@ void Room::UpdateRoom(float deltaTime)
 			
 		}
 		
-
+		if (obj->GetIsMoving())
+		{
+			
+		}
 	}
+}
+
+void Room::BroadcastMoving(const ObjectRef& obj)
+{
+	// Moving Start
+	Protocol::S_MOVE movePkt;
+	movePkt.set_object_id(obj->GetObjectId());
+	movePkt
+}
+
+void Room::BroadcastMovingEnd(const ObjectRef& obj)
+{
 }

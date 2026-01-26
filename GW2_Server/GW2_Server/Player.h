@@ -16,6 +16,7 @@ public:
 
 	// Contents
 
+
 private:
 	// Server System
 	string name;

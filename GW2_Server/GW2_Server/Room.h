@@ -32,6 +32,8 @@ private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
 	void UpdateRoom(float deltaTime);
+	void BroadcastMoving(const ObjectRef& obj);
+	void BroadcastMovingEnd(const ObjectRef& obj);
 
 private:
 	unordered_map<int32, ObjectRef> _objects;

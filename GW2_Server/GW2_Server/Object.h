@@ -15,6 +15,7 @@ public:
 	Protocol::PosInfo GetPosInfo() { return _pos; }
 	GameMath::Vector3 GetPosVector() const { return _posVector; }
 	Protocol::StatInfo GetStatInfo() const { return _statInfo; }
+	Protocol::MoveState GetMoveState() const { return _moveState; }
 
 	void SetObjectId(int64 id) { _objectId = id; }
 	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }
@@ -40,13 +41,9 @@ protected:
 
 	bool _isMoving = false;
 
-	enum class MoveState
-	{
-		Idle,
-		Moving
-	};
+	Protocol::MoveState _moveState;
 
-	MoveState _moveState = MoveState::Idle;
+	Protocol::MoveState _moveState = MoveState::Idle;
 	float _moveSpeed = 5.f;
 };
 
