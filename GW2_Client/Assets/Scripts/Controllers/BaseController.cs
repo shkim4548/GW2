@@ -9,11 +9,12 @@ using UnityEngine;
 public class BaseController : MonoBehaviour
 {
     protected IInputService _inputService;
-    [Inject]
     protected INetworkService _networkService;
 
-    public ulong Id { get; set; }
+    public int Id { get; set; }
     public float _sendPacketDelay = 0.2f;
+    public float LastServerTime { get; set; }
+    public bool _isMoving = false;
 
     protected Animator _animator;
 
@@ -124,5 +125,11 @@ public class BaseController : MonoBehaviour
 
     protected virtual void MakeSendPacket(float delay)
     {
+    }
+
+    protected int GetClientTime()
+    {
+        // ms단위로 전달
+        return (int)(Time.realtimeSinceStartup * 1000);
     }
 }

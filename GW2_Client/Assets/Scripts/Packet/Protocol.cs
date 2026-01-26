@@ -38,15 +38,15 @@ namespace Google.Protobuf.Protocol {
             "UHJvdG9jb2wuUG9zSW5mbxITCgtjbGllbnRfdGltZRgFIAEoBSJ8CgZTX01P",
             "VkUSDwoHcm9vbV9pZBgBIAEoBRIRCglvYmplY3RfaWQYAiABKAUSJgoLc2Vy",
             "dmVyX2luZm8YAyABKAsyES5Qcm90b2NvbC5Qb3NJbmZvEhMKC3NlcnZlcl90",
-            "aW1lGAQgASgFEhEKCWNvcnJlY3RlZBgFIAEoCCJFCgpTX01PVkVfRU5EEhEK",
-            "CW9iamVjdF9pZBgBIAEoBRIkCglmaW5hbF9wb3MYAiABKAsyES5Qcm90b2Nv",
-            "bC5Qb3NJbmZvIkMKB0NfU0tJTEwSEAoIc2tpbGxfaWQYASABKAUSEQoJdGFy",
-            "Z2V0X2lkGAIgASgDEhMKC2F0dGFja2VyX2lkGAMgASgDIkMKB1NfU0tJTEwS",
-            "EAoIc2tpbGxfaWQYASABKAUSEQoJdGFyZ2V0X2lkGAIgASgDEhMKC2F0dGFj",
-            "a2VyX2lkGAMgASgDIg8KDUNfRU5URVJfTE9CQlkiSAoNU19FTlRFUl9MT0JC",
-            "WRIQCghwbGF5ZXJJZBgBIAEoBRIlCglyb29tSW5mb3MYAiADKAsyEi5Qcm90",
-            "b2NvbC5Sb29tSW5mb0IbqgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZw",
-            "cm90bzM="));
+            "aW1lGAQgASgFEhEKCWNvcnJlY3RlZBgFIAEoCCJWCgpTX01PVkVfRU5EEg8K",
+            "B3Jvb21faWQYASABKAUSEQoJb2JqZWN0X2lkGAIgASgFEiQKCWZpbmFsX3Bv",
+            "cxgDIAEoCzIRLlByb3RvY29sLlBvc0luZm8iQwoHQ19TS0lMTBIQCghza2ls",
+            "bF9pZBgBIAEoBRIRCgl0YXJnZXRfaWQYAiABKAMSEwoLYXR0YWNrZXJfaWQY",
+            "AyABKAMiQwoHU19TS0lMTBIQCghza2lsbF9pZBgBIAEoBRIRCgl0YXJnZXRf",
+            "aWQYAiABKAMSEwoLYXR0YWNrZXJfaWQYAyABKAMiDwoNQ19FTlRFUl9MT0JC",
+            "WSJICg1TX0VOVEVSX0xPQkJZEhAKCHBsYXllcklkGAEgASgFEiUKCXJvb21J",
+            "bmZvcxgCIAMoCzISLlByb3RvY29sLlJvb21JbmZvQhuqAhhHb29nbGUuUHJv",
+            "dG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, global::Google.Protobuf.Struct.StructReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -59,7 +59,7 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_SPAWN), global::Google.Protobuf.Protocol.C_SPAWN.Parser, new[]{ "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_MOVE), global::Google.Protobuf.Protocol.C_MOVE.Parser, new[]{ "RoomId", "ObjectId", "StartPos", "TargetPos", "ClientTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MOVE), global::Google.Protobuf.Protocol.S_MOVE.Parser, new[]{ "RoomId", "ObjectId", "ServerInfo", "ServerTime", "Corrected" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MOVE_END), global::Google.Protobuf.Protocol.S_MOVE_END.Parser, new[]{ "ObjectId", "FinalPos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MOVE_END), global::Google.Protobuf.Protocol.S_MOVE_END.Parser, new[]{ "RoomId", "ObjectId", "FinalPos" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_SKILL), global::Google.Protobuf.Protocol.C_SKILL.Parser, new[]{ "SkillId", "TargetId", "AttackerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_SKILL), global::Google.Protobuf.Protocol.S_SKILL.Parser, new[]{ "SkillId", "TargetId", "AttackerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_ENTER_LOBBY), global::Google.Protobuf.Protocol.C_ENTER_LOBBY.Parser, null, null, null, null, null),
@@ -2232,6 +2232,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public S_MOVE_END(S_MOVE_END other) : this() {
+      roomId_ = other.roomId_;
       objectId_ = other.objectId_;
       finalPos_ = other.finalPos_ != null ? other.finalPos_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -2243,8 +2244,20 @@ namespace Google.Protobuf.Protocol {
       return new S_MOVE_END(this);
     }
 
+    /// <summary>Field number for the "room_id" field.</summary>
+    public const int RoomIdFieldNumber = 1;
+    private int roomId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int RoomId {
+      get { return roomId_; }
+      set {
+        roomId_ = value;
+      }
+    }
+
     /// <summary>Field number for the "object_id" field.</summary>
-    public const int ObjectIdFieldNumber = 1;
+    public const int ObjectIdFieldNumber = 2;
     private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2256,8 +2269,11 @@ namespace Google.Protobuf.Protocol {
     }
 
     /// <summary>Field number for the "final_pos" field.</summary>
-    public const int FinalPosFieldNumber = 2;
+    public const int FinalPosFieldNumber = 3;
     private global::Google.Protobuf.Struct.PosInfo finalPos_;
+    /// <summary>
+    /// 서버가 확정한 최종 위치
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Google.Protobuf.Struct.PosInfo FinalPos {
@@ -2282,6 +2298,7 @@ namespace Google.Protobuf.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (RoomId != other.RoomId) return false;
       if (ObjectId != other.ObjectId) return false;
       if (!object.Equals(FinalPos, other.FinalPos)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2291,6 +2308,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (RoomId != 0) hash ^= RoomId.GetHashCode();
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (finalPos_ != null) hash ^= FinalPos.GetHashCode();
       if (_unknownFields != null) {
@@ -2311,12 +2329,16 @@ namespace Google.Protobuf.Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (ObjectId != 0) {
+      if (RoomId != 0) {
         output.WriteRawTag(8);
+        output.WriteInt32(RoomId);
+      }
+      if (ObjectId != 0) {
+        output.WriteRawTag(16);
         output.WriteInt32(ObjectId);
       }
       if (finalPos_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(FinalPos);
       }
       if (_unknownFields != null) {
@@ -2329,12 +2351,16 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (ObjectId != 0) {
+      if (RoomId != 0) {
         output.WriteRawTag(8);
+        output.WriteInt32(RoomId);
+      }
+      if (ObjectId != 0) {
+        output.WriteRawTag(16);
         output.WriteInt32(ObjectId);
       }
       if (finalPos_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(FinalPos);
       }
       if (_unknownFields != null) {
@@ -2347,6 +2373,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (RoomId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
+      }
       if (ObjectId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
@@ -2364,6 +2393,9 @@ namespace Google.Protobuf.Protocol {
     public void MergeFrom(S_MOVE_END other) {
       if (other == null) {
         return;
+      }
+      if (other.RoomId != 0) {
+        RoomId = other.RoomId;
       }
       if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
@@ -2390,10 +2422,14 @@ namespace Google.Protobuf.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
+            RoomId = input.ReadInt32();
+            break;
+          }
+          case 16: {
             ObjectId = input.ReadInt32();
             break;
           }
-          case 18: {
+          case 26: {
             if (finalPos_ == null) {
               FinalPos = new global::Google.Protobuf.Struct.PosInfo();
             }
@@ -2416,10 +2452,14 @@ namespace Google.Protobuf.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
+            RoomId = input.ReadInt32();
+            break;
+          }
+          case 16: {
             ObjectId = input.ReadInt32();
             break;
           }
-          case 18: {
+          case 26: {
             if (finalPos_ == null) {
               FinalPos = new global::Google.Protobuf.Struct.PosInfo();
             }

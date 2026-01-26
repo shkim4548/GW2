@@ -1736,10 +1736,11 @@ class S_MOVE_END final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFinalPosFieldNumber = 2,
-    kObjectIdFieldNumber = 1,
+    kFinalPosFieldNumber = 3,
+    kRoomIdFieldNumber = 1,
+    kObjectIdFieldNumber = 2,
   };
-  // .Protocol.PosInfo final_pos = 2;
+  // .Protocol.PosInfo final_pos = 3;
   bool has_final_pos() const;
   private:
   bool _internal_has_final_pos() const;
@@ -1757,7 +1758,16 @@ class S_MOVE_END final :
       ::Protocol::PosInfo* final_pos);
   ::Protocol::PosInfo* unsafe_arena_release_final_pos();
 
-  // int32 object_id = 1;
+  // int32 room_id = 1;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
+  private:
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
+  public:
+
+  // int32 object_id = 2;
   void clear_object_id();
   int32_t object_id() const;
   void set_object_id(int32_t value);
@@ -1774,6 +1784,7 @@ class S_MOVE_END final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::Protocol::PosInfo* final_pos_;
+  int32_t room_id_;
   int32_t object_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -3174,7 +3185,27 @@ inline void S_MOVE::set_corrected(bool value) {
 
 // S_MOVE_END
 
-// int32 object_id = 1;
+// int32 room_id = 1;
+inline void S_MOVE_END::clear_room_id() {
+  room_id_ = 0;
+}
+inline int32_t S_MOVE_END::_internal_room_id() const {
+  return room_id_;
+}
+inline int32_t S_MOVE_END::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE_END.room_id)
+  return _internal_room_id();
+}
+inline void S_MOVE_END::_internal_set_room_id(int32_t value) {
+  
+  room_id_ = value;
+}
+inline void S_MOVE_END::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MOVE_END.room_id)
+}
+
+// int32 object_id = 2;
 inline void S_MOVE_END::clear_object_id() {
   object_id_ = 0;
 }
@@ -3194,7 +3225,7 @@ inline void S_MOVE_END::set_object_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_MOVE_END.object_id)
 }
 
-// .Protocol.PosInfo final_pos = 2;
+// .Protocol.PosInfo final_pos = 3;
 inline bool S_MOVE_END::_internal_has_final_pos() const {
   return this != internal_default_instance() && final_pos_ != nullptr;
 }

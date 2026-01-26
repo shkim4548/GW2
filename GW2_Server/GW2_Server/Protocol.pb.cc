@@ -139,6 +139,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT S_MOVEDefaultTypeInternal _S_MO
 constexpr S_MOVE_END::S_MOVE_END(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : final_pos_(nullptr)
+  , room_id_(0)
   , object_id_(0){}
 struct S_MOVE_ENDDefaultTypeInternal {
   constexpr S_MOVE_ENDDefaultTypeInternal()
@@ -287,6 +288,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE_END, room_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE_END, object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE_END, final_pos_),
   ~0u,  // no _has_bits_
@@ -333,10 +335,10 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 52, -1, -1, sizeof(::Protocol::C_MOVE)},
   { 63, -1, -1, sizeof(::Protocol::S_MOVE)},
   { 74, -1, -1, sizeof(::Protocol::S_MOVE_END)},
-  { 82, -1, -1, sizeof(::Protocol::C_SKILL)},
-  { 91, -1, -1, sizeof(::Protocol::S_SKILL)},
-  { 100, -1, -1, sizeof(::Protocol::C_ENTER_LOBBY)},
-  { 106, -1, -1, sizeof(::Protocol::S_ENTER_LOBBY)},
+  { 83, -1, -1, sizeof(::Protocol::C_SKILL)},
+  { 92, -1, -1, sizeof(::Protocol::S_SKILL)},
+  { 101, -1, -1, sizeof(::Protocol::C_ENTER_LOBBY)},
+  { 107, -1, -1, sizeof(::Protocol::S_ENTER_LOBBY)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -373,15 +375,16 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "t_time\030\005 \001(\005\"|\n\006S_MOVE\022\017\n\007room_id\030\001 \001(\005\022"
   "\021\n\tobject_id\030\002 \001(\005\022&\n\013server_info\030\003 \001(\0132"
   "\021.Protocol.PosInfo\022\023\n\013server_time\030\004 \001(\005\022"
-  "\021\n\tcorrected\030\005 \001(\010\"E\n\nS_MOVE_END\022\021\n\tobje"
-  "ct_id\030\001 \001(\005\022$\n\tfinal_pos\030\002 \001(\0132\021.Protoco"
-  "l.PosInfo\"C\n\007C_SKILL\022\020\n\010skill_id\030\001 \001(\005\022\021"
-  "\n\ttarget_id\030\002 \001(\003\022\023\n\013attacker_id\030\003 \001(\003\"C"
-  "\n\007S_SKILL\022\020\n\010skill_id\030\001 \001(\005\022\021\n\ttarget_id"
-  "\030\002 \001(\003\022\023\n\013attacker_id\030\003 \001(\003\"\017\n\rC_ENTER_L"
-  "OBBY\"H\n\rS_ENTER_LOBBY\022\020\n\010playerId\030\001 \001(\005\022"
-  "%\n\troomInfos\030\002 \003(\0132\022.Protocol.RoomInfoB\033"
-  "\252\002\030Google.Protobuf.Protocolb\006proto3"
+  "\021\n\tcorrected\030\005 \001(\010\"V\n\nS_MOVE_END\022\017\n\007room"
+  "_id\030\001 \001(\005\022\021\n\tobject_id\030\002 \001(\005\022$\n\tfinal_po"
+  "s\030\003 \001(\0132\021.Protocol.PosInfo\"C\n\007C_SKILL\022\020\n"
+  "\010skill_id\030\001 \001(\005\022\021\n\ttarget_id\030\002 \001(\003\022\023\n\013at"
+  "tacker_id\030\003 \001(\003\"C\n\007S_SKILL\022\020\n\010skill_id\030\001"
+  " \001(\005\022\021\n\ttarget_id\030\002 \001(\003\022\023\n\013attacker_id\030\003"
+  " \001(\003\"\017\n\rC_ENTER_LOBBY\"H\n\rS_ENTER_LOBBY\022\020"
+  "\n\010playerId\030\001 \001(\005\022%\n\troomInfos\030\002 \003(\0132\022.Pr"
+  "otocol.RoomInfoB\033\252\002\030Google.Protobuf.Prot"
+  "ocolb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -389,7 +392,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 995, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  false, false, 1012, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
   &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 14,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
@@ -2481,7 +2484,9 @@ S_MOVE_END::S_MOVE_END(const S_MOVE_END& from)
   } else {
     final_pos_ = nullptr;
   }
-  object_id_ = from.object_id_;
+  ::memcpy(&room_id_, &from.room_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&object_id_) -
+    reinterpret_cast<char*>(&room_id_)) + sizeof(object_id_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_MOVE_END)
 }
 
@@ -2524,7 +2529,9 @@ void S_MOVE_END::Clear() {
     delete final_pos_;
   }
   final_pos_ = nullptr;
-  object_id_ = 0;
+  ::memset(&room_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&object_id_) -
+      reinterpret_cast<char*>(&room_id_)) + sizeof(object_id_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2534,17 +2541,25 @@ const char* S_MOVE_END::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 object_id = 1;
+      // int32 room_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 object_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.PosInfo final_pos = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+      // .Protocol.PosInfo final_pos = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_final_pos(), ptr);
           CHK_(ptr);
         } else
@@ -2579,18 +2594,24 @@ uint8_t* S_MOVE_END::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 object_id = 1;
-  if (this->_internal_object_id() != 0) {
+  // int32 room_id = 1;
+  if (this->_internal_room_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_object_id(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_room_id(), target);
   }
 
-  // .Protocol.PosInfo final_pos = 2;
+  // int32 object_id = 2;
+  if (this->_internal_object_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_object_id(), target);
+  }
+
+  // .Protocol.PosInfo final_pos = 3;
   if (this->_internal_has_final_pos()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::final_pos(this), target, stream);
+        3, _Internal::final_pos(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2609,14 +2630,19 @@ size_t S_MOVE_END::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .Protocol.PosInfo final_pos = 2;
+  // .Protocol.PosInfo final_pos = 3;
   if (this->_internal_has_final_pos()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *final_pos_);
   }
 
-  // int32 object_id = 1;
+  // int32 room_id = 1;
+  if (this->_internal_room_id() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_room_id());
+  }
+
+  // int32 object_id = 2;
   if (this->_internal_object_id() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_object_id());
   }
@@ -2645,6 +2671,9 @@ void S_MOVE_END::MergeFrom(const S_MOVE_END& from) {
 
   if (from._internal_has_final_pos()) {
     _internal_mutable_final_pos()->::Protocol::PosInfo::MergeFrom(from._internal_final_pos());
+  }
+  if (from._internal_room_id() != 0) {
+    _internal_set_room_id(from._internal_room_id());
   }
   if (from._internal_object_id() != 0) {
     _internal_set_object_id(from._internal_object_id());

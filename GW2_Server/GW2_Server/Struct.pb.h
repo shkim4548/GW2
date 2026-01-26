@@ -211,13 +211,13 @@ class PosInfo final :
     kYawFieldNumber = 5,
     kStateFieldNumber = 6,
   };
-  // uint64 object_id = 1;
+  // int32 object_id = 1;
   void clear_object_id();
-  uint64_t object_id() const;
-  void set_object_id(uint64_t value);
+  int32_t object_id() const;
+  void set_object_id(int32_t value);
   private:
-  uint64_t _internal_object_id() const;
-  void _internal_set_object_id(uint64_t value);
+  int32_t _internal_object_id() const;
+  void _internal_set_object_id(int32_t value);
   public:
 
   // float x = 2;
@@ -272,7 +272,7 @@ class PosInfo final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  uint64_t object_id_;
+  int32_t object_id_;
   float x_;
   float y_;
   float z_;
@@ -408,8 +408,8 @@ class ObjectInfo final :
     kNameFieldNumber = 4,
     kPosInfoFieldNumber = 5,
     kStatInfoFieldNumber = 6,
-    kRoomIdFieldNumber = 1,
-    kObjectIdFieldNumber = 2,
+    kObjectIdFieldNumber = 1,
+    kRoomIdFieldNumber = 2,
     kObjectTypeFieldNumber = 3,
   };
   // string name = 4;
@@ -462,22 +462,22 @@ class ObjectInfo final :
       ::Protocol::StatInfo* stat_info);
   ::Protocol::StatInfo* unsafe_arena_release_stat_info();
 
-  // uint64 room_id = 1;
-  void clear_room_id();
-  uint64_t room_id() const;
-  void set_room_id(uint64_t value);
+  // int32 object_id = 1;
+  void clear_object_id();
+  int32_t object_id() const;
+  void set_object_id(int32_t value);
   private:
-  uint64_t _internal_room_id() const;
-  void _internal_set_room_id(uint64_t value);
+  int32_t _internal_object_id() const;
+  void _internal_set_object_id(int32_t value);
   public:
 
-  // uint64 object_id = 2;
-  void clear_object_id();
-  uint64_t object_id() const;
-  void set_object_id(uint64_t value);
+  // int32 room_id = 2;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
   private:
-  uint64_t _internal_object_id() const;
-  void _internal_set_object_id(uint64_t value);
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
   public:
 
   // .Protocol.ObjectType object_type = 3;
@@ -499,8 +499,8 @@ class ObjectInfo final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   ::Protocol::PosInfo* pos_info_;
   ::Protocol::StatInfo* stat_info_;
-  uint64_t room_id_;
-  uint64_t object_id_;
+  int32_t object_id_;
+  int32_t room_id_;
   int object_type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Struct_2eproto;
@@ -1025,22 +1025,22 @@ class RoomInfo final :
 #endif  // __GNUC__
 // PosInfo
 
-// uint64 object_id = 1;
+// int32 object_id = 1;
 inline void PosInfo::clear_object_id() {
-  object_id_ = uint64_t{0u};
+  object_id_ = 0;
 }
-inline uint64_t PosInfo::_internal_object_id() const {
+inline int32_t PosInfo::_internal_object_id() const {
   return object_id_;
 }
-inline uint64_t PosInfo::object_id() const {
+inline int32_t PosInfo::object_id() const {
   // @@protoc_insertion_point(field_get:Protocol.PosInfo.object_id)
   return _internal_object_id();
 }
-inline void PosInfo::_internal_set_object_id(uint64_t value) {
+inline void PosInfo::_internal_set_object_id(int32_t value) {
   
   object_id_ = value;
 }
-inline void PosInfo::set_object_id(uint64_t value) {
+inline void PosInfo::set_object_id(int32_t value) {
   _internal_set_object_id(value);
   // @@protoc_insertion_point(field_set:Protocol.PosInfo.object_id)
 }
@@ -1149,44 +1149,44 @@ inline void PosInfo::set_state(::Protocol::MoveState value) {
 
 // ObjectInfo
 
-// uint64 room_id = 1;
-inline void ObjectInfo::clear_room_id() {
-  room_id_ = uint64_t{0u};
-}
-inline uint64_t ObjectInfo::_internal_room_id() const {
-  return room_id_;
-}
-inline uint64_t ObjectInfo::room_id() const {
-  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.room_id)
-  return _internal_room_id();
-}
-inline void ObjectInfo::_internal_set_room_id(uint64_t value) {
-  
-  room_id_ = value;
-}
-inline void ObjectInfo::set_room_id(uint64_t value) {
-  _internal_set_room_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.room_id)
-}
-
-// uint64 object_id = 2;
+// int32 object_id = 1;
 inline void ObjectInfo::clear_object_id() {
-  object_id_ = uint64_t{0u};
+  object_id_ = 0;
 }
-inline uint64_t ObjectInfo::_internal_object_id() const {
+inline int32_t ObjectInfo::_internal_object_id() const {
   return object_id_;
 }
-inline uint64_t ObjectInfo::object_id() const {
+inline int32_t ObjectInfo::object_id() const {
   // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.object_id)
   return _internal_object_id();
 }
-inline void ObjectInfo::_internal_set_object_id(uint64_t value) {
+inline void ObjectInfo::_internal_set_object_id(int32_t value) {
   
   object_id_ = value;
 }
-inline void ObjectInfo::set_object_id(uint64_t value) {
+inline void ObjectInfo::set_object_id(int32_t value) {
   _internal_set_object_id(value);
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.object_id)
+}
+
+// int32 room_id = 2;
+inline void ObjectInfo::clear_room_id() {
+  room_id_ = 0;
+}
+inline int32_t ObjectInfo::_internal_room_id() const {
+  return room_id_;
+}
+inline int32_t ObjectInfo::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.room_id)
+  return _internal_room_id();
+}
+inline void ObjectInfo::_internal_set_room_id(int32_t value) {
+  
+  room_id_ = value;
+}
+inline void ObjectInfo::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.room_id)
 }
 
 // .Protocol.ObjectType object_type = 3;

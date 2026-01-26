@@ -35,7 +35,7 @@ public class MyPlayerController : PlayerController
         _inputService.KeyAction -= OnKeyEvent;
         _inputService.KeyAction += OnKeyEvent;
 
-        Id = (ulong)_networkService.GetNetworkId();
+        Id = _networkService.GetNetworkId();
     }
 
     public override void UpdateIdle()
@@ -71,10 +71,11 @@ public class MyPlayerController : PlayerController
                 targetPos.Z = _destPos.z;
 
                 C_MOVE movePkt = new C_MOVE();
-                movePkt.RoomId = (int)RoomId;
-                movePkt.ObjectId = (int)this.Id;
+                movePkt.RoomId = RoomId;
+                movePkt.ObjectId = this.Id;
                 movePkt.StartPos = nowPos;
                 movePkt.TargetPos = targetPos;
+                movePkt.ClientTime = GetClientTime();
 
                 _networkService.Send(movePkt);
                 //Debug.Log($"movePkt : {movePkt.RoomId}, {movePkt.ObjectId}");

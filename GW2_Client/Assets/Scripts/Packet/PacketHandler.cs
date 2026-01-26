@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Google.Protobuf.Struct;
 using ServerCore;
 using System;
 using System.Collections;
@@ -43,8 +44,36 @@ public class PacketHandler
         var objectService = DI.Container.Resolve<IObjectService>();
 
         int targetId = movePkt.ObjectId;
+        GameObject go = objectService.FindById(targetId);
+        if(go == null)
+        {
+            Debug.Log($"[S_MOVEHandler] : objectService findById is nullptr");
+            return;
+        }
 
-        //objectService.FindById()
+        // 내꺼는 수신하지 않는다 -> 이게 맞는가는 다시한번 체크해봐야함
+        if(objectService.MyPlayer.Id == movePkt.ObjectId)
+        {
+            return;
+        }
+
+        //
+        BaseController bc = go. GetComponent<BaseController>();
+        if(bc == null)
+        {
+            Debug.Log($"[S_MOVEHandler] : bc is nullptr, type casting faileds");
+            return;
+        }
+
+        PosInfo pos = new PosInfo();
+        pos.X = movePkt.ServerInfo.X;
+        pos.Y = movePkt.ServerInfo.Y;
+        pos.Z = movePkt.ServerInfo.Z;
+
+        // 서버의 권위있는 정보를 전달
+        bc.PosInfo = pos;
+        bc.LastServerTime = movePkt.ServerTime;
+        bc._isMoving = true;
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -82,9 +111,21 @@ public class PacketHandler
         throw new NotImplementedException();
     }
 
-    internal static void S_MOVE_ENDHandler(PacketSession session, IMessage message)
+    public static void S_MOVE_ENDHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        // EndOfMoving Recv
+        S_MOVE_END endMovePkt = message as S_MOVE_END;
+        IObjectService objectService = DI.Container.Resolve<IObjectService>();
+        
+        int targetId = endMovePkt.ObjectId;
+        GameObject go = objectService.FindById(endMovePkt.ObjectId);
+        BaseController bc = go.GetComponent<BaseController>();
+        bc.PosInfo = endMovePkt.FinalPos;
+        bc._isMoving = false;
+
+        // 여기서는 스냅이 허용된다
+        bc.transform.position.Set(bc.PosInfo.X, bc.PosInfo.Y, bc.PosInfo.Z);
+        // TODO: STATE 변경 + ROTATION 변경
     }
 
     internal static void S_MOVE_STARTHandler(PacketSession session, IMessage message)

@@ -7,10 +7,10 @@ using UnityEngine;
 public interface IObjectService
 {
     public MyPlayerController MyPlayer { get; set; }
-    public ObjectType GetObjectTypeById(ulong id);
+    public ObjectType GetObjectTypeById(int id);
     public void Add(ObjectInfo info, bool myPlayer = false);
-    public void Remove(ulong id);
-    public GameObject FindById(ulong id);
+    public void Remove(int id);
+    public GameObject FindById(int id);
     public void Clear();
 }
 
@@ -19,18 +19,18 @@ public class ObjectService : IObjectService
     protected IResourceService _resourceService;
 
     public MyPlayerController MyPlayer { get; set; }
-    Dictionary<ulong, GameObject> _objects = new Dictionary<ulong, GameObject>();
+    Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 
-    public ObjectType GetObjectTypeById(ulong id)
+    public ObjectType GetObjectTypeById(int id)
     {
-        ulong type = (id >> 24) & 0x7F;
+        int type = (id >> 24) & 0x7F;
         return (ObjectType)type;
     }
 
     public void Add(ObjectInfo info, bool myPlayer = false)
     {
-        ulong objectId = info.ObjectId;
-        ulong roomId = info.RoomId;
+        int objectId = info.ObjectId;
+        int roomId = info.RoomId;
         GameObject go;
         if (_objects.TryGetValue(objectId, out go))
             return;
@@ -76,7 +76,7 @@ public class ObjectService : IObjectService
         }
     }
 
-    public void Remove(ulong id)
+    public void Remove(int id)
     {
         if (MyPlayer != null && MyPlayer.Id == id)
             return;
@@ -91,7 +91,7 @@ public class ObjectService : IObjectService
         _resourceService.Destroy(go);
     }
 
-    public GameObject FindById(ulong id)
+    public GameObject FindById(int id)
     {
         GameObject go = null;
         _objects.TryGetValue(id, out go);

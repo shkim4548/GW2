@@ -25,10 +25,10 @@ namespace Google.Protobuf.Struct {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIm4KB1Bvc0lu",
-            "Zm8SEQoJb2JqZWN0X2lkGAEgASgEEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJ",
+            "Zm8SEQoJb2JqZWN0X2lkGAEgASgFEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJ",
             "CgF6GAQgASgCEgsKA3lhdxgFIAEoAhIiCgVzdGF0ZRgGIAEoDjITLlByb3Rv",
-            "Y29sLk1vdmVTdGF0ZSK1AQoKT2JqZWN0SW5mbxIPCgdyb29tX2lkGAEgASgE",
-            "EhEKCW9iamVjdF9pZBgCIAEoBBIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
+            "Y29sLk1vdmVTdGF0ZSK1AQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
+            "KAUSDwoHcm9vbV9pZBgCIAEoBRIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
             "b3RvY29sLk9iamVjdFR5cGUSDAoEbmFtZRgEIAEoCRIjCghwb3NfaW5mbxgF",
             "IAEoCzIRLlByb3RvY29sLlBvc0luZm8SJQoJc3RhdF9pbmZvGAYgASgLMhIu",
             "UHJvdG9jb2wuU3RhdEluZm8iRQoIU3RhdEluZm8SCgoCaHAYASABKAQSDgoG",
@@ -40,7 +40,7 @@ namespace Google.Protobuf.Struct {
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.PosInfo), global::Google.Protobuf.Struct.PosInfo.Parser, new[]{ "ObjectId", "X", "Y", "Z", "Yaw", "State" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "RoomId", "ObjectId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "RoomId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.Vector3Info), global::Google.Protobuf.Struct.Vector3Info.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.RoomInfo), global::Google.Protobuf.Struct.RoomInfo.Parser, new[]{ "RoomId", "RommName" }, null, null, null, null)
@@ -101,10 +101,10 @@ namespace Google.Protobuf.Struct {
 
     /// <summary>Field number for the "object_id" field.</summary>
     public const int ObjectIdFieldNumber = 1;
-    private ulong objectId_;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
@@ -199,7 +199,7 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (ObjectId != 0UL) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (X != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
       if (Y != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
       if (Z != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Z);
@@ -223,9 +223,9 @@ namespace Google.Protobuf.Struct {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (ObjectId != 0UL) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteUInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (X != 0F) {
         output.WriteRawTag(21);
@@ -257,9 +257,9 @@ namespace Google.Protobuf.Struct {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (ObjectId != 0UL) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteUInt64(ObjectId);
+        output.WriteInt32(ObjectId);
       }
       if (X != 0F) {
         output.WriteRawTag(21);
@@ -291,8 +291,8 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (ObjectId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ObjectId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (X != 0F) {
         size += 1 + 4;
@@ -321,7 +321,7 @@ namespace Google.Protobuf.Struct {
       if (other == null) {
         return;
       }
-      if (other.ObjectId != 0UL) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
       if (other.X != 0F) {
@@ -355,7 +355,7 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            ObjectId = input.ReadUInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 21: {
@@ -394,7 +394,7 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            ObjectId = input.ReadUInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 21: {
@@ -458,8 +458,8 @@ namespace Google.Protobuf.Struct {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ObjectInfo(ObjectInfo other) : this() {
-      roomId_ = other.roomId_;
       objectId_ = other.objectId_;
+      roomId_ = other.roomId_;
       objectType_ = other.objectType_;
       name_ = other.name_;
       posInfo_ = other.posInfo_ != null ? other.posInfo_.Clone() : null;
@@ -473,27 +473,27 @@ namespace Google.Protobuf.Struct {
       return new ObjectInfo(this);
     }
 
-    /// <summary>Field number for the "room_id" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
-      set {
-        roomId_ = value;
-      }
-    }
-
     /// <summary>Field number for the "object_id" field.</summary>
-    public const int ObjectIdFieldNumber = 2;
-    private ulong objectId_;
+    public const int ObjectIdFieldNumber = 1;
+    private int objectId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong ObjectId {
+    public int ObjectId {
       get { return objectId_; }
       set {
         objectId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "room_id" field.</summary>
+    public const int RoomIdFieldNumber = 2;
+    private int roomId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int RoomId {
+      get { return roomId_; }
+      set {
+        roomId_ = value;
       }
     }
 
@@ -563,8 +563,8 @@ namespace Google.Protobuf.Struct {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
       if (ObjectId != other.ObjectId) return false;
+      if (RoomId != other.RoomId) return false;
       if (ObjectType != other.ObjectType) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(PosInfo, other.PosInfo)) return false;
@@ -576,8 +576,8 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
-      if (ObjectId != 0UL) hash ^= ObjectId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
+      if (RoomId != 0) hash ^= RoomId.GetHashCode();
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) hash ^= ObjectType.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
@@ -600,13 +600,13 @@ namespace Google.Protobuf.Struct {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+        output.WriteInt32(ObjectId);
       }
-      if (ObjectId != 0UL) {
+      if (RoomId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ObjectId);
+        output.WriteInt32(RoomId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         output.WriteRawTag(24);
@@ -634,13 +634,13 @@ namespace Google.Protobuf.Struct {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
+      if (ObjectId != 0) {
         output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+        output.WriteInt32(ObjectId);
       }
-      if (ObjectId != 0UL) {
+      if (RoomId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ObjectId);
+        output.WriteInt32(RoomId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         output.WriteRawTag(24);
@@ -668,11 +668,11 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
-      if (ObjectId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ObjectId);
+      if (RoomId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ObjectType);
@@ -698,11 +698,11 @@ namespace Google.Protobuf.Struct {
       if (other == null) {
         return;
       }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
-      }
-      if (other.ObjectId != 0UL) {
+      if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
+      }
+      if (other.RoomId != 0) {
+        RoomId = other.RoomId;
       }
       if (other.ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         ObjectType = other.ObjectType;
@@ -738,11 +738,11 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 16: {
-            ObjectId = input.ReadUInt64();
+            RoomId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -783,11 +783,11 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 16: {
-            ObjectId = input.ReadUInt64();
+            RoomId = input.ReadInt32();
             break;
           }
           case 24: {

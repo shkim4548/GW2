@@ -8,20 +8,19 @@ using System.Collections.Generic;
 public enum PacketId : ushort
 {
     //PKT_C_LOGIN = 1000,
-    PKT_C_LOGIN = 1000,
-    PKT_S_LOGIN = 1001,
-    PKT_C_ENTER_GAME = 1002,
-    PKT_C_LEAVE_GAME = 1003,
-    PKT_S_ENTER_GAME = 1004,
-    PKT_S_SPAWN = 1005,
-    PKT_C_SPAWN = 1006,
-    PKT_C_MOVE = 1007,
-    PKT_S_MOVE = 1008,
-    PKT_S_MOVE_END = 1009,
-    PKT_C_SKILL = 1010,
-    PKT_S_SKILL = 1011,
-    PKT_C_ENTER_LOBBY = 1012,
-    PKT_S_ENTER_LOBBY = 1013,
+        PKT_C_LOGIN = 1000,
+        PKT_S_LOGIN = 1001,
+        PKT_C_ENTER_GAME = 1002,
+        PKT_C_LEAVE_GAME = 1003,
+        PKT_S_ENTER_GAME = 1004,
+        PKT_S_SPAWN = 1005,
+        PKT_C_SPAWN = 1006,
+        PKT_C_MOVE = 1007,
+        PKT_S_MOVE = 1008,
+        PKT_C_SKILL = 1009,
+        PKT_S_SKILL = 1010,
+        PKT_C_ENTER_LOBBY = 1011,
+        PKT_S_ENTER_LOBBY = 1012,
 }
 
 public class PacketManager
@@ -53,8 +52,6 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_SPAWN, PacketHandler.S_SPAWNHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_MOVE, MakePacket<S_MOVE>);
         _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
-        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_END, MakePacket<S_MOVE_END>);
-        _handler.Add((ushort)PacketId.PKT_S_MOVE_END, PacketHandler.S_MOVE_ENDHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, MakePacket<S_ENTER_LOBBY>);
