@@ -156,15 +156,15 @@ void Room::UpdateRoom(float deltaTime)
 	for (auto& [id, obj] : _objects)
 	{
 		bool movedThisTick = obj->UpdateMovement(deltaTime);
-
+		obj->AccumulateMoveTime(deltaTime);
 		if (movedThisTick)
 		{
 			BroadcastMoving(obj);
+			obj->ResetBroadcastTimer();
 		}
 
 		// 이동 종료 감지
-		if (obj->GetIsMoving() &&
-			obj->GetMoveState() == Protocol::MoveState::MOVE_STATE_IDLE)
+		if (obj->GetIsMoving() && obj->GetMoveState() == Protocol::MoveState::MOVE_STATE_IDLE)
 		{
 			BroadcastMovingEnd(obj);
 		}

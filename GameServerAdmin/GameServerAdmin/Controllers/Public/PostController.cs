@@ -10,9 +10,9 @@ namespace GameServerAdmin.Controllers.Public;
 [Route("api/posts")]
 public class PostController : ControllerBase
 {
-    private readonly PostService _postService;
+    private readonly IPostService _postService;
 
-    public PostController(PostService postService)
+    public PostController(IPostService postService)
     {
         _postService = postService;
     }

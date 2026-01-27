@@ -121,7 +121,10 @@ void Lobby::EnterRoom(int32 roomId, int64 playerId)
 	_rooms[roomId]->Enter(player);
 }
 
-void Lobby::LobbyTick(float deltaTime)
+void Lobby::LobbyUpdate(float deltaTime)
 {
-
+	for (auto& [roomId, room] : _rooms)
+	{
+		room->DoAsync(&Room::UpdateRoom, deltaTime);
+	}
 }

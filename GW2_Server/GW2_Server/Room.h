@@ -28,10 +28,12 @@ public:
 	void HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
 	void HandleMovePlayer(Protocol::C_MOVE movePkt);
 
+	// 로비에서 호출해야함
+	void UpdateRoom(float deltaTime);
+
 private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
-	void UpdateRoom(float deltaTime);
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
 

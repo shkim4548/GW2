@@ -33,9 +33,9 @@ public:
 		called by main
 	----------------------*/
 	void Run();
+	void LobbyUpdate(float deltaTime);
 
 private:
-	void LobbyTick(float deltaTime);
 
 private:
 	// object 단위에서 자신의 소속 room을 갖고 있다.

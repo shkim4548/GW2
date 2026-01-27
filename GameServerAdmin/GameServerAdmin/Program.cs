@@ -1,4 +1,5 @@
 
+using GameServerAdmin.Common.Filters;
 using GameServerAdmin.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,12 @@ namespace GameServerAdmin
                 options.UseNpgsql(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                     );
+            });
+
+            // Filter 등록
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
             });
 
             // Controller 등록

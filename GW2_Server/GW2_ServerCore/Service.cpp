@@ -99,12 +99,13 @@ bool ServerService::Start()
 	if (_listener->StartAccept(service) == false)
 		return false;
 
+	_isRunning.store(true);
 	return true;
 }
 
 void ServerService::CloseService()
 {
 	// TODO
-
+	_isRunning.store(false);
 	Service::CloseService();
 }

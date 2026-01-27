@@ -81,3 +81,29 @@ void Object::PostUpdate()
 {
 	_isMoving = (_moveState == Protocol::MOVE_STATE_RUN);
 }
+
+void Object::AccumulateMoveTime(float deltaTime)
+{
+	// 이동 중일 때만 누적시킨다. 이 숫자를 보고 너무 자주 보내서 네트워크 터지지 않게한다.
+	if (_moveState == Protocol::MOVE_STATE_RUN)
+	{
+		_moveBroadcastElapsed += deltaTime;
+	}
+}
+
+bool Object::ShouldBroadcastMove() const
+{
+	// 아직 브로드캐스트 주기에 도달하지 않았다.
+	if (_moveBroadcastElapsed < MOVE_BROADCAST_INTERVAL)
+	{
+		return false;
+	}
+
+	// 이동 중일 때만 flag true
+	return (_moveState == Protocol::MOVE_STATE_RUN);
+}
+
+void Object::ResetBroadcastTimer()
+{
+	_moveBroadcastElapsed = 0.0f;
+}

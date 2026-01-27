@@ -4,6 +4,7 @@
 namespace GameMath{ struct Vector3; }
 namespace Navigation {  struct GridCell;  class NavigationSystem; }
 using NavPath = std::vector<GameMath::Vector3>;
+constexpr float MOVE_BROADCAST_INTERVAL = 0.1f; // 100ms (10Hz), 가장 일반적인 온라인 게임 브로드캐스트 주기
 
 class Object : public enable_shared_from_this<Object>
 {
@@ -27,7 +28,10 @@ public:
 	void RequestMove(const vector<GameMath::Vector3>& path);
 	void PostUpdate();
 	
-	// Astar
+	// Game Room Logic
+	void AccumulateMoveTime(float deltaTime);
+	bool ShouldBroadcastMove() const;
+	void ResetBroadcastTimer();
 	
 public:
 	NavPath _path;
@@ -43,5 +47,8 @@ protected:
 	bool _isMoving = false;
 	Protocol::MoveState _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	float _moveSpeed = 5.f;
+
+private:
+	float _moveBroadcastElapsed = 0.0f;
 };
 

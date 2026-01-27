@@ -21,6 +21,7 @@ public interface IPostService
     Task<IReadOnlyList<DeletedPostResponse>> GetDeletedPostAsync();
     Task<DeletedPostDetailResponse> GetDeletedPostAsync(int postId);
     Task<PagedResponse<AdminPostListItemResponse>> GetAdminPostListAsync(AdminPostListQuery query);
+    Task<PublicPostDetailResponse> GetPublicPostAsync(int postId);
 }
 
 // DTO의 데이터 할당은 Service의 책임범위이므로 Controller에 노출되어서는 안된다.
@@ -86,6 +87,11 @@ public class PostService : IPostService
             throw new InvalidOperationException("수정할 Post가 존재하지 않습니다");
         }
 
+        if(post.IsDeleted)
+        {
+            throw new InvalidOperationException("삭제된 Post는 수정할 수 없습니다.");
+        }
+
         // 도메인 수정
         post.Title = request.Title;
         post.Content = request.Content;
@@ -104,6 +110,11 @@ public class PostService : IPostService
         if (post == null)
         {
             throw new InvalidOperationException("삭제할 Post가 존재하지 않습니다.");
+        }
+
+        if(post.IsDeleted)
+        {
+            throw new InvalidOperationException("이미 삭제된 Post입니다.");
         }
 
         post.IsDeleted = true;

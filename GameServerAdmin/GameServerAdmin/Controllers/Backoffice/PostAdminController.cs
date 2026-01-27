@@ -12,7 +12,7 @@ namespace GameServerAdmin.Controllers.BackOffice
     {
         private readonly IPostService _postService;
 
-        public PostAdminController(PostService postService)
+        public PostAdminController(IPostService postService)
         {
             _postService = postService;
         }
@@ -34,7 +34,7 @@ namespace GameServerAdmin.Controllers.BackOffice
         }
 
         // READ
-        [HttpGet("admin/posts")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetPostsForAdmin()
         {
             var posts = await _postService.GetAllPostsForAdminAsync();
@@ -73,7 +73,7 @@ namespace GameServerAdmin.Controllers.BackOffice
             return Ok(posts);
         }
 
-        [HttpGet("deleted{id:int}")]
+        [HttpGet("deleted/{id:int}")]
         public async Task<IActionResult> GetDeletedPost(int id)
         {
             var post = await _postService.GetDeletedPostAsync(id);
@@ -81,7 +81,7 @@ namespace GameServerAdmin.Controllers.BackOffice
         }
 
         // HARD DELETE
-        [HttpDelete]
+        [HttpDelete("{id:int}/hard")]
         public async Task<IActionResult> HardDeleted(int id)
         {
             await _postService.HardDeleteAsync(id);
@@ -91,7 +91,7 @@ namespace GameServerAdmin.Controllers.BackOffice
 
         // PAGED QUERY
         [HttpGet]
-        public async Task<ActionResult<PagedResponse<AdminPostListItemResponse>>> GetList([FromQuery] AdminPostListQuery query)
+        public async Task<ActionResult<PagedResponse<AdminPostListItemResponse>>> GetPagedList([FromQuery] AdminPostListQuery query)
         {
             var result = await _postService.GetAdminPostListAsync(query);
             return Ok(result);

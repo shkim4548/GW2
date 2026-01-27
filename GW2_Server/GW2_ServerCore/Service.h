@@ -79,7 +79,9 @@ public:
 
 	virtual bool	Start() override;
 	virtual void	CloseService() override;
+	bool			GetIsRunning() { return _isRunning; }
 
 private:
 	ListenerRef		_listener = nullptr;
+	atomic<bool> _isRunning = false;
 };
