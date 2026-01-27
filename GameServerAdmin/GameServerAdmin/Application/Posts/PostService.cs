@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Domain.Posts;
+﻿using GameServerAdmin.Common.Exceptions.Post;
+using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.PublicApi;
@@ -157,12 +158,12 @@ public class PostService : IPostService
 
         if (post == null)
         {
-            throw new Exception("Post not found");
+            throw new PostNotFoundException(postId);
         }
 
         if (!post.IsDeleted)
         {
-            throw new Exception("Post is not deleted");
+            throw new InvalidPostStateException("Post is not deleted");
         }
 
         post.IsDeleted = false;
@@ -196,7 +197,7 @@ public class PostService : IPostService
 
         if (post == null)
         {
-            throw new Exception("Deleted post not found");
+            throw new PostNotFoundException(postId);
         }
 
         return new DeletedPostDetailResponse
@@ -219,12 +220,12 @@ public class PostService : IPostService
 
         if (post == null)
         {
-            throw new Exception("Post not Found");
+            throw new PostNotFoundException(postId);
         }
 
         if (!post.IsDeleted)
         {
-            throw new Exception("Post must be soft-deleted before hard delete");
+            throw new InvalidPostStateException("Post must be soft-deleted before hard delete");
         }
 
         _db.Posts.Remove(post);
@@ -276,7 +277,7 @@ public class PostService : IPostService
             }).FirstOrDefaultAsync();
 
         if (post == null)
-            throw new Exception("Post Not Found");
+            throw new PostNotFoundException(postId);
 
         return post;
     }

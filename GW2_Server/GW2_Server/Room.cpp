@@ -146,6 +146,13 @@ void Room::HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCel
 
 		worldPath.push_back(worldPos);
 	}
+
+	if (player == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayerInternal] player is nullptr");
+		return;
+	}
+
 	player->_path = move(worldPath);
 	player->_pathIndex = 0;
 
@@ -179,7 +186,7 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	Protocol::S_MOVE movePkt;
 	movePkt.set_object_id(obj->GetObjectId());
 	// TODO : POS는 & 형태로 가져오는 것이 유리할 것이다
-	Protocol::PosInfo* pos = movePkt.mutable_server_info();
+	Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
 	*pos = obj->GetPosInfo();
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(movePkt);

@@ -15,7 +15,7 @@ public class PacketHandler
         int roomId = (int)enterGamePkt.Player.RoomId;
         
         var objectService = DI.Container.Resolve<IObjectService>();
-        Debug.Log($"[PacketHandler] After OBjectService");
+        Debug.Log($"[PacketHandler] After ObjectService");
         // TEST : EnterGame으로 받았으면 무조건 내 플레이어 캐릭터다
         objectService.Add(enterGamePkt.Player, true);
     }
@@ -27,7 +27,7 @@ public class PacketHandler
 
         if (recvLoginpkt.Success == false)
             return;
-        
+
         // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
         var sceneService = DI.Container.Resolve<ISceneService>();
         sceneService.LoadScene(Define.Scene.Lobby);
@@ -35,6 +35,7 @@ public class PacketHandler
         // 로그인 완료시 Lobby 입장 요청
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
         var networkService = DI.Container.Resolve<INetworkService>();
+        networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
         networkService.Send(enterLobbyRequest);
     }
 
@@ -66,9 +67,9 @@ public class PacketHandler
         }
 
         PosInfo pos = new PosInfo();
-        pos.X = movePkt.ServerInfo.X;
-        pos.Y = movePkt.ServerInfo.Y;
-        pos.Z = movePkt.ServerInfo.Z;
+        pos.X = movePkt.ServerPosInfo.X;
+        pos.Y = movePkt.ServerPosInfo.Y;
+        pos.Z = movePkt.ServerPosInfo.Z;
 
         // 서버의 권위있는 정보를 전달
         bc.PosInfo = pos;
@@ -91,7 +92,7 @@ public class PacketHandler
         throw new NotImplementedException();
     }
 
-    internal static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
+    public static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
     {
         S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
         var networkService = DI.Container.Resolve<INetworkService>();

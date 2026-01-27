@@ -74,6 +74,9 @@ void Lobby::OnClientEnter(PlayerRef player)
 	cout << "[OnClientEnter] GetPlayerId : " << id << '\n';
 	_lobbyPlayers[id] = player;
 	cout << "lobbyPlayer size : " << _lobbyPlayers.size() << '\n';
+
+	// TODO : RoomId 선택 혹은 랜덤 수를 넣을 수 있도록 해줘야한다.
+	//EnterRoom(0, id);
 }
 
 void Lobby::OnClientLeave(int32 playerId)
