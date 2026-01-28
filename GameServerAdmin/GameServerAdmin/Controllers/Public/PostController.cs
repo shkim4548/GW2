@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
+using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 
@@ -18,7 +19,7 @@ public class PostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PostDto>> Create(PostCreateRequest request)
+    public async Task<ActionResult<PublicPostDetailResponse>> Create(PostCreateRequest request)
     {
         var post = new Post
         {
@@ -34,13 +35,13 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PostDto>>> GetAll()
+    public async Task<ActionResult<List<PublicPostDetailResponse>>> GetAll()
     {
         return Ok(await _postService.GetAllAsync());
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<PostDto>> Get(int id)
+    public async Task<ActionResult<PublicPostDetailResponse>> Get(int id)
     {
         var post = await _postService.GetByIdAsync(id);
         if (post == null)

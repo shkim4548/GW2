@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
+using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql.PostgresTypes;
 
@@ -19,7 +20,7 @@ namespace GameServerAdmin.Controllers.BackOffice
 
         // Create
         [HttpPost]
-        public async Task<ActionResult<PostDto>> Create(PostCreateRequest request)
+        public async Task<ActionResult<PublicPostDetailResponse>> Create(PostCreateRequest request)
         {
             var post = new Post
             {
