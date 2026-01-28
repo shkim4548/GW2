@@ -9,9 +9,9 @@ namespace GameServerAdmin.Application.Posts;
 
 public interface IPostService
 {
-    Task<PostDto> CreateAsync(Post post);
-    Task<List<PostDto>> GetAllAsync();
-    Task<PostDto?> GetByIdAsync(int postId);
+    Task<PublicPostDetailResponse> CreateAsync(Post post);
+    Task<List<PublicPostDetailResponse>> GetAllAsync();
+    Task<PublicPostDetailResponse?> GetByIdAsync(int postId);
     Task UpdateAsync(PostUpdateRequest request);
     Task SoftDeleteAsync(int postId);
     Task<List<Post>> GetActivePostsAsync();
@@ -34,7 +34,7 @@ public class PostService : IPostService
         _db = db;
     }
 
-    public async Task<PostDto> CreateAsync(Post post)
+    public async Task<PublicPostDetailResponse> CreateAsync(Post post)
     {
         post.CreatedAt = DateTime.UtcNow;
         post.IsDeleted = false;
@@ -45,7 +45,7 @@ public class PostService : IPostService
         return ToDto(post);
     }
 
-    public async Task<List<PostDto>> GetAllAsync()
+    public async Task<List<PublicPostDetailResponse>> GetAllAsync()
     {
         return await _db.Posts
             .Where(p => !p.IsDeleted)
@@ -54,7 +54,7 @@ public class PostService : IPostService
             .ToListAsync();
     }
 
-    public async Task<PostDto?> GetByIdAsync(int postId)
+    public async Task<PublicPostDetailResponse?> GetByIdAsync(int postId)
     {
         var post = await _db.Posts
             .FirstOrDefaultAsync(p => p.PostId == postId && !p.IsDeleted);
@@ -62,9 +62,9 @@ public class PostService : IPostService
         return post == null ? null : ToDto(post);
     }
 
-    private static PostDto ToDto(Post post)
+    private static PublicPostDetailResponse ToDto(Post post)
     {
-        return new PostDto
+        return new PublicPostDetailResponse
         {
             PostId = post.PostId,
             PostType = post.PostType,
