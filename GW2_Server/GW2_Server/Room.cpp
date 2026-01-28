@@ -97,8 +97,10 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	GameMath::Vector3 startWorld(startPos.x(), startPos.y(), startPos.z());
 	GameMath::Vector3 endWorld(endPos.x(), endPos.y(), endPos.z());
 
+	cout << "[Room::HandleMovePlayer] Before FindPath" << endl;
 	// World -> Grid
 	int32 sx, sz, tx, tz;
+	shared_ptr<Navigation::WalkableGrid>
 	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), startWorld, sx, sz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
@@ -128,7 +130,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] player is nullptr\n");
 		return;
 	}
-
+	cout << "End of HandleMovePlayer" << endl;
 	HandleMovePlayerInternal(player.lock(), gridPath);
 }
 
