@@ -1,7 +1,9 @@
 ﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public class ValidationException : DomainException
+    public sealed class ValidationException : AppException
     {
-        protected ValidationException(string message) : base(message) { }
+        protected ValidationException(string message) : base(ErrorCode.VALIDATION_FAILED, message) { }
+
+        public override int StatusCode => StatusCodes.Status400BadRequest;
     }
 }

@@ -1,5 +1,6 @@
 
 using GameServerAdmin.Common.Filters;
+using GameServerAdmin.Controllers.MiddleWare;
 using GameServerAdmin.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +53,7 @@ namespace GameServerAdmin
             //app.UseStaticFiles();
 
             //app.UseRouting();
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthorization();
             app.MapControllers();
             //app.MapRazorPages();

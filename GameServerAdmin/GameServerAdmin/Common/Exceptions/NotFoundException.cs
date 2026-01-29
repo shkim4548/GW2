@@ -1,7 +1,9 @@
 ﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public class NotFoundException : DomainException
+    public class NotFoundException : AppException
     {
-        public NotFoundException(string message) : base(message) { }
+        public NotFoundException(string message) : base(ErrorCode.NOT_FOUND, message) { }
+
+        public override int StatusCode => StatusCodes.Status404NotFound;
     }
 }

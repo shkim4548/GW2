@@ -1,7 +1,9 @@
 ﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public class DomainException : Exception
+    public sealed class DomainException : AppException
     {
-        protected DomainException(string message) : base(message) { }
+        protected DomainException(string message) : base(ErrorCode.VALIDATION_FAILED, message) { }
+
+        public override int StatusCode => StatusCodes.Status409Conflict;
     }
 }

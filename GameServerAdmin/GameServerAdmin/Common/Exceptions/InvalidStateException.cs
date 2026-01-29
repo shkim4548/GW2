@@ -1,7 +1,9 @@
 ﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public class InvalidStateException : DomainException
+    public sealed class InvalidStateException : AppException
     {
-        public InvalidStateException(string message) : base(message) { }
+        public InvalidStateException(string message) : base(ErrorCode.INVALID_STATE, message) { }
+
+        public override int StatusCode => StatusCodes.Status409Conflict;
     }
 }
