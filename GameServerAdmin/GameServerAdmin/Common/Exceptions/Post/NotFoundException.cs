@@ -1,4 +1,4 @@
-﻿namespace GameServerAdmin.Common.Exceptions
+﻿namespace GameServerAdmin.Common.Exceptions.Post
 {
     public class NotFoundException : AppException
     {

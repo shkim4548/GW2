@@ -23,7 +23,7 @@ namespace GameServerAdmin
             // Filter 등록
             builder.Services.AddControllers(options =>
             {
-                options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add<HttpExceptionFilter>();
             });
 
             // Controller 등록

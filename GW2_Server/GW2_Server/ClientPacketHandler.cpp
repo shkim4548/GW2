@@ -29,6 +29,11 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 	Protocol::S_LOGIN replyLoginPkt;
 	replyLoginPkt.set_success(true);
+
+	PlayerRef newPlayer = ObjectUtils::CreatePlayer(static_pointer_cast<GameSession>(session));
+	GLobby->OnClientEnter(newPlayer);
+	replyLoginPkt.set_player_index(newPlayer->GetPlayerId());
+
 	SEND_PACKET(replyLoginPkt);
 
 	return true;
@@ -105,10 +110,10 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 		roomInfo->set_roomid(roomId);
 		roomInfo->set_rommname(room->GetRoomName());
 	}
-
-	PlayerRef newPlayer = ObjectUtils::CreatePlayer(static_pointer_cast<GameSession>(session));
-	GLobby->OnClientEnter(newPlayer);
+	// TODO : RoomId HardCoding
+	PlayerRef newPlayer =  GLobby->GetLobbyPlayers()[1];
 	lobbyPkt.set_playerid(newPlayer->GetPlayerId());
+	cout << newPlayer->GetPlayerId() << endl;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(lobbyPkt);
 	session->Send(sendBuffer);

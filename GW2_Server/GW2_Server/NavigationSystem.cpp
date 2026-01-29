@@ -327,23 +327,24 @@ bool Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int3
 bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
 {
 	bool ok = WorldToGridImpl(grid, worldPos._x, worldPos._z, x, z);
+	cout << "WorldToGridEnd" << endl;
 
 	if (!ok)
 	{
 		x = -1;
 		z = -1;
+		GConsoleLogger->WriteStdErr(Color::RED, L"WorldToGridImpl is not ok");
 		return false;
 	}
 
 	// 방어적 범위 체크 (Impl 신뢰하지 않음)
-	if (x < 0 || z < 0 ||
-		x >= grid.width || z >= grid.height)
+	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
 	{
 		x = -1;
 		z = -1;
+		GConsoleLogger->WriteStdErr(Color::RED, L"WorldToGridImpl is block is not ok");
 		return false;
 	}
-
 	return true;
 }
 
@@ -428,6 +429,7 @@ void Navigation::NavigationSystem::Init(WalkableGrid& grid)
 
 bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
 {
+	cout << "FindPath Start" << endl;
 	outPath.clear();
 
 	const int32 W = grid.width;
@@ -529,7 +531,7 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 			}
 		}
 	}
-
+	cout << "End of Find Path" << endl;
 	return false;
 }
 
@@ -687,18 +689,25 @@ void Navigation::NavigationSystem::DebugTestWorldPos(GameMath::Vector3& worldPos
 
 bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& X, int32& Z)
 {
+	cout << "WorldToGridImpl Start" << endl;
 	float localX = (worldX - grid.origin._x) / grid.cellSize;
 	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
 
 	// 핵심: floor 사용
+	// 여기서 0x00005 메모리 침범 오류 발생
 	int32 x = static_cast<int32>(std::floor(localX));
 	int32 z = static_cast<int32>(std::floor(localZ));
+	//cout << "WorldToGridImpl floor" << endl;
 
 	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"World to Grid is out of bound");
 		return false;
+	}
 
 	X = x;
 	Z = z;
+	cout << "WorldToGridImpl End" << endl;
 	return true;
 }
 
