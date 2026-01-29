@@ -40,6 +40,9 @@ namespace Navigation
 	class WalkableGrid
 	{
 	public:
+		WalkableGrid();
+		virtual ~WalkableGrid();
+
 		int32 width;
 		int32 height;
 		float cellSize;
@@ -109,6 +112,9 @@ namespace Navigation
 	class NavigationSystem
 	{
 	public:
+		NavigationSystem();
+		virtual ~NavigationSystem();
+
 		void Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices);
 		bool GetGroundHeight(float x, float z, float& OUT outY);
 		bool CanMoveStraight(GameMath::Vector3 start, GameMath::Vector3 end);

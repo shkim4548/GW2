@@ -12,17 +12,19 @@ LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다
 Lobby::Lobby()
 {
 	//LobbyInit();
+	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
+	cout << "Lobby Construct" << endl;
 }
 
 Lobby::~Lobby()
 {
 	_rooms.clear();
 	_lobbyPlayers.clear();
+	cout << "Lobby Destroy" << endl;
 }
 
 void Lobby::LobbyInit()
 {
-	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
 
 	GConsoleLogger->WriteStdOut(
 		Color::YELLOW,

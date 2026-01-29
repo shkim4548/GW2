@@ -18,6 +18,7 @@ Room::Room()
 Room::~Room()
 {
 	_players.clear();
+	
 }
 
 bool Room::Enter(PlayerRef player)
@@ -100,14 +101,20 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	cout << "[Room::HandleMovePlayer] Before FindPath" << endl;
 	// World -> Grid
 	int32 sx, sz, tx, tz;
-	shared_ptr<Navigation::WalkableGrid>
-	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), startWorld, sx, sz))
+	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	if (navSystem == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] _navigationSystem is nullptr\n");
+		return;
+	}
+	Navigation::WalkableGrid& grid = _navigationSystem.lock()->GetGridCells();
+	if (!_navigationSystem.lock()->WorldToGrid(grid, startWorld, sx, sz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
 		return;
 	}
 
-	if (!_navigationSystem.lock()->WorldToGrid(_navigationSystem.lock()->GetGridCells(), endWorld, tx, tz))
+	if (!_navigationSystem.lock()->WorldToGrid(grid, endWorld, tx, tz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
 		return;
@@ -115,7 +122,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 
 	// PathFinding
 	vector<Navigation::GridCell*> gridPath;
-	bool ok = _navigationSystem.lock()->FindPath(_navigationSystem.lock()->GetGridCells(), sx, sz, tx, tz, gridPath);
+	bool ok = _navigationSystem.lock()->FindPath(grid, sx, sz, tx, tz, gridPath);
 
 	if (!ok || gridPath.empty())
 	{

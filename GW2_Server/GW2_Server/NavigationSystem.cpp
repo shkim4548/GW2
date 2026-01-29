@@ -6,6 +6,15 @@
 #undef min
 #undef max
 
+Navigation::NavigationSystem::NavigationSystem()
+{
+	_grids = WalkableGrid();
+}
+
+Navigation::NavigationSystem::~NavigationSystem()
+{
+}
+
 // indices는 0-2-1 기준의 삼각 인덱스 배열 형태로 들어온다.
 void Navigation::NavigationSystem::Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices)
 {
@@ -711,3 +720,10 @@ bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, flo
 	return true;
 }
 
+Navigation::WalkableGrid::WalkableGrid()
+{
+}
+
+Navigation::WalkableGrid::~WalkableGrid()
+{
+}
