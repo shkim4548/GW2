@@ -13,6 +13,7 @@
 Room::Room()
 {
 	_navigationSystem = GLobby->GetNavigationSystem();
+	_roomWalkableGrid = GLobby->GetWalkableGrid();
 }
 
 Room::~Room()
@@ -107,6 +108,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] _navigationSystem is nullptr\n");
 		return;
 	}
+
 	Navigation::WalkableGrid& grid = _navigationSystem.lock()->GetGridCells();
 	if (!_navigationSystem.lock()->WorldToGrid(grid, startWorld, sx, sz))
 	{

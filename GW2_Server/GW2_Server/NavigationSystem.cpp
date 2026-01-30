@@ -13,6 +13,7 @@ Navigation::NavigationSystem::NavigationSystem()
 
 Navigation::NavigationSystem::~NavigationSystem()
 {
+	cout << "NavigationSystem Destroy" << endl;
 }
 
 // indices는 0-2-1 기준의 삼각 인덱스 배열 형태로 들어온다.
@@ -703,7 +704,7 @@ bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, flo
 	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
 
 	// 핵심: floor 사용
-	// 여기서 0x00005 메모리 침범 오류 발생
+	// 여기서 0x00005 메모리 침범 오류 발생 -> _navigationSystem 자체가 nullptr
 	int32 x = static_cast<int32>(std::floor(localX));
 	int32 z = static_cast<int32>(std::floor(localZ));
 	//cout << "WorldToGridImpl floor" << endl;

@@ -12,8 +12,9 @@ LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다
 Lobby::Lobby()
 {
 	//LobbyInit();
+	_navigationSystem = MakeShared<Navigation::NavigationSystem>();
 	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
-	cout << "Lobby Construct" << endl;
+	//cout << "Lobby Construct" << endl;
 }
 
 Lobby::~Lobby()
@@ -25,7 +26,6 @@ Lobby::~Lobby()
 
 void Lobby::LobbyInit()
 {
-
 	GConsoleLogger->WriteStdOut(
 		Color::YELLOW,
 		L"[Lobby] Load NavGrid start\n"
@@ -50,21 +50,22 @@ void Lobby::LobbyInit()
 		L"[Lobby] NavGrid load complete\n"
 	);
 
+	// TODO : HardCoding
 	MakeRoom("TestRoom");
 	GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 	cout << _rooms.size() << endl;
 
 	// DEBUG
-	Navigation::NavigationSystem navSystem;
+	//Navigation::NavigationSystem& navSystem = *_navigationSystem;
 	cout << "[NavGrid Loaded]\n";
 	cout << "width     : " << _walkableGrid->width << "\n";
 	cout << "height    : " << _walkableGrid->height << "\n";
 	cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
 	cout << "cellCount : " << _walkableGrid->cells.size() << endl;
-	navSystem.PrintGridSummary(*_walkableGrid);
+	_navigationSystem->PrintGridSummary(*_walkableGrid);
 	//navSystem.PrintGrid(*_walkableGrid);
-	navSystem.VerifyWorldGridInvariant(*_walkableGrid);
-	navSystem.Init(*_walkableGrid);
+	_navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
+	_navigationSystem->Init(*_walkableGrid);
 }
 
 void Lobby::OnClientEnter(PlayerRef player)

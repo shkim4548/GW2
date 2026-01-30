@@ -3,7 +3,7 @@
 #include "JobQueue.h"
 #include "Protocol.pb.h"
 
-namespace Navigation { class NavigationSystem; struct GridCell; }
+namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; }
 
 class Room : public JobQueue
 {
@@ -43,6 +43,7 @@ private:
 	int32 _roomId;
 	string _roomName;
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
+	weak_ptr<Navigation::WalkableGrid> _roomWalkableGrid;
 };
 
 extern shared_ptr<Room> GRoom;

@@ -15,7 +15,8 @@ PacketHandlerFunc GPacketHandler[UINT16_MAX];
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 {
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-	GConsoleLogger->WriteStdOut(Color::RED, L"[Handle_Invalid] Invalid Packet\n");
+	GConsoleLogger->WriteStdOut(Color::RED, L"[Handle_Invalid] Invalid Packet id : ");
+	cout << header->id << endl;
 	return false;
 }
 
