@@ -1,5 +1,3 @@
-
-using GameServerAdmin.Common.Filters;
 using GameServerAdmin.Controllers.MiddleWare;
 using GameServerAdmin.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +21,7 @@ namespace GameServerAdmin
             // Filter 등록
             builder.Services.AddControllers(options =>
             {
-                options.Filters.Add<HttpExceptionFilter>();
+                //options.Filters.Add<HttpExceptionFilter>();
             });
 
             // Controller 등록

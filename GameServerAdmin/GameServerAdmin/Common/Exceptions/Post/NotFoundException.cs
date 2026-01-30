@@ -2,8 +2,10 @@
 {
     public class NotFoundException : AppException
     {
-        public NotFoundException(string message) : base(ErrorCode.NOT_FOUND, message) { }
-
+        protected NotFoundException(ErrorCode errorCode, string message)
+                    : base(errorCode, message)
+        {
+        }
         public override int StatusCode => StatusCodes.Status404NotFound;
     }
 }

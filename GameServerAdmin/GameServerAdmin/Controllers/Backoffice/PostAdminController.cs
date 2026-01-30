@@ -22,7 +22,7 @@ namespace GameServerAdmin.Controllers.BackOffice
         [HttpPost]
         public async Task<ActionResult<PublicPostDetailResponse>> Create(PostCreateRequest request)
         {
-            var post = new Post
+            var post = new PostCreateRequest
             {
                 PostType = request.PostType,
                 Title = request.Title,

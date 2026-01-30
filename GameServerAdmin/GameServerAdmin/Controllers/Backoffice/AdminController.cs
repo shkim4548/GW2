@@ -40,8 +40,6 @@ namespace GameServerAdmin.Controllers.Backoffice
             });
         }
 
-
-
         // TEMP
         private string HashPassword(string password)
         {

@@ -1,11 +1,11 @@
 ﻿namespace GameServerAdmin.Common.Exceptions.Post
 {
-    public class PostNotFoundException : AppException
+    public sealed class PostNotFoundException : NotFoundException
     {
-        public override string ErrorCode => "POST_NOT_FOUND";
-        public override int StatusCode => StatusCodes.Status404NotFound;
-
-        public PostNotFoundException(int postId)
-            : base($"Post not found. postId={postId}") { }
+        public PostNotFoundException(long postId)
+    : base(
+        ErrorCode.BOARD_POST_NOT_FOUND,
+        $"게시글을 찾을 수 없습니다. postId={postId}"
+    ) { }
     }
 }

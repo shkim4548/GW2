@@ -1,16 +1,18 @@
 ﻿using GameServerAdmin.Common.Exceptions.Post;
+using GameServerAdmin.Common.Exceptions.Validation;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 
 namespace GameServerAdmin.Application.Posts;
 
 public interface IPostService
 {
-    Task<PublicPostDetailResponse> CreateAsync(Post post);
+    Task<PublicPostDetailResponse> CreateAsync(PostCreateRequest request);
     Task<List<PublicPostDetailResponse>> GetAllAsync();
     Task<PublicPostDetailResponse?> GetByIdAsync(int postId);
     Task UpdateAsync(PostUpdateRequest request);
@@ -35,11 +37,30 @@ public class PostService : IPostService
         _db = db;
     }
 
-    public async Task<PublicPostDetailResponse> CreateAsync(Post post)
+    public async Task<PublicPostDetailResponse> CreateAsync(PostCreateRequest request)
     {
-        post.CreatedAt = DateTime.UtcNow;
-        post.IsDeleted = false;
+        // 1. Validation (Application 규칙)
+        var fieldErrors = new FieldErrorCollection();
 
+        if (string.IsNullOrWhiteSpace(request.Title))
+            fieldErrors.AddError(nameof(request.Title), "Title is required");
+
+        if (fieldErrors.Any())
+            throw new RequestValidationException(fieldErrors);
+
+        // 2. Domain Entity 생성
+        var post = new Post
+        {
+            PostType = request.PostType,
+            Title = request.Title,
+            Content = request.Content,
+            AuthorId = request.AuthorId,
+            AuthorType = request.AuthorType,
+            CreatedAt = DateTime.UtcNow,
+            IsDeleted = false
+        };
+
+        // 3. Persist
         _db.Posts.Add(post);
         await _db.SaveChangesAsync();
 
@@ -60,7 +81,10 @@ public class PostService : IPostService
         var post = await _db.Posts
             .FirstOrDefaultAsync(p => p.PostId == postId && !p.IsDeleted);
 
-        return post == null ? null : ToDto(post);
+        if (post == null)
+            throw new PostNotFoundException(postId);
+
+        return ToDto(post);
     }
 
     private static PublicPostDetailResponse ToDto(Post post)
@@ -85,12 +109,12 @@ public class PostService : IPostService
 
         if (post == null)
         {
-            throw new InvalidOperationException("수정할 Post가 존재하지 않습니다");
+            throw new PostNotFoundException(request.PostId);
         }
 
         if(post.IsDeleted)
         {
-            throw new InvalidOperationException("삭제된 Post는 수정할 수 없습니다.");
+            throw new InvalidPostStateException("삭제된 Post는 수정할 수 없습니다.");
         }
 
         // 도메인 수정
@@ -110,12 +134,12 @@ public class PostService : IPostService
 
         if (post == null)
         {
-            throw new InvalidOperationException("삭제할 Post가 존재하지 않습니다.");
+            throw new PostNotFoundException(postId);
         }
 
         if(post.IsDeleted)
         {
-            throw new InvalidOperationException("이미 삭제된 Post입니다.");
+            throw new InvalidPostStateException("이미 삭제된 Post입니다.");
         }
 
         post.IsDeleted = true;
