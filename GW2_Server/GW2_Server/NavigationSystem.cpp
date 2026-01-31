@@ -71,11 +71,7 @@ bool Navigation::NavigationSystem::CanMoveStraight(GameMath::Vector3 start, Game
 	ray.dir = dir;
 
 	RaycastHit hit;
-	if (!RaycastWorld(
-		ray,
-		length,
-		/*cullBackFace=*/true,
-		hit))
+	if (!RaycastWorld(ray,	length,	/*cullBackFace=*/true, hit))
 	{
 		return true;
 	}
@@ -206,6 +202,7 @@ void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 w
 
 void Navigation::NavigationSystem::BuildCells(WalkableGrid& grid)
 {
+	cout << "BuildCells Start" << endl;
 	// 초기화된 데이터로 실제로 맵을 만든다.
 	// 벽위, 공중, 낭떠러지를 구분하고, 갈 수 있는 공간을 구분한다.
 	const float MAX_SLOPE_HEIGHT = 1.0f;
@@ -267,7 +264,11 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 
 			GameMath::Vector3 from;
 			if (!GridToWorld(grid, x, z, from))
+			{
+				GConsoleLogger->WriteStdErr(Color::RED, L"GridToWorld FAIL : ");
+				cout << x << ", " << z << endl;
 				continue;
+			}
 
 			// North (x, z+1)
 			if (z + 1 < grid.height && grid.At(x, z + 1).walkable)
@@ -277,6 +278,8 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 				{
 					if (CanMoveStraight(from, to))
 						cell.neighbors[DIR_NORTH] = true;
+					else
+						cout << "North : " << x << z + 1 << endl;
 				}
 			}
 
@@ -288,6 +291,8 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 				{
 					if (CanMoveStraight(from, to))
 						cell.neighbors[DIR_EAST] = true;
+					else
+						cout << "EAST : " << x + 1 << z << endl;
 				}
 			}
 
@@ -299,6 +304,8 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 				{
 					if (CanMoveStraight(from, to))
 						cell.neighbors[DIR_SOUTH] = true;
+					else
+						cout << "SOUTH : " << x << z - 1 << endl;
 				}
 			}
 
@@ -310,6 +317,8 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 				{
 					if (CanMoveStraight(from, to))
 						cell.neighbors[DIR_WEST] = true;
+					else
+						cout << "WEST : " << x - 1 << z << endl;
 				}
 			}
 		}
@@ -439,7 +448,7 @@ void Navigation::NavigationSystem::Init(WalkableGrid& grid)
 
 bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
 {
-	cout << "FindPath Start" << endl;
+	//cout << "FindPath Start" << endl;
 	outPath.clear();
 
 	const int32 W = grid.width;
@@ -506,10 +515,17 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 		}
 
 		const GridCell& cell = grid.At(cx, cz);
+		cout << "Start neighbors : ";
+		for (int32 i = 0; i < 5; ++i)
+		{
+			cout << cell.neighbors[i] << ' ';
+		}
+		cout << endl;
 
 		static const int dx[4] = { 0, 1, 0, -1 };
 		static const int dz[4] = { 1, 0, -1, 0 };
 
+		// 이 루프가 한번도 작동하지 않는다.
 		for (int dir = 0; dir < 4; ++dir)
 		{
 			if (!cell.neighbors[dir])
@@ -541,7 +557,7 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 			}
 		}
 	}
-	cout << "End of Find Path" << endl;
+	//cout << "End of Find Path" << endl;
 	return false;
 }
 

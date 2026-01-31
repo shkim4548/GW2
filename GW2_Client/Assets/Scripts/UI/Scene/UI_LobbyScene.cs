@@ -41,6 +41,8 @@ public class UI_LobbyScene : UI_Scene
     {
         // TODO : TEST만 하기 때문에 그냥 Single플레이만 넘겨버린다.
         ISceneService sceneService = DI.Container.Resolve<ISceneService>();
-        sceneService.LoadScene(Define.Scene.Game);
+        //sceneService.LoadScene(Define.Scene.Game);
+        // 개발단계에서는 여기를 테스트 씬으로 넘겨버리자
+        sceneService.LoadScene(Define.Scene.TestScene);
     }
 }

@@ -17,10 +17,11 @@ public enum PacketId : ushort
         PKT_C_SPAWN = 1006,
         PKT_C_MOVE = 1007,
         PKT_S_MOVE = 1008,
-        PKT_C_SKILL = 1009,
-        PKT_S_SKILL = 1010,
-        PKT_C_ENTER_LOBBY = 1011,
-        PKT_S_ENTER_LOBBY = 1012,
+        PKT_S_MOVE_END = 1009,
+        PKT_C_SKILL = 1010,
+        PKT_S_SKILL = 1011,
+        PKT_C_ENTER_LOBBY = 1012,
+        PKT_S_ENTER_LOBBY = 1013,
 }
 
 public class PacketManager

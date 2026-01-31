@@ -107,13 +107,13 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 	vector<int32> roomIds;
 	for (auto& [roomId, room] : rooms)
 	{
-		Protocol::RoomInfo* roomInfo = lobbyPkt.add_roominfos();
+		Protocol::RoomInfo* roomInfo = lobbyPkt.add_room_infos();
 		roomInfo->set_roomid(roomId);
 		roomInfo->set_rommname(room->GetRoomName());
 	}
 	// TODO : RoomId HardCoding
 	PlayerRef newPlayer =  GLobby->GetLobbyPlayers()[1];
-	lobbyPkt.set_playerid(newPlayer->GetPlayerId());
+	lobbyPkt.set_player_id(newPlayer->GetPlayerId());
 	cout << newPlayer->GetPlayerId() << endl;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(lobbyPkt);

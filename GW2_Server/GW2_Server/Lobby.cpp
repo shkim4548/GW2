@@ -49,7 +49,7 @@ void Lobby::LobbyInit()
 		Color::YELLOW,
 		L"[Lobby] NavGrid load complete\n"
 	);
-
+	//Navigation::WalkableGrid walkGrid = *_walkableGrid;
 	// TODO : HardCoding
 	MakeRoom("TestRoom");
 	GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
@@ -65,6 +65,7 @@ void Lobby::LobbyInit()
 	_navigationSystem->PrintGridSummary(*_walkableGrid);
 	//navSystem.PrintGrid(*_walkableGrid);
 	_navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
+	_navigationSystem->BuildWalkableGrid(*_walkableGrid, _walkableGrid->width, _walkableGrid->height, _walkableGrid->cellSize, _walkableGrid->origin);
 	_navigationSystem->Init(*_walkableGrid);
 }
 

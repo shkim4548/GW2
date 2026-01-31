@@ -28,15 +28,15 @@ public class PacketHandler
         if (recvLoginpkt.Success == false)
             return;
 
-        // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
-        var sceneService = DI.Container.Resolve<ISceneService>();
-        sceneService.LoadScene(Define.Scene.Lobby);
-
         // 로그인 완료시 Lobby 입장 요청
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
         var networkService = DI.Container.Resolve<INetworkService>();
         networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
         networkService.Send(enterLobbyRequest);
+
+        // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
+        var sceneService = DI.Container.Resolve<ISceneService>();
+        sceneService.LoadScene(Define.Scene.Lobby);
     }
 
     public static void S_MOVEHandler(PacketSession session, IMessage message)

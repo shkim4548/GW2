@@ -99,7 +99,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	GameMath::Vector3 startWorld(startPos.x(), startPos.y(), startPos.z());
 	GameMath::Vector3 endWorld(endPos.x(), endPos.y(), endPos.z());
 
-	cout << "[Room::HandleMovePlayer] Before FindPath" << endl;
+	//cout << "[Room::HandleMovePlayer] Before FindPath" << endl;
 	// World -> Grid
 	int32 sx, sz, tx, tz;
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
@@ -128,6 +128,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 
 	if (!ok || gridPath.empty())
 	{
+		cout << "ok, gridPath.size() : " << ok << ", " << gridPath.size() << endl;
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] GridCell is nullptr\n");
 		return;
 	}
