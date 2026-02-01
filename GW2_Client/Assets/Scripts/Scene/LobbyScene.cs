@@ -7,18 +7,20 @@ using UnityEngine;
 public class LobbyScene : BaseScene
 {
     public IUIService _uiService;
+    public INetworkService _networkService;
 
     protected override void Init()
     {
         base.Init();
-        _uiService = DI.Container.Resolve<IUIService>();
+        _uiService = Bootstrapper.Instance.UIService;
+        _networkService = Bootstrapper.Instance.NetworkService;
         _uiService.ShowSceneUI<UI_LobbyScene>();
 
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
-        var networkService = DI.Container.Resolve<INetworkService>();
+        //var networkService = DI.Container.Resolve<INetworkService>();
         //networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
-        networkService.SetNetworkId(1);
-        networkService.Send(enterLobbyRequest);
+        _networkService.SetNetworkId(1);
+        _networkService.Send(enterLobbyRequest);
     }
 
     public override void Clear()

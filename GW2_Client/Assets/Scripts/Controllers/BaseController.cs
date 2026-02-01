@@ -58,7 +58,8 @@ public class BaseController : MonoBehaviour
 
     public void Start()
     {
-        _inputService = DI.Container.Resolve<IInputService>();
+        //_inputService = DI.Container.Resolve<IInputService>();
+        _inputService = Bootstrapper.Instance.InputService;
         Init();
     }
 

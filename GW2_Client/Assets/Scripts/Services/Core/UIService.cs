@@ -24,12 +24,8 @@ public class UIService : IUIService
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
     UI_Scene _sceneUI = null;
 
-    private readonly Lazy<IResourceService> Resource;
+    //private readonly Lazy<IResourceService> Resource;
 
-    public UIService(Lazy<IResourceService> lazyResource)
-    {
-        Resource = lazyResource;
-    }
 
     public GameObject Root
     {
@@ -73,8 +69,11 @@ public class UIService : IUIService
         if (_popupStack.Count == 0)
             return;
 
+        IResourceService Resource = Bootstrapper.Instance.ResourceService;
+
         UI_Popup popup = _popupStack.Pop();
-        Resource.Value.Destroy(popup.gameObject);
+        //Resource.Value.Destroy(popup.gameObject);
+        Resource.Destroy(popup.gameObject);
         popup = null;
         _order--;
     }
@@ -84,7 +83,8 @@ public class UIService : IUIService
         if (string.IsNullOrEmpty(name))
             name = typeof(T).Name;
 
-        GameObject go = Resource.Value.Instantiate($"UI/SubItem/{name}");
+        IResourceService Resource = Bootstrapper.Instance.ResourceService;
+        GameObject go = Resource.Instantiate($"UI/SubItem/{name}");
         if (parent != null)
             go.transform.SetParent(parent);
 
@@ -96,7 +96,8 @@ public class UIService : IUIService
         if (string.IsNullOrEmpty(name))
             name = typeof(T).Name;
 
-        GameObject go = Resource.Value.Instantiate($"UI/WorldSpace/{name}");
+        IResourceService Resource = Bootstrapper.Instance.ResourceService;
+        GameObject go = Resource.Instantiate($"UI/WorldSpace/{name}");
         if (parent != null)
             go.transform.SetParent(parent);
 
@@ -128,7 +129,8 @@ public class UIService : IUIService
         if (string.IsNullOrEmpty(name))
             name = typeof(T).Name;
 
-        GameObject go = Resource.Value.Instantiate($"UI/Popup/{name}");
+        IResourceService Resource = Bootstrapper.Instance.ResourceService;
+        GameObject go = Resource.Instantiate($"UI/Popup/{name}");
         T popup = Util.GetOrAddComponent<T>(go);
         _popupStack.Push(popup);
 
@@ -142,7 +144,8 @@ public class UIService : IUIService
         if (string.IsNullOrEmpty(name))
             name = typeof(T).Name;
 
-        GameObject go = Resource.Value.Instantiate($"UI/Scene/{name}");
+        IResourceService Resource = Bootstrapper.Instance.ResourceService;
+        GameObject go = Resource.Instantiate($"UI/Scene/{name}");
         T sceneUI = Util.GetOrAddComponent<T>(go);
         _sceneUI = sceneUI;
 

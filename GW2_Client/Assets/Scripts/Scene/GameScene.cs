@@ -11,7 +11,8 @@ public class GameScene : BaseScene
     protected override void Init()
     {
         base.Init();
-        INetworkService network = DI.Container.Resolve<INetworkService>();
+        //INetworkService network = DI.Container.Resolve<INetworkService>();
+        INetworkService network = Bootstrapper.Instance.NetworkService;
 
         //_resourceService.Instantiate("Player/Police");
         // TODO : 하드코딩된 RoomId 변경

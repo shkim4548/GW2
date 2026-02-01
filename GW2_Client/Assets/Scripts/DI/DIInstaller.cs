@@ -13,15 +13,16 @@ public class DIInstaller : MonoBehaviour
         _sceneScope = new ScopeContext();
 
         // DIInstaller.Awake()
-        DI.Container.Register<IResourceService, ResourceService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IUIService, UIService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IInputService, InputService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<ISceneService, SceneService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<INetworkService, NetworkService>(Define.ServiceLifetime.Singleton);
+        
+        //DI.Container.Register<IResourceService, ResourceService>(Define.ServiceLifetime.Singleton);
+        //DI.Container.Register<IUIService, UIService>(Define.ServiceLifetime.Singleton);
+        //DI.Container.Register<IInputService, InputService>(Define.ServiceLifetime.Singleton);
+        //DI.Container.Register<ISceneService, SceneService>(Define.ServiceLifetime.Singleton);
+        //DI.Container.Register<INetworkService, NetworkService>(Define.ServiceLifetime.Singleton);
 
-        DI.Container.Inject(this, _sceneScope);
+        //DI.Container.Inject(this, _sceneScope);
 
-        foreach (var mb in FindObjectsOfType<MonoBehaviour>(true))
-            DI.Container.Inject(mb, _sceneScope);
+        //foreach (var mb in FindObjectsOfType<MonoBehaviour>(true))
+            //DI.Container.Inject(mb, _sceneScope);
     }
 }

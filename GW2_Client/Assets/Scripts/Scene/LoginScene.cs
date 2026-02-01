@@ -5,7 +5,7 @@ using UnityEngine;
 public class LoginScene : BaseScene
 {
     [Inject]
-    IUIService uiService;
+    IUIService _uiService;
 
     protected override void Init()
     {
@@ -13,7 +13,7 @@ public class LoginScene : BaseScene
 
         // 지역(Scene Service) 미리 다 등록
         // 일정 시간이 지나면 UI를 띄운다.
-        uiService = DI.Container.Resolve<IUIService>();
+        _uiService = Bootstrapper.Instance.UIService;
         StartCoroutine("ShowUICoroutine");
     }
 
@@ -25,6 +25,6 @@ public class LoginScene : BaseScene
     public IEnumerator ShowUICoroutine()
     {
         yield return new WaitForSeconds(5.0f);
-        uiService.ShowSceneUI<UI_LoginScene>();
+        _uiService.ShowSceneUI<UI_LoginScene>();
     }
 }

@@ -26,8 +26,8 @@ public class MyPlayerController : PlayerController
         FindObjectOfType<CameraController>().SetPlayer(this);
 
         _navAgent = GetComponent<NavMeshAgent>();
-        _inputService = DI.Container.Resolve<IInputService>();
-        _networkService = DI.Container.Resolve<INetworkService>();
+        _inputService = Bootstrapper.Instance.InputService;
+        _networkService = Bootstrapper.Instance.NetworkService;
 
         _inputService.MouseAction -= OnMouseEvent;
         _inputService.MouseAction += OnMouseEvent;
@@ -46,6 +46,7 @@ public class MyPlayerController : PlayerController
     public override void UpdateMoving()
     {
         base.UpdateMoving();
+        Debug.Log("UpdateMoving");
         if (_moveToDest)
         {
             Vector3 dir = _destPos - transform.position;

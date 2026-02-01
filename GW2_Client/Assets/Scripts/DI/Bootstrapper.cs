@@ -1,44 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using Google.Protobuf.Protocol;
 using UnityEngine;
 
-// 전역 Service 관리자
 public class Bootstrapper : MonoBehaviour
 {
-    //public static DIContainer GlobalContainer { get; private set; }
+    public static Bootstrapper Instance { get; private set; }
 
-    [Inject]
-    private INetworkService _networkService;
-
-    private ScopeContext _sceneScope;
+    public INetworkService NetworkService { get; private set; }
+    public IUIService UIService { get; private set; }
+    public IResourceService ResourceService { get; private set; }
+    public ISceneService SceneService { get; private set; }
+    public IObjectService ObjectService { get; private set; }
+    public IInputService InputService { get; private set; }
 
     void Awake()
     {
-        Debug.Log("BootStrapper");
-        _sceneScope = new ScopeContext();
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
+        Instance = this;
         DontDestroyOnLoad(gameObject);
-        //GlobalContainer = new DIContainer();
 
-        // 전역 싱글톤 서비스 등록
-        DI.Container.Register<INetworkService, NetworkService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IUIService, UIService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IResourceService, ResourceService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<ISceneService, SceneService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IObjectService, ObjectService>(Define.ServiceLifetime.Singleton);
-        DI.Container.Register<IInputService, InputService>(Define.ServiceLifetime.Singleton);
-        //Container.RegisterSingleton<IAudioService, AudioService>();
-
-        // 등록된 것을 미리 꺼내두기
-        _networkService = DI.Container.Resolve<INetworkService>();
-        _networkService.Init();
+        InitializeServices();
     }
 
-    private void Update()
+    private void InitializeServices()
     {
-        _networkService.Update();
+        DI.Container.Register<INetworkService, NetworkService>(Define.ServiceLifetime.Singleton);
+
+        NetworkService = new NetworkService();
+        UIService = new UIService();
+        ResourceService = new ResourceService();
+        SceneService = new SceneService();
+        ObjectService = new ObjectService();
+        InputService = new InputService();
+
+        NetworkService.Init();
     }
 
+    void Update()
+    {
+        NetworkService.Update();
+    }
 }

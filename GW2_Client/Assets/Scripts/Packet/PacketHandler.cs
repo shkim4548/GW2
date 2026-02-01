@@ -14,7 +14,8 @@ public class PacketHandler
         S_ENTER_GAME enterGamePkt = message as S_ENTER_GAME;
         int roomId = (int)enterGamePkt.Player.RoomId;
         
-        var objectService = DI.Container.Resolve<IObjectService>();
+        //var objectService = DI.Container.Resolve<IObjectService>();
+        var objectService = Bootstrapper.Instance.ObjectService;
         Debug.Log($"[PacketHandler] After ObjectService");
         // TEST : EnterGame으로 받았으면 무조건 내 플레이어 캐릭터다
         objectService.Add(enterGamePkt.Player, true);
@@ -30,19 +31,23 @@ public class PacketHandler
 
         // 로그인 완료시 Lobby 입장 요청
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
-        var networkService = DI.Container.Resolve<INetworkService>();
+        //var networkService = DI.Container.Resolve<INetworkService>();
+        var networkService = Bootstrapper.Instance.NetworkService;
         networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
+        Debug.Log(networkService.GetNetworkId());
         networkService.Send(enterLobbyRequest);
 
         // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
-        var sceneService = DI.Container.Resolve<ISceneService>();
+        //var sceneService = DI.Container.Resolve<ISceneService>();
+        var sceneService = Bootstrapper.Instance.SceneService;
         sceneService.LoadScene(Define.Scene.Lobby);
     }
 
     public static void S_MOVEHandler(PacketSession session, IMessage message)
     {
         S_MOVE movePkt = message as S_MOVE;
-        var objectService = DI.Container.Resolve<IObjectService>();
+        //var objectService = DI.Container.Resolve<IObjectService>();
+        var objectService = Bootstrapper.Instance.ObjectService;
 
         int targetId = movePkt.ObjectId;
         GameObject go = objectService.FindById(targetId);
@@ -95,7 +100,7 @@ public class PacketHandler
     public static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
     {
         S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
-        var networkService = DI.Container.Resolve<INetworkService>();
+        var networkService = Bootstrapper.Instance.NetworkService;
         networkService.SetNetworkId(lobbyPkt.PlayerId);
         
         // DEBUG

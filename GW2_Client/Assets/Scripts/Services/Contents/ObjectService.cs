@@ -45,9 +45,11 @@ public class ObjectService : IObjectService
         {
             if (myPlayer)
             {
+                Debug.Log("MyPlayer");
                 Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
                 // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
-                _resourceService = DI.Container.Resolve<IResourceService>();
+                //_resourceService = DI.Container.Resolve<IResourceService>();
+                _resourceService = Bootstrapper.Instance.ResourceService;
                 go = _resourceService.Instantiate("Player/Police");
                 if(go == null)
                 {

@@ -8,14 +8,17 @@ public class TestScene : BaseScene
     protected override void Init()
     {
         base.Init();
-        INetworkService network = DI.Container.Resolve<INetworkService>();
-
+        INetworkService network = Bootstrapper.Instance.NetworkService;
         //_resourceService.Instantiate("Player/Police");
         // TODO : 하드코딩된 RoomId 변경
+
         C_ENTER_GAME enterGamePkt = new C_ENTER_GAME();
-        enterGamePkt.PlayerIndex = network.GetNetworkId();
+        //enterGamePkt.PlayerIndex = network.GetNetworkId();
+        enterGamePkt.PlayerIndex = 1;
+        //Debug.Log(enterGamePkt.PlayerIndex);
         enterGamePkt.RoomId = 0;
         network.Send(enterGamePkt);
+        Debug.Log("TestScene");
     }
 
     public override void Clear()

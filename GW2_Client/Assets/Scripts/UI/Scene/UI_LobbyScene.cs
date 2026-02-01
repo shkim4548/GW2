@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class UI_LobbyScene : UI_Scene
 {
-    
-
     enum Buttons
     {
         EnterMulti_1vs1,
@@ -27,20 +25,20 @@ public class UI_LobbyScene : UI_Scene
 
     public void OnClick1vs1(PointerEventData data)
     {
-        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        ISceneService sceneService = Bootstrapper.Instance.SceneService;
         sceneService.LoadScene(Define.Scene.Game);
     }
 
     public void OnClick2vs2(PointerEventData data)
     {
-        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        ISceneService sceneService = Bootstrapper.Instance.SceneService;
         sceneService.LoadScene(Define.Scene.Game);
     }
 
     public void OnClickSingle(PointerEventData data)
     {
         // TODO : TEST만 하기 때문에 그냥 Single플레이만 넘겨버린다.
-        ISceneService sceneService = DI.Container.Resolve<ISceneService>();
+        ISceneService sceneService = Bootstrapper.Instance.SceneService;
         //sceneService.LoadScene(Define.Scene.Game);
         // 개발단계에서는 여기를 테스트 씬으로 넘겨버리자
         sceneService.LoadScene(Define.Scene.TestScene);

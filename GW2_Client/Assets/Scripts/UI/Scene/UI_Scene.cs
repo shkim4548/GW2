@@ -7,8 +7,8 @@ public class UI_Scene : UI_Base
 
     public override void Init()
     {
-        DI.Container.Inject(this);
-
+        //DI.Container.Inject(this);
+        uiService = Bootstrapper.Instance.UIService;
         uiService.SetCanvas(gameObject, false);
     }
 }

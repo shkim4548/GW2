@@ -37,7 +37,8 @@ public class UI_LoginScene : UI_Scene
         Debug.Log(text);
 
         C_LOGIN loginPkt = new C_LOGIN() { Nickname = text };
-        var networkService = DI.Container.Resolve<INetworkService>();
+        //var networkService = DI.Container.Resolve<INetworkService>();
+        INetworkService networkService = Bootstrapper.Instance.NetworkService;
 
         networkService.Send(loginPkt);
     }

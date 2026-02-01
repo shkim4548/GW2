@@ -1,44 +1,77 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using GameServerAdmin.Common.Exceptions.Post;
 
 namespace GameServerAdmin.Domain.Posts
 {
-    [Table("post")]
     public class Post
     {
-        [Key]
-        [Column("post_id")]
-        public int PostId { get; set; }
+        protected Post() { }
 
-        [Required]
-        [MaxLength(20)]
-        [Column("post_type")]
-        public string PostType { get; set; } = null!;
+        public Post(string postType, string title, string content, string authorType, int authorId)
+        {
+            ValidateTitle(title);
+            ValidateContent(content);
 
-        [Required]
-        [MaxLength(200)]
-        [Column("title")]
-        public string Title { get; set; } = null!;
+            PostType = postType;
+            Title = title;
+            Content = content;
+            AuthorType = authorType;
+            AuthorId = authorId;
 
-        [Required]
-        [Column("content")]
-        public string Content { get; set; } = null!;
+            IsDeleted = false;
+            CreatedAt = DateTime.UtcNow;
+        }
 
-        [Required]
-        [MaxLength(20)]
-        [Column("author_type")]
-        public string AuthorType { get; set; } = null!;
+        public int PostId { get; private set; }
+        public string PostType { get; private set; } = null!;
+        public string Title { get; private set; } = null!;
+        public string Content { get; private set; } = null!;
+        public string AuthorType { get; private set; } = null!;
+        public int AuthorId { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public bool IsDeleted { get; private set; }
 
-        [Column("author_id")]
-        public int AuthorId { get; set; }
+        public void Update(string title, string content)
+        {
+            if (IsDeleted)
+                throw new InvalidPostStateException("Deleted post cannot be updated");
 
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+            ValidateTitle(title);
+            ValidateContent(content);
 
-        [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+            Title = title;
+            Content = content;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
-        [Column("is_deleted")]
-        public bool IsDeleted { get; set; }
+        public void SoftDelete()
+        {
+            if (IsDeleted)
+                throw new InvalidPostStateException("Already deleted");
+
+            IsDeleted = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Restore()
+        {
+            if (!IsDeleted)
+                throw new InvalidPostStateException("Post is not deleted");
+
+            IsDeleted = false;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        private static void ValidateTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new DomainException("Title is required");
+        }
+
+        private static void ValidateContent(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                throw new DomainException("Content is required");
+        }
     }
 }
