@@ -346,7 +346,6 @@ bool Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int3
 bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
 {
 	bool ok = WorldToGridImpl(grid, worldPos._x, worldPos._z, x, z);
-	cout << "WorldToGridEnd" << endl;
 
 	if (!ok)
 	{
@@ -715,12 +714,11 @@ void Navigation::NavigationSystem::DebugTestWorldPos(GameMath::Vector3& worldPos
 
 bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& X, int32& Z)
 {
-	cout << "WorldToGridImpl Start" << endl;
 	float localX = (worldX - grid.origin._x) / grid.cellSize;
 	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
 
 	// 핵심: floor 사용
-	// 여기서 0x00005 메모리 침범 오류 발생 -> _navigationSystem 자체가 nullptr
+	// 여기서 0x00005 메모리 침범 오류 발생 -> _navigationSystem 자체가 nullptr -> 이건 해결 완료
 	int32 x = static_cast<int32>(std::floor(localX));
 	int32 z = static_cast<int32>(std::floor(localZ));
 	//cout << "WorldToGridImpl floor" << endl;
@@ -733,7 +731,6 @@ bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, flo
 
 	X = x;
 	Z = z;
-	cout << "WorldToGridImpl End" << endl;
 	return true;
 }
 

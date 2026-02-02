@@ -11,7 +11,7 @@ public class NavGridExporter : EditorWindow
     private static float cellSize = 0.5f;
     private static float sampleHeight = 2.0f;
 
-    [MenuItem("Tools/Export/Export NavGrid (Binary)")]
+    //[MenuItem("Tools/Export/Export NavGrid (Binary)")]
     public static void ExportNavGrid()
     {
         // -----------------------------
