@@ -1,101 +1,77 @@
 ﻿using GameServerAdmin.Application.Posts;
-using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
-using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql.PostgresTypes;
 
-namespace GameServerAdmin.Controllers.BackOffice
+namespace GameServerAdmin.Controllers.BackOffice;
+
+[ApiController]
+[Route("api/admin/posts")]
+public class PostAdminController : ControllerBase
 {
-    [ApiController]
-    [Route("api/admin/posts")]
-    public class PostAdminController : ControllerBase
+    private readonly IAdminPostService _postService;
+
+    public PostAdminController(IAdminPostService postService)
     {
-        private readonly IPostService _postService;
+        _postService = postService;
+    }
 
-        public PostAdminController(IPostService postService)
-        {
-            _postService = postService;
-        }
+    // READ (Admin)
+    [HttpGet("all")]
+    public async Task<IActionResult> GetPostsForAdmin()
+    {
+        return Ok(await _postService.GetAllPostsForAdminAsync());
+    }
 
-        // Create
-        [HttpPost]
-        public async Task<ActionResult<PublicPostDetailResponse>> Create(PostCreateRequest request)
-        {
-            var post = new PostCreateRequest
-            {
-                PostType = request.PostType,
-                Title = request.Title,
-                Content = request.Content,
-                AuthorType = request.AuthorType,
-                AuthorId = request.AuthorId,
-            };
+    // UPDATE
+    [HttpPut]
+    public async Task<IActionResult> Update(PostUpdateRequest request)
+    {
+        await _postService.UpdateAsync(request);
+        return Ok();
+    }
 
-            return Ok(await _postService.CreateAsync(post));
-        }
+    // SOFT DELETE
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> SoftDelete(int id)
+    {
+        await _postService.SoftDeleteAsync(id);
+        return Ok();
+    }
 
-        // READ
-        [HttpGet("all")]
-        public async Task<IActionResult> GetPostsForAdmin()
-        {
-            var posts = await _postService.GetAllPostsForAdminAsync();
-            return Ok(posts);
-        }
+    // RESTORE
+    [HttpPatch("{id:int}/restore")]
+    public async Task<IActionResult> Restore(int id)
+    {
+        await _postService.RestoreAsync(id);
+        return Ok();
+    }
 
-        // UPDATE
-        [HttpPut]
-        public async Task<IActionResult> Update(PostUpdateRequest request)
-        {
-            await _postService.UpdateAsync(request);
-            return Ok();
-        }
+    // DELETED LIST
+    [HttpGet("deleted")]
+    public async Task<IActionResult> GetDeletedPosts()
+    {
+        return Ok(await _postService.GetDeletedPostAsync());
+    }
 
-        // DELETE (Soft)
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _postService.SoftDeleteAsync(id);
-            return Ok();
-        }
+    // DELETED DETAIL
+    [HttpGet("deleted/{id:int}")]
+    public async Task<IActionResult> GetDeletedPost(int id)
+    {
+        return Ok(await _postService.GetDeletedPostAsync(id));
+    }
 
-        // Restore
-        [HttpPatch("{id:int}/restore")]
-        public async Task<IActionResult> Restore(int id)
-        {
-            await _postService.RestoreAsync(id);
-            return Ok();
-        }
+    // HARD DELETE
+    [HttpDelete("{id:int}/hard")]
+    public async Task<IActionResult> HardDelete(int id)
+    {
+        await _postService.HardDeleteAsync(id);
+        return NoContent();
+    }
 
-        // DELETED POSTS LIST GET
-        [HttpGet("deleted")]
-        public async Task<IActionResult> GetDeletedPosted()
-        {
-            var posts = await _postService.GetDeletedPostAsync();
-            return Ok(posts);
-        }
-
-        [HttpGet("deleted/{id:int}")]
-        public async Task<IActionResult> GetDeletedPost(int id)
-        {
-            var post = await _postService.GetDeletedPostAsync(id);
-            return Ok(post);
-        }
-
-        // HARD DELETE
-        [HttpDelete("{id:int}/hard")]
-        public async Task<IActionResult> HardDeleted(int id)
-        {
-            await _postService.HardDeleteAsync(id);
-            // 성공했지만 반환할 데이터가 없기 때문에 return No Content
-            return NoContent();
-        }
-
-        // PAGED QUERY
-        [HttpGet]
-        public async Task<ActionResult<PagedResponse<AdminPostListItemResponse>>> GetPagedList([FromQuery] AdminPostListQuery query)
-        {
-            var result = await _postService.GetAdminPostListAsync(query);
-            return Ok(result);
-        }
+    // PAGED LIST
+    [HttpGet]
+    public async Task<IActionResult> GetPaged([FromQuery] AdminPostListQuery query)
+    {
+        return Ok(await _postService.GetAdminPostListAsync(query));
     }
 }
