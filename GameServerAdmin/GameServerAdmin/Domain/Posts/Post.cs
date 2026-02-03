@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Common.Exceptions.Post;
+﻿using GameServerAdmin.Common.Exceptions;
+using GameServerAdmin.Common.Exceptions.Post;
 
 namespace GameServerAdmin.Domain.Posts
 {
