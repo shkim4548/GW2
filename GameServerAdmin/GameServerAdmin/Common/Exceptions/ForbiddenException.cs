@@ -1,4 +1,4 @@
-﻿namespace GameServerAdmin.Common.Exceptions.Post
+﻿namespace GameServerAdmin.Common.Exceptions
 {
     public sealed class ForbiddenException : AppException
     {

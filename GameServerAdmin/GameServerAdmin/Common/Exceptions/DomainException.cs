@@ -1,6 +1,6 @@
-﻿namespace GameServerAdmin.Common.Exceptions.Post
+﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public sealed class DomainException : AppException
+    public class DomainException : AppException
     {
         public DomainException(string message) : base(ErrorCode.VALIDATION_FAILED, message) { }
 

@@ -1,11 +1,14 @@
-﻿namespace GameServerAdmin.Common.Exceptions.Post
+﻿
+namespace GameServerAdmin.Common.Exceptions.Comment
 {
-    public sealed class PostNotFoundException : NotFoundException
+    public sealed class CommentNotFoundException : NotFoundException
     {
-        public PostNotFoundException(long postId)
-    : base(
-        ErrorCode.BOARD_POST_NOT_FOUND,
-        $"게시글을 찾을 수 없습니다. postId={postId}"
-    ) { }
+        public CommentNotFoundException(long commentId)
+            : base(
+                ErrorCode.COMMENT_NOT_FOUND,
+                $"댓글을 찾을 수 없습니다. commentId={commentId}"
+            )
+        {
+        }
     }
 }

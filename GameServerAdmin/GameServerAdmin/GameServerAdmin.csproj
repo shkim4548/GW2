@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Comments\Admin\" />
+    <Folder Include="Application\Comments\Public\" />
     <Folder Include="Common\Contracts\" />
     <Folder Include="Repositoires\" />
   </ItemGroup>

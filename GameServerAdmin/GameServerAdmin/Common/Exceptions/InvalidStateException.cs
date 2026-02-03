@@ -1,6 +1,6 @@
-﻿namespace GameServerAdmin.Common.Exceptions.Validation
+﻿namespace GameServerAdmin.Common.Exceptions
 {
-    public sealed class InvalidStateException : AppException
+    public class InvalidStateException : AppException
     {
         public InvalidStateException(string message) : base(ErrorCode.INVALID_STATE, message) { }
 
