@@ -65,7 +65,7 @@ public class MyPlayerController : PlayerController
                 nowPos.X = this.transform.position.x;
                 nowPos.Y = this.transform.position.y;
                 nowPos.Z = this.transform.position.z;
-                
+
                 PosInfo targetPos = new PosInfo();
                 targetPos.X = _destPos.x;
                 targetPos.Y = _destPos.y;

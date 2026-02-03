@@ -88,9 +88,9 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 
 	//DEBUG
 	// startPos
-	cout << "[Handle_C_MOVE] StartPos " << pkt.object_id() << ", " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
+	cout << "[Handle_C_MOVE] StartPos " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
 	// targetPos
-	cout << "[Handle_C_MOVE] TargetPos " << pkt.object_id() << ", " << pkt.target_pos().x() << ", " << pkt.target_pos().y() << ", " << pkt.target_pos().z() << '\n';
+	cout << "[Handle_C_MOVE] TargetPos " << pkt.target_pos().x() << ", " << pkt.target_pos().y() << ", " << pkt.target_pos().z() << '\n';
 
 	room->DoAsync(&Room::HandleMovePlayer, pkt);
 	//room->HandleMovePlayer(player, pkt);

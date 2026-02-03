@@ -83,6 +83,12 @@ bool Navigation::NavigationSystem::CanMoveStraight(GameMath::Vector3 start, Game
 	return false;
 }
 
+bool Navigation::NavigationSystem::CanMoveStraightXZ(const GameMath::Vector3& start, const GameMath::Vector3& end)
+{
+
+	return false;
+}
+
 /*-----------------
 	Raycasting
 -------------------*/
@@ -187,6 +193,41 @@ bool Navigation::NavigationSystem::RaycastWorld(const Ray& ray, float maxDistanc
 	return hasHit;
 }
 
+bool Navigation::NavigationSystem::RaycastWorld2D(const Ray2D& ray, float maxDistance, RaycastHit2D& outHit)
+{
+	const float STEP = _grids.cellSize * 0.25f; // 충분히 작은 값
+	float traveled = 0.0f;
+
+	GameMath::Vector2 pos = ray.origin;
+
+	while (traveled <= maxDistance)
+	{
+		// World → Grid
+		int gx, gz;
+		if (!WorldToGridXZ(pos._x, pos._z, gx, gz))
+		{
+			// Grid 밖 = 벽
+			outHit.point = pos;
+			outHit.distance = traveled;
+			outHit.normal = GameMath::Vector2(0, 0);
+			return true;
+		}
+
+		if (!_grids.At(gx, gz).walkable)
+		{
+			outHit.point = pos;
+			outHit.distance = traveled;
+			outHit.normal = GameMath::Vector2(0, 0);
+			return true;
+		}
+
+		pos = pos + (ray.dir * STEP);
+		traveled += STEP;
+	}
+
+	return false; // 충돌 없음
+}
+
 void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin)
 {
 	// grid cell 초기화
@@ -202,7 +243,7 @@ void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 w
 
 void Navigation::NavigationSystem::BuildCells(WalkableGrid& grid)
 {
-	cout << "BuildCells Start" << endl;
+	// cout << "BuildCells Start" << endl;
 	// 초기화된 데이터로 실제로 맵을 만든다.
 	// 벽위, 공중, 낭떠러지를 구분하고, 갈 수 있는 공간을 구분한다.
 	const float MAX_SLOPE_HEIGHT = 1.0f;
@@ -262,68 +303,23 @@ void Navigation::NavigationSystem::BuildConnections(WalkableGrid& grid)
 			if (!cell.walkable)
 				continue;
 
-			GameMath::Vector3 from;
-			if (!GridToWorld(grid, x, z, from))
-			{
-				GConsoleLogger->WriteStdErr(Color::RED, L"GridToWorld FAIL : ");
-				cout << x << ", " << z << endl;
-				continue;
-			}
-
-			// North (x, z+1)
+			// North
 			if (z + 1 < grid.height && grid.At(x, z + 1).walkable)
-			{
-				GameMath::Vector3 to;
-				if (GridToWorld(grid, x, z + 1, to))
-				{
-					if (CanMoveStraight(from, to))
-						cell.neighbors[DIR_NORTH] = true;
-					else
-						cout << "North : " << x << z + 1 << endl;
-				}
-			}
+				cell.neighbors[DIR_NORTH] = true;
 
-			// East (x+1, z)
+			// East
 			if (x + 1 < grid.width && grid.At(x + 1, z).walkable)
-			{
-				GameMath::Vector3 to;
-				if (GridToWorld(grid, x + 1, z, to))
-				{
-					if (CanMoveStraight(from, to))
-						cell.neighbors[DIR_EAST] = true;
-					else
-						cout << "EAST : " << x + 1 << z << endl;
-				}
-			}
+				cell.neighbors[DIR_EAST] = true;
 
-			// South (x, z-1)
+			// South
 			if (z > 0 && grid.At(x, z - 1).walkable)
-			{
-				GameMath::Vector3 to;
-				if (GridToWorld(grid, x, z - 1, to))
-				{
-					if (CanMoveStraight(from, to))
-						cell.neighbors[DIR_SOUTH] = true;
-					else
-						cout << "SOUTH : " << x << z - 1 << endl;
-				}
-			}
+				cell.neighbors[DIR_SOUTH] = true;
 
-			// West (x-1, z)
+			// West
 			if (x > 0 && grid.At(x - 1, z).walkable)
-			{
-				GameMath::Vector3 to;
-				if (GridToWorld(grid, x - 1, z, to))
-				{
-					if (CanMoveStraight(from, to))
-						cell.neighbors[DIR_WEST] = true;
-					else
-						cout << "WEST : " << x - 1 << z << endl;
-				}
-			}
+				cell.neighbors[DIR_WEST] = true;
 		}
 	}
-
 }
 
 bool Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int32 z, GameMath::Vector3& OUT worldPos)
@@ -332,37 +328,28 @@ bool Navigation::NavigationSystem::GridToWorld(WalkableGrid& grid, int32 x, int3
 		return false;
 
 	const GridCell& cell = grid.At(x, z);
-
 	if (!cell.walkable)
 		return false;
 
-	float worldX = grid.origin._x + (x + 0.5f) * grid.cellSize;
-	float worldZ = grid.origin._z + (z + 0.5f) * grid.cellSize;
+	worldPos._x = grid.origin._x + (x + 0.5f) * grid.cellSize;
+	worldPos._z = grid.origin._z + (z + 0.5f) * grid.cellSize;
 
-	worldPos = GameMath::Vector3(worldX, cell.height, worldZ);
+	worldPos._y = 0.0f;   // 예: 0.0f 또는 Nav 기준 Y
+
 	return true;
 }
 
 bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z)
 {
-	bool ok = WorldToGridImpl(grid, worldPos._x, worldPos._z, x, z);
-
-	if (!ok)
-	{
-		x = -1;
-		z = -1;
-		GConsoleLogger->WriteStdErr(Color::RED, L"WorldToGridImpl is not ok");
+	if (!WorldToGridImpl(grid, worldPos._x, worldPos._z, x, z))
 		return false;
-	}
 
-	// 방어적 범위 체크 (Impl 신뢰하지 않음)
 	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
-	{
-		x = -1;
-		z = -1;
-		GConsoleLogger->WriteStdErr(Color::RED, L"WorldToGridImpl is block is not ok");
 		return false;
-	}
+
+	if (!grid.At(x, z).walkable)
+		return false;
+
 	return true;
 }
 
@@ -420,6 +407,21 @@ void Navigation::NavigationSystem::BuildGrid(float cellSize)
 			_cells.push_back(cell);
 		}
 	}
+}
+
+bool Navigation::NavigationSystem::WorldToGridXZ(float worldX, float worldZ, int& outX, int& outZ) const
+{
+	float localX = (worldX - _grids.origin._x) / _grids.cellSize;
+	float localZ = (worldZ - _grids.origin._z) / _grids.cellSize;
+
+	outX = static_cast<int>(floor(localX));
+	outZ = static_cast<int>(floor(localZ));
+
+	if (outX < 0 || outX >= _grids.width ||
+		outZ < 0 || outZ >= _grids.height)
+		return false;
+
+	return true;
 }
 
 void Navigation::NavigationSystem::InitNavmesh(vector<Triangle>&& triangles, WalkableGrid&& grid)
@@ -515,7 +517,7 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 
 		const GridCell& cell = grid.At(cx, cz);
 		cout << "Start neighbors : ";
-		for (int32 i = 0; i < 5; ++i)
+		for (int32 i = 0; i < 4; ++i)
 		{
 			cout << cell.neighbors[i] << ' ';
 		}
@@ -717,17 +719,11 @@ bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, flo
 	float localX = (worldX - grid.origin._x) / grid.cellSize;
 	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
 
-	// 핵심: floor 사용
-	// 여기서 0x00005 메모리 침범 오류 발생 -> _navigationSystem 자체가 nullptr -> 이건 해결 완료
-	int32 x = static_cast<int32>(std::floor(localX));
-	int32 z = static_cast<int32>(std::floor(localZ));
-	//cout << "WorldToGridImpl floor" << endl;
+	int32 x = static_cast<int32>(std::floor(localX + 0.5f));
+	int32 z = static_cast<int32>(std::floor(localZ + 0.5f));
 
 	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"World to Grid is out of bound");
 		return false;
-	}
 
 	X = x;
 	Z = z;

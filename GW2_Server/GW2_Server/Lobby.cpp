@@ -26,48 +26,60 @@ Lobby::~Lobby()
 
 void Lobby::LobbyInit()
 {
-	GConsoleLogger->WriteStdOut(
-		Color::YELLOW,
-		L"[Lobby] Load NavGrid start\n"
-	);
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] Load NavGrid start\n");
 
-	bool ok = _navmeshLoader->LoadNavGridBin(
-		"../../GW2_Client/Assets/NavMeshExport/navgrid.bin",
-		*_walkableGrid
-	);
+    bool ok = _navmeshLoader->LoadNavGridBin(
+        "../../GW2_Client/Assets/NavMeshExport/navgrid.bin",
+        *_walkableGrid
+    );
 
-	if (!ok)
-	{
-		GConsoleLogger->WriteStdOut(
-			Color::RED,
-			L"[Lobby] NavGrid load failed\n"
-		);
-		return;
-	}
+    if (!ok) {
+        GConsoleLogger->WriteStdOut(Color::RED, L"[Lobby] NavGrid load failed\n");
+        return;
+    }
 
-	GConsoleLogger->WriteStdOut(
-		Color::YELLOW,
-		L"[Lobby] NavGrid load complete\n"
-	);
-	//Navigation::WalkableGrid walkGrid = *_walkableGrid;
-	// TODO : HardCoding
-	MakeRoom("TestRoom");
-	GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
-	cout << _rooms.size() << endl;
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] NavGrid load complete\n");
 
-	// DEBUG
-	//Navigation::NavigationSystem& navSystem = *_navigationSystem;
-	cout << "[NavGrid Loaded]\n";
-	cout << "width     : " << _walkableGrid->width << "\n";
-	cout << "height    : " << _walkableGrid->height << "\n";
-	cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
-	cout << "cellCount : " << _walkableGrid->cells.size() << endl;
-	_navigationSystem->PrintGridSummary(*_walkableGrid);
-	//navSystem.PrintGrid(*_walkableGrid);
-	_navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
-	_navigationSystem->BuildWalkableGrid(*_walkableGrid, _walkableGrid->width, _walkableGrid->height, _walkableGrid->cellSize, _walkableGrid->origin);
-	_navigationSystem->Init(*_walkableGrid);
+    MakeRoom("TestRoom");
+    GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
+    cout << _rooms.size() << endl;
+
+    // DEBUG
+    cout << "[NavGrid Loaded]\n";
+    cout << "width     : " << _walkableGrid->width << "\n";
+    cout << "height    : " << _walkableGrid->height << "\n";
+    cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
+    cout << "cellCount : " << _walkableGrid->cells.size() << endl;
+
+    // 제거: BuildWalkableGrid는 파일 데이터를 덮어씀
+    // _navigationSystem->BuildWalkableGrid(*_walkableGrid, ...);
+
+    // 추가: Connections만 빌드
+    _navigationSystem->BuildConnections(*_walkableGrid);
+
+    // Init
+    _navigationSystem->Init(*_walkableGrid);
+
+    // 검증
+    _navigationSystem->PrintGridSummary(*_walkableGrid);
+    _navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
+
+    // ===== 검증 로그 =====
+    cout << "[Connections Verification - First 3x3]" << endl;
+    for (int z = 0; z < min(3, _walkableGrid->height); ++z) {
+        for (int x = 0; x < min(3, _walkableGrid->width); ++x) {
+            auto& cell = _walkableGrid->At(x, z);
+            if (cell.walkable) {
+                cout << "Cell(" << x << "," << z << ") N="
+                    << (int)cell.neighbors[0] << " E="
+                    << (int)cell.neighbors[1] << " S="
+                    << (int)cell.neighbors[2] << " W="
+                    << (int)cell.neighbors[3] << endl;
+            }
+        }
+    }
 }
+
 
 void Lobby::OnClientEnter(PlayerRef player)
 {

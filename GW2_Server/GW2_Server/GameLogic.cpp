@@ -84,3 +84,17 @@ float GameMath::Vector3::Length() const
 {
 	return std::sqrt(_x * _x + _y * _y + _z * _z);
 }
+
+GameMath::Vector2 GameMath::Vector2::Normalized2D()
+{
+	float len = Length2D();
+	if (len < 1e-6f)
+		return GameMath::Vector2{ 0, 0 };
+
+	return GameMath::Vector2{ _x / len, _z / len };
+}
+
+float GameMath::Vector2::Length2D()
+{
+	return std::sqrt(_x * _x  + _z * _z);
+}

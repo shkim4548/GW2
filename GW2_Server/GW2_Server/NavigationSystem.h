@@ -118,9 +118,11 @@ namespace Navigation
 		void Build(const vector<GameMath::Vector3> vertices, const vector<int32>& indices);
 		bool GetGroundHeight(float x, float z, float& OUT outY);
 		bool CanMoveStraight(GameMath::Vector3 start, GameMath::Vector3 end);
+		bool CanMoveStraightXZ(const GameMath::Vector3& start, const GameMath::Vector3& end);
 		// 뮐러 트럼보 교차 알고리즘
 		optional<HitResult> RayIntersects(const Ray& ray, const GameMath::Vector3& v1, const GameMath::Vector3& v2, const GameMath::Vector3& v3, bool cullBackFace = false);
 		bool RaycastWorld(const Ray& ray, float maxDistance, bool cullBackFace, RaycastHit& outHit);
+		bool RaycastWorld2D(const Ray2D& ray, float maxDistance, RaycastHit2D& OUT outHit);
 
 		// Grid Logic
 		void BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin);
@@ -129,6 +131,7 @@ namespace Navigation
 		bool GridToWorld(WalkableGrid& grid, int32 x, int32 z, GameMath::Vector3& OUT worldPos);
 		bool WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z);
 		void BuildGrid(float cellSize);
+		bool WorldToGridXZ(float worldX, float worldZ, int& OUT outX, int& OUT outZ) const;
 
 		vector<Triangle>& GetAllTriangles() { return _allTriangles; }
 		WalkableGrid& GetGridCells() { return _grids; }

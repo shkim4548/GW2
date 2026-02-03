@@ -74,12 +74,12 @@ public class BaseController : MonoBehaviour
     public virtual void Init()
     {
 
-        _animator = GetComponent<Animator>();
-        _baseLayer = _animator.GetLayerIndex("BaseLayer");
-        _lowerLayer = _animator.GetLayerIndex("LowerLayer");
+        //_animator = GetComponent<Animator>();
+        //_baseLayer = _animator.GetLayerIndex("BaseLayer");
+        //_lowerLayer = _animator.GetLayerIndex("LowerLayer");
 
-        _animator.SetLayerWeight(_baseLayer, 1f);
-        _animator.SetLayerWeight(_lowerLayer, 1f);
+        //_animator.SetLayerWeight(_baseLayer, 1f);
+        //_animator.SetLayerWeight(_lowerLayer, 1f);
 
     }
 
@@ -92,7 +92,7 @@ public class BaseController : MonoBehaviour
         if (_animator == null)
         {
             Debug.Log("Animator is null");
-            return;
+            //return;
         }
 
         // Protobuf의 Enum을 사용
@@ -105,21 +105,21 @@ public class BaseController : MonoBehaviour
                 break;
             case MoveState.Idle:
                 Debug.Log("Idle");
-                _animator.CrossFade("Idle", 0.1f, _baseLayer);
-                _animator.CrossFade("Idle", 0.1f, _lowerLayer);
+                //_animator.CrossFade("Idle", 0.1f, _baseLayer);
+                //_animator.CrossFade("Idle", 0.1f, _lowerLayer);
                 UpdateIdle();
                 break;
             case MoveState.Run:
-                _animator.CrossFade("Moving", 0.1f, _baseLayer);
-                _animator.CrossFade("Moving", 0.1f, _lowerLayer);
+                //_animator.CrossFade("Moving", 0.1f, _baseLayer);
+                //_animator.CrossFade("Moving", 0.1f, _lowerLayer);
                 UpdateMoving();
                 break;
             case MoveState.Skill:
-                _animator.CrossFade("SKILL", 0.1f);
+                //_animator.CrossFade("SKILL", 0.1f);
                 break;
             case MoveState.None:
-                _animator.CrossFade("Idle", 0.1f, _baseLayer);
-                _animator.CrossFade("Idle", 0.1f, _lowerLayer);
+                //_animator.CrossFade("Idle", 0.1f, _baseLayer);
+                //_animator.CrossFade("Idle", 0.1f, _lowerLayer);
                 break;
         }
     }

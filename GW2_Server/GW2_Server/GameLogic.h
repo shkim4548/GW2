@@ -94,6 +94,32 @@ namespace GameMath
 		float _y;
 		float _z;
 	};
+
+	struct Vector2
+	{
+	public:
+		Vector2() :_x(0), _z(0) { }
+		Vector2(float x, float z) : _x(x), _z(z) { }
+
+		// 연산자
+		Vector2 operator+(const Vector2& other) const { return Vector2(_x + other._x, _z + other._z);	}
+		Vector2 operator-(const Vector2& other) const { return Vector2(_x - other._x, _z - other._z); }
+		Vector2 operator*(const Vector2& other) const { return Vector2(_x * other._x, _z * other._z);	}
+		Vector2 operator*(const float& other) const { return Vector2(_x * other, _z * other); }
+		Vector2 operator/(const Vector2& other) const { return Vector2(_x / other._x, _z / other._z); }
+		Vector2 operator/(const float& other) const { return Vector2(_x / other, _z / other); }
+		bool operator==(const Vector2& other) const { return _x == other._x && _z == other._z;	}
+
+		Vector2 Normalized2D();
+		float Length2D();
+
+		// 출력용 함수
+		static void Print(Vector2 v) { std::cout << "Vector2(" << v._x << ", " << v._z << ")" << std::endl; }
+
+	public:
+		float _x;
+		float _z;
+	};
 }
 
 /*-----------------
@@ -114,12 +140,25 @@ struct Ray
 	GameMath::Vector3 dir;
 };
 
+struct Ray2D
+{
+	GameMath::Vector2 origin;
+	GameMath::Vector2 dir;
+};
+
 struct RaycastHit
 {
 	float t;
 	GameMath::Vector3 position;
 	GameMath::Vector3 normal;
 	const Triangle* triangle;
+};
+
+struct RaycastHit2D
+{
+	GameMath::Vector2 point;	// 충돌 지점
+	GameMath::Vector2 normal;	// 충돌면의 법선(2D)
+	float distance;
 };
 
 struct HitResult
