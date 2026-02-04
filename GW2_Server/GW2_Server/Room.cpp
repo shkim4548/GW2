@@ -86,9 +86,9 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 }
 
 
-void Room::HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt)
+bool Room::HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt)
 {
-
+	return false;
 }
 
 void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
@@ -128,8 +128,8 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 
 	if (!ok || gridPath.empty())
 	{
-		cout << "ok, gridPath.size() : " << ok << ", " << gridPath.size() << endl;
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] GridCell is nullptr\n");
+		// TODO : 이동 실패 구현
 		return;
 	}
 
@@ -138,9 +138,10 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	if (player.lock() == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] player is nullptr\n");
+		// TODO : 이동 실패 구현
 		return;
 	}
-	cout << "End of HandleMovePlayer" << endl;
+	//cout << "End of HandleMovePlayer" << endl;
 	HandleMovePlayerInternal(player.lock(), gridPath);
 }
 
@@ -167,7 +168,6 @@ void Room::HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCel
 
 	player->_path = move(worldPath);
 	player->_pathIndex = 0;
-
 }
 
 void Room::UpdateRoom(float deltaTime)

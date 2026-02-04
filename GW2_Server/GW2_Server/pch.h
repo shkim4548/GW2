@@ -14,6 +14,7 @@
 #include "Enum.pb.h"
 #include "Struct.pb.h"
 #include <optional>
+#include <chrono>
 #include <unordered_map>
 
 using GameSessionRef = shared_ptr<class GameSession>;

@@ -25,17 +25,19 @@ public:
 public:
 	// Handlers
 	bool HandleEnterPlayer(PlayerRef player);
-	void HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
+	bool HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
 	void HandleMovePlayer(Protocol::C_MOVE movePkt);
 
-	// 로비에서 호출해야함
-	void UpdateRoom(float deltaTime);
+	// called by main thread
+	void RunningRoom();
 
 private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
+	// 로비에서 호출해야함
+	void UpdateRoom(float deltaTime);
 
 private:
 	unordered_map<int32, ObjectRef> _objects;
@@ -44,6 +46,7 @@ private:
 	string _roomName;
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 	weak_ptr<Navigation::WalkableGrid> _roomWalkableGrid;
+	bool _isRunning = false;
 };
 
 extern shared_ptr<Room> GRoom;

@@ -33,7 +33,7 @@ public:
 	/*--------------------
 		called by main
 	----------------------*/
-	void Run();
+	void RunRooms();
 	void LobbyUpdate(float deltaTime);
 
 private:
@@ -49,6 +49,10 @@ private:
 	shared_ptr<struct OBJ_CollisionMesh> _collisionMesh;
 	shared_ptr<Navigation::NavigationSystem> _navigationSystem;
 	shared_ptr<Navigation::WalkableGrid> _walkableGrid;
+
+	// ≈∏¿Ãπ÷
+	bool _isRunning = false;
+	chrono::steady_clock::time_point _lastUpdateTime;
 };
 
 extern shared_ptr<Lobby> GLobby;

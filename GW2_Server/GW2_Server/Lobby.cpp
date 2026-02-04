@@ -140,10 +140,30 @@ void Lobby::EnterRoom(int32 roomId, int64 playerId)
 	_rooms[roomId]->Enter(player);
 }
 
+void Lobby::RunRooms()
+{
+    _isRunning = true;
+    _lastUpdateTime = chrono::steady_clock::now();
+    const auto TICK_INTERVAL = chrono::steady_clock::now();
+
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby::RunRooms] Main loop Start : 30Hz");
+
+    while (_isRunning)
+    {
+        auto frameStart = chrono::steady_clock::now();
+
+        // deltaTime 계산
+        auto now = chrono::steady_clock::now();
+        float deltaTime = chrono::duration<float>(now - _lastUpdateTime).count();
+
+        // Lobby Update
+        LobbyUpdate(deltaTime);
+
+        // Frame Rate 제한
+    }
+}
+
 void Lobby::LobbyUpdate(float deltaTime)
 {
-	for (auto& [roomId, room] : _rooms)
-	{
-		room->DoAsync(&Room::UpdateRoom, deltaTime);
-	}
+    
 }

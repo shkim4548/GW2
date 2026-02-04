@@ -1,3 +1,7 @@
+using GameServerAdmin.Application.Comments.Admin;
+using GameServerAdmin.Application.Comments.Public;
+using GameServerAdmin.Application.Posts;
+using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Application.Validation;
 using GameServerAdmin.Controllers.MiddleWare;
 using GameServerAdmin.Infrastructure.Persistence;
@@ -32,6 +36,10 @@ namespace GameServerAdmin
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<PublicPostService>();
+            builder.Services.AddScoped<PublicCommentService>();
+            builder.Services.AddScoped<AdminPostService>();
+            builder.Services.AddScoped<AdminCommentService>();
 
             var app = builder.Build();
 

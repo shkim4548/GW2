@@ -59,7 +59,6 @@ D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebasset
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.development.json
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\refint\GameServerAdmin.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.pdb
