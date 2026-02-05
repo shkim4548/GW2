@@ -30,6 +30,7 @@ bool Object::UpdateMovement(float deltaTime)
 	// 상태부터 우선 체크한다.
 	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
 	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Object UpdateMovement] invalid state : move_state_run\n");
 		return false;
 	}
 

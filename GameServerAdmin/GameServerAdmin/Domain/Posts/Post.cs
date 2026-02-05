@@ -1,9 +1,10 @@
 ﻿using GameServerAdmin.Common.Exceptions;
 using GameServerAdmin.Common.Exceptions.Post;
+using GameServerAdmin.Common.Interface;
 
 namespace GameServerAdmin.Domain.Posts
 {
-    public class Post
+    public class Post : ICommentable, IViewCountable, ISoftDeletable
     {
         protected Post() { }
 
@@ -20,8 +21,12 @@ namespace GameServerAdmin.Domain.Posts
 
             IsDeleted = false;
             CreatedAt = DateTime.UtcNow;
+
+            ViewCount = 0;
+            IsCommentEnabled = true;
         }
 
+        // 기본 속성
         public long PostId { get; private set; }
         public string PostType { get; private set; } = null!;
         public string Title { get; private set; } = null!;
@@ -30,7 +35,34 @@ namespace GameServerAdmin.Domain.Posts
         public long AuthorId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
+        public DateTime? DeletedAt { get; private set; }
         public bool IsDeleted { get; private set; }
+        public PostStatus Status { get; private set; }
+
+        // 공통 기능
+        public int ViewCount { get; private set; }
+        public bool IsCommentEnabled { get; private set; }
+
+        // ICommentable 구현
+        long ICommentable.Id => PostId;
+
+        public void EnableComments()
+        {
+            IsCommentEnabled = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void DisableComments()
+        {
+            IsCommentEnabled = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        // IViewCountable 구현
+        public void IncrementViewCount()
+        {
+            ViewCount++;
+        }
 
         public void Update(string title, string content)
         {
