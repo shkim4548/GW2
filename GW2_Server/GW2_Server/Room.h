@@ -17,6 +17,7 @@ public:
 
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
 	int32 GetRoomId() { return _roomId; }
+	int32 GetRoomPlayerCount() { return _players.size(); }
 	void SetRoomName(string roomName) { _roomName = roomName; }
 	string GetRoomName() { return _roomName; }
 
@@ -28,16 +29,16 @@ public:
 	bool HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
 	void HandleMovePlayer(Protocol::C_MOVE movePkt);
 
-	// called by main thread
-	void RunningRoom();
+	// 로비에서 호출해야함
+	void UpdateRoom(float deltaTime);
 
 private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
-	// 로비에서 호출해야함
-	void UpdateRoom(float deltaTime);
+
+	void DeleteRoom();
 
 private:
 	unordered_map<int32, ObjectRef> _objects;

@@ -144,9 +144,9 @@ void Lobby::RunRooms()
 {
     _isRunning = true;
     _lastUpdateTime = chrono::steady_clock::now();
-    const auto TICK_INTERVAL = chrono::steady_clock::now();
+    const auto TICK_INTERVAL = chrono::milliseconds(33);
 
-    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby::RunRooms] Main loop Start : 30Hz");
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby::RunRooms] Main loop Start : 30Hz\n");
 
     while (_isRunning)
     {
@@ -160,10 +160,58 @@ void Lobby::RunRooms()
         LobbyUpdate(deltaTime);
 
         // Frame Rate 제한
+        auto frameEnd = chrono::steady_clock::now();
+        auto elapsed = chrono::duration_cast<chrono::milliseconds>(frameEnd - frameStart);
+        if (elapsed < TICK_INTERVAL)
+        {
+            this_thread::sleep_for(TICK_INTERVAL - elapsed);
+        }
+        else
+        {
+            // 틱이 밀림
+            if (elapsed.count() > 50)
+            {
+                GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Lobby Warning] Tick Took : ");
+                cout << elapsed.count();
+                GConsoleLogger->WriteStdErr(Color::YELLOW, L"ms(target : 33ms)\n");
+            }
+        }
     }
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby::RunRooms] Main loop Ended\n");
+
 }
 
 void Lobby::LobbyUpdate(float deltaTime)
 {
-    
+    // TODO : MMR 레이팅에 따른 공개방 범위 구현
+    // 모든 Room Update
+    for(auto& [roomId, room] : _rooms)
+    {
+        if (room == nullptr)
+        {
+            GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby Update] : Room id nullptr : ");
+            cout << roomId << endl;
+            continue;
+        }
+        room->UpdateRoom(deltaTime);
+    }
+
+    // Room 정리
+    vector<int32> emptyRooms;
+    for (auto& [roomId, room] : _rooms)
+    {
+        // TODO : 실행 상태를 확인해서 없애는 로직도 추가해야함
+        if (room->GetRoomPlayerCount() == 0)
+        {
+            emptyRooms.push_back(roomId);
+        }
+    }
+
+    for (int32 roomId : emptyRooms)
+    {
+        GConsoleLogger->WriteStdOut(Color::WHITE, L"[Lobby Update] Deleteing empty room : ");
+        cout << roomId << endl;
+        // 실제 룸 삭제
+        //DeletedRoom();
+    }
 }

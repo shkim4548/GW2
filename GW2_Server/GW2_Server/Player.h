@@ -15,7 +15,7 @@ public:
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
 	// Contents
-
+	void StartMove(const GameMath::Vector3& startPos, const GameMath::Vector3& targetPos, const vector<Navigation::GridCell*>& path, int32 clientTime);
 
 private:
 	// Server System
@@ -30,5 +30,6 @@ private:
 	vector<GameMath::Vector3> path;
 	int32 currentPathIndex;
 	float moveSpeed;
+	bool _isMoving = false;
 };
 

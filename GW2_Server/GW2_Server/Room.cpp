@@ -189,6 +189,7 @@ void Room::UpdateRoom(float deltaTime)
 		}
 
 		obj->PostUpdate();
+		// TODO : Monster Moving
 	}
 }
 
