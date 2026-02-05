@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="Common\Contracts\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Repositoires\" />
   </ItemGroup>
 

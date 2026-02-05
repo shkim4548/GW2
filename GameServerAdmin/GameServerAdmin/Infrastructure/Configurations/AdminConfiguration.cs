@@ -13,6 +13,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
             builder.HasKey(e => e.AdminId);
             builder.Property(e => e.AdminId)
                 .HasColumnName("admin_id")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             builder.Property(e => e.LoginId)
@@ -44,7 +45,6 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnName("is_active")
                 .IsRequired();
 
-            // 인덱스
             builder.HasIndex(e => e.LoginId)
                 .IsUnique()
                 .HasDatabaseName("IX_admin_login_id");

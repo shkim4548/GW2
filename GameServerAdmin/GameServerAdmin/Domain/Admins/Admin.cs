@@ -8,7 +8,7 @@ namespace GameServerAdmin.Domain.Admins
     {
         [Key]
         [Column("admin_id")]
-        public int AdminId { get; set; }
+        public long AdminId { get; set; }
 
         [Required]
         [MaxLength(50)]

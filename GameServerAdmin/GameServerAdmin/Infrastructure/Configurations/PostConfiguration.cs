@@ -8,16 +8,14 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {
-            // 테이블명
             builder.ToTable("post");
 
-            // 기본키
             builder.HasKey(e => e.PostId);
             builder.Property(e => e.PostId)
                 .HasColumnName("post_id")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
-            // 컬럼 매핑
             builder.Property(e => e.PostType)
                 .HasColumnName("post_type")
                 .HasMaxLength(20)
@@ -40,6 +38,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.AuthorId)
                 .HasColumnName("author_id")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(e => e.CreatedAt)
@@ -56,7 +55,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnName("is_deleted")
                 .IsRequired();
 
-            // 인덱스 (성능 최적화용 - 추가 권장)
+            // 인덱스
             builder.HasIndex(e => e.AuthorId)
                 .HasDatabaseName("IX_post_author_id");
 

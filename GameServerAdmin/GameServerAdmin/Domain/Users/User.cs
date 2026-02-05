@@ -9,10 +9,10 @@ namespace GameServerAdmin.Domain.Users
     {
         [Key]
         [Column("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [Column("account_id")]
-        public int AccountId { get; set; }
+        public long AccountId { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -20,7 +20,7 @@ namespace GameServerAdmin.Domain.Users
         public string Nickname { get; set; } = null!;
 
         [Column("level")]
-        public int Level { get; set; }
+        public long Level { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }

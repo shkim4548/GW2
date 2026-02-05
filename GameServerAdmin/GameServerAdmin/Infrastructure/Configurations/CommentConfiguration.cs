@@ -9,26 +9,27 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
-            // 테이블명 (snake_case 일관성)
             builder.ToTable("comment");
 
-            // 기본키
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id)
                 .HasColumnName("comment_id")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
-            // 컬럼 매핑
             builder.Property(e => e.PostId)
                 .HasColumnName("post_id")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(e => e.ParentCommentId)
                 .HasColumnName("parent_comment_id")
+                .HasColumnType("bigint")
                 .IsRequired(false);
 
             builder.Property(e => e.AuthorId)
                 .HasColumnName("author_id")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(e => e.Content)
@@ -57,7 +58,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnType("timestamp with time zone")
                 .IsRequired(false);
 
-            // 외래키 관계
+            // 외래키
             builder.HasOne<Post>()
                 .WithMany()
                 .HasForeignKey(e => e.PostId)

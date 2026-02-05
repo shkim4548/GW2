@@ -7,7 +7,7 @@ namespace GameServerAdmin.Domain.Posts
     {
         protected Post() { }
 
-        public Post(string postType, string title, string content, string authorType, int authorId)
+        public Post(string postType, string title, string content, string authorType, long authorId)
         {
             ValidateTitle(title);
             ValidateContent(content);
@@ -22,12 +22,12 @@ namespace GameServerAdmin.Domain.Posts
             CreatedAt = DateTime.UtcNow;
         }
 
-        public int PostId { get; private set; }
+        public long PostId { get; private set; }
         public string PostType { get; private set; } = null!;
         public string Title { get; private set; } = null!;
         public string Content { get; private set; } = null!;
         public string AuthorType { get; private set; } = null!;
-        public int AuthorId { get; private set; }
+        public long AuthorId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public bool IsDeleted { get; private set; }

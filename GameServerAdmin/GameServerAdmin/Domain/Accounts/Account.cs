@@ -8,7 +8,7 @@ namespace GameServerAdmin.Domain.Accounts
     {
         [Key]
         [Column("accound_id")]
-        public int AccountId { get; set; }
+        public long AccountId { get; set; }
 
         [Required]
         [Column("login_id")]

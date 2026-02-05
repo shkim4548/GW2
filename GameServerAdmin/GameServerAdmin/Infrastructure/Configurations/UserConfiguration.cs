@@ -1,11 +1,6 @@
 ﻿using GameServerAdmin.Domain.Users;
-using GameServerAdmin.Infrastructure.Configurations;
-using GameServerAdmin.Infrastructure.Persistence;
-using GameServerAdmin.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Configuration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GameServerAdmin.Infrastructure.Persistence.Configurations
 {
@@ -18,10 +13,12 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
             builder.HasKey(e => e.UserId);
             builder.Property(e => e.UserId)
                 .HasColumnName("user_id")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             builder.Property(e => e.AccountId)
                 .HasColumnName("account_id")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(e => e.Nickname)
@@ -31,6 +28,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.Level)
                 .HasColumnName("level")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(e => e.CreatedAt)
@@ -48,7 +46,6 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnType("text")
                 .IsRequired();
 
-            // 인덱스
             builder.HasIndex(e => e.AccountId)
                 .HasDatabaseName("IX_user_account_id");
 

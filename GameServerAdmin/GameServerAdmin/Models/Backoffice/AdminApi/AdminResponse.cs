@@ -2,7 +2,7 @@
 {
     public class AdminResponse
     {
-        public int AdminId { get; set; }
+        public long AdminId { get; set; }
         public string LoginId { get; set; } = null!;
         public string Role { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
