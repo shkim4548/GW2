@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Domain.Accounts;
 using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Domain.Comments;
+using GameServerAdmin.Domain.Notices;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
         public DbSet<Admin> Admins => Set<Admin>();
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<Comment> Comments => Set<Comment>();
+        public DbSet<Notice> Notices => Set<Notice>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

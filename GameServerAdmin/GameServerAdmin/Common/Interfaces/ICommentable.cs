@@ -1,4 +1,4 @@
-﻿namespace GameServerAdmin.Common.Interface
+﻿namespace GameServerAdmin.Common.Interfaces
 {
     public interface ICommentable
     {

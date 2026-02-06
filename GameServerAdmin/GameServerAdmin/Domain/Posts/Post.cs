@@ -1,6 +1,6 @@
 ﻿using GameServerAdmin.Common.Exceptions;
 using GameServerAdmin.Common.Exceptions.Post;
-using GameServerAdmin.Common.Interface;
+using GameServerAdmin.Common.Interfaces;
 
 namespace GameServerAdmin.Domain.Posts
 {
@@ -18,10 +18,10 @@ namespace GameServerAdmin.Domain.Posts
             Content = content;
             AuthorType = authorType;
             AuthorId = authorId;
-
-            IsDeleted = false;
+            Status = PostStatus.Active;
             CreatedAt = DateTime.UtcNow;
 
+            // 새로 추가된 속성 초기화
             ViewCount = 0;
             IsCommentEnabled = true;
         }
@@ -33,15 +33,16 @@ namespace GameServerAdmin.Domain.Posts
         public string Content { get; private set; } = null!;
         public string AuthorType { get; private set; } = null!;
         public long AuthorId { get; private set; }
+        public PostStatus Status { get; private set; }
+        public bool IsDeleted { get; private set; }
+
+        // 공통 기능 속성 (새로 추가)
+        public int ViewCount { get; private set; }
+        public bool IsCommentEnabled { get; private set; }
+
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public DateTime? DeletedAt { get; private set; }
-        public bool IsDeleted { get; private set; }
-        public PostStatus Status { get; private set; }
-
-        // 공통 기능
-        public int ViewCount { get; private set; }
-        public bool IsCommentEnabled { get; private set; }
 
         // ICommentable 구현
         long ICommentable.Id => PostId;
@@ -54,7 +55,7 @@ namespace GameServerAdmin.Domain.Posts
 
         public void DisableComments()
         {
-            IsCommentEnabled = true;
+            IsCommentEnabled = false;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -64,10 +65,11 @@ namespace GameServerAdmin.Domain.Posts
             ViewCount++;
         }
 
+        // 기존 메서드
         public void Update(string title, string content)
         {
-            if (IsDeleted)
-                throw new InvalidPostStateException("Deleted post cannot be updated");
+            if (Status == PostStatus.Deleted)
+                throw new InvalidPostStateException("삭제된 게시글은 수정할 수 없습니다.");
 
             ValidateTitle(title);
             ValidateContent(content);
@@ -79,32 +81,35 @@ namespace GameServerAdmin.Domain.Posts
 
         public void SoftDelete()
         {
-            if (IsDeleted)
-                throw new InvalidPostStateException("Already deleted");
+            if (Status == PostStatus.Deleted)
+                throw new InvalidPostStateException("이미 삭제된 게시글입니다.");
 
-            IsDeleted = true;
-            UpdatedAt = DateTime.UtcNow;
+            Status = PostStatus.Deleted;
+            DeletedAt = DateTime.UtcNow;
         }
 
         public void Restore()
         {
-            if (!IsDeleted)
-                throw new InvalidPostStateException("Post is not deleted");
+            if (Status != PostStatus.Deleted)
+                throw new InvalidPostStateException("삭제되지 않은 게시글은 복구할 수 없습니다.");
 
-            IsDeleted = false;
-            UpdatedAt = DateTime.UtcNow;
+            Status = PostStatus.Active;
+            DeletedAt = null;
         }
 
         private static void ValidateTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new DomainException("Title is required");
+                throw new DomainException("제목은 필수입니다.");
+
+            if (title.Length > 200)
+                throw new DomainException("제목은 200자를 초과할 수 없습니다.");
         }
 
         private static void ValidateContent(string content)
         {
             if (string.IsNullOrWhiteSpace(content))
-                throw new DomainException("Content is required");
+                throw new DomainException("내용은 필수입니다.");
         }
     }
 }
