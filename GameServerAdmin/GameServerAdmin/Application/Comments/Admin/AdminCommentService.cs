@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Domain.Comments;
+﻿using GameServerAdmin.Common.Models;
+using GameServerAdmin.Domain.Comments;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Comments.AdminApi;
 using Microsoft.EntityFrameworkCore;

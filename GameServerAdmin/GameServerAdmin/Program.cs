@@ -1,5 +1,6 @@
 using GameServerAdmin.Application.Comments.Admin;
 using GameServerAdmin.Application.Comments.Public;
+using GameServerAdmin.Application.Notice;
 using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Application.Validation;
@@ -40,6 +41,8 @@ namespace GameServerAdmin
             builder.Services.AddScoped<PublicCommentService>();
             builder.Services.AddScoped<AdminPostService>();
             builder.Services.AddScoped<AdminCommentService>();
+            builder.Services.AddScoped<PublicNoticeService>();
+            builder.Services.AddScoped<AdminNoticeService>();
 
             var app = builder.Build();
 

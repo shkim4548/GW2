@@ -55,6 +55,15 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnName("is_deleted")
                 .IsRequired();
 
+            // Post에 Notice 기능이 추가된 내용
+            builder.Property(e => e.ViewCount)
+                .HasColumnName("view_count")
+                .IsRequired();
+
+            builder.Property(e => e.IsCommentEnabled)
+                .HasColumnName("is_comment_enabled")
+                .IsRequired();
+
             // 인덱스
             builder.HasIndex(e => e.AuthorId)
                 .HasDatabaseName("IX_post_author_id");

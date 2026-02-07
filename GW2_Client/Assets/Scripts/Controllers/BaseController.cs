@@ -11,10 +11,18 @@ public class BaseController : MonoBehaviour
     protected IInputService _inputService;
     protected INetworkService _networkService;
 
+    // === Server Pos ===
     public int Id { get; set; }
     public float _sendPacketDelay = 0.2f;
     public float LastServerTime { get; set; }
     public bool _isMoving = false;
+    public float _positionSmoothTime = 0.1f;
+    public float _moveSpeed = 5.0f;
+
+    // === Server Navigation ===
+    protected List<Vector3> _path = new List<Vector3>();
+    protected int _pathIndex = 0;
+    protected float _correctionSpeed = 1.0f;
 
     protected Animator _animator;
 

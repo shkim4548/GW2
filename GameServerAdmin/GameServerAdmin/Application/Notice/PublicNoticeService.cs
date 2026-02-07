@@ -6,7 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Application.Notice
 {
-    public class PublicNoticeService
+    public interface IPublicNoticeService
+    {
+        Task<NoticeListResponse> GetNoticeAsync();
+        Task<NoticeResponse> GetNoticeDetailAsync(long noticeId);
+        Task<List<NoticeResponse>> GetPinnedNoticeAsync();
+        Task<NoticeListResponse> GetNoticeByCategoryAsync(NoticeCategory category);
+    }
+
+    public class PublicNoticeService : IPublicNoticeService
     {
         private readonly AppDbContext _db;
 

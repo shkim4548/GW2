@@ -125,6 +125,7 @@ public class MyPlayerController : PlayerController
         }
     }
 
+    // 현재는 사용하지 않는다.
     public void OnKeyEvent()
     {
         if (Input.GetKey(KeyCode.Q))
@@ -152,5 +153,32 @@ public class MyPlayerController : PlayerController
     protected override void MakeSendPacket(float delay)
     {
         //movePacket.Info.Yaw = this.transform.rotation;
+    }
+
+    // 추측항법
+    // 위치 정정
+    private void CorrectPosition()
+    {
+        Vector3 serverPosVector = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
+        float distance = Vector3.Distance(transform.position, serverPosVector);
+
+        if(distance < 0.01f)
+        {
+            transform.position = serverPosVector;
+            return;
+        }
+
+        // 보정처리
+        transform.position = Vector3.Lerp(transform.position, serverPosVector, _correctionSpeed * Time.deltaTime);
+    }
+
+    private void StartMovePrediction(Vector3 destination)
+    {
+        
+    }
+
+    private void StopMovement()
+    {
+        _isMoving = false;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GameServerAdmin.Common.Exceptions.Notice;
+using GameServerAdmin.Common.Models;
 using GameServerAdmin.Domain.Notices;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Notices.AdminApi;
@@ -7,7 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Application.Notice
 {
-    public class AdminNoticeService
+    public interface IAdminNoticeService
+    {
+        Task<AdminNoticeResponse> CreateNoticeAsync(long adminId, CreateNoticeRequest request);
+        Task<AdminNoticeResponse> UpdateNoticeAsync(long noticeId, UpdateNoticeRequest request);
+        Task PublishNoticeAsync(long noticeId);
+        Task HideNoticeAsync(long noticeId);
+        Task PinNoticeAsync(long noticeId);
+        Task UnpinNoticeAsync(long noticeId);
+        Task EnableCommentsAsync(long noticeId);
+        Task DisableCommentsAsync(long noticeId);
+        Task DeleteNoticeAsync(long noticeId);
+        Task RestoreNoticeAsync(long noticeId);
+        Task HardDeleteNoticeAsync(long noticeId);
+        Task<AdminNoticeResponse> GetNoticeDetailAsync(long noticeId);
+        Task<PagedResponse<AdminNoticeListItemDto>> GetAllNoticesAsync(AdminNoticeListQuery query);
+    }
+
+    public class AdminNoticeService : IAdminNoticeService
     {
         private readonly AppDbContext _db;
 

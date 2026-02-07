@@ -130,7 +130,7 @@ public class PacketHandler
         bc._isMoving = false;
 
         // 여기서는 스냅이 허용된다
-        bc.transform.position.Set(bc.PosInfo.X, bc.PosInfo.Y, bc.PosInfo.Z);
+        bc.transform.position.Set(bc.PosInfo.X, bc.PosInfo.Y, bc.PosInfo.Z);23
         // TODO: STATE 변경 + ROTATION 변경
     }
 

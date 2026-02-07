@@ -173,6 +173,97 @@ namespace GameServerAdmin.Migrations
                     b.ToTable("comment", (string)null);
                 });
 
+            modelBuilder.Entity("GameServerAdmin.Domain.Notices.Notice", b =>
+                {
+                    b.Property<long>("NoticeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("notice_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("NoticeId"));
+
+                    b.Property<long>("AdminId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("admin_id");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer")
+                        .HasColumnName("category");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("DisplayEndAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("display_end_at");
+
+                    b.Property<DateTime?>("DisplayStartAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("display_start_at");
+
+                    b.Property<bool>("IsCommentEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_comment_enabled");
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_pinned");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer")
+                        .HasColumnName("priority");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("view_count");
+
+                    b.HasKey("NoticeId");
+
+                    b.HasIndex("AdminId")
+                        .HasDatabaseName("IX_notice_admin_id");
+
+                    b.HasIndex("Category")
+                        .HasDatabaseName("IX_notice_category");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_notice_created_at");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_notice_status");
+
+                    b.HasIndex("DisplayStartAt", "DisplayEndAt")
+                        .HasDatabaseName("IX_notice_display_period");
+
+                    b.HasIndex("Status", "IsPinned")
+                        .HasDatabaseName("IX_notice_status_is_pinned");
+
+                    b.ToTable("notice", (string)null);
+                });
+
             modelBuilder.Entity("GameServerAdmin.Domain.Posts.Post", b =>
                 {
                     b.Property<long>("PostId")
@@ -201,6 +292,13 @@ namespace GameServerAdmin.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCommentEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_comment_enabled");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -211,6 +309,9 @@ namespace GameServerAdmin.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("post_type");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -220,6 +321,10 @@ namespace GameServerAdmin.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("view_count");
 
                     b.HasKey("PostId");
 

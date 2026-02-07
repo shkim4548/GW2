@@ -1,4 +1,5 @@
 ﻿using GameServerAdmin.Application.Comments.Admin;
+using GameServerAdmin.Common.Models;
 using GameServerAdmin.Models.Comments.AdminApi;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : CreatureController
 {
+    private float interpolationSpeed = 10.0f;
+
+    private Vector3 _serverPosition;
+    private Vector3 _velocity;
+
     public override void Init()
     {
         base.Init();
@@ -17,5 +23,25 @@ public class PlayerController : CreatureController
     public override void UpdateMoving()
     {
         base.UpdateMoving();
+        if(_isMoving)
+        {
+            InterpolateToServerPosition();
+        }
+        // update animation은 Base에서 진행해준다.
+    }
+
+    // === Remote 보간 이동 === 
+    private void InterpolateToServerPosition()
+    {
+        // smooth damp
+        transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref _velocity, _positionSmoothTime);
+
+        // 회전
+        Vector3 direction = _serverPosition - transform.position;
+        if(direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
+        }
     }
 }
