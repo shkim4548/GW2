@@ -28,6 +28,7 @@ public class Bootstrapper : MonoBehaviour
     private void InitializeServices()
     {
         DI.Container.Register<INetworkService, NetworkService>(Define.ServiceLifetime.Singleton);
+        DI.Container.Register<IInputService, InputService>(Define.ServiceLifetime.Singleton);
 
         NetworkService = new NetworkService();
         UIService = new UIService();

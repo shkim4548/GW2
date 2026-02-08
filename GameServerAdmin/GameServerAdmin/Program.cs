@@ -5,8 +5,13 @@ using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Application.Validation;
 using GameServerAdmin.Controllers.MiddleWare;
+using GameServerAdmin.Domain.Identity;
 using GameServerAdmin.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace GameServerAdmin
 {
@@ -23,6 +28,50 @@ namespace GameServerAdmin
                     builder.Configuration.GetConnectionString("DefaultConnection")
                     );
             });
+
+            // Identity 설정
+            builder.Services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                // password 정책
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // Lockout 설정
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User 설정
+                options.User.RequireUniqueEmail = false;
+                options.SignIn.RequireConfirmedEmail = false;
+            }).AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            // JWT 인증 설정
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+                        ClockSkew = TimeSpan.Zero  // 토큰 만료 시간 정확히 체크
+                    };
+                });
+
 
             // Filter 등록
             builder.Services.AddControllers(options =>

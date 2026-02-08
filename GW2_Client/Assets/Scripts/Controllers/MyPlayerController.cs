@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static Define;
 
 
 public class MyPlayerController : PlayerController
@@ -16,6 +17,9 @@ public class MyPlayerController : PlayerController
 
     GameObject _target;
     NavMeshAgent _navAgent;
+
+    private int _clientMoveStartTime;
+    private bool _needsCorrection = false;
 
     public int RoomId { get; set; }
 
@@ -46,46 +50,61 @@ public class MyPlayerController : PlayerController
     public override void UpdateMoving()
     {
         base.UpdateMoving();
-        Debug.Log("UpdateMoving");
-        if (_moveToDest)
+        //Debug.Log("UpdateMoving");
+        // 보정 필요성부터 확인
+        if(_needsCorrection)
         {
-            Vector3 dir = _destPos - transform.position;
-            //Debug.Log(dir.magnitude);
-            if (dir.magnitude < 0.1f)
-            {
-                _moveToDest = false;
-                State = MoveState.Idle;
-            }
-            else
-            {
-                float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
-                //_navAgent.SetDestination(_destPos);
-                // 현위치 기록
-                PosInfo nowPos = new PosInfo();
-                nowPos.X = this.transform.position.x;
-                nowPos.Y = this.transform.position.y;
-                nowPos.Z = this.transform.position.z;
-
-                PosInfo targetPos = new PosInfo();
-                targetPos.X = _destPos.x;
-                targetPos.Y = _destPos.y;
-                targetPos.Z = _destPos.z;
-
-                C_MOVE movePkt = new C_MOVE();
-                movePkt.RoomId = RoomId;
-                movePkt.ObjectId = this.Id;
-                movePkt.StartPos = nowPos;
-                movePkt.TargetPos = targetPos;
-                movePkt.ClientTime = GetClientTime();
-
-                _networkService.Send(movePkt);
-                //Debug.Log($"movePkt : {movePkt.RoomId}, {movePkt.ObjectId}");
-                Debug.Log($"movePkt destPos, startPos: {_destPos}, {this.transform.position}");
-
-                //Debug.Log(_destPos);
-            }
+            CorrectPosition();
         }
 
+        if(_path ==  null || _path.Count == 0)
+        {
+            StopMovement();
+            return;
+        }
+
+        if(_pathIndex >= _path.Count)
+        {
+            StopMovement();
+            return;
+        }
+        Vector3 waypoint = _path[_pathIndex];
+        Vector3 direction = waypoint - transform.position;
+        float distance = direction.magnitude;
+
+        // 도착 여부 체크
+        if(distance < 0.1f)
+        {
+            transform.position = waypoint;
+            _pathIndex++;
+
+            if(_pathIndex >= _path.Count)
+            {
+                StopMovement();
+            }
+            return;
+        }
+
+        // 실제 이동
+        direction.Normalize();
+        float moveDistance = _moveSpeed * Time.deltaTime;
+
+        if (moveDistance >= distance)
+        {
+            transform.position = waypoint;
+            _pathIndex++;
+        }
+        else
+        {
+            transform.position += direction * moveDistance;
+        }
+
+        // 회전 반영
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        }
         // 상위 함수에서 상태 변화 및 애니메이션 재생
     }
 
@@ -98,7 +117,7 @@ public class MyPlayerController : PlayerController
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
-
+        Debug.Log("OnMouseEvent");
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
         {
@@ -108,6 +127,7 @@ public class MyPlayerController : PlayerController
             State = MoveState.Run;
             // 상태 변화 확인
             //Debug.Log(State);
+            RequestMove(_destPos);
         }
         // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
         else if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Creature")))
@@ -120,7 +140,7 @@ public class MyPlayerController : PlayerController
             // 사거리 밖에 있다면, 추적시킨다.
             else
             {
-
+                Debug.Log("OnMouseEvent Else block");
             }
         }
     }
@@ -174,11 +194,59 @@ public class MyPlayerController : PlayerController
 
     private void StartMovePrediction(Vector3 destination)
     {
-        
+        Vector3 targetPosition = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
+        // targetPosition = destination;
+
+        // 클라이언트에서 navmesh로 경로를 미리 예측한다.
+        UnityEngine.AI.NavMeshPath navPath = new UnityEngine.AI.NavMeshPath();
+        if (UnityEngine.AI.NavMesh.CalculatePath(transform.position, destination, UnityEngine.AI.NavMesh.AllAreas, navPath))
+        {
+            _path = new List<Vector3>(navPath.corners);
+            _pathIndex = 0;
+            _isMoving = true;
+
+            Debug.Log($"[MyPlayer] Prediction path : {_path.Count} waypoints");
+        }
     }
 
     private void StopMovement()
     {
         _isMoving = false;
+        _path.Clear();
+        _pathIndex = 0;
+    }
+
+    public void RequestMove(Vector3 worldPosition)
+    {
+        // 즉시 이동 시작
+        StartMovePrediction(worldPosition);
+        // 서버에 전송
+        SendMovePacket(worldPosition);
+    }
+
+    private void SendMovePacket(Vector3 nowPosition)
+    {
+        C_MOVE movePacket = new C_MOVE();
+        movePacket.StartPos = new PosInfo();
+        movePacket.RoomId = RoomId;
+        movePacket.ObjectId = Id;
+
+        // Start Position
+        movePacket.StartPos.X = transform.position.x;
+        movePacket.StartPos.Y = transform.position.y;
+        movePacket.StartPos.Z = transform.position.z;
+
+        // TargetPosition
+        movePacket.TargetPos = new PosInfo();
+        movePacket.TargetPos.X = _destPos.x;
+        movePacket.TargetPos.Y = _destPos.y;
+        movePacket.TargetPos.Z = _destPos.z;
+
+        // clientTime
+        movePacket.ClientTime = GetClientTime();
+        _clientMoveStartTime = movePacket.ClientTime;
+
+        _networkService.Send(movePacket);
+        Debug.Log($"movePkt destPos, startPos: {_destPos}, {this.transform.position}");
     }
 }

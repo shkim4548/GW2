@@ -268,3 +268,12 @@ D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.As
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.MvcApplicationPartsAssemblyInfo.cs
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
