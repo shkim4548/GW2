@@ -40,7 +40,7 @@ bool Room::Enter(PlayerRef player)
 	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
 	objectInfo->set_object_id(playerId);
 	posInfo->set_x(72.5);
-	posInfo->set_y(2.3);
+	posInfo->set_y(0);
 	posInfo->set_x(0);
 	posInfo->set_yaw(0);
 	objectInfo->set_allocated_pos_info(posInfo);
@@ -165,27 +165,44 @@ void Room::HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCel
 		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayerInternal] player is nullptr");
 		return;
 	}
-
+	// 이 부분이 빠져있었음
+	//player->GetMoveState();
+	player->SetMoveState(Protocol::MOVE_STATE_RUN);
 	player->_path = move(worldPath);
 	player->_pathIndex = 0;
+	player->SetIsMoving(true);
 }
 
 void Room::UpdateRoom(float deltaTime)
 {
 	for (auto& [id, obj] : _objects)
 	{
+		//cout << "UpodateRoom is running now" << endl;
+		// 이동중이 아니라면 스킵한다.
+		if (obj->GetMoveState() != Protocol::MOVE_STATE_RUN)
+		{
+			continue;
+		}
+
+		// 이동 업데이트 한다
 		bool movedThisTick = obj->UpdateMovement(deltaTime);
 		obj->AccumulateMoveTime(deltaTime);
-		if (movedThisTick)
+		if (!movedThisTick)
+			continue;
+
+		// 브로드 캐스트 타이밍 체크
+		obj->AccumulateMoveTime(deltaTime);
+		if (obj->ShouldBroadcastMove())
 		{
 			BroadcastMoving(obj);
 			obj->ResetBroadcastTimer();
 		}
 
-		// 이동 종료 감지
-		if (obj->GetIsMoving() && obj->GetMoveState() == Protocol::MoveState::MOVE_STATE_IDLE)
+		// 이동 종료 감지, 일단 이 if 로 들어오지도 않는다.
+		if (obj->GetMoveState() != Protocol::MoveState::MOVE_STATE_RUN)
 		{
 			BroadcastMovingEnd(obj);
+			cout << "Terminate Moving" << endl;
 		}
 
 		obj->PostUpdate();

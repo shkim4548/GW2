@@ -20,6 +20,8 @@ public:
 
 	void SetObjectId(int64 id) { _objectId = id; }
 	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }
+	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
+	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
 
 	// Navigation
 	void SetPath(const NavPath& path);
@@ -46,7 +48,7 @@ protected:
 
 	bool _isMoving = false;
 	Protocol::MoveState _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
-	float _moveSpeed = 5.f;
+	float _moveSpeed = 100.0f;
 
 private:
 	float _moveBroadcastElapsed = 0.0f;

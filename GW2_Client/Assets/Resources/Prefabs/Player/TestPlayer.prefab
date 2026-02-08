@@ -154,4 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sendPacketDelay: 0.2
   _isMoving: 0
+  _positionSmoothTime: 0.1
+  _moveSpeed: 100
+  _rotationSpeed: 1
   _campType: 0

@@ -29,7 +29,6 @@ private:
 	GameMath::Vector3 posVector;
 	vector<GameMath::Vector3> path;
 	int32 currentPathIndex;
-	float moveSpeed;
 	bool _isMoving = false;
 };
 

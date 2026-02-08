@@ -58,7 +58,9 @@ bool Object::UpdateMovement(float deltaTime)
 		dir = dir.Normalized();
 		_posVector = _posVector + (dir * moveDist);
 	}
-
+	_pos.set_x(_posVector._x);
+	_pos.set_y(_posVector._y);
+	_pos.set_z(_posVector._z);
 	return true;
 }
 

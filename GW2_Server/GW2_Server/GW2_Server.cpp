@@ -76,15 +76,16 @@ int main()
 	//DoWorkerJob(service);
 
 	// 게임 Contents
+	// TODO : while 조건 저렇게 두면 문제의 소지가 될 수 있다.
 	uint64 lastTick = GetTickCount64();
-	while (service->GetIsRunning())
+	while (true)
 	{
+		//cout << "Lobby Update Loop in main is now running" << endl;
 		uint64 now = GetTickCount64();
 		float deltaTime = (now - lastTick) * 0.001f;
 		// deltaTime 폭주 방지
 		// Windows.h 매크로 지정 방지
 		deltaTime = std::clamp(deltaTime, 0.0f, 0.1f);
-
 
 		// 30 FPS
 		if (deltaTime >= 0.033f)

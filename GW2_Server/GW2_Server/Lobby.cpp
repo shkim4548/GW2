@@ -209,8 +209,8 @@ void Lobby::LobbyUpdate(float deltaTime)
 
     for (int32 roomId : emptyRooms)
     {
-        GConsoleLogger->WriteStdOut(Color::WHITE, L"[Lobby Update] Deleteing empty room : ");
-        cout << roomId << endl;
+        //GConsoleLogger->WriteStdOut(Color::WHITE, L"[Lobby Update] Deleteing empty room : ");
+        //cout << roomId << endl;
         // ½ÇÁ¦ ·ë »èÁ¦
         //DeletedRoom();
     }

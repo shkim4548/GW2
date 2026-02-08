@@ -17,7 +17,7 @@ public class BaseController : MonoBehaviour
     public float LastServerTime { get; set; }
     public bool _isMoving = false;
     public float _positionSmoothTime = 0.1f;
-    public float _moveSpeed = 5.0f;
+    public float _moveSpeed = 100.0f;
     public float _rotationSpeed = 1.0f;
 
     // === Server Navigation ===

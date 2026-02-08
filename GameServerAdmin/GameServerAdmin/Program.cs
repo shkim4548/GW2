@@ -95,6 +95,13 @@ namespace GameServerAdmin
 
             var app = builder.Build();
 
+            // DB √ ±‚»∏
+            using(var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+                await DbInitializer.SeedRolesAsync(roleManager);
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

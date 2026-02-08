@@ -516,12 +516,12 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 		}
 
 		const GridCell& cell = grid.At(cx, cz);
-		cout << "Start neighbors : ";
+		//cout << "Start neighbors : ";
 		for (int32 i = 0; i < 4; ++i)
 		{
-			cout << cell.neighbors[i] << ' ';
+			//cout << cell.neighbors[i] << ' ';
 		}
-		cout << endl;
+		//cout << endl;
 
 		static const int dx[4] = { 0, 1, 0, -1 };
 		static const int dz[4] = { 1, 0, -1, 0 };

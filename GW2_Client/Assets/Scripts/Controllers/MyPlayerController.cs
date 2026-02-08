@@ -97,6 +97,7 @@ public class MyPlayerController : PlayerController
         else
         {
             transform.position += direction * moveDistance;
+            Debug.Log("Actual moving");
         }
 
         // 회전 반영

@@ -34,6 +34,11 @@ namespace GameServerAdmin.Infrastructure.Persistence
             modelBuilder.Entity<IdentityUserLogin<long>>().ToTable("app_user_logins");
             modelBuilder.Entity<IdentityUserToken<long>>().ToTable("app_user_tokens");
             modelBuilder.Entity<IdentityRoleClaim<long>>().ToTable("app_role_claims");
+
+            // identity 복합키 설정
+            modelBuilder.Entity<IdentityUserLogin<long>>().HasKey(l => new { l.LoginProvider, l.ProviderKey });
+            modelBuilder.Entity<IdentityUserRole<long>>().HasKey(r => new {r.UserId, r.RoleId });
+            modelBuilder.Entity<IdentityUserToken<long>>().HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
              
             modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(AppDbContext).Assembly
