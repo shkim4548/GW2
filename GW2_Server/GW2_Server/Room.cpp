@@ -1,11 +1,11 @@
 #include "pch.h"
+#include "Lobby.h"
 #include "Room.h"
 #include "Player.h"
 #include "GameSession.h"
 #include "NavigationSystem.h"
 #include "NavmeshLoader.h"
 #include "ClientPacketHandler.h"
-#include "Lobby.h"
 
 // 공용으로 사용할 전역 룸
 //shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -142,22 +142,35 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 		return;
 	}
 	//cout << "End of HandleMovePlayer" << endl;
-	HandleMovePlayerInternal(player.lock(), gridPath);
+	HandleMovePlayerInternal(player.lock(), gridPath, startWorld, endWorld);
 }
 
 // Path를 player에 할당한다.
-void Room::HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath)
+void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld)
 {
 	vector<GameMath::Vector3> worldPath;
-	worldPath.reserve(gridPath.size());
+	worldPath.reserve(gridPath.size() + 2);
+	worldPath.push_back(startWorld);
 
 	for (Navigation::GridCell* cell : gridPath)
 	{
 		GameMath::Vector3 worldPos;
 		if (!_navigationSystem.lock()->GridToWorld(_navigationSystem.lock()->GetGridCells(), cell->x, cell->z, worldPos))
+		{
 			continue;
+		}
+
+		if ((worldPos - startWorld).Length() < 0.01f)
+		{
+			continue;
+		}
 
 		worldPath.push_back(worldPos);
+	}
+
+	if (worldPath.empty() || (worldPath.back() - endWorld).Length() >= 0.01f)
+	{
+		worldPath.push_back(endWorld);
 	}
 
 	if (player == nullptr)

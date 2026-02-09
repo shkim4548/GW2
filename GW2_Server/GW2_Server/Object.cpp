@@ -34,34 +34,59 @@ bool Object::UpdateMovement(float deltaTime)
 		return false;
 	}
 
-	// 경로 유효성 체크
+	// 경로 유효성 체크, 유효하지 않다면 IDLE로 바꾸고 return
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
 		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 		return false;
 	}
 
-	const GameMath::Vector3& target = _path[_pathIndex];
-	GameMath::Vector3 dir = target - _posVector;
+	const float kArriveEpsilon = 1e-4f;
+	float remainMoveDist = _moveSpeed * deltaTime;
+	bool moved = false;
 
-	float dist = dir.Length();
-	float moveDist = _moveSpeed * deltaTime;
+	// _path를 소모하는 루프를 이용, 한틱만 움직이는 현상을 방지한다.
+	while (remainMoveDist > 0.0f && _pathIndex < _path.size())
+	{
+		const GameMath::Vector3& target = _path[_pathIndex];
+		GameMath::Vector3 dir = target - _posVector;
+		const float dist = dir.Length();
 
-	if (dist <= moveDist)
-	{
-		//_pos = target;
-		_posVector = target;
-		++_pathIndex;
+		if (dist <= kArriveEpsilon)
+		{
+			_posVector = target;
+			++_pathIndex;
+			continue;
+		}
+
+		if (dist <= remainMoveDist)
+		{
+			_posVector = target;
+			remainMoveDist -= dist;
+			++_pathIndex;
+			moved = true;
+		}
+		else
+		{
+			dir = dir.Normalized();
+			_posVector = _posVector + (dir * remainMoveDist);
+			++_pathIndex;
+			moved = true;
+		}
 	}
-	else
+
+	if (_pathIndex >= _path.size())
 	{
-		dir = dir.Normalized();
-		_posVector = _posVector + (dir * moveDist);
+		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	}
+
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
-	return true;
+	// 이 값이 유효하지 않다. 전혀 다른 값이 오고 있다.
+	cout << "posInfo :" << _pos.x() << ' ' << _pos.y() << ' ' << _pos.z() << endl;
+	cout << "_posVector : " << _posVector._x << ' ' << _posVector._y << ' ' << _posVector._z << endl;
+	return moved;
 }
 
 void Object::RequestMove(const vector<GameMath::Vector3>& path)

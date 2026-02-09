@@ -257,7 +257,6 @@ D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticweb
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServ.178BC6C2.Up2Date
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\GameServerAdmin.genruntimeconfig.cache
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\ref\GameServerAdmin.dll
-D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.OpenApi.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
@@ -277,3 +276,12 @@ D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.Iden
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

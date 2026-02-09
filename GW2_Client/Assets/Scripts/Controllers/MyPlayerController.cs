@@ -207,6 +207,10 @@ public class MyPlayerController : PlayerController
             _isMoving = true;
 
             Debug.Log($"[MyPlayer] Prediction path : {_path.Count} waypoints");
+            for(int i = 0; i < _path.Count; ++i)
+            {
+                Debug.Log($"Path Index {i} : {_path[i]}");
+            }
         }
     }
 

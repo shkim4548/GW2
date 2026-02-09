@@ -2,8 +2,10 @@
 #include "Job.h"
 #include "JobQueue.h"
 #include "Protocol.pb.h"
+#pragma message("ROOM HEADER LOADED")
 
 namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; }
+namespace GameMath { struct Vector3; }
 
 class Room : public JobQueue
 {
@@ -34,7 +36,7 @@ public:
 
 private:
 	// internal
-	void HandleMovePlayerInternal(PlayerRef player, vector<Navigation::GridCell*>& gridPath);
+	void HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld);
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
 

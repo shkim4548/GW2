@@ -370,7 +370,7 @@ void Navigation::NavigationSystem::BuildGrid(float cellSize)
 			_mapMinX = std::min(_mapMinX, v._x);
 			_mapMaxX = std::max(_mapMaxX, v._x);
 			_mapMinZ = std::min(_mapMinZ, v._z);
-			_mapMaxZ = std::max(_mapMinZ, v._z);
+			_mapMaxZ = std::max(_mapMaxZ, v._z);
 		}
 	}
 
