@@ -5,6 +5,7 @@ using ServerCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.AssetImporters;
 using UnityEngine;
 
 public class PacketHandler
@@ -121,16 +122,31 @@ public class PacketHandler
     {
         // EndOfMoving Recv
         S_MOVE_END endMovePkt = message as S_MOVE_END;
-        IObjectService objectService = DI.Container.Resolve<IObjectService>();
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
         
         int targetId = endMovePkt.ObjectId;
         GameObject go = objectService.FindById(endMovePkt.ObjectId);
         BaseController bc = go.GetComponent<BaseController>();
-        bc.PosInfo = endMovePkt.FinalPos;
+        
+        // 스냅 전 클라 위치
+        Vector3 clientPosBefore = bc.transform.position;
+
+        // 서버 기준 최종 위치
+        PosInfo finalPos = endMovePkt.ServerPosInfo;
+        Vector3 serverPos = new Vector3(finalPos.X, finalPos.Y, finalPos.Z);
+
+        float diff = Vector3.Distance(clientPosBefore, serverPos);
+        if (diff > 0.05f)
+        {
+            Debug.LogWarning($"[S_MOVE_END] desync: diff={diff}, client={clientPosBefore}, server={serverPos}");
+        }
+
         bc._isMoving = false;
 
         // 여기서는 스냅이 허용된다
-        bc.transform.position.Set(bc.PosInfo.X, bc.PosInfo.Y, bc.PosInfo.Z);
+        bc.PosInfo = finalPos;
+        bc._isMoving = false;
+        bc.transform.position = serverPos;
         // TODO: STATE 변경 + ROTATION 변경
     }
 

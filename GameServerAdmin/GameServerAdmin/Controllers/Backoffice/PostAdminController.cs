@@ -1,10 +1,12 @@
 ﻿using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAdmin.Controllers.BackOffice;
 
 [ApiController]
+[Authorize(Policy = "AdminOnly")]
 [Route("api/admin/posts")]
 public class PostAdminController : ControllerBase
 {

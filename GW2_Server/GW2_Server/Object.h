@@ -34,6 +34,7 @@ public:
 	void AccumulateMoveTime(float deltaTime);
 	bool ShouldBroadcastMove() const;
 	void ResetBroadcastTimer();
+	bool ValidateMovement(float deltaTime);
 	
 public:
 	NavPath _path;
@@ -52,5 +53,9 @@ protected:
 
 private:
 	float _moveBroadcastElapsed = 0.0f;
+
+	// === 이동상태 이상 탐지 === 
+	GameMath::Vector3 _lastCheckPos;
+	bool _hasLastCheckPos = false;
 };
 

@@ -1,11 +1,13 @@
 ﻿using GameServerAdmin.Application.Comments.Admin;
 using GameServerAdmin.Common.Models;
 using GameServerAdmin.Models.Comments.AdminApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAdmin.Controllers.Backoffice
 {
     [ApiController]
+    [Authorize(Policy = "AdminOnly")]
     [Route("api/admin/comments")]
     public class CommentAdminController : ControllerBase
     {

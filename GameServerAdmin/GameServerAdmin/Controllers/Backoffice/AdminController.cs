@@ -2,11 +2,13 @@
 using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Backoffice.AdminApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAdmin.Controllers.Backoffice
 {
     [ApiController]
+    [Authorize(Policy = "AdminOnly")]
     [Route("api/admins")]
     public class AdminController : ControllerBase
     {

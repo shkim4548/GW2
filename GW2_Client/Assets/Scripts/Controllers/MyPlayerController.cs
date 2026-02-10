@@ -73,7 +73,7 @@ public class MyPlayerController : PlayerController
         float distance = direction.magnitude;
 
         // 도착 여부 체크
-        if(distance < 0.1f)
+        if(distance < 0.001f)
         {
             transform.position = waypoint;
             _pathIndex++;

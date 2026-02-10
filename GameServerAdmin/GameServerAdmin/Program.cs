@@ -72,6 +72,13 @@ namespace GameServerAdmin
                     };
                 });
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                {
+                    policy.RequireRole("Admin", "SuperAdmin");
+                });
+            });
 
             // Filter µî·Ï
             builder.Services.AddControllers(options =>
@@ -120,6 +127,7 @@ namespace GameServerAdmin
 
             //app.UseRouting();
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             //app.MapRazorPages();

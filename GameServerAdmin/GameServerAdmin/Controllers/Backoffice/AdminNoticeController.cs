@@ -1,11 +1,13 @@
 ﻿using GameServerAdmin.Application.Notice;
 using GameServerAdmin.Common.Models;
 using GameServerAdmin.Models.Notices.AdminApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAdmin.Controllers.Backoffice
 {
     [ApiController]
+    [Authorize(Policy = "AdminOnly")]
     [Route("api/admin/notices")]
     public class NoticeAdminController : ControllerBase
     {

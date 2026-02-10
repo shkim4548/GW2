@@ -241,7 +241,7 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	// Moving End
 	Protocol::S_MOVE_END endMovePkt;
 	endMovePkt.set_object_id(obj->GetObjectId());
-	Protocol::PosInfo* pos = endMovePkt.mutable_final_pos();
+	Protocol::PosInfo* pos = endMovePkt.mutable_server_pos_info();
 	*pos = obj->GetPosInfo();
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);

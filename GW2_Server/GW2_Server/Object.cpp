@@ -38,6 +38,7 @@ bool Object::UpdateMovement(float deltaTime)
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
 		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		_isMoving = false;
 		return false;
 	}
 
@@ -46,12 +47,13 @@ bool Object::UpdateMovement(float deltaTime)
 	bool moved = false;
 
 	// _path를 소모하는 루프를 이용, 한틱만 움직이는 현상을 방지한다.
-	while (remainMoveDist > 0.0f && _pathIndex < _path.size())
+	while (remainMoveDist > 0.0f && _pathIndex < static_cast<int32>(_path.size()))
 	{
 		const GameMath::Vector3& target = _path[_pathIndex];
 		GameMath::Vector3 dir = target - _posVector;
 		const float dist = dir.Length();
 
+		// waypoint에 거의 도달한 경우 : 완전히 스냅 + 다음 인덱스로
 		if (dist <= kArriveEpsilon)
 		{
 			_posVector = target;
@@ -59,32 +61,35 @@ bool Object::UpdateMovement(float deltaTime)
 			continue;
 		}
 
+		// 이번 틱 안에 target까지 도착 가능하다
 		if (dist <= remainMoveDist)
 		{
 			_posVector = target;
 			remainMoveDist -= dist;
 			++_pathIndex;
 			moved = true;
+			continue;
 		}
-		else
-		{
-			dir = dir.Normalized();
-			_posVector = _posVector + (dir * remainMoveDist);
-			++_pathIndex;
-			moved = true;
-		}
+
+		// 이번 틱 안에 target까지 못가는 경우, partial move
+		dir = dir.Normalized();
+		_posVector = _posVector + (dir * remainMoveDist);
+		++_pathIndex;
+		moved = true;
+
 	}
 
 	if (_pathIndex >= _path.size())
 	{
 		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		_isMoving = false;
 	}
 
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
-	cout << "posInfo :" << _pos.x() << ' ' << _pos.y() << ' ' << _pos.z() << endl;
-	cout << "_posVector : " << _posVector._x << ' ' << _posVector._y << ' ' << _posVector._z << endl;
+	std::cout << "posInfo :" << _pos.x() << ' ' << _pos.y() << ' ' << _pos.z() << endl;
+	std::cout << "_posVector : " << _posVector._x << ' ' << _posVector._y << ' ' << _posVector._z << endl;
 	return moved;
 }
 
@@ -133,4 +138,14 @@ bool Object::ShouldBroadcastMove() const
 void Object::ResetBroadcastTimer()
 {
 	_moveBroadcastElapsed = 0.0f;
+}
+
+bool Object::ValidateMovement(float deltaTime)
+{
+	// 아직 기준점이 없다 -> 현재 위치를 초기 기준으로 삼고 통과한다.
+	if (_hasLastCheckPos == false)
+	{
+
+	}
+	return false;
 }

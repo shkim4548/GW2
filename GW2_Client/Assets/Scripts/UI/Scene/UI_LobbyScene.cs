@@ -41,6 +41,6 @@ public class UI_LobbyScene : UI_Scene
         ISceneService sceneService = Bootstrapper.Instance.SceneService;
         //sceneService.LoadScene(Define.Scene.Game);
         // 개발단계에서는 여기를 테스트 씬으로 넘겨버리자
-        sceneService.LoadScene(Define.Scene.TestScene);
+        sceneService.LoadScene(Define.Scene.GameScene);
     }
 }
