@@ -53,6 +53,8 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_SPAWN, PacketHandler.S_SPAWNHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_MOVE, MakePacket<S_MOVE>);
         _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MOVE_END, MakePacket<S_MOVE_END>);
+        _handler.Add((ushort)PacketId.PKT_S_MOVE_END, PacketHandler.S_MOVE_ENDHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, MakePacket<S_ENTER_LOBBY>);

@@ -12,6 +12,6 @@ namespace GameServerAdmin.Controllers.Auth
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController()
+        //public AuthController()
     }
 }

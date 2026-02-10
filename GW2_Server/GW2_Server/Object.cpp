@@ -83,7 +83,6 @@ bool Object::UpdateMovement(float deltaTime)
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
-	// 이 값이 유효하지 않다. 전혀 다른 값이 오고 있다.
 	cout << "posInfo :" << _pos.x() << ' ' << _pos.y() << ' ' << _pos.z() << endl;
 	cout << "_posVector : " << _posVector._x << ' ' << _posVector._y << ' ' << _posVector._z << endl;
 	return moved;

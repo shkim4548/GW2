@@ -51,7 +51,7 @@ message C_MOVE
 	int32 object_id = 2;
 	PosInfo start_pos = 3;
 	PosInfo target_pos = 4;
-	int32 client_time = 5;	// Å¬¶óÀÌ¾ðÆ® ±âÁØ ½Ã°£, ÃßÃøÇ×¹ý º¸Á¤¿ë
+	int32 client_time = 5;	// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½×¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 message S_MOVE
@@ -60,7 +60,7 @@ message S_MOVE
 	int32 object_id = 2;
 	PosInfo server_info = 3;
 	int32 server_time = 4;
-	bool corrected = 5;		// Å¬¶óÀÌ¾ðÆ® ¿¹ÃøÀ§Ä¡¿Í Â÷ÀÌ°¡ ÀÖ´Â°¡?
+	bool corrected = 5;		// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ö´Â°ï¿½?
 }
 
 message S_MOVE_END

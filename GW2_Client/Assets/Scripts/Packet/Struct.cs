@@ -27,8 +27,8 @@ namespace Google.Protobuf.Struct {
             "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIm4KB1Bvc0lu",
             "Zm8SEQoJb2JqZWN0X2lkGAEgASgFEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJ",
             "CgF6GAQgASgCEgsKA3lhdxgFIAEoAhIiCgVzdGF0ZRgGIAEoDjITLlByb3Rv",
-            "Y29sLk1vdmVTdGF0ZSK1AQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
-            "KAUSDwoHcm9vbV9pZBgCIAEoBRIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
+            "Y29sLk1vdmVTdGF0ZSK1AQoKT2JqZWN0SW5mbxIPCgdyb29tX2lkGAEgASgF",
+            "EhEKCW9iamVjdF9pZBgCIAEoBRIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
             "b3RvY29sLk9iamVjdFR5cGUSDAoEbmFtZRgEIAEoCRIjCghwb3NfaW5mbxgF",
             "IAEoCzIRLlByb3RvY29sLlBvc0luZm8SJQoJc3RhdF9pbmZvGAYgASgLMhIu",
             "UHJvdG9jb2wuU3RhdEluZm8iRQoIU3RhdEluZm8SCgoCaHAYASABKAQSDgoG",
@@ -40,7 +40,7 @@ namespace Google.Protobuf.Struct {
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.PosInfo), global::Google.Protobuf.Struct.PosInfo.Parser, new[]{ "ObjectId", "X", "Y", "Z", "Yaw", "State" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "RoomId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "RoomId", "ObjectId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.Vector3Info), global::Google.Protobuf.Struct.Vector3Info.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.RoomInfo), global::Google.Protobuf.Struct.RoomInfo.Parser, new[]{ "RoomId", "RommName" }, null, null, null, null)
@@ -458,8 +458,8 @@ namespace Google.Protobuf.Struct {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ObjectInfo(ObjectInfo other) : this() {
-      objectId_ = other.objectId_;
       roomId_ = other.roomId_;
+      objectId_ = other.objectId_;
       objectType_ = other.objectType_;
       name_ = other.name_;
       posInfo_ = other.posInfo_ != null ? other.posInfo_.Clone() : null;
@@ -473,20 +473,8 @@ namespace Google.Protobuf.Struct {
       return new ObjectInfo(this);
     }
 
-    /// <summary>Field number for the "object_id" field.</summary>
-    public const int ObjectIdFieldNumber = 1;
-    private int objectId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int ObjectId {
-      get { return objectId_; }
-      set {
-        objectId_ = value;
-      }
-    }
-
     /// <summary>Field number for the "room_id" field.</summary>
-    public const int RoomIdFieldNumber = 2;
+    public const int RoomIdFieldNumber = 1;
     private int roomId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -494,6 +482,18 @@ namespace Google.Protobuf.Struct {
       get { return roomId_; }
       set {
         roomId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "object_id" field.</summary>
+    public const int ObjectIdFieldNumber = 2;
+    private int objectId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int ObjectId {
+      get { return objectId_; }
+      set {
+        objectId_ = value;
       }
     }
 
@@ -563,8 +563,8 @@ namespace Google.Protobuf.Struct {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (ObjectId != other.ObjectId) return false;
       if (RoomId != other.RoomId) return false;
+      if (ObjectId != other.ObjectId) return false;
       if (ObjectType != other.ObjectType) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(PosInfo, other.PosInfo)) return false;
@@ -576,8 +576,8 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
+      if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) hash ^= ObjectType.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
@@ -600,13 +600,13 @@ namespace Google.Protobuf.Struct {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (ObjectId != 0) {
-        output.WriteRawTag(8);
-        output.WriteInt32(ObjectId);
-      }
       if (RoomId != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteInt32(RoomId);
+      }
+      if (ObjectId != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(ObjectId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         output.WriteRawTag(24);
@@ -634,13 +634,13 @@ namespace Google.Protobuf.Struct {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (ObjectId != 0) {
-        output.WriteRawTag(8);
-        output.WriteInt32(ObjectId);
-      }
       if (RoomId != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteInt32(RoomId);
+      }
+      if (ObjectId != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(ObjectId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         output.WriteRawTag(24);
@@ -668,11 +668,11 @@ namespace Google.Protobuf.Struct {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (ObjectId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
-      }
       if (RoomId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
+      }
+      if (ObjectId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
       if (ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ObjectType);
@@ -698,11 +698,11 @@ namespace Google.Protobuf.Struct {
       if (other == null) {
         return;
       }
-      if (other.ObjectId != 0) {
-        ObjectId = other.ObjectId;
-      }
       if (other.RoomId != 0) {
         RoomId = other.RoomId;
+      }
+      if (other.ObjectId != 0) {
+        ObjectId = other.ObjectId;
       }
       if (other.ObjectType != global::Google.Protobuf.Enum.ObjectType.None) {
         ObjectType = other.ObjectType;
@@ -738,11 +738,11 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            ObjectId = input.ReadInt32();
+            RoomId = input.ReadInt32();
             break;
           }
           case 16: {
-            RoomId = input.ReadInt32();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {
@@ -783,11 +783,11 @@ namespace Google.Protobuf.Struct {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            ObjectId = input.ReadInt32();
+            RoomId = input.ReadInt32();
             break;
           }
           case 16: {
-            RoomId = input.ReadInt32();
+            ObjectId = input.ReadInt32();
             break;
           }
           case 24: {

@@ -23,6 +23,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_table_driven.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
@@ -241,10 +242,10 @@ class C_LOGIN final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNicknameFieldNumber = 2,
-    kPlayerIndexFieldNumber = 1,
+    kNicknameFieldNumber = 1,
+    kPlayerIndexFieldNumber = 2,
   };
-  // string nickname = 2;
+  // string nickname = 1;
   void clear_nickname();
   const std::string& nickname() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -258,7 +259,7 @@ class C_LOGIN final :
   std::string* _internal_mutable_nickname();
   public:
 
-  // int32 player_index = 1;
+  // int32 player_index = 2;
   void clear_player_index();
   int32_t player_index() const;
   void set_player_index(int32_t value);
@@ -403,25 +404,25 @@ class S_LOGIN final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPlayerIndexFieldNumber = 1,
-    kSuccessFieldNumber = 2,
+    kSuccessFieldNumber = 1,
+    kPlayerIndexFieldNumber = 2,
   };
-  // int32 player_index = 1;
-  void clear_player_index();
-  int32_t player_index() const;
-  void set_player_index(int32_t value);
-  private:
-  int32_t _internal_player_index() const;
-  void _internal_set_player_index(int32_t value);
-  public:
-
-  // bool success = 2;
+  // bool success = 1;
   void clear_success();
   bool success() const;
   void set_success(bool value);
   private:
   bool _internal_success() const;
   void _internal_set_success(bool value);
+  public:
+
+  // int32 player_index = 2;
+  void clear_player_index();
+  int32_t player_index() const;
+  void set_player_index(int32_t value);
+  private:
+  int32_t _internal_player_index() const;
+  void _internal_set_player_index(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_LOGIN)
@@ -431,8 +432,8 @@ class S_LOGIN final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int32_t player_index_;
   bool success_;
+  int32_t player_index_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -1757,11 +1758,10 @@ class S_MOVE_END final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFinalPosFieldNumber = 3,
-    kRoomIdFieldNumber = 1,
-    kObjectIdFieldNumber = 2,
+    kFinalPosFieldNumber = 2,
+    kObjectIdFieldNumber = 1,
   };
-  // .Protocol.PosInfo final_pos = 3;
+  // .Protocol.PosInfo final_pos = 2;
   bool has_final_pos() const;
   private:
   bool _internal_has_final_pos() const;
@@ -1779,16 +1779,7 @@ class S_MOVE_END final :
       ::Protocol::PosInfo* final_pos);
   ::Protocol::PosInfo* unsafe_arena_release_final_pos();
 
-  // int32 room_id = 1;
-  void clear_room_id();
-  int32_t room_id() const;
-  void set_room_id(int32_t value);
-  private:
-  int32_t _internal_room_id() const;
-  void _internal_set_room_id(int32_t value);
-  public:
-
-  // int32 object_id = 2;
+  // int32 object_id = 1;
   void clear_object_id();
   int32_t object_id() const;
   void set_object_id(int32_t value);
@@ -1805,7 +1796,6 @@ class S_MOVE_END final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::Protocol::PosInfo* final_pos_;
-  int32_t room_id_;
   int32_t object_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -1934,26 +1924,17 @@ class C_SKILL final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSkillIdFieldNumber = 1,
     kTargetIdFieldNumber = 2,
     kAttackerIdFieldNumber = 3,
+    kSkillIdFieldNumber = 1,
   };
-  // int32 skill_id = 1;
-  void clear_skill_id();
-  int32_t skill_id() const;
-  void set_skill_id(int32_t value);
-  private:
-  int32_t _internal_skill_id() const;
-  void _internal_set_skill_id(int32_t value);
-  public:
-
-  // int32 target_id = 2;
+  // int64 target_id = 2;
   void clear_target_id();
-  int32_t target_id() const;
-  void set_target_id(int32_t value);
+  int64_t target_id() const;
+  void set_target_id(int64_t value);
   private:
-  int32_t _internal_target_id() const;
-  void _internal_set_target_id(int32_t value);
+  int64_t _internal_target_id() const;
+  void _internal_set_target_id(int64_t value);
   public:
 
   // int64 attacker_id = 3;
@@ -1965,6 +1946,15 @@ class C_SKILL final :
   void _internal_set_attacker_id(int64_t value);
   public:
 
+  // int32 skill_id = 1;
+  void clear_skill_id();
+  int32_t skill_id() const;
+  void set_skill_id(int32_t value);
+  private:
+  int32_t _internal_skill_id() const;
+  void _internal_set_skill_id(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_SKILL)
  private:
   class _Internal;
@@ -1972,9 +1962,9 @@ class C_SKILL final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int32_t skill_id_;
-  int32_t target_id_;
+  int64_t target_id_;
   int64_t attacker_id_;
+  int32_t skill_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -2149,10 +2139,9 @@ class S_SKILL final :
 // -------------------------------------------------------------------
 
 class C_ENTER_LOBBY final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_ENTER_LOBBY) */ {
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:Protocol.C_ENTER_LOBBY) */ {
  public:
   inline C_ENTER_LOBBY() : C_ENTER_LOBBY(nullptr) {}
-  ~C_ENTER_LOBBY() override;
   explicit constexpr C_ENTER_LOBBY(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   C_ENTER_LOBBY(const C_ENTER_LOBBY& from);
@@ -2225,27 +2214,15 @@ class C_ENTER_LOBBY final :
   C_ENTER_LOBBY* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<C_ENTER_LOBBY>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const C_ENTER_LOBBY& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const C_ENTER_LOBBY& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const C_ENTER_LOBBY& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const C_ENTER_LOBBY& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
+  }
   public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  uint8_t* _InternalSerialize(
-      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(C_ENTER_LOBBY* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -2256,8 +2233,6 @@ class C_ENTER_LOBBY final :
   explicit C_ENTER_LOBBY(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -2269,18 +2244,6 @@ class C_ENTER_LOBBY final :
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kPlayerIndexFieldNumber = 1,
-  };
-  // int32 player_index = 1;
-  void clear_player_index();
-  int32_t player_index() const;
-  void set_player_index(int32_t value);
-  private:
-  int32_t _internal_player_index() const;
-  void _internal_set_player_index(int32_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:Protocol.C_ENTER_LOBBY)
  private:
   class _Internal;
@@ -2288,7 +2251,6 @@ class C_ENTER_LOBBY final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int32_t player_index_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -2419,31 +2381,31 @@ class S_ENTER_LOBBY final :
     kRoomInfosFieldNumber = 2,
     kPlayerIdFieldNumber = 1,
   };
-  // repeated .Protocol.RoomInfo room_infos = 2;
-  int room_infos_size() const;
+  // repeated .Protocol.RoomInfo roomInfos = 2;
+  int roominfos_size() const;
   private:
-  int _internal_room_infos_size() const;
+  int _internal_roominfos_size() const;
   public:
-  void clear_room_infos();
-  ::Protocol::RoomInfo* mutable_room_infos(int index);
+  void clear_roominfos();
+  ::Protocol::RoomInfo* mutable_roominfos(int index);
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >*
-      mutable_room_infos();
+      mutable_roominfos();
   private:
-  const ::Protocol::RoomInfo& _internal_room_infos(int index) const;
-  ::Protocol::RoomInfo* _internal_add_room_infos();
+  const ::Protocol::RoomInfo& _internal_roominfos(int index) const;
+  ::Protocol::RoomInfo* _internal_add_roominfos();
   public:
-  const ::Protocol::RoomInfo& room_infos(int index) const;
-  ::Protocol::RoomInfo* add_room_infos();
+  const ::Protocol::RoomInfo& roominfos(int index) const;
+  ::Protocol::RoomInfo* add_roominfos();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >&
-      room_infos() const;
+      roominfos() const;
 
-  // int32 player_id = 1;
-  void clear_player_id();
-  int32_t player_id() const;
-  void set_player_id(int32_t value);
+  // int32 playerId = 1;
+  void clear_playerid();
+  int32_t playerid() const;
+  void set_playerid(int32_t value);
   private:
-  int32_t _internal_player_id() const;
-  void _internal_set_player_id(int32_t value);
+  int32_t _internal_playerid() const;
+  void _internal_set_playerid(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_ENTER_LOBBY)
@@ -2453,8 +2415,8 @@ class S_ENTER_LOBBY final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo > room_infos_;
-  int32_t player_id_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo > roominfos_;
+  int32_t playerid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -2469,27 +2431,7 @@ class S_ENTER_LOBBY final :
 #endif  // __GNUC__
 // C_LOGIN
 
-// int32 player_index = 1;
-inline void C_LOGIN::clear_player_index() {
-  player_index_ = 0;
-}
-inline int32_t C_LOGIN::_internal_player_index() const {
-  return player_index_;
-}
-inline int32_t C_LOGIN::player_index() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_LOGIN.player_index)
-  return _internal_player_index();
-}
-inline void C_LOGIN::_internal_set_player_index(int32_t value) {
-  
-  player_index_ = value;
-}
-inline void C_LOGIN::set_player_index(int32_t value) {
-  _internal_set_player_index(value);
-  // @@protoc_insertion_point(field_set:Protocol.C_LOGIN.player_index)
-}
-
-// string nickname = 2;
+// string nickname = 1;
 inline void C_LOGIN::clear_nickname() {
   nickname_.ClearToEmpty();
 }
@@ -2540,31 +2482,31 @@ inline void C_LOGIN::set_allocated_nickname(std::string* nickname) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_LOGIN.nickname)
 }
 
+// int32 player_index = 2;
+inline void C_LOGIN::clear_player_index() {
+  player_index_ = 0;
+}
+inline int32_t C_LOGIN::_internal_player_index() const {
+  return player_index_;
+}
+inline int32_t C_LOGIN::player_index() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_LOGIN.player_index)
+  return _internal_player_index();
+}
+inline void C_LOGIN::_internal_set_player_index(int32_t value) {
+  
+  player_index_ = value;
+}
+inline void C_LOGIN::set_player_index(int32_t value) {
+  _internal_set_player_index(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_LOGIN.player_index)
+}
+
 // -------------------------------------------------------------------
 
 // S_LOGIN
 
-// int32 player_index = 1;
-inline void S_LOGIN::clear_player_index() {
-  player_index_ = 0;
-}
-inline int32_t S_LOGIN::_internal_player_index() const {
-  return player_index_;
-}
-inline int32_t S_LOGIN::player_index() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_LOGIN.player_index)
-  return _internal_player_index();
-}
-inline void S_LOGIN::_internal_set_player_index(int32_t value) {
-  
-  player_index_ = value;
-}
-inline void S_LOGIN::set_player_index(int32_t value) {
-  _internal_set_player_index(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.player_index)
-}
-
-// bool success = 2;
+// bool success = 1;
 inline void S_LOGIN::clear_success() {
   success_ = false;
 }
@@ -2582,6 +2524,26 @@ inline void S_LOGIN::_internal_set_success(bool value) {
 inline void S_LOGIN::set_success(bool value) {
   _internal_set_success(value);
   // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.success)
+}
+
+// int32 player_index = 2;
+inline void S_LOGIN::clear_player_index() {
+  player_index_ = 0;
+}
+inline int32_t S_LOGIN::_internal_player_index() const {
+  return player_index_;
+}
+inline int32_t S_LOGIN::player_index() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_LOGIN.player_index)
+  return _internal_player_index();
+}
+inline void S_LOGIN::_internal_set_player_index(int32_t value) {
+  
+  player_index_ = value;
+}
+inline void S_LOGIN::set_player_index(int32_t value) {
+  _internal_set_player_index(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.player_index)
 }
 
 // -------------------------------------------------------------------
@@ -3274,27 +3236,7 @@ inline void S_MOVE::set_corrected(bool value) {
 
 // S_MOVE_END
 
-// int32 room_id = 1;
-inline void S_MOVE_END::clear_room_id() {
-  room_id_ = 0;
-}
-inline int32_t S_MOVE_END::_internal_room_id() const {
-  return room_id_;
-}
-inline int32_t S_MOVE_END::room_id() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_MOVE_END.room_id)
-  return _internal_room_id();
-}
-inline void S_MOVE_END::_internal_set_room_id(int32_t value) {
-  
-  room_id_ = value;
-}
-inline void S_MOVE_END::set_room_id(int32_t value) {
-  _internal_set_room_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_MOVE_END.room_id)
-}
-
-// int32 object_id = 2;
+// int32 object_id = 1;
 inline void S_MOVE_END::clear_object_id() {
   object_id_ = 0;
 }
@@ -3314,7 +3256,7 @@ inline void S_MOVE_END::set_object_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_MOVE_END.object_id)
 }
 
-// .Protocol.PosInfo final_pos = 3;
+// .Protocol.PosInfo final_pos = 2;
 inline bool S_MOVE_END::_internal_has_final_pos() const {
   return this != internal_default_instance() && final_pos_ != nullptr;
 }
@@ -3424,22 +3366,22 @@ inline void C_SKILL::set_skill_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_SKILL.skill_id)
 }
 
-// int32 target_id = 2;
+// int64 target_id = 2;
 inline void C_SKILL::clear_target_id() {
-  target_id_ = 0;
+  target_id_ = int64_t{0};
 }
-inline int32_t C_SKILL::_internal_target_id() const {
+inline int64_t C_SKILL::_internal_target_id() const {
   return target_id_;
 }
-inline int32_t C_SKILL::target_id() const {
+inline int64_t C_SKILL::target_id() const {
   // @@protoc_insertion_point(field_get:Protocol.C_SKILL.target_id)
   return _internal_target_id();
 }
-inline void C_SKILL::_internal_set_target_id(int32_t value) {
+inline void C_SKILL::_internal_set_target_id(int64_t value) {
   
   target_id_ = value;
 }
-inline void C_SKILL::set_target_id(int32_t value) {
+inline void C_SKILL::set_target_id(int64_t value) {
   _internal_set_target_id(value);
   // @@protoc_insertion_point(field_set:Protocol.C_SKILL.target_id)
 }
@@ -3532,85 +3474,65 @@ inline void S_SKILL::set_attacker_id(int64_t value) {
 
 // C_ENTER_LOBBY
 
-// int32 player_index = 1;
-inline void C_ENTER_LOBBY::clear_player_index() {
-  player_index_ = 0;
-}
-inline int32_t C_ENTER_LOBBY::_internal_player_index() const {
-  return player_index_;
-}
-inline int32_t C_ENTER_LOBBY::player_index() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_ENTER_LOBBY.player_index)
-  return _internal_player_index();
-}
-inline void C_ENTER_LOBBY::_internal_set_player_index(int32_t value) {
-  
-  player_index_ = value;
-}
-inline void C_ENTER_LOBBY::set_player_index(int32_t value) {
-  _internal_set_player_index(value);
-  // @@protoc_insertion_point(field_set:Protocol.C_ENTER_LOBBY.player_index)
-}
-
 // -------------------------------------------------------------------
 
 // S_ENTER_LOBBY
 
-// int32 player_id = 1;
-inline void S_ENTER_LOBBY::clear_player_id() {
-  player_id_ = 0;
+// int32 playerId = 1;
+inline void S_ENTER_LOBBY::clear_playerid() {
+  playerid_ = 0;
 }
-inline int32_t S_ENTER_LOBBY::_internal_player_id() const {
-  return player_id_;
+inline int32_t S_ENTER_LOBBY::_internal_playerid() const {
+  return playerid_;
 }
-inline int32_t S_ENTER_LOBBY::player_id() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.player_id)
-  return _internal_player_id();
+inline int32_t S_ENTER_LOBBY::playerid() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.playerId)
+  return _internal_playerid();
 }
-inline void S_ENTER_LOBBY::_internal_set_player_id(int32_t value) {
+inline void S_ENTER_LOBBY::_internal_set_playerid(int32_t value) {
   
-  player_id_ = value;
+  playerid_ = value;
 }
-inline void S_ENTER_LOBBY::set_player_id(int32_t value) {
-  _internal_set_player_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_LOBBY.player_id)
+inline void S_ENTER_LOBBY::set_playerid(int32_t value) {
+  _internal_set_playerid(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_LOBBY.playerId)
 }
 
-// repeated .Protocol.RoomInfo room_infos = 2;
-inline int S_ENTER_LOBBY::_internal_room_infos_size() const {
-  return room_infos_.size();
+// repeated .Protocol.RoomInfo roomInfos = 2;
+inline int S_ENTER_LOBBY::_internal_roominfos_size() const {
+  return roominfos_.size();
 }
-inline int S_ENTER_LOBBY::room_infos_size() const {
-  return _internal_room_infos_size();
+inline int S_ENTER_LOBBY::roominfos_size() const {
+  return _internal_roominfos_size();
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::mutable_room_infos(int index) {
-  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_LOBBY.room_infos)
-  return room_infos_.Mutable(index);
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::mutable_roominfos(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_LOBBY.roomInfos)
+  return roominfos_.Mutable(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >*
-S_ENTER_LOBBY::mutable_room_infos() {
-  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_LOBBY.room_infos)
-  return &room_infos_;
+S_ENTER_LOBBY::mutable_roominfos() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_LOBBY.roomInfos)
+  return &roominfos_;
 }
-inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::_internal_room_infos(int index) const {
-  return room_infos_.Get(index);
+inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::_internal_roominfos(int index) const {
+  return roominfos_.Get(index);
 }
-inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::room_infos(int index) const {
-  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.room_infos)
-  return _internal_room_infos(index);
+inline const ::Protocol::RoomInfo& S_ENTER_LOBBY::roominfos(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_LOBBY.roomInfos)
+  return _internal_roominfos(index);
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::_internal_add_room_infos() {
-  return room_infos_.Add();
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::_internal_add_roominfos() {
+  return roominfos_.Add();
 }
-inline ::Protocol::RoomInfo* S_ENTER_LOBBY::add_room_infos() {
-  ::Protocol::RoomInfo* _add = _internal_add_room_infos();
-  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_LOBBY.room_infos)
+inline ::Protocol::RoomInfo* S_ENTER_LOBBY::add_roominfos() {
+  ::Protocol::RoomInfo* _add = _internal_add_roominfos();
+  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_LOBBY.roomInfos)
   return _add;
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::RoomInfo >&
-S_ENTER_LOBBY::room_infos() const {
-  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_LOBBY.room_infos)
-  return room_infos_;
+S_ENTER_LOBBY::roominfos() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_LOBBY.roomInfos)
+  return roominfos_;
 }
 
 #ifdef __GNUC__

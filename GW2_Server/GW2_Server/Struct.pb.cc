@@ -40,8 +40,8 @@ constexpr ObjectInfo::ObjectInfo(
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , pos_info_(nullptr)
   , stat_info_(nullptr)
-  , object_id_(0)
   , room_id_(0)
+  , object_id_(0)
   , object_type_(0)
 {}
 struct ObjectInfoDefaultTypeInternal {
@@ -119,8 +119,8 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, room_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, object_type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, name_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, pos_info_),
@@ -174,7 +174,7 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "PosInfo\022\021\n\tobject_id\030\001 \001(\005\022\t\n\001x\030\002 \001(\002\022\t\n"
   "\001y\030\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\013\n\003yaw\030\005 \001(\002\022\"\n\005stat"
   "e\030\006 \001(\0162\023.Protocol.MoveState\"\265\001\n\nObjectI"
-  "nfo\022\021\n\tobject_id\030\001 \001(\005\022\017\n\007room_id\030\002 \001(\005\022"
+  "nfo\022\017\n\007room_id\030\001 \001(\005\022\021\n\tobject_id\030\002 \001(\005\022"
   ")\n\013object_type\030\003 \001(\0162\024.Protocol.ObjectTy"
   "pe\022\014\n\004name\030\004 \001(\t\022#\n\010pos_info\030\005 \001(\0132\021.Pro"
   "tocol.PosInfo\022%\n\tstat_info\030\006 \001(\0132\022.Proto"
@@ -600,9 +600,9 @@ ObjectInfo::ObjectInfo(const ObjectInfo& from)
   } else {
     stat_info_ = nullptr;
   }
-  ::memcpy(&object_id_, &from.object_id_,
+  ::memcpy(&room_id_, &from.room_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&object_type_) -
-    reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
+    reinterpret_cast<char*>(&room_id_)) + sizeof(object_type_));
   // @@protoc_insertion_point(copy_constructor:Protocol.ObjectInfo)
 }
 
@@ -656,9 +656,9 @@ void ObjectInfo::Clear() {
     delete stat_info_;
   }
   stat_info_ = nullptr;
-  ::memset(&object_id_, 0, static_cast<size_t>(
+  ::memset(&room_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&object_type_) -
-      reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
+      reinterpret_cast<char*>(&room_id_)) + sizeof(object_type_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -668,18 +668,18 @@ const char* ObjectInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 object_id = 1;
+      // int32 room_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 room_id = 2;
+      // int32 object_id = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -748,16 +748,16 @@ uint8_t* ObjectInfo::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 object_id = 1;
-  if (this->_internal_object_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_object_id(), target);
-  }
-
-  // int32 room_id = 2;
+  // int32 room_id = 1;
   if (this->_internal_room_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_room_id(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_room_id(), target);
+  }
+
+  // int32 object_id = 2;
+  if (this->_internal_object_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_object_id(), target);
   }
 
   // .Protocol.ObjectType object_type = 3;
@@ -830,14 +830,14 @@ size_t ObjectInfo::ByteSizeLong() const {
         *stat_info_);
   }
 
-  // int32 object_id = 1;
-  if (this->_internal_object_id() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_object_id());
-  }
-
-  // int32 room_id = 2;
+  // int32 room_id = 1;
   if (this->_internal_room_id() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_room_id());
+  }
+
+  // int32 object_id = 2;
+  if (this->_internal_object_id() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_object_id());
   }
 
   // .Protocol.ObjectType object_type = 3;
@@ -877,11 +877,11 @@ void ObjectInfo::MergeFrom(const ObjectInfo& from) {
   if (from._internal_has_stat_info()) {
     _internal_mutable_stat_info()->::Protocol::StatInfo::MergeFrom(from._internal_stat_info());
   }
-  if (from._internal_object_id() != 0) {
-    _internal_set_object_id(from._internal_object_id());
-  }
   if (from._internal_room_id() != 0) {
     _internal_set_room_id(from._internal_room_id());
+  }
+  if (from._internal_object_id() != 0) {
+    _internal_set_object_id(from._internal_object_id());
   }
   if (from._internal_object_type() != 0) {
     _internal_set_object_type(from._internal_object_type());
