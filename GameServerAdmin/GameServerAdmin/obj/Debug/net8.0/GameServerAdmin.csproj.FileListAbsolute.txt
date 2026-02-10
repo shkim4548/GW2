@@ -285,3 +285,4 @@ D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\Develope\unity\GW2\GameServerAdmin\GameServerAdmin\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Dev\unity\GW2\GameServerAdmin\GameServerAdmin\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
