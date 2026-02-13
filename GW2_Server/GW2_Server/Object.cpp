@@ -10,6 +10,11 @@ Object::~Object()
 {
 }
 
+bool Object::isDead()
+{
+	return false;
+}
+
 void Object::SetPath(const NavPath& path)
 {
 	if (path.empty())

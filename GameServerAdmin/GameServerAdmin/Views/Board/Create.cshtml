@@ -1,0 +1,32 @@
+﻿@model GameServerAdmin.Models.Posts.PublicUi.PublicPostCreateViewModel
+
+@{
+    ViewData["Title"] = "글쓰기";
+}
+
+<h2>글쓰기</h2>
+
+<form asp-action="Create" asp-controller="Board" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+
+    <div>
+        <label asp-for="Content"></label><br />
+        <textarea asp-for="Content" rows="10" cols="80"></textarea>
+        <span asp-validation-for="Content"></span>
+    </div>
+
+    <button type="submit">등록</button>
+    <a asp-controller="Board" asp-action="Index">취소</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

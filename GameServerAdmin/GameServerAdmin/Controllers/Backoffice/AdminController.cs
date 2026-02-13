@@ -10,13 +10,20 @@ namespace GameServerAdmin.Controllers.Backoffice
     [ApiController]
     [Authorize(Policy = "AdminOnly")]
     [Route("api/admins")]
-    public class AdminController : ControllerBase
+    public class AdminController : Controller
     {
         private readonly AppDbContext _dbContext;
 
         public AdminController(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            ViewData["Title"] = "댓글 관리";
+            return View();
         }
 
         [HttpPost]

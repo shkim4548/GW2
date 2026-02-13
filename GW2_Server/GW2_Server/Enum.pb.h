@@ -58,15 +58,16 @@ namespace Protocol {
 
 enum ObjectType : int {
   OBJECT_TYPE_NONE = 0,
-  OBJECT_TYPE_PLAYER = 2,
-  OBJECT_TYPE_MONSTER = 3,
-  OBJECT_TYPE_ENV = 4,
+  OBJECT_TYPE_PLAYER = 1,
+  OBJECT_TYPE_MINION = 2,
+  OBJECT_TYPE_TURRET = 3,
+  OBJECT_TYPE_NEXUS = 4,
   ObjectType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   ObjectType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool ObjectType_IsValid(int value);
 constexpr ObjectType ObjectType_MIN = OBJECT_TYPE_NONE;
-constexpr ObjectType ObjectType_MAX = OBJECT_TYPE_ENV;
+constexpr ObjectType ObjectType_MAX = OBJECT_TYPE_NEXUS;
 constexpr int ObjectType_ARRAYSIZE = ObjectType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ObjectType_descriptor();
@@ -140,6 +141,34 @@ inline bool MoveState_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MoveState>(
     MoveState_descriptor(), name, value);
 }
+enum MinionState : int {
+  MINION_IDLE = 0,
+  MINION_LINE_TRACE = 1,
+  MINION_CHASE_TARGET = 2,
+  MINION_ATTACK = 3,
+  MINION_DEAD = 4,
+  MinionState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  MinionState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool MinionState_IsValid(int value);
+constexpr MinionState MinionState_MIN = MINION_IDLE;
+constexpr MinionState MinionState_MAX = MINION_DEAD;
+constexpr int MinionState_ARRAYSIZE = MinionState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MinionState_descriptor();
+template<typename T>
+inline const std::string& MinionState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, MinionState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function MinionState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    MinionState_descriptor(), enum_t_value);
+}
+inline bool MinionState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, MinionState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MinionState>(
+    MinionState_descriptor(), name, value);
+}
 enum SkillType : int {
   SKILL_ID_NONE = 0,
   SKILL_ID_ATTACK = 1,
@@ -168,14 +197,15 @@ inline bool SkillType_Parse(
     SkillType_descriptor(), name, value);
 }
 enum CampType : int {
-  CAMP_HUMAN = 0,
-  CAMP_CYBORG = 1,
-  CAMP_NEUTURAL = 2,
+  CAMP_NONE = 0,
+  CAMP_HUMAN = 1,
+  CAMP_CYBORG = 2,
+  CAMP_NEUTURAL = 3,
   CampType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   CampType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool CampType_IsValid(int value);
-constexpr CampType CampType_MIN = CAMP_HUMAN;
+constexpr CampType CampType_MIN = CAMP_NONE;
 constexpr CampType CampType_MAX = CAMP_NEUTURAL;
 constexpr int CampType_ARRAYSIZE = CampType_MAX + 1;
 
@@ -280,6 +310,11 @@ template <> struct is_proto_enum< ::Protocol::MoveState> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MoveState>() {
   return ::Protocol::MoveState_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::MinionState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MinionState>() {
+  return ::Protocol::MinionState_descriptor();
 }
 template <> struct is_proto_enum< ::Protocol::SkillType> : ::std::true_type {};
 template <>

@@ -33,6 +33,12 @@ void Lobby::LobbyInit()
         *_walkableGrid
     );
 
+    // 미니언 이동 맵 적용
+    bool loadMinonLane = _navmeshLoader->LoadLaneMap(
+        "../../GW2_Client/Assets/NavMeshExport/navlane.bin",
+        *_walkableGrid
+        );
+
     if (!ok) {
         GConsoleLogger->WriteStdOut(Color::RED, L"[Lobby] NavGrid load failed\n");
         return;

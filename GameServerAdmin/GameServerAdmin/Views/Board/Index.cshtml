@@ -1,0 +1,35 @@
+﻿@model List<GameServerAdmin.Models.Posts.PublicUi.PublicPostListItemViewModel>
+
+@{
+    ViewData["Title"] = "게시판";
+    Layout = "_Layout";
+}
+
+<h2>게시판 목록</h2>
+<a asp-controller="Board" asp-action="Create">글쓰기</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>@post.PostId</td>
+                <td>
+                    <a asp-controller="Board"
+                       asp-action="Detail"
+                       asp-route-id="@post.PostId">
+                        @post.Title
+                    </a>
+                </td>
+                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

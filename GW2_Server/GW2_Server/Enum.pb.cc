@@ -18,35 +18,39 @@
 PROTOBUF_PRAGMA_INIT_SEG
 namespace Protocol {
 }  // namespace Protocol
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[7];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[8];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\nEnum.proto\022\010Protocol*h\n\nObjectType\022\024\n\020"
-  "OBJECT_TYPE_NONE\020\000\022\026\n\022OBJECT_TYPE_PLAYER"
-  "\020\002\022\027\n\023OBJECT_TYPE_MONSTER\020\003\022\023\n\017OBJECT_TY"
-  "PE_ENV\020\004*\211\001\n\nPlayerType\022\024\n\020PLAYER_TYPE_N"
-  "ONE\020\000\022\026\n\022PLAYER_TYPE_POLICE\020\001\022\024\n\020PLAYER_"
-  "TYPE_MONK\020\002\022\032\n\026PLAYER_TYPE_LIGHTSABRE\020\003\022"
-  "\033\n\027PLAYER_TYPE_FIREFIGHTER\020\004*\210\001\n\tMoveSta"
-  "te\022\023\n\017MOVE_STATE_NONE\020\000\022\023\n\017MOVE_STATE_ID"
-  "LE\020\001\022\022\n\016MOVE_STATE_RUN\020\002\022\023\n\017MOVE_STATE_J"
-  "UMP\020\003\022\024\n\020MOVE_STATE_SKILL\020\004\022\022\n\016MOVE_STAT"
-  "E_DIE\020\005*\\\n\tSkillType\022\021\n\rSKILL_ID_NONE\020\000\022"
-  "\023\n\017SKILL_ID_ATTACK\020\001\022\022\n\016SKILL_ID_FIRST\020\002"
-  "\022\023\n\017SKILL_ID_SECOND\020\003*>\n\010CampType\022\016\n\nCAM"
-  "P_HUMAN\020\000\022\017\n\013CAMP_CYBORG\020\001\022\021\n\rCAMP_NEUTU"
-  "RAL\020\002*\036\n\tCellFlags\022\021\n\rCELL_WALKABLE\020\000*I\n"
-  "\tCellLinks\022\016\n\nLINK_NORTH\020\000\022\r\n\tLINK_EAST\020"
-  "\001\022\016\n\nLINK_SOUTH\020\002\022\r\n\tLINK_WEST\020\003B\027\252\002\024Goo"
-  "gle.Protobuf.Enumb\006proto3"
+  "\n\nEnum.proto\022\010Protocol*\201\001\n\nObjectType\022\024\n"
+  "\020OBJECT_TYPE_NONE\020\000\022\026\n\022OBJECT_TYPE_PLAYE"
+  "R\020\001\022\026\n\022OBJECT_TYPE_MINION\020\002\022\026\n\022OBJECT_TY"
+  "PE_TURRET\020\003\022\025\n\021OBJECT_TYPE_NEXUS\020\004*\211\001\n\nP"
+  "layerType\022\024\n\020PLAYER_TYPE_NONE\020\000\022\026\n\022PLAYE"
+  "R_TYPE_POLICE\020\001\022\024\n\020PLAYER_TYPE_MONK\020\002\022\032\n"
+  "\026PLAYER_TYPE_LIGHTSABRE\020\003\022\033\n\027PLAYER_TYPE"
+  "_FIREFIGHTER\020\004*\210\001\n\tMoveState\022\023\n\017MOVE_STA"
+  "TE_NONE\020\000\022\023\n\017MOVE_STATE_IDLE\020\001\022\022\n\016MOVE_S"
+  "TATE_RUN\020\002\022\023\n\017MOVE_STATE_JUMP\020\003\022\024\n\020MOVE_"
+  "STATE_SKILL\020\004\022\022\n\016MOVE_STATE_DIE\020\005*r\n\013Min"
+  "ionState\022\017\n\013MINION_IDLE\020\000\022\025\n\021MINION_LINE"
+  "_TRACE\020\001\022\027\n\023MINION_CHASE_TARGET\020\002\022\021\n\rMIN"
+  "ION_ATTACK\020\003\022\017\n\013MINION_DEAD\020\004*\\\n\tSkillTy"
+  "pe\022\021\n\rSKILL_ID_NONE\020\000\022\023\n\017SKILL_ID_ATTACK"
+  "\020\001\022\022\n\016SKILL_ID_FIRST\020\002\022\023\n\017SKILL_ID_SECON"
+  "D\020\003*M\n\010CampType\022\r\n\tCAMP_NONE\020\000\022\016\n\nCAMP_H"
+  "UMAN\020\001\022\017\n\013CAMP_CYBORG\020\002\022\021\n\rCAMP_NEUTURAL"
+  "\020\003*\036\n\tCellFlags\022\021\n\rCELL_WALKABLE\020\000*I\n\tCe"
+  "llLinks\022\016\n\nLINK_NORTH\020\000\022\r\n\tLINK_EAST\020\001\022\016"
+  "\n\nLINK_SOUTH\020\002\022\r\n\tLINK_WEST\020\003B\027\252\002\024Google"
+  ".Protobuf.Enumb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Enum_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Enum_2eproto = {
-  false, false, 705, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
+  false, false, 862, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
   &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
   schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
   nullptr, file_level_enum_descriptors_Enum_2eproto, file_level_service_descriptors_Enum_2eproto,
@@ -65,6 +69,7 @@ const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ObjectType_descriptor() {
 bool ObjectType_IsValid(int value) {
   switch (value) {
     case 0:
+    case 1:
     case 2:
     case 3:
     case 4:
@@ -109,9 +114,26 @@ bool MoveState_IsValid(int value) {
   }
 }
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SkillType_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MinionState_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
   return file_level_enum_descriptors_Enum_2eproto[3];
+}
+bool MinionState_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SkillType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[4];
 }
 bool SkillType_IsValid(int value) {
   switch (value) {
@@ -127,13 +149,14 @@ bool SkillType_IsValid(int value) {
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CampType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
-  return file_level_enum_descriptors_Enum_2eproto[4];
+  return file_level_enum_descriptors_Enum_2eproto[5];
 }
 bool CampType_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -142,7 +165,7 @@ bool CampType_IsValid(int value) {
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellFlags_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
-  return file_level_enum_descriptors_Enum_2eproto[5];
+  return file_level_enum_descriptors_Enum_2eproto[6];
 }
 bool CellFlags_IsValid(int value) {
   switch (value) {
@@ -155,7 +178,7 @@ bool CellFlags_IsValid(int value) {
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CellLinks_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
-  return file_level_enum_descriptors_Enum_2eproto[6];
+  return file_level_enum_descriptors_Enum_2eproto[7];
 }
 bool CellLinks_IsValid(int value) {
   switch (value) {

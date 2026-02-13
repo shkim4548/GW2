@@ -16,7 +16,7 @@ public interface IAdminPostService
     /*--------------------
         Admin Service
      ---------------------*/
-    Task UpdateAsync(PostUpdateRequest request);
+    Task UpdateAsync(AdminPostUpdateRequest request);
     Task SoftDeleteAsync(int postId);
     Task<List<Post>> GetActivePostsAsync();
     Task<List<AdminPostListItemDto>> GetAllPostsForAdminAsync();
@@ -25,6 +25,7 @@ public interface IAdminPostService
     Task<IReadOnlyList<DeletedPostResponse>> GetDeletedPostAsync();
     Task<DeletedPostDetailResponse> GetDeletedPostAsync(int postId);
     Task<PagedResponse<AdminPostListItemResponse>> GetAdminPostListAsync(AdminPostListQuery query);
+    Task<AdminPostDetailResponse> GetPostDetailForAdminAsync(int postId);
 }
 
 // DTO의 데이터 할당은 Service의 책임범위이므로 Controller에 노출되어서는 안된다.
@@ -38,7 +39,7 @@ public class AdminPostService : IAdminPostService
     }
 
 
-    public async Task UpdateAsync(PostUpdateRequest request)
+    public async Task UpdateAsync(AdminPostUpdateRequest request)
     {
         var post = await _db.Posts
             .FirstOrDefaultAsync(p =>
@@ -222,4 +223,25 @@ public class AdminPostService : IAdminPostService
         };
     }
 
+    public async Task<AdminPostDetailResponse> GetPostDetailForAdminAsync(int postId)
+    {
+        var post = await _db.Posts
+        .AsNoTracking()
+        .FirstOrDefaultAsync(p => p.PostId == postId);
+
+        if (post == null) throw new PostNotFoundException(postId);
+
+        return new AdminPostDetailResponse
+        {
+            PostId = post.PostId,
+            PostType = post.PostType,
+            Title = post.Title,
+            Content = post.Content,
+            AuthorType = post.AuthorType,
+            AuthorId = post.AuthorId,
+            IsDeleted = post.IsDeleted,
+            CreatedAt = post.CreatedAt,
+            DeletedAt = post.DeletedAt
+        };
+    }
 }

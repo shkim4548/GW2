@@ -1,0 +1,24 @@
+﻿@model GameServerAdmin.Models.Posts.PublicUi.PublicPostDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <span>작성일: @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+</div>
+
+<hr />
+
+<div>
+    @* Content에 HTML이 섞여 있을 수 있으면 @Html.Raw(Model.Content) 고려,
+       지금은 안전하게 일반 텍스트 출력으로 두자 *@
+    <pre style="white-space:pre-wrap;">@Model.Content</pre>
+</div>
+
+<hr />
+
+<a asp-controller="Board" asp-action="Index">목록으로</a>

@@ -93,12 +93,12 @@ namespace GameServerAdmin
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddScoped<PublicPostService>();
-            builder.Services.AddScoped<PublicCommentService>();
-            builder.Services.AddScoped<AdminPostService>();
-            builder.Services.AddScoped<AdminCommentService>();
-            builder.Services.AddScoped<PublicNoticeService>();
-            builder.Services.AddScoped<AdminNoticeService>();
+            builder.Services.AddScoped<IPublicPostService, PublicPostService>();
+            builder.Services.AddScoped<IPublicCommentService, PublicCommentService>();
+            builder.Services.AddScoped<IAdminPostService, AdminPostService>();
+            builder.Services.AddScoped<IAdminCommentService, AdminCommentService>();
+            builder.Services.AddScoped<IPublicNoticeService, PublicNoticeService>();
+            builder.Services.AddScoped<IAdminNoticeService, AdminNoticeService>();
 
             var app = builder.Build();
 
@@ -122,13 +122,21 @@ namespace GameServerAdmin
                 app.UseHsts();
             }
 
-                app.UseHttpsRedirection();
-            //app.UseStaticFiles();
+            // Https 사용
+            app.UseHttpsRedirection();
+            // wwwroot, css, js등 정적 파일 사용
+            app.UseStaticFiles();
 
-            //app.UseRouting();
+            app.UseRouting();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            // MVC View용 기본 라우트 (Board/Index를 기본으로
+            app.MapControllerRoute
+                (name: "default",
+                pattern: "{controller=Board}/{action=Index}/{id?}"
+                );
             app.MapControllers();
             //app.MapRazorPages();
 

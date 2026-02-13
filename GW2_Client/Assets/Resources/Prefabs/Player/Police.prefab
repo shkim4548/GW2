@@ -6539,7 +6539,6 @@ GameObject:
   - component: {fileID: 1959736477568059468}
   - component: {fileID: 1959736477558852768}
   - component: {fileID: 1959736475956015900}
-  - component: {fileID: 5173391102341985191}
   - component: {fileID: 5173391103442544979}
   - component: {fileID: 8712133111495519684}
   m_Layer: 0
@@ -6617,33 +6616,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!54 &5173391102341985191
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1959736477568309668}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 0
 --- !u!136 &5173391103442544979
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6681,6 +6653,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sendPacketDelay: 0.2
   _isMoving: 0
+  _positionSmoothTime: 0.1
+  _moveSpeed: 100
+  _rotationSpeed: 1
   _campType: 0
 --- !u!1 &1959736477568311710
 GameObject:

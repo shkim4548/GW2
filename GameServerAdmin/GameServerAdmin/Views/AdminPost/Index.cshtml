@@ -1,0 +1,125 @@
+﻿@using GameServerAdmin.Models.Posts.AdminApi
+@using GameServerAdmin.Common.Models
+@model GameServerAdmin.Models.Posts.AdminUi.AdminPostListViewModel
+
+@{
+    ViewData["Title"] = "Admin 게시판 관리";
+}
+
+<h2>Admin 게시판 관리</h2>
+
+<form asp-action="Index" asp-controller="AdminPost" method="get">
+    <label>삭제 여부 필터: </label>
+    <select name="IsDeleted">
+        <option value="" @(Model.Query.IsDeleted == null ? "selected" : "")>전체</option>
+        <option value="false" @(Model.Query.IsDeleted == false ? "selected" : "")>정상</option>
+        <option value="true" @(Model.Query.IsDeleted == true ? "selected" : "")>삭제됨</option>
+    </select>
+
+    <label>페이지:</label>
+    <input type="number" name="Page" value="@Model.Query.Page" min="1" />
+
+    <label>PageSize:</label>
+    <input type="number" name="PageSize" value="@Model.Query.PageSize" min="1" max="100" />
+
+    <button type="submit">적용</button>
+</form>
+
+<hr />
+
+<table>
+    <thead>
+        <tr>
+            <th>PostId</th>
+            <th>Type</th>
+            <th>Title</th>
+            <th>삭제 여부</th>
+            <th>작성일</th>
+            <th>관리</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model.PagedResult.Items)
+        {
+            <tr>
+                <td>@post.PostId</td>
+                <td>@post.PostType</td>
+                <td>@post.Title</td>
+                <td>@(post.IsDeleted ? "삭제됨" : "정상")</td>
+                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    @* SoftDelete / Restore / HardDelete 버튼 *@
+
+                    @if (!post.IsDeleted)
+                    {
+                        <form asp-action="SoftDelete"
+                              asp-controller="AdminPost"
+                              asp-route-id="@post.PostId"
+                              method="post"
+                              style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
+                                삭제
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Restore"
+                              asp-controller="AdminPost"
+                              asp-route-id="@post.PostId"
+                              method="post"
+                              style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit">
+                                복구
+                            </button>
+                        </form>
+
+                        <form asp-action="HardDelete"
+                              asp-controller="AdminPost"
+                              asp-route-id="@post.PostId"
+                              method="post"
+                              style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" onclick="return confirm('정말 완전히 삭제하시겠습니까?');">
+                                완전 삭제
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+
+<div>
+    <span>총 @Model.PagedResult.TotalCount 개</span><br />
+    <span>페이지 @Model.PagedResult.Page / @Model.PagedResult.TotalPages</span>
+</div>
+
+<div>
+    @if (Model.PagedResult.HasPrevious)
+    {
+        <a asp-action="Index"
+           asp-controller="AdminPost"
+           asp-route-Page="@(Model.PagedResult.Page - 1)"
+           asp-route-PageSize="@Model.PagedResult.PageSize"
+           asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">
+            이전
+        </a>
+    }
+
+    @if (Model.PagedResult.HasNext)
+    {
+        <a asp-action="Index"
+           asp-controller="AdminPost"
+           asp-route-Page="@(Model.PagedResult.Page + 1)"
+           asp-route-PageSize="@Model.PagedResult.PageSize"
+           asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">
+            다음
+        </a>
+    }
+</div>

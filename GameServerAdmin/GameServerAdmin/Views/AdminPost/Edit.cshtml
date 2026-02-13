@@ -1,0 +1,35 @@
+﻿@model GameServerAdmin.Models.Posts.AdminUi.AdminPostEditViewModel
+
+@{
+    ViewData["Title"] = "게시글 수정 (Admin)";
+}
+
+<h2>게시글 수정 (Admin)</h2>
+
+<form asp-action="Edit" asp-controller="AdminPost" method="post">
+    @Html.AntiForgeryToken()
+
+    @* Hidden으로 PostId 유지 *@
+    <input type="hidden" asp-for="PostId" />
+
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+
+    <div>
+        <label asp-for="Content"></label><br />
+        <textarea asp-for="Content" rows="10" cols="80"></textarea>
+        <span asp-validation-for="Content"></span>
+    </div>
+
+    <button type="submit">저장</button>
+    <a asp-controller="AdminPost" asp-action="Detail" asp-route-id="@Model.PostId">취소</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -447,17 +447,28 @@ void Navigation::NavigationSystem::Init(WalkableGrid& grid)
 	_grids = move(grid);
 }
 
-bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath)
+bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath, uint8 allowedLaneId)
 {
-	//cout << "FindPath Start" << endl;
 	outPath.clear();
 
 	const int32 W = grid.width;
 	const int32 H = grid.height;
 
+	// (선택) start / end lane 체크
+	if (allowedLaneId != 0)
+	{
+		const GridCell& startCell = grid.At(startX, startZ);
+		const GridCell& endCell = grid.At(endX, endZ);
+
+		if (startCell.laneId != allowedLaneId)
+			return false;
+
+		if (endCell.laneId != allowedLaneId)
+			return false;
+	}
+
 	vector<NodeRecord> records(W * H);
 
-	// 초기화
 	for (auto& r : records)
 	{
 		r.g = INT32_MAX;
@@ -496,13 +507,12 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 		// 도착
 		if (cx == endX && cz == endZ)
 		{
-			// Path reconstruction
 			int32 x = cx;
 			int32 z = cz;
 
 			while (!(x == startX && z == startZ))
 			{
-				outPath.push_back(const_cast<GridCell*>(& grid.At(x, z)));
+				outPath.push_back(const_cast<GridCell*>(&grid.At(x, z)));
 				NodeRecord& r = records[Index(grid, x, z)];
 				int32 px = r.parentX;
 				int32 pz = r.parentZ;
@@ -516,17 +526,10 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 		}
 
 		const GridCell& cell = grid.At(cx, cz);
-		//cout << "Start neighbors : ";
-		for (int32 i = 0; i < 4; ++i)
-		{
-			//cout << cell.neighbors[i] << ' ';
-		}
-		//cout << endl;
 
 		static const int dx[4] = { 0, 1, 0, -1 };
 		static const int dz[4] = { 1, 0, -1, 0 };
 
-		// 이 루프가 한번도 작동하지 않는다.
 		for (int dir = 0; dir < 4; ++dir)
 		{
 			if (!cell.neighbors[dir])
@@ -544,6 +547,17 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 			if (nr.closed)
 				continue;
 
+			// ★ neighbor 셀 정보 가져오기
+			const GridCell& neighborCell = grid.At(nx, nz);
+
+			// ★ walkable 체크
+			if (!neighborCell.walkable)
+				continue;
+
+			// ★ lane 제한 체크
+			if (allowedLaneId != 0 && neighborCell.laneId != allowedLaneId)
+				continue;
+
 			int32 newG = current.g + 1;
 
 			if (!nr.opened || newG < nr.g)
@@ -558,7 +572,7 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 			}
 		}
 	}
-	//cout << "End of Find Path" << endl;
+
 	return false;
 }
 
@@ -712,6 +726,20 @@ void Navigation::NavigationSystem::DebugTestWorldPos(GameMath::Vector3& worldPos
 	//GameMath::Vector3 center = GridToWorld();
 
 	//GConsoleLogger->WriteStdOut()
+}
+
+uint8 Navigation::NavigationSystem::GetLaneId(const WalkableGrid& grid, GameMath::Vector3& worldPos)
+{
+	int32 x = 0, z = 0;
+	if (!WorldToGrid(grid, worldPos, x, z))
+		return 0;
+
+	if (x < 0 || x >= grid.width || z < 0 || z >= grid.height)
+		return 0;
+
+
+	int32 idx = z * grid.width + x;
+	return grid.cells[idx].laneId;
 }
 
 bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& X, int32& Z)

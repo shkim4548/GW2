@@ -23,4 +23,5 @@ public:
 	bool LoadMeshBin(vector<Triangle>& outTriangles, Navigation::WalkableGrid& outGrid, const string& path);
 	bool LoadJsonMeshFile(const string& path, vector<GameMath::Vector3>& outVertices, vector<int32>& outIndices);
 	bool LoadNavGridBin(const string& path, Navigation::WalkableGrid& OUT outGrid);
+	bool LoadLaneMap(const string& path, Navigation::WalkableGrid& grid);
 };

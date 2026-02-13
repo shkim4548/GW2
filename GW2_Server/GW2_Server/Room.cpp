@@ -6,6 +6,7 @@
 #include "NavigationSystem.h"
 #include "NavmeshLoader.h"
 #include "ClientPacketHandler.h"
+#include "Minion.h"
 
 // 공용으로 사용할 전역 룸
 //shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -124,7 +125,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 
 	// PathFinding
 	vector<Navigation::GridCell*> gridPath;
-	bool ok = _navigationSystem.lock()->FindPath(grid, sx, sz, tx, tz, gridPath);
+	bool ok = _navigationSystem.lock()->FindPath(grid, sx, sz, tx, tz, gridPath, 0);
 
 	if (!ok || gridPath.empty())
 	{
@@ -220,6 +221,49 @@ void Room::UpdateRoom(float deltaTime)
 
 		obj->PostUpdate();
 		// TODO : Monster Moving
+	}
+}
+
+void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const
+{
+	targets.clear();
+	if (requester == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::CollectEnemiesInRange] requester is nullptr\n");
+		return;
+	}
+	
+	const Protocol::CampType team = requester->GetTeamFlag();
+	const GameMath::Vector3 requesterPos = requester->GetPosVector();
+	const float rangeSquare = range * range;
+	
+	// 선형탐색의 범위를 자신의 라인 안으로만 한정한다.
+	const shared_ptr<Minion>& asMinion = requester->IsMinion() ? static_pointer_cast<Minion>(requester) : nullptr;
+	const uint8 myLaneId = asMinion ? asMinion->_laneId : 0;
+
+	for (auto& [id, obj] : _objects)
+	{
+		if (!obj || obj == requester /*|| obj->IsDead()*/)
+			continue;
+		if (obj->GetTeamFlag() == team)
+			continue;
+
+		// (선택) 미니언이면 같은 laneId 대상만
+		if (asMinion)
+		{
+			// 타겟이 플레이어/미니언/포탑일 수 있으니, laneId를 어떻게 꺼낼지 정책 필요
+			// 가장 단순: 타겟 위치로 grid에서 laneId 조회
+			GameMath::Vector3 nowPos = obj->GetPosVector();
+			uint8 targetLaneId = _navigationSystem.lock()->GetLaneId(_navigationSystem.lock()->GetGridCells(), nowPos);
+			if (targetLaneId != myLaneId)
+				continue;
+		}
+
+		const GameMath::Vector3 p = obj->GetPosVector();
+		float dx = p._x - requesterPos._x;
+		float dz = p._z - requesterPos._z;
+		if (dx * dx + dz * dz <= rangeSquare)
+			targets.push_back(obj);
 	}
 }
 

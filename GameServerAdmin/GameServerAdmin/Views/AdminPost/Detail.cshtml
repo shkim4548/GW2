@@ -1,0 +1,35 @@
+﻿@model GameServerAdmin.Models.Posts.AdminUi.AdminPostDetailViewModel
+
+@{
+    ViewData["Title"] = "게시글 상세 (Admin)";
+}
+
+<h2>게시글 상세 (Admin)</h2>
+
+<div>
+    <span>PostId: @Model.PostId</span><br />
+    <span>Type: @Model.PostType</span><br />
+    <span>Author: @Model.AuthorType (@Model.AuthorId)</span><br />
+    <span>작성일: @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span><br />
+    <span>삭제 여부: @(Model.IsDeleted ? "삭제됨" : "정상")</span><br />
+    @if (Model.DeletedAt.HasValue)
+    {
+        <span>삭제일: @Model.DeletedAt.Value.ToString("yyyy-MM-dd HH:mm")</span>
+    
+        <br />
+    }
+</div>
+
+<hr />
+
+<div>
+    <h3>내용</h3>
+    <pre style="white-space:pre-wrap;">@Model.Content</pre>
+</div>
+
+<hr />
+
+<div>
+    <a asp-controller="AdminPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
+    <a asp-controller="AdminPost" asp-action="Index">목록</a>
+</div>

@@ -211,3 +211,32 @@ bool NavmeshLoader::LoadNavGridBin(const string& path, Navigation::WalkableGrid&
 
     return true;
 }
+
+bool NavmeshLoader::LoadLaneMap(const string& path, Navigation::WalkableGrid& grid)
+{
+    ifstream file(path, ios::binary);
+    if (!file.is_open())
+    {
+        return false;
+    }
+
+    size_t size = static_cast<size_t>(grid.width) * grid.height;
+    vector<uint8> laneData(size);
+
+    file.read(reinterpret_cast<char*>(laneData.data()), size);
+    if (file.gcount() != size)
+    {
+        return false;
+    }
+
+    for (int32 z = 0; z < grid.height; ++z)
+    {
+        for (int32 x = 0; x < grid.width; ++x)
+        {
+            int32 idx = z * grid.width + x;
+            grid.cells[idx].laneId = laneData[idx];
+        }
+    }
+
+    return false;
+}

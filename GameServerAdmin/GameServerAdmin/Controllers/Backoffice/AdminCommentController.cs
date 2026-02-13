@@ -9,13 +9,20 @@ namespace GameServerAdmin.Controllers.Backoffice
     [ApiController]
     [Authorize(Policy = "AdminOnly")]
     [Route("api/admin/comments")]
-    public class CommentAdminController : ControllerBase
+    public class CommentAdminController : Controller
     {
         private readonly IAdminCommentService _commentAdminService;
 
         public CommentAdminController(IAdminCommentService commentAdminService)
         {
             _commentAdminService = commentAdminService;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            ViewData["Title"] = "댓글 관리";
+            return View();
         }
 
         // 관리자용 댓글 목록 조회 (삭제된 것 포함)

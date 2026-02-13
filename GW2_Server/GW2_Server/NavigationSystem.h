@@ -27,6 +27,9 @@ namespace Navigation
 		// grid index
 		int32 x;
 		int32 z;
+
+		// 미니언 라인
+		int32 laneId;
 	};
 #pragma pack(pop)
 	enum Dir
@@ -143,7 +146,7 @@ namespace Navigation
 
 		// A Star
 		void Init(WalkableGrid& grid);
-		bool FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath);
+		bool FindPath(const WalkableGrid& grid, int32 startX, int32 startZ, int32 endX, int32 endZ, vector<GridCell*>& outPath, uint8 allowedLaneId);
 		inline float Heuristic(int32 x1, int32 z1, int32 x2, int32 z2) { return abs(x1 - x2) + abs(z1 - z2); }
 		inline int32 Index(const WalkableGrid& grid, int32 x, int32 z) { return z * grid.width + x; }
 
@@ -157,6 +160,9 @@ namespace Navigation
 		void PrintSampleCells(const Navigation::WalkableGrid& grid);
 		void VerifyWorldGridInvariant(Navigation::WalkableGrid& grid);
 		void DebugTestWorldPos(GameMath::Vector3& worldPos, Navigation::WalkableGrid& grid);
+
+		// Minion
+		uint8 GetLaneId(const WalkableGrid& grid, GameMath::Vector3& worldPos);
 
 	private:
 		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT X, int32& OUT Z);

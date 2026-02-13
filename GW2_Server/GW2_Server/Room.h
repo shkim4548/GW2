@@ -34,6 +34,10 @@ public:
 	// 로비에서 호출해야함
 	void UpdateRoom(float deltaTime);
 
+public:
+	// Object called
+	void CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& OUT targets) const;
+
 private:
 	// internal
 	void HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld);
