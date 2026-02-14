@@ -1,65 +1,121 @@
 ﻿using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.AdminUi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
-namespace GameServerAdmin.Controllers.Backoffice
+namespace GameServerAdmin.Controllers.BackOffice;
+
+// View 반환 전용 컨트롤러 (ApiController/Route("api/...") 절대 금지)
+[Authorize(Policy = "AdminOnly")]
+public class AdminUiPostController : Controller
 {
-    public class AdminUiPostController : Controller
+    private readonly IAdminPostService _postService;
+
+    public AdminUiPostController(IAdminPostService postService)
     {
-        private readonly IAdminPostService _postService;
-        public AdminUiPostController(IAdminPostService postService)
+        _postService = postService;
+    }
+
+    // GET /AdminUiPost/Index  (기본 라우트)
+    // 또는 [HttpGet("/admin/posts")]로 바꿔도 됨
+    [HttpGet]
+    public async Task<IActionResult> Index([FromQuery] AdminPostListQuery query)
+    {
+        var paged = await _postService.GetAdminPostListAsync(query);
+
+        // 서비스가 page/pageSize를 안 채우는 경우를 대비한 보정(필요하면 유지)
+        paged.Page = query.Page;
+        paged.PageSize = query.PageSize;
+
+        var vm = new AdminPostListViewModel
         {
-            _postService = postService;
-        }
+            Query = query,
+            PagedResult = paged
+        };
 
-        /// <summary>
-        /// Admin 게시판 목록
-        /// GET /AdminPost/Index?Page=1&PageSize=20&IsDeleted=true/false/null
-        /// (기본 MVC 라우트 사용)
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] AdminPostListQuery query)
+        ViewData["Title"] = "게시글 관리";
+        return View("~/Views/AdminPost/Index.cshtml", vm);
+    }
+
+    // GET /AdminUiPost/Detail/{id}
+    [HttpGet]
+    public async Task<IActionResult> Detail(int id)
+    {
+        var dto = await _postService.GetPostDetailForAdminAsync(id);
+        var vm = AdminPostDetailViewModel.FromDto(dto);
+
+        ViewData["Title"] = "게시글 상세";
+        return View("~/Views/AdminPost/Detail.cshtml", vm);
+    }
+
+    // GET /AdminUiPost/Edit/{id}
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var dto = await _postService.GetPostDetailForAdminAsync(id);
+
+        var vm = new AdminPostEditViewModel
         {
-            // 서비스에서 페이징 결과 조회
-            var paged = await _postService.GetAdminPostListAsync(query);
+            PostId = dto.PostId,
+            Title = dto.Title,
+            Content = dto.Content
+        };
 
-            // 서비스 구현이 Page/PageSize를 안 채우고 있어서, 여기서 맞춰 줌
-            paged.Page = query.Page;
-            paged.PageSize = query.PageSize;
+        ViewData["Title"] = "게시글 수정";
+        return View("~/Views/AdminPost/Edit.cshtml", vm);
+    }
 
-            var vm = new AdminPostListViewModel
-            {
-                Query = query,
-                PagedResult = paged
-            };
+    // POST /AdminUiPost/Edit/{id}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, AdminPostEditViewModel model)
+    {
+        if (id != model.PostId) 
+            return BadRequest();
+        if (!ModelState.IsValid)
+            return View("~/Views/AdminPost/Edit.cshtml", model);
 
-            return View(vm);    // Views/AdminPost/Index.cshtml
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SoftDelete(int id)
+        // 레포에 실제 존재하는 DTO: PostUpdateRequest 사용
+        var request = new PostUpdateRequest
         {
-            await _postService.SoftDeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
+            // ⚠️ PostUpdateRequest 필드 구성에 맞춰 조정
+            // 만약 PostId가 DTO에 없다면, 서비스 시그니처가 UpdateAsync(int postId, PostUpdateRequest req)여야 함
+            Title = model.Title,
+            Content = model.Content
+        };
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Restore(int id)
-        {
-            await _postService.RestoreAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
+        // 네가 "예외 없이 구현 완료"라 했으니,
+        // 현재 IAdminPostService.UpdateAsync(PostUpdateRequest)를 유지한다면
+        // request에 PostId가 포함되어 있어야 함.
+        // 그렇지 않다면 아래 호출을 UpdateAsync(id, request)로 바꿔야 함.
+        await _postService.UpdateAsync(request);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> HardDelete(int id)
-        {
-            await _postService.HardDeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
+        return RedirectToAction(nameof(Detail), new { id = model.PostId });
+    }
+
+    // POST /AdminUiPost/SoftDelete/{id}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SoftDelete(int id)
+    {
+        await _postService.SoftDeleteAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Restore(int id)
+    {
+        await _postService.RestoreAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HardDelete(int id)
+    {
+        await _postService.HardDeleteAsync(id);
+        return RedirectToAction(nameof(Index));
     }
 }

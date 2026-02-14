@@ -110,6 +110,16 @@ namespace Navigation
 	};
 
 	/*---------------------
+		Minion Lane
+	-----------------------*/
+
+	struct LaneRoute
+	{
+		uint8 laneId;
+		std::vector<GameMath::Vector3> waypoints; // Unity Empty 좌표 받아온 것
+	};
+
+	/*---------------------
 		Navigation Logic
 	-----------------------*/
 	class NavigationSystem

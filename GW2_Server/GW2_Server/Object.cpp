@@ -10,7 +10,7 @@ Object::~Object()
 {
 }
 
-bool Object::isDead()
+bool Object::IsDead()
 {
 	return false;
 }

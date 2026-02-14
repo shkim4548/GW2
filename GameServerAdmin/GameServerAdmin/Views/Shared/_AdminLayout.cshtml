@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+    <div style="display:flex; min-height:100vh;">
+
+        <!-- Sidebar -->
+        <aside style="width:240px; background:#f3f4f6; padding:16px;">
+            <h2 style="margin:0 0 12px 0;">Admin</h2>
+
+            <nav style="display:flex; flex-direction:column; gap:8px;">
+                <a asp-controller="AdminUiPost" asp-action="Index">게시글 관리</a>
+                <a asp-controller="AdminUiComment" asp-action="Index">댓글 관리</a>
+                <a asp-controller="AdminUiNotice" asp-action="Index">공지 관리</a>
+
+                <hr />
+
+                <a asp-controller="AdminUiUser" asp-action="Index">유저 관리</a>
+                <a asp-controller="AdminUiServer" asp-action="Index">게임 서버</a>
+                <a asp-controller="AdminUiLog" asp-action="Index">로그 조회</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main style="flex:1; padding:24px;">
+            <header style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-size:20px; font-weight:700;">
+                    @ViewData["Title"]
+                </div>
+                <div>
+                    <span style="opacity:.7;">(Admin Area)</span>
+                </div>
+            </header>
+
+            <hr style="margin:16px 0;" />
+
+            @RenderBody()
+        </main>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

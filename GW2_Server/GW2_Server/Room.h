@@ -6,6 +6,7 @@
 
 namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; }
 namespace GameMath { struct Vector3; }
+class Minion;
 
 class Room : public JobQueue
 {
@@ -37,6 +38,8 @@ public:
 public:
 	// Object called
 	void CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& OUT targets) const;
+	void HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& dest, float speed, float deltaTime, uint8 laneId);
+	void HandleMinionAttack(shared_ptr<Object> target);
 
 private:
 	// internal

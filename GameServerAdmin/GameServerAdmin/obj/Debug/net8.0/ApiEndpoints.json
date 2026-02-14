@@ -1,6 +1,6 @@
 [
   {
-    "ContainingType": "GameServerAdmin.Controllers.Backoffice.CommentAdminController",
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "GetAllComments",
     "RelativePath": "api/admin/comments",
     "HttpMethod": "GET",
@@ -61,7 +61,7 @@
     ]
   },
   {
-    "ContainingType": "GameServerAdmin.Controllers.Backoffice.CommentAdminController",
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "GetCommentDetail",
     "RelativePath": "api/admin/comments/{commentId}",
     "HttpMethod": "GET",
@@ -87,7 +87,7 @@
     ]
   },
   {
-    "ContainingType": "GameServerAdmin.Controllers.Backoffice.CommentAdminController",
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "DeleteComment",
     "RelativePath": "api/admin/comments/{commentId}",
     "HttpMethod": "DELETE",
@@ -103,7 +103,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GameServerAdmin.Controllers.Backoffice.CommentAdminController",
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "HardDeleteComment",
     "RelativePath": "api/admin/comments/{commentId}/permanent",
     "HttpMethod": "DELETE",
@@ -119,7 +119,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GameServerAdmin.Controllers.Backoffice.CommentAdminController",
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "RestoreComment",
     "RelativePath": "api/admin/comments/{commentId}/restore",
     "HttpMethod": "POST",
@@ -429,22 +429,6 @@
   },
   {
     "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
-    "Method": "Update",
-    "RelativePath": "api/admin/posts",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "GameServerAdmin.Models.Posts.AdminApi.AdminPostUpdateRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
     "Method": "GetPaged",
     "RelativePath": "api/admin/posts",
     "HttpMethod": "GET",
@@ -471,52 +455,15 @@
   },
   {
     "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
-    "Method": "Detail",
+    "Method": "Update",
     "RelativePath": "api/admin/posts",
-    "HttpMethod": "GET",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
-    "Method": "Edit",
-    "RelativePath": "api/admin/posts",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
-    "Method": "Edit",
-    "RelativePath": "api/admin/posts",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "model",
-        "Type": "GameServerAdmin.Models.Posts.AdminUi.AdminPostEditViewModel",
+        "Name": "request",
+        "Type": "GameServerAdmin.Models.Posts.AdminApi.PostUpdateRequest",
         "IsRequired": true
       }
     ],
@@ -572,7 +519,7 @@
   },
   {
     "ContainingType": "GameServerAdmin.Controllers.BackOffice.AdminPostController",
-    "Method": "GetPostsForAdmin",
+    "Method": "GetAll",
     "RelativePath": "api/admin/posts/all",
     "HttpMethod": "GET",
     "IsController": true,
@@ -631,6 +578,16 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminController",
+    "Method": "Ping",
+    "RelativePath": "api/admins/ping",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "GameServerAdmin.Controllers.Auth.AuthController",

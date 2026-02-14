@@ -10,7 +10,7 @@ namespace GameServerAdmin.Controllers.Backoffice
     [ApiController]
     [Authorize(Policy = "AdminOnly")]
     [Route("api/admins")]
-    public class AdminController : Controller
+    public class AdminController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
 
@@ -19,11 +19,11 @@ namespace GameServerAdmin.Controllers.Backoffice
             _dbContext = dbContext;
         }
 
-        [HttpGet]
-        public IActionResult Index()
+        // GET /api/admins/ping
+        [HttpGet("ping")]
+        public IActionResult Ping()
         {
-            ViewData["Title"] = "댓글 관리";
-            return View();
+            return Ok(new { ok = true });
         }
 
         [HttpPost]

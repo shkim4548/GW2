@@ -2,7 +2,7 @@
 
 namespace GameServerAdmin.Models.Posts.AdminApi;
 
-public class AdminPostUpdateRequest
+public class PostUpdateRequest
 {
     [Required]
     public int PostId { get; set; }

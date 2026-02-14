@@ -1,67 +1,23 @@
-﻿<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Admin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-    <div style="display:flex; min-height:100vh;">
+﻿﻿<!DOCTYPE html>
+ <html lang="ko">
+ <head>
+     <meta charset="utf-8" />
+     <title>@ViewData["Title"] - GameServerAdmin</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+ </head>
+ <body>
+    <header style="padding:16px; border-bottom:1px solid #e5e7eb;">
+        <nav style="display:flex; gap:12px; align-items:center;">
+            <a asp-controller="Board" asp-action="Index">게시판</a>
+            <span style="opacity:.4;">|</span>
+            <a asp-controller="AdminUiPost" asp-action="Index">관리자</a>
+        </nav>
+    </header>
 
-        <!-- Sidebar -->
-        <aside style="width:240px; background:#f3f4f6; padding:16px;">
-            <h2 style="margin:0 0 12px 0;">Admin</h2>
-
-            <nav>
-                <div style="margin:12px 0; font-weight:600;">게시판</div>
-                <ul style="list-style:none; padding-left:0; margin:0;">
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminPost" asp-action="Index">게시글 관리</a>
-                    </li>
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminComment" asp-action="Index">댓글 관리</a> @* placeholder *@
-                    </li>
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminNotice" asp-action="Index">공지 관리</a> @* placeholder *@
-                    </li>
-                </ul>
-
-                <hr style="margin:16px 0;" />
-
-                <div style="margin:12px 0; font-weight:600;">게임 운영</div>
-                <ul style="list-style:none; padding-left:0; margin:0;">
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminUser" asp-action="Index">유저 관리</a> @* placeholder *@
-                    </li>
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminServer" asp-action="Index">게임 서버</a> @* placeholder *@
-                    </li>
-                    <li style="margin:8px 0;">
-                        <a asp-controller="AdminLog" asp-action="Index">로그 조회</a> @* placeholder *@
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Main -->
-        <main style="flex:1; padding:24px;">
-            <header style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-size:18px; font-weight:700;">
-                    @ViewData["Title"]
-                </div>
-
-                <div>
-                    @* 나중에 Identity 연결하면 사용자명/역할 표시 *@
-                    <span style="opacity:.7;">(Admin Area)</span>
-                </div>
-            </header>
-
-            <hr style="margin:16px 0;" />
-
-            @RenderBody()
-        </main>
-    </div>
-
-    @RenderSection("Scripts", required: false)
-</body>
-</html>
+    <main style="padding:24px;">
+        @RenderBody()
+    </main>
+ 
+     @RenderSection("Scripts", required: false)
+ </body>
+ </html>

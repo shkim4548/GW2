@@ -8,12 +8,12 @@
 
 <h2>Admin 게시판 관리</h2>
 
-<form asp-action="Index" asp-controller="AdminPost" method="get">
+<form asp-action="Index" asp-controller="AdminUiPost" method="get">
     <label>삭제 여부 필터: </label>
     <select name="IsDeleted">
-        <option value="" @(Model.Query.IsDeleted == null ? "selected" : "")>전체</option>
-        <option value="false" @(Model.Query.IsDeleted == false ? "selected" : "")>정상</option>
-        <option value="true" @(Model.Query.IsDeleted == true ? "selected" : "")>삭제됨</option>
+        <option value="" selected = "@(Model.Query.IsDeleted == null ? "selected" : "")">전체</option>
+        <option value="false" selected = "@(Model.Query.IsDeleted == false ? "selected" : "")">정상</option>
+        <option value="true" selected ="@(Model.Query.IsDeleted == true ? "selected" : "")"">삭제됨</option>
     </select>
 
     <label>페이지:</label>
@@ -44,16 +44,23 @@
             <tr>
                 <td>@post.PostId</td>
                 <td>@post.PostType</td>
-                <td>@post.Title</td>
+
+                @* (선택) 제목 클릭 시 상세로 이동 *@
+                <td>
+                    <a asp-controller="AdminUiPost"
+                       asp-action="Detail"
+                       asp-route-id="@post.PostId">
+                        @post.Title
+                    </a>
+                </td>
+
                 <td>@(post.IsDeleted ? "삭제됨" : "정상")</td>
                 <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>
-                    @* SoftDelete / Restore / HardDelete 버튼 *@
-
                     @if (!post.IsDeleted)
                     {
                         <form asp-action="SoftDelete"
-                              asp-controller="AdminPost"
+                              asp-controller="AdminUiPost"
                               asp-route-id="@post.PostId"
                               method="post"
                               style="display:inline;">
@@ -66,7 +73,7 @@
                     else
                     {
                         <form asp-action="Restore"
-                              asp-controller="AdminPost"
+                              asp-controller="AdminUiPost"
                               asp-route-id="@post.PostId"
                               method="post"
                               style="display:inline;">
@@ -77,7 +84,7 @@
                         </form>
 
                         <form asp-action="HardDelete"
-                              asp-controller="AdminPost"
+                              asp-controller="AdminUiPost"
                               asp-route-id="@post.PostId"
                               method="post"
                               style="display:inline;">
@@ -104,7 +111,7 @@
     @if (Model.PagedResult.HasPrevious)
     {
         <a asp-action="Index"
-           asp-controller="AdminPost"
+           asp-controller="AdminUiPost"
            asp-route-Page="@(Model.PagedResult.Page - 1)"
            asp-route-PageSize="@Model.PagedResult.PageSize"
            asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">
@@ -115,7 +122,7 @@
     @if (Model.PagedResult.HasNext)
     {
         <a asp-action="Index"
-           asp-controller="AdminPost"
+           asp-controller="AdminUiPost"
            asp-route-Page="@(Model.PagedResult.Page + 1)"
            asp-route-PageSize="@Model.PagedResult.PageSize"
            asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">

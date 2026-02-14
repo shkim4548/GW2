@@ -9,7 +9,7 @@ namespace GameServerAdmin.Controllers.Backoffice
     [ApiController]
     [Authorize(Policy = "AdminOnly")]
     [Route("api/admin/notices")]
-    public class NoticeAdminController : Controller
+    public class NoticeAdminController : ControllerBase
     {
         private readonly IAdminNoticeService _noticeAdminService;
 
@@ -18,12 +18,12 @@ namespace GameServerAdmin.Controllers.Backoffice
             _noticeAdminService = noticeAdminService;
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            ViewData["Title"] = "댓글 관리";
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult Index()
+        //{
+        //    ViewData["Title"] = "댓글 관리";
+        //    return View();
+        //}
 
         /// <summary>
         /// 공지사항 작성

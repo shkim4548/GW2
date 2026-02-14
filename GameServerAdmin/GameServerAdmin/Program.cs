@@ -10,6 +10,7 @@ using GameServerAdmin.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -80,16 +81,14 @@ namespace GameServerAdmin
                 });
             });
 
-            // Filter 등록
-            builder.Services.AddControllers(options =>
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            // MVC (API + View) + Global Filter
+            builder.Services.AddControllersWithViews(options =>
             {
                 options.Filters.Add<ModelStateValidationFilter>();
             });
-
-            // Controller 등록
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             // Add services to the container.
             builder.Services.AddRazorPages();
@@ -102,7 +101,7 @@ namespace GameServerAdmin
 
             var app = builder.Build();
 
-            // DB 초기회
+            // DB 초기화
             using(var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();

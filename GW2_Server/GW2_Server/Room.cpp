@@ -267,6 +267,15 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 	}
 }
 
+void Room::HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& dest, float speed, float deltaTime, uint8 laneId)
+{
+	// 삭제/상태/권한 우선 체크
+}
+
+void Room::HandleMinionAttack(shared_ptr<Object> target)
+{
+}
+
 void Room::BroadcastMoving(const ObjectRef& obj)
 {
 	// Moving Start
@@ -290,4 +299,8 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
 	Broadcast(sendBuffer);
+}
+
+void Room::DeleteRoom()
+{
 }

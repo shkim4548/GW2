@@ -16,7 +16,7 @@ public interface IAdminPostService
     /*--------------------
         Admin Service
      ---------------------*/
-    Task UpdateAsync(AdminPostUpdateRequest request);
+    Task UpdateAsync(PostUpdateRequest request);
     Task SoftDeleteAsync(int postId);
     Task<List<Post>> GetActivePostsAsync();
     Task<List<AdminPostListItemDto>> GetAllPostsForAdminAsync();
@@ -39,7 +39,7 @@ public class AdminPostService : IAdminPostService
     }
 
 
-    public async Task UpdateAsync(AdminPostUpdateRequest request)
+    public async Task UpdateAsync(PostUpdateRequest request)
     {
         var post = await _db.Posts
             .FirstOrDefaultAsync(p =>

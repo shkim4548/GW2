@@ -15,7 +15,6 @@
     @if (Model.DeletedAt.HasValue)
     {
         <span>삭제일: @Model.DeletedAt.Value.ToString("yyyy-MM-dd HH:mm")</span>
-    
         <br />
     }
 </div>
@@ -30,6 +29,6 @@
 <hr />
 
 <div>
-    <a asp-controller="AdminPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
-    <a asp-controller="AdminPost" asp-action="Index">목록</a>
+    <a asp-controller="AdminUiPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
+    <a asp-controller="AdminUiPost" asp-action="Index">목록</a>
 </div>

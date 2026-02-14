@@ -20,7 +20,7 @@ public:
 	Protocol::ObjectType GetObjectType() const { return _objectType; }
 	Protocol::CampType GetTeamFlag() const { return _campType; }
 	// TODO : 사망 여부 체크 로직 필요
-	bool isDead();
+	bool IsDead();
 
 	void SetObjectId(int64 id) { _objectId = id; }
 	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }

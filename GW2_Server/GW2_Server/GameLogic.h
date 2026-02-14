@@ -73,6 +73,9 @@ namespace GameMath
 		float GetDistance(const Vector3& other) const {
 			return (float)std::sqrt((_x - other._x) * (_x - other._x) + (_z - other._z) * (_z - other._z));
 		}
+		static float GetDistTanceXZ(Vector3& origin, Vector3& target) {
+			return static_cast<float>(std::sqrt((origin._x - target._x) * (origin._x - target._x) + (origin._z - target._z) * (origin._z - target._z)));
+		}
 		Protocol::PosInfo GetPositionFromVector(Vector3 v, float yaw = 0);
 		static Vector3 GetVectorFromPosition(Protocol::PosInfo* pos);
 		static Vector3 YawToDirectionVector(float yaw);
