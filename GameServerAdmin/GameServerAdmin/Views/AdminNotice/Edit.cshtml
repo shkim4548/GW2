@@ -1,0 +1,99 @@
+﻿@model GameServerAdmin.Models.Notices.AdminApi.AdminNoticeResponse
+
+@{
+    ViewData["Title"] = "공지 상세";
+}
+
+<h2>공지 상세</h2>
+
+<table class="table">
+    <tbody>
+        <tr><th style="width:180px;">ID</th><td>@Model.NoticeId</td></tr>
+        <tr><th>제목</th><td>@Model.Title</td></tr>
+        <tr><th>관리자 ID</th><td>@Model.AdminId</td></tr>
+        <tr><th>카테고리</th><td>@Model.Category</td></tr>
+        <tr><th>우선순위</th><td>@Model.Priority</td></tr>
+        <tr><th>상태</th><td>@Model.Status</td></tr>
+        <tr><th>고정</th><td>@(Model.IsPinned ? "Y" : "N")</td></tr>
+        <tr><th>조회수</th><td>@Model.ViewCount</td></tr>
+        <tr><th>댓글 허용</th><td>@(Model.IsCommentEnabled ? "Y" : "N")</td></tr>
+        <tr><th>노출 시작</th><td>@(Model.DisplayStartAt?.ToString() ?? "-")</td></tr>
+        <tr><th>노출 종료</th><td>@(Model.DisplayEndAt?.ToString() ?? "-")</td></tr>
+        <tr><th>작성일</th><td>@Model.CreatedAt</td></tr>
+        <tr><th>수정일</th><td>@(Model.UpdatedAt?.ToString() ?? "-")</td></tr>
+        <tr><th>삭제일</th><td>@(Model.DeletedAt?.ToString() ?? "-")</td></tr>
+    </tbody>
+</table>
+
+<h3>내용</h3>
+<pre style="white-space:pre-wrap;">@Model.Content</pre>
+
+<hr />
+
+<div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <a asp-controller="AdminUiNotice" asp-action="Edit" asp-route-noticeId="@Model.NoticeId">수정</a>
+    <a asp-controller="AdminUiNotice" asp-action="List">목록</a>
+
+    <form asp-controller="AdminUiNotice" asp-action="Publish" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+        <button type="submit">게시</button>
+    </form>
+
+    <form asp-controller="AdminUiNotice" asp-action="Hide" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+        <button type="submit">숨김</button>
+    </form>
+
+    @if (!Model.IsPinned)
+    {
+        <form asp-controller="AdminUiNotice" asp-action="Pin" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">고정</button>
+        </form>
+    }
+    else
+    {
+        <form asp-controller="AdminUiNotice" asp-action="Unpin" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">고정해제</button>
+        </form>
+    }
+
+    @if (!Model.IsCommentEnabled)
+    {
+        <form asp-controller="AdminUiNotice" asp-action="EnableComments" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">댓글 허용</button>
+        </form>
+    }
+    else
+    {
+        <form asp-controller="AdminUiNotice" asp-action="DisableComments" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">댓글 비활성</button>
+        </form>
+    }
+
+    @if (Model.DeletedAt == null)
+    {
+        <form asp-controller="AdminUiNotice" asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">삭제</button>
+        </form>
+    }
+    else
+    {
+        <form asp-controller="AdminUiNotice" asp-action="Restore" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="noticeId" value="@Model.NoticeId" />
+            <button type="submit">복구</button>
+        </form>
+    }
+</div>

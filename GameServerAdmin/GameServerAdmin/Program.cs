@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -102,10 +103,15 @@ namespace GameServerAdmin
             var app = builder.Build();
 
             // DB √ ±‚»≠
-            using(var scope = app.Services.CreateScope())
+            using (var scope = app.Services.CreateScope())
             {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+                var services = scope.ServiceProvider;
+
+                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
                 await DbInitializer.SeedRolesAsync(roleManager);
+                await DbInitializer.SeedAdminUserAsync(userManager, roleManager);
             }
 
             // Configure the HTTP request pipeline.

@@ -22,10 +22,10 @@ void Minion::UpdateMinion(float deltaTime)
 		UpdateLaneTrace(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_CHASE_TARGET:
-		UpdateLaneTrace(deltaTime);
+		UpdateChaseTarget(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_ATTACK:
-		UpdateChaseTarget(deltaTime);
+		UpdateAttack(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_DEAD:
 		// TODO : 미니언 제거 후 보상 지급
@@ -82,7 +82,18 @@ void Minion::UpdateLaneTrace(float deltaTime)
 
 	// waypoint 따라 이동한다
 	shared_ptr<Navigation::LaneRoute> route = _route.lock();
+	if (route == nullptr || route->waypoints.empty())
+	{
+		_minionState = Protocol::MinionState::MINION_IDLE;
+		return;
+	}
+	if(_currentWaypointIndex < 0 || _currentWaypointIndex >= static_cast<int32>(route->waypoints.empty()))
+	{ 
+		_currentWaypointIndex = 0;
+	}
+
 	GameMath::Vector3 nowWp = route->waypoints[_currentWaypointIndex];
+
 	float distToNextPoint = GameMath::Vector3::GetDistTanceXZ(myPos, nowWp);
 
 	// 도착 판정
@@ -91,6 +102,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		if (_currentWaypointIndex + 1 < static_cast<int32>(route->waypoints.size()))
 		{
 			++_currentWaypointIndex;
+			nowWp = route->waypoints[_currentWaypointIndex];
 		}
 		else
 		{
@@ -99,7 +111,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	}
 	// 현재 목표 중간점으로 이동
 	shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
-	_room->HandleMinionMove(minionSelf, target->GetPosVector(), _moveSpeed, deltaTime, _laneId);
+	_room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
 }
 
 void Minion::UpdateChaseTarget(float deltaTime)

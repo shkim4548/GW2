@@ -1,0 +1,22 @@
+﻿@model GameServerAdmin.Models.Notices.AdminApi.AdminNoticeResponse
+
+@{
+    ViewData["Title"] = "공지 상세";
+}
+
+<h2>공지 상세</h2>
+
+<div>
+    <div><b>ID:</b> @Model.NoticeId</div>
+    <div><b>제목:</b> @Model.Title</div>
+    <div><b>작성일:</b> @Model.CreatedAt</div>
+    <div style="margin-top:12px;">
+        <b>내용</b>
+        <pre style="white-space:pre-wrap;">@Model.Content</pre>
+    </div>
+</div>
+
+<div style="margin-top:16px;">
+    <a asp-controller="AdminUiNotice" asp-action="Edit" asp-route-noticeId="@Model.NoticeId">수정</a>
+    <a asp-controller="AdminUiNotice" asp-action="Index">목록</a>
+</div>

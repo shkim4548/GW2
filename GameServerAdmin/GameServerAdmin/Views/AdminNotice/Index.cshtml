@@ -1,1 +1,77 @@
-﻿
+﻿@model GameServerAdmin.Common.Models.PagedResponse<GameServerAdmin.Models.Notices.AdminApi.AdminNoticeListItemDto>
+@using GameServerAdmin.Domain.Notices
+
+@{
+    ViewData["Title"] = "공지 관리";
+}
+
+<h2>공지 관리</h2>
+
+<div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+    <a asp-controller="AdminUiNotice" asp-action="Create">새 공지 작성</a>
+    <a asp-controller="AdminUiNotice" asp-action="List">새로고침</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>제목</th>
+            <th>카테고리</th>
+            <th>우선순위</th>
+            <th>상태</th>
+            <th>고정</th>
+            <th>조회수</th>
+            <th>작성일</th>
+            <th>수정일</th>
+            <th>삭제일</th>
+            <th>액션</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model.Items)
+        {
+            <tr>
+                <td>@n.NoticeId</td>
+                <td>
+                    <a asp-controller="AdminUiNotice" asp-action="Detail" asp-route-noticeId="@n.NoticeId">
+                        @n.Title
+                    </a>
+                </td>
+                <td>@n.Category</td>
+                <td>@n.Priority</td>
+                <td>@n.Status</td>
+                <td>@(n.IsPinned ? "Y" : "N")</td>
+                <td>@n.ViewCount</td>
+                <td>@n.CreatedAt</td>
+                <td>@(n.UpdatedAt?.ToString() ?? "-")</td>
+                <td>@(n.DeletedAt?.ToString() ?? "-")</td>
+                <td style="white-space:nowrap;">
+                    <a asp-controller="AdminUiNotice" asp-action="Edit" asp-route-noticeId="@n.NoticeId">수정</a>
+
+                    @if (n.DeletedAt == null)
+                    {
+                        <form asp-controller="AdminUiNotice" asp-action="Delete" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="noticeId" value="@n.NoticeId" />
+                            <button type="submit">삭제</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="AdminUiNotice" asp-action="Restore" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="noticeId" value="@n.NoticeId" />
+                            <button type="submit">복구</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* 페이징 UI는 PagedResponse 구조에 따라 다를 수 있어(불명확) 최소 placeholder만 둠 *@
+<div style="margin-top:12px; opacity:.7;">
+    <span>총 @Model.TotalCount 개</span>
+</div>
