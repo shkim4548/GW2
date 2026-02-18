@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# protobuf file must include
+!Common/Protobuf/bin/*.proto
+
 # User-specific files
 *.rsuser
 *.suo
