@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.PublicUi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static GameServerAdmin.Models.Posts.PublicUi.PublicPostDetailViewModel;
 
@@ -37,6 +38,7 @@ namespace GameServerAdmin.Controllers.Public
         }
 
         // 상세 View
+        [Authorize]
         [HttpGet("/board/{id:long}")]
         public async Task<IActionResult> Detail(long id)
         {
@@ -57,6 +59,7 @@ namespace GameServerAdmin.Controllers.Public
         }
 
         // GET : Create
+        [Authorize]
         [HttpGet("/board/create")]
         public IActionResult Create()
         {
@@ -64,6 +67,7 @@ namespace GameServerAdmin.Controllers.Public
         }
 
         // POST : Create
+        [Authorize]
         [HttpPost("/board/create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PublicPostCreateViewModel model)

@@ -1,5 +1,119 @@
 [
   {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AccountController",
+    "Method": "Denied",
+    "RelativePath": "account/denied",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AccountController",
+    "Method": "Login",
+    "RelativePath": "account/login",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "returnUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AccountController",
+    "Method": "Login",
+    "RelativePath": "account/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "returnUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AccountController",
+    "Method": "Logout",
+    "RelativePath": "account/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AdminUiAccountController",
+    "Method": "Login",
+    "RelativePath": "admin/login",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "returnUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AdminUiAccountController",
+    "Method": "Login",
+    "RelativePath": "admin/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "returnUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GameServerAdmin.Controllers.Auth.AdminUiAccountController",
+    "Method": "Logout",
+    "RelativePath": "admin/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "GameServerAdmin.Controllers.Backoffice.AdminCommentController",
     "Method": "GetAllComments",
     "RelativePath": "api/admin/comments",

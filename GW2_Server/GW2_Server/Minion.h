@@ -28,6 +28,10 @@ private:
 	bool ShouldChaseTargetNow(shared_ptr<Object> target);
 	uint8 GetLaneIdFromPos(GameMath::Vector3& targetPos);
 
+	// === LaneRoute Handler === 
+	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
+	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
+
 public:
 	uint8 _laneId;
 
@@ -44,5 +48,8 @@ private:
 
 	int32 _currentWaypointIndex;
 	vector<weak_ptr<Object>> _targets;
-	const weak_ptr<Navigation::LaneRoute> _route;
+	weak_ptr<Navigation::LaneRoute> _route;
+
+	GameMath::Vector3 _lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
+	float _repathCoolDown = 0.0f;
 };

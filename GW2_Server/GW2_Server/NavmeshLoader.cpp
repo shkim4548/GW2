@@ -224,7 +224,7 @@ bool NavmeshLoader::LoadLaneMap(const string& path, Navigation::WalkableGrid& gr
     vector<uint8> laneData(size);
 
     file.read(reinterpret_cast<char*>(laneData.data()), size);
-    if (file.gcount() != size)
+    if (file.gcount() != static_cast<streamsize>(size))
     {
         return false;
     }

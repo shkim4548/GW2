@@ -52,27 +52,65 @@ namespace GameServerAdmin
             }).AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            // JWT 인증 설정
+            // 쿠키 리다이렉트 경로
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/account/login";
+                options.AccessDeniedPath = "/account/denied";
+
+                // Admin UI로 들어가다 막히면 /admin/login으로 보내기
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    if (context.Request.Path.StartsWithSegments("/AdminUi") ||
+                        context.Request.Path.StartsWithSegments("/admin"))
+                    {
+                        context.Response.Redirect("/admin/login");
+                        return Task.CompletedTask;
+                    }
+
+                    context.Response.Redirect("/account/login");
+                    return Task.CompletedTask;
+                };
+            });
+
+            // JWT + Cookie(Identity) 혼용: 요청에 따라 자동 선택
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = "SmartAuth";
+                options.DefaultChallengeScheme = "SmartAuth";
             })
-                .AddJwtBearer(options =>
+            .AddPolicyScheme("SmartAuth", "SmartAuth", options =>
+            {
+                options.ForwardDefaultSelector = context =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-                        ClockSkew = TimeSpan.Zero  // 토큰 만료 시간 정확히 체크
-                    };
-                });
+                    // 1) Authorization: Bearer ... 가 있으면 JWT
+                    var authHeader = context.Request.Headers.Authorization.ToString();
+                    if (!string.IsNullOrWhiteSpace(authHeader) && authHeader.StartsWith("Bearer "))
+                        return JwtBearerDefaults.AuthenticationScheme;
+
+                    // 2) /api 로 시작하면 JWT
+                    if (context.Request.Path.StartsWithSegments("/api"))
+                        return JwtBearerDefaults.AuthenticationScheme;
+
+                    // 3) 그 외(UI)는 Identity Cookie
+                    return IdentityConstants.ApplicationScheme;
+                };
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -112,6 +150,7 @@ namespace GameServerAdmin
 
                 await DbInitializer.SeedRolesAsync(roleManager);
                 await DbInitializer.SeedAdminUserAsync(userManager, roleManager);
+                await DbInitializer.SeedDefaultUserAsync(userManager, roleManager);
             }
 
             // Configure the HTTP request pipeline.

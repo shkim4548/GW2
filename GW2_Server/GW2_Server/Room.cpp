@@ -198,6 +198,20 @@ void Room::UpdateRoom(float deltaTime)
 			continue;
 		}
 
+		// Minions
+		for (auto& [id, obj] : _objects)
+		{
+			if (obj == nullptr)
+			{
+				continue;
+			}
+
+			if (auto minion = dynamic_pointer_cast<Minion>(obj))
+			{
+				minion->UpdateMinion(deltaTime);
+			}
+		}
+
 		// 이동 업데이트 한다
 		bool movedThisTick = obj->UpdateMovement(deltaTime);
 		obj->AccumulateMoveTime(deltaTime);
@@ -216,12 +230,28 @@ void Room::UpdateRoom(float deltaTime)
 		if (obj->GetMoveState() != Protocol::MoveState::MOVE_STATE_RUN)
 		{
 			BroadcastMovingEnd(obj);
-			cout << "Terminate Moving" << endl;
+			//cout << "Terminate Moving" << endl;
 		}
 
 		obj->PostUpdate();
-		// TODO : Monster Moving
 	}
+}
+
+shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team)
+{
+	// route 확보
+	weak_ptr<Navigation::LaneRoute> routeWeak = GetLaneRoute(laneId);
+	shared_ptr<Navigation::LaneRoute> route = routeWeak.lock();
+	if (route == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::SpawnMinion] LaneRoute missing. laneId=%d\n", laneId);
+		return nullptr;
+	}
+
+	// 미니언 생성
+	shared_ptr<Minion> minion = make_shared<Minion>();
+	// 기본 파라미터 세팅
+
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const
@@ -270,6 +300,83 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 void Room::HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& dest, float speed, float deltaTime, uint8 laneId)
 {
 	// 삭제/상태/권한 우선 체크
+	if (minion == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr");
+		return;
+	}
+
+	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	if (navSystem == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr");
+		return;
+	}
+
+	// grid는 참조로만 가져와야한다.
+	Navigation::WalkableGrid& grid = navSystem->GetGridCells();
+
+	// Start/End world position
+	GameMath::Vector3 startWorldPos = minion->GetPosVector();
+	GameMath::Vector3 endWorldPos = dest;
+
+	// WorldPos -> GridPos
+	int32 sx = 0, sz = 0, tx = 0, tz = 0;
+	if (navSystem->WorldToGrid(grid, startWorldPos, sx, sz) == false)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(start) fail\n");
+		return;
+	}
+	if (navSystem->WorldToGrid(grid, endWorldPos, tx, tz) == false)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(end) is fail\n");
+		return;
+	}
+
+	// PathFinding
+	vector<Navigation::GridCell*> gridPath;
+	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
+	if (ok == false || gridPath.empty())
+	{
+		// lane 제한 때문에 실패할 수 있음(정상 케이스도 존재)
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed (lane filtered?)\n");
+		return;
+	}
+
+	// Grid Path -> WorldPath
+	vector<GameMath::Vector3> worldPath;
+	worldPath.reserve(gridPath.size() + 2);
+	worldPath.push_back(startWorldPos);
+
+	for (Navigation::GridCell* cell : gridPath)
+	{
+		if (cell == nullptr)
+		{
+			continue;
+		}
+
+		GameMath::Vector3 worldPos;
+		if (navSystem->GridToWorld(grid, cell->x, cell->z, worldPos))
+		{
+			continue;
+		}
+
+		if ((worldPos - startWorldPos).Length() < 0.01f)
+			continue;
+
+		worldPath.push_back(worldPos);
+	}
+
+	if (worldPath.empty() || (worldPath.back() - endWorldPos).Length() >= 0.01f)
+	{
+		worldPath.push_back(endWorldPos);
+	}
+
+	// 이동 제공
+	minion->SetMoveState(Protocol::MoveState::MOVE_STATE_RUN);
+	minion->_path = std::move(worldPath);
+	minion->_pathIndex = 0;
+	minion->SetIsMoving(true);
 }
 
 void Room::HandleMinionAttack(shared_ptr<Object> target)
@@ -299,6 +406,24 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
 	Broadcast(sendBuffer);
+}
+
+void Room::InitLaneRoute()
+{
+
+}
+
+weak_ptr<Navigation::LaneRoute> Room::GetLaneRoute(int32 laneId) const
+{
+	auto it = _laneRoute.find(laneId);
+	if (it == _laneRoute.end())
+		return {};
+	return it->second;
+}
+
+void Room::SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route)
+{
+	_laneRoute[laneId] = move(route);
 }
 
 void Room::DeleteRoom()

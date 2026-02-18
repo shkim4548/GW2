@@ -65,6 +65,9 @@ void Minion::UpdateLaneTrace(float deltaTime)
 {
 	GameMath::Vector3 myPos = GetPosVector();
 
+	// repath 쿨다운 감소
+	_repathCoolDown -= deltaTime;
+
 	// 타겟 탐색
 	shared_ptr<Object> target = FindBestTarget().lock();
 	if (target != nullptr)
@@ -103,15 +106,34 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		{
 			++_currentWaypointIndex;
 			nowWp = route->waypoints[_currentWaypointIndex];
+
+			// 다음 waypoint로 넘어갈 때는 기존 path를 버리고, 다음 tick에 새 path 요청
+			_path.clear();
+			_pathIndex = 0;
+			_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
+			_repathCoolDown = 0.0f;
 		}
 		else
 		{
 			// TODO : 마지막 웨이포인트에 도착 -> 넥서스 근처 로직
+			_minionState = Protocol::MinionState::MINION_IDLE;
+			// TODO : StopMovement 구현
+			return;
 		}
 	}
 	// 현재 목표 중간점으로 이동
-	shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
-	_room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
+	// 매틱 마다 HandleMinionMove를 호출하지 않도록 한다
+	// 조건: (1) 현재 path가 비었거나 (2) 목표가 바뀌었거나 (3) 일정 시간 지나서 재탐색 필요할 때만 요청
+	auto shouldRequest = _path.empty() || (_lastMoveGoal - nowWp).Length() > 0.05f || (_repathCoolDown <= 0.0f);
+
+	if (shouldRequest)
+	{
+		shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
+		_room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
+
+		_lastMoveGoal = nowWp;
+		_repathCoolDown = 0.2f;
+	}
 }
 
 void Minion::UpdateChaseTarget(float deltaTime)
@@ -119,10 +141,12 @@ void Minion::UpdateChaseTarget(float deltaTime)
 	shared_ptr<Object> currentTarget = _currentTarget.lock();
 	if (currentTarget == nullptr || currentTarget->IsDead())
 	{
-		currentTarget = nullptr;
+		//currentTarget = nullptr;
 		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
 		return;
 	}
+
+	_repathCoolDown -= deltaTime;
 
 	GameMath::Vector3 minionSelfPos = GetPosVector();
 	GameMath::Vector3 targetPos = currentTarget->GetPosVector();
@@ -136,9 +160,19 @@ void Minion::UpdateChaseTarget(float deltaTime)
 		return;
 	}
 
-	// 공격 사거리 밖이면 타겟 쪽으로 이동
-	shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
-	_room->HandleMinionMove(minionSelf, targetPos, _moveSpeed, deltaTime, _laneId);
+	// 현재 목표 중간점으로 이동
+// 매틱 마다 HandleMinionMove를 호출하지 않도록 한다
+// 조건: (1) 현재 path가 비었거나 (2) 목표가 바뀌었거나 (3) 일정 시간 지나서 재탐색 필요할 때만 요청
+	auto shouldRequest = _path.empty() || (_lastMoveGoal - minionSelfPos).Length() > 0.05f || (_repathCoolDown <= 0.0f);
+
+	if (shouldRequest)
+	{
+		shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
+		_room->HandleMinionMove(minionSelf, minionSelfPos, _moveSpeed, deltaTime, _laneId);
+
+		_lastMoveGoal = minionSelfPos;
+		_repathCoolDown = 0.2f;
+	}
 }
 
 void Minion::UpdateAttack(float deltaTime)
@@ -281,4 +315,14 @@ bool Minion::ShouldChaseTargetNow(shared_ptr<Object> target)
 uint8 Minion::GetLaneIdFromPos(GameMath::Vector3& targetPos)
 {
 	return 0;
+}
+
+void Minion::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
+{
+	_route = route;
+}
+
+weak_ptr<Navigation::LaneRoute> Minion::GetLaneRoute() const
+{
+	return _route;
 }

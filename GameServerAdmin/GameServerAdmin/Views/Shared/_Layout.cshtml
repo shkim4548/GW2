@@ -19,5 +19,21 @@
     </main>
  
      @RenderSection("Scripts", required: false)
+    <div style="display:flex; gap:12px; align-items:center; justify-content:flex-end;">
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            <span>안녕하세요, @User.Identity.Name</span>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                @Html.AntiForgeryToken()
+                <button type="submit">로그아웃</button>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login">로그인</a>
+        }
+    </div>
+
  </body>
  </html>

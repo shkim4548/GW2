@@ -4,7 +4,7 @@
 #include "Protocol.pb.h"
 #pragma message("ROOM HEADER LOADED")
 
-namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; }
+namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; struct LaneRoute; }
 namespace GameMath { struct Vector3; }
 class Minion;
 
@@ -34,6 +34,7 @@ public:
 
 	// 로비에서 호출해야함
 	void UpdateRoom(float deltaTime);
+	shared_ptr<Minion> SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team);
 
 public:
 	// Object called
@@ -47,6 +48,11 @@ private:
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
 
+	// Lane Controller
+	void InitLaneRoute();
+	weak_ptr<Navigation::LaneRoute> GetLaneRoute(int32 laneId) const;
+	void SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route);
+
 	void DeleteRoom();
 
 private:
@@ -57,6 +63,7 @@ private:
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 	weak_ptr<Navigation::WalkableGrid> _roomWalkableGrid;
 	bool _isRunning = false;
+	unordered_map<int32, shared_ptr<Navigation::LaneRoute>> _laneRoute;
 };
 
 extern shared_ptr<Room> GRoom;

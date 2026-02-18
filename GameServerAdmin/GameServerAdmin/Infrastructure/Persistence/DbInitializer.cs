@@ -18,6 +18,45 @@ namespace GameServerAdmin.Infrastructure.Persistence
             }
         }
 
+        public static async Task SeedDefaultUserAsync(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
+        {
+            const string userRole = "User";
+            const string userName = "user";
+            const string userPassword = "testUser123";
+
+            if(await roleManager.RoleExistsAsync(userRole) == false)
+            {
+                await roleManager.CreateAsync(new AppRole(userRole));
+            }
+
+            var user = await userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = userName,
+                };
+
+                var createResult = await userManager.CreateAsync(user, userPassword);
+                if (createResult.Succeeded == false)
+                {
+                    var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Default user creation failed : {errors}");
+                }
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+            if (!roles.Contains(userRole))
+            {
+                var roleResult = await userManager.AddToRoleAsync(user, userRole);
+                if (!roleResult.Succeeded)
+                {
+                    var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Default user role assignment failed: {errors}");
+                }
+            }
+        }
+
         public static async Task SeedAdminUserAsync(
             UserManager<AppUser> userManager,
             RoleManager<AppRole> roleManager)
