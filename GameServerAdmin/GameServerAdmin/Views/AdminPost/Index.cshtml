@@ -11,9 +11,9 @@
 <form asp-action="Index" asp-controller="AdminUiPost" method="get">
     <label>삭제 여부 필터: </label>
     <select name="IsDeleted">
-        <option value="" selected = "@(Model.Query.IsDeleted == null ? "selected" : "")">전체</option>
-        <option value="false" selected = "@(Model.Query.IsDeleted == false ? "selected" : "")">정상</option>
-        <option value="true" selected ="@(Model.Query.IsDeleted == true ? "selected" : "")"">삭제됨</option>
+        <option value="" selected="@(Model.Query.IsDeleted == null)">전체</option>
+        <option value="false" selected="@(Model.Query.IsDeleted == false)">정상</option>
+        <option value="true" selected="@(Model.Query.IsDeleted == true)">삭제됨</option>
     </select>
 
     <label>페이지:</label>

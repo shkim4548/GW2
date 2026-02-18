@@ -11,10 +11,16 @@ class Minion : public Object
 public:
 	Minion();
 	virtual ~Minion();
+	void SetMinionId(int32 id) { _objectId = id; }
+	int32 GetMinionId() { return _objectId; }
 
 	// called by GameRoom
 	void UpdateMinion(float deltaTime);
-	
+
+	// === LaneRoute Handler === 
+	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
+	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
+
 private:
 	// === STATE MACHINE ===
 	void UpdateIdle(float deltaTime);
@@ -28,9 +34,6 @@ private:
 	bool ShouldChaseTargetNow(shared_ptr<Object> target);
 	uint8 GetLaneIdFromPos(GameMath::Vector3& targetPos);
 
-	// === LaneRoute Handler === 
-	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
-	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
 
 public:
 	uint8 _laneId;

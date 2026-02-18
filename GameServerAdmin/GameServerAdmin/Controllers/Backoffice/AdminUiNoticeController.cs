@@ -20,7 +20,7 @@ namespace GameServerAdmin.Controllers.Backoffice
         public IActionResult Index() => RedirectToAction(nameof(List));
 
         // GET /AdminUiNotice/List
-        [HttpGet]
+        [HttpGet("/admin/ui/notice/list")]
         public async Task<IActionResult> List([FromQuery] AdminNoticeListQuery query)
         {
             ViewData["Title"] = "공지 관리";
@@ -29,7 +29,7 @@ namespace GameServerAdmin.Controllers.Backoffice
         }
 
         // GET /AdminUiNotice/Detail?noticeId=1
-        [HttpGet]
+        [HttpGet("/admin/ui/notice/detail/{noticeId}")]
         public async Task<IActionResult> Detail(long noticeId)
         {
             ViewData["Title"] = "공지 상세";
@@ -38,7 +38,7 @@ namespace GameServerAdmin.Controllers.Backoffice
         }
 
         // GET /AdminUiNotice/Create
-        [HttpGet]
+        [HttpGet("/admin/ui/notice/create")]
         public IActionResult Create()
         {
             ViewData["Title"] = "공지 작성";
@@ -46,7 +46,7 @@ namespace GameServerAdmin.Controllers.Backoffice
         }
 
         // POST /AdminUiNotice/Create
-        [HttpPost]
+        [HttpPost("/admin/ui/notice/create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateNoticeRequest model)
         {

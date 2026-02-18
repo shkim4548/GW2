@@ -61,8 +61,7 @@ namespace GameServerAdmin
                 // Admin UI로 들어가다 막히면 /admin/login으로 보내기
                 options.Events.OnRedirectToLogin = context =>
                 {
-                    if (context.Request.Path.StartsWithSegments("/AdminUi") ||
-                        context.Request.Path.StartsWithSegments("/admin"))
+                    if (context.Request.Path.StartsWithSegments("/admin") || context.Request.Path.StartsWithSegments("/Admin") || context.Request.Path.Value?.StartsWith("/AdminUi", StringComparison.OrdinalIgnoreCase) == true)
                     {
                         context.Response.Redirect("/admin/login");
                         return Task.CompletedTask;

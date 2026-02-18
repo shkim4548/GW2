@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ObjectUtils.h"
 #include "Player.h"
+#include "Minion.h"
 #include "GameSession.h"
 
 atomic<int32> ObjectUtils::s_idGenerator = 1;
@@ -16,4 +17,14 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
     session->_currentPlayer.store(player);
 
     return player;
+}
+
+MinionRef ObjectUtils::CreateMinion()
+{
+    const int64 newId = s_idGenerator.fetch_add(1);
+
+    MinionRef minion = MakeShared<Minion>();
+    minion->SetMinionId(newId);
+
+    return minion;
 }

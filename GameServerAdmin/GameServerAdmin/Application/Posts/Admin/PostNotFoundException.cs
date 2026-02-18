@@ -4,13 +4,13 @@ namespace GameServerAdmin.Application.Posts
     [Serializable]
     internal class PostNotFoundException : Exception
     {
-        private int postId;
+        private long postId;
 
         public PostNotFoundException()
         {
         }
 
-        public PostNotFoundException(int postId)
+        public PostNotFoundException(long postId)
         {
             this.postId = postId;
         }

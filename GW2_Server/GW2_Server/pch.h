@@ -19,6 +19,7 @@
 
 using GameSessionRef = shared_ptr<class GameSession>;
 using PlayerRef = shared_ptr<class Player>;
+using MinionRef = shared_ptr<class Minion>;
 using ObjectRef = shared_ptr<class Object>;
 using RoomRef = shared_ptr<class Room>;
 using LobbyRef = shared_ptr<class Lobby>;

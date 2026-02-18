@@ -212,8 +212,9 @@ constexpr C_ATTACK::C_ATTACK(
   : room_id_(0)
   , attacker_id_(0)
   , target_id_(0)
-  , client_time_(0)
-  , command_id_(0){}
+  , command_id_(0)
+
+  , client_time_(0){}
 struct C_ATTACKDefaultTypeInternal {
   constexpr C_ATTACKDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -228,7 +229,7 @@ constexpr S_ATTACK::S_ATTACK(
   : room_id_(0)
   , attacker_id_(0)
   , target_id_(0)
-  , hit_(0)
+  , command_id_(0)
 
   , server_time_(0){}
 struct S_ATTACKDefaultTypeInternal {
@@ -375,8 +376,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, room_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, attacker_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, target_id_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, client_time_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, command_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_ATTACK, client_time_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -386,7 +387,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, room_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, attacker_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, target_id_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, hit_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, command_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ATTACK, server_time_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -455,14 +456,14 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "\023\n\013attacker_id\030\003 \001(\003\"%\n\rC_ENTER_LOBBY\022\024\n"
   "\014player_index\030\001 \001(\005\"J\n\rS_ENTER_LOBBY\022\021\n\t"
   "player_id\030\001 \001(\005\022&\n\nroom_infos\030\002 \003(\0132\022.Pr"
-  "otocol.RoomInfo\"l\n\010C_ATTACK\022\017\n\007room_id\030\001"
-  " \001(\005\022\023\n\013attacker_id\030\002 \001(\005\022\021\n\ttarget_id\030\003"
-  " \001(\005\022\023\n\013client_time\030\004 \001(\005\022\022\n\ncommand_id\030"
-  "\005 \001(\005\"z\n\010S_ATTACK\022\017\n\007room_id\030\001 \001(\005\022\023\n\013at"
-  "tacker_id\030\002 \001(\005\022\021\n\ttarget_id\030\003 \001(\005\022 \n\003hi"
-  "t\030\004 \001(\0162\023.Protocol.SkillType\022\023\n\013server_t"
-  "ime\030\005 \001(\005B\033\252\002\030Google.Protobuf.Protocolb\006"
-  "proto3"
+  "otocol.RoomInfo\"\201\001\n\010C_ATTACK\022\017\n\007room_id\030"
+  "\001 \001(\005\022\023\n\013attacker_id\030\002 \001(\005\022\021\n\ttarget_id\030"
+  "\003 \001(\005\022\'\n\ncommand_id\030\004 \001(\0162\023.Protocol.Ski"
+  "llType\022\023\n\013client_time\030\005 \001(\005\"\201\001\n\010S_ATTACK"
+  "\022\017\n\007room_id\030\001 \001(\005\022\023\n\013attacker_id\030\002 \001(\005\022\021"
+  "\n\ttarget_id\030\003 \001(\005\022\'\n\ncommand_id\030\004 \001(\0162\023."
+  "Protocol.SkillType\022\023\n\013server_time\030\005 \001(\005B"
+  "\033\252\002\030Google.Protobuf.Protocolb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -470,7 +471,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 1366, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  false, false, 1396, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
   &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 16,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
@@ -3770,16 +3771,16 @@ C_ATTACK::C_ATTACK(const C_ATTACK& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&room_id_, &from.room_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&command_id_) -
-    reinterpret_cast<char*>(&room_id_)) + sizeof(command_id_));
+    static_cast<size_t>(reinterpret_cast<char*>(&client_time_) -
+    reinterpret_cast<char*>(&room_id_)) + sizeof(client_time_));
   // @@protoc_insertion_point(copy_constructor:Protocol.C_ATTACK)
 }
 
 inline void C_ATTACK::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&room_id_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&command_id_) -
-    reinterpret_cast<char*>(&room_id_)) + sizeof(command_id_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&client_time_) -
+    reinterpret_cast<char*>(&room_id_)) + sizeof(client_time_));
 }
 
 C_ATTACK::~C_ATTACK() {
@@ -3810,8 +3811,8 @@ void C_ATTACK::Clear() {
   (void) cached_has_bits;
 
   ::memset(&room_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&command_id_) -
-      reinterpret_cast<char*>(&room_id_)) + sizeof(command_id_));
+      reinterpret_cast<char*>(&client_time_) -
+      reinterpret_cast<char*>(&room_id_)) + sizeof(client_time_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3845,18 +3846,19 @@ const char* C_ATTACK::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         } else
           goto handle_unusual;
         continue;
-      // int32 client_time = 4;
+      // .Protocol.SkillType command_id = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          client_time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+          _internal_set_command_id(static_cast<::Protocol::SkillType>(val));
         } else
           goto handle_unusual;
         continue;
-      // int32 command_id = 5;
+      // int32 client_time = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          command_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          client_time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3908,16 +3910,17 @@ uint8_t* C_ATTACK::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_target_id(), target);
   }
 
-  // int32 client_time = 4;
-  if (this->_internal_client_time() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_client_time(), target);
-  }
-
-  // int32 command_id = 5;
+  // .Protocol.SkillType command_id = 4;
   if (this->_internal_command_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_command_id(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      4, this->_internal_command_id(), target);
+  }
+
+  // int32 client_time = 5;
+  if (this->_internal_client_time() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_client_time(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3951,14 +3954,15 @@ size_t C_ATTACK::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_target_id());
   }
 
-  // int32 client_time = 4;
-  if (this->_internal_client_time() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_client_time());
+  // .Protocol.SkillType command_id = 4;
+  if (this->_internal_command_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_command_id());
   }
 
-  // int32 command_id = 5;
-  if (this->_internal_command_id() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_command_id());
+  // int32 client_time = 5;
+  if (this->_internal_client_time() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_client_time());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -3992,11 +3996,11 @@ void C_ATTACK::MergeFrom(const C_ATTACK& from) {
   if (from._internal_target_id() != 0) {
     _internal_set_target_id(from._internal_target_id());
   }
-  if (from._internal_client_time() != 0) {
-    _internal_set_client_time(from._internal_client_time());
-  }
   if (from._internal_command_id() != 0) {
     _internal_set_command_id(from._internal_command_id());
+  }
+  if (from._internal_client_time() != 0) {
+    _internal_set_client_time(from._internal_client_time());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -4016,8 +4020,8 @@ void C_ATTACK::InternalSwap(C_ATTACK* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(C_ATTACK, command_id_)
-      + sizeof(C_ATTACK::command_id_)
+      PROTOBUF_FIELD_OFFSET(C_ATTACK, client_time_)
+      + sizeof(C_ATTACK::client_time_)
       - PROTOBUF_FIELD_OFFSET(C_ATTACK, room_id_)>(
           reinterpret_cast<char*>(&room_id_),
           reinterpret_cast<char*>(&other->room_id_));
@@ -4123,12 +4127,12 @@ const char* S_ATTACK::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.SkillType hit = 4;
+      // .Protocol.SkillType command_id = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_hit(static_cast<::Protocol::SkillType>(val));
+          _internal_set_command_id(static_cast<::Protocol::SkillType>(val));
         } else
           goto handle_unusual;
         continue;
@@ -4187,11 +4191,11 @@ uint8_t* S_ATTACK::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_target_id(), target);
   }
 
-  // .Protocol.SkillType hit = 4;
-  if (this->_internal_hit() != 0) {
+  // .Protocol.SkillType command_id = 4;
+  if (this->_internal_command_id() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      4, this->_internal_hit(), target);
+      4, this->_internal_command_id(), target);
   }
 
   // int32 server_time = 5;
@@ -4231,10 +4235,10 @@ size_t S_ATTACK::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_target_id());
   }
 
-  // .Protocol.SkillType hit = 4;
-  if (this->_internal_hit() != 0) {
+  // .Protocol.SkillType command_id = 4;
+  if (this->_internal_command_id() != 0) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_hit());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_command_id());
   }
 
   // int32 server_time = 5;
@@ -4273,8 +4277,8 @@ void S_ATTACK::MergeFrom(const S_ATTACK& from) {
   if (from._internal_target_id() != 0) {
     _internal_set_target_id(from._internal_target_id());
   }
-  if (from._internal_hit() != 0) {
-    _internal_set_hit(from._internal_hit());
+  if (from._internal_command_id() != 0) {
+    _internal_set_command_id(from._internal_command_id());
   }
   if (from._internal_server_time() != 0) {
     _internal_set_server_time(from._internal_server_time());

@@ -17,9 +17,9 @@ public class AdminUiPostController : Controller
         _postService = postService;
     }
 
-    // GET /AdminUiPost/Index  (기본 라우트)
+    // GET /admin/Index  (기본 라우트)
     // 또는 [HttpGet("/admin/posts")]로 바꿔도 됨
-    [HttpGet]
+    [HttpGet("/admin/ui/posts")]
     public async Task<IActionResult> Index([FromQuery] AdminPostListQuery query)
     {
         var paged = await _postService.GetAdminPostListAsync(query);
@@ -39,7 +39,7 @@ public class AdminUiPostController : Controller
     }
 
     // GET /AdminUiPost/Detail/{id}
-    [HttpGet]
+    [HttpGet("/admin/ui/posts/{id}")]
     public async Task<IActionResult> Detail(int id)
     {
         var dto = await _postService.GetPostDetailForAdminAsync(id);
@@ -50,7 +50,7 @@ public class AdminUiPostController : Controller
     }
 
     // GET /AdminUiPost/Edit/{id}
-    [HttpGet]
+    [HttpGet("/admin/ui/posts/{id}/edit")]
     public async Task<IActionResult> Edit(int id)
     {
         var dto = await _postService.GetPostDetailForAdminAsync(id);
@@ -67,7 +67,7 @@ public class AdminUiPostController : Controller
     }
 
     // POST /AdminUiPost/Edit/{id}
-    [HttpPost]
+    [HttpPost("admin/ui/posts/{id}/edit")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, AdminPostEditViewModel model)
     {
@@ -95,7 +95,7 @@ public class AdminUiPostController : Controller
     }
 
     // POST /AdminUiPost/SoftDelete/{id}
-    [HttpPost]
+    [HttpPost("/admin/ui/posts/{id}/soft-delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SoftDelete(int id)
     {
@@ -103,7 +103,7 @@ public class AdminUiPostController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("/admin/ui/posts/{id}/restore")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Restore(int id)
     {
@@ -111,7 +111,7 @@ public class AdminUiPostController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("/admin/ui/posts/{id}/hard-delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> HardDelete(int id)
     {

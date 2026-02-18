@@ -15,7 +15,7 @@ namespace GameServerAdmin.Application.Comments.Public
         /*---------------------------
             Public Comment Service
         -----------------------------*/
-        Task<CommentResponse> CreateCommentAsync(int postId, int authorId, CreateCommentRequest request);
+        Task<CommentResponse> CreateCommentAsync(long postId, long authorId, CreateCommentRequest request);
         Task<ReplyResponse> CreateReplyAsync(int postId, int parentCommentId, int authorId, CreateReplyRequest request);
         Task<CommentResponse> UpdateCommentAsync(long postId, long commentId, long authorId, UpdateCommentRequest request);
         Task DeleteCommentAsync(long postId, long commentId, long authorId);
@@ -32,7 +32,7 @@ namespace GameServerAdmin.Application.Comments.Public
             _db = db;
         }
 
-        public async Task<CommentResponse> CreateCommentAsync(int postId, int authorId, CreateCommentRequest request)
+        public async Task<CommentResponse> CreateCommentAsync(long postId, long authorId, CreateCommentRequest request)
         {
             var post = await _db.Posts.FindAsync(postId);
             if(post == null)

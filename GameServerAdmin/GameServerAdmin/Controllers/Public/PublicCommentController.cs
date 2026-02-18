@@ -1,17 +1,19 @@
 ﻿using GameServerAdmin.Application.Comments.Public;
 using GameServerAdmin.Models.Comments.AdminApi;
 using GameServerAdmin.Models.Comments.PublicApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GameServerAdmin.Controllers.Public
 {
     [ApiController]
     [Route("api/posts/{postId}/comments")]
-    public class CommentController : ControllerBase
+    public class PublicCommentController : ControllerBase
     {
         private readonly IPublicCommentService _commentService;
 
-        public CommentController(IPublicCommentService commentService)
+        public PublicCommentController(IPublicCommentService commentService)
         {
             _commentService = commentService;
         }
@@ -19,9 +21,16 @@ namespace GameServerAdmin.Controllers.Public
         // 댓글 작성
         // POST /api/posts/{postId}/comments
         // 임시: 인증 구현 전까지 Query로 받음
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CommentResponse>> CreateComment([FromRoute] int postId, [FromBody] CreateCommentRequest request, [FromQuery] int authorId)  
+        public async Task<ActionResult<CommentResponse>> CreateComment(long postId, [FromBody] CreateCommentRequest request)  
         {
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+            if (string.IsNullOrWhiteSpace(userIdValue))
+                return Unauthorized();
+
+            var authorId = long.Parse(userIdValue);
+
             var response = await _commentService.CreateCommentAsync(postId, authorId, request);
             return CreatedAtAction(
                 nameof(GetComments),

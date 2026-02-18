@@ -136,7 +136,7 @@ public class MyPlayerController : PlayerController
             // 진영이 다르고 사거리 내에 있다면 상태를 전이시킨다.
             if (hit.collider.gameObject.GetComponent<BaseController>()._campType != this._campType)
             {
-
+                // 
             }
             // 사거리 밖에 있다면, 추적시킨다.
             else

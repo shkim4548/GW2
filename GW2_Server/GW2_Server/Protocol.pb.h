@@ -2615,8 +2615,8 @@ class C_ATTACK final :
     kRoomIdFieldNumber = 1,
     kAttackerIdFieldNumber = 2,
     kTargetIdFieldNumber = 3,
-    kClientTimeFieldNumber = 4,
-    kCommandIdFieldNumber = 5,
+    kCommandIdFieldNumber = 4,
+    kClientTimeFieldNumber = 5,
   };
   // int32 room_id = 1;
   void clear_room_id();
@@ -2645,22 +2645,22 @@ class C_ATTACK final :
   void _internal_set_target_id(int32_t value);
   public:
 
-  // int32 client_time = 4;
+  // .Protocol.SkillType command_id = 4;
+  void clear_command_id();
+  ::Protocol::SkillType command_id() const;
+  void set_command_id(::Protocol::SkillType value);
+  private:
+  ::Protocol::SkillType _internal_command_id() const;
+  void _internal_set_command_id(::Protocol::SkillType value);
+  public:
+
+  // int32 client_time = 5;
   void clear_client_time();
   int32_t client_time() const;
   void set_client_time(int32_t value);
   private:
   int32_t _internal_client_time() const;
   void _internal_set_client_time(int32_t value);
-  public:
-
-  // int32 command_id = 5;
-  void clear_command_id();
-  int32_t command_id() const;
-  void set_command_id(int32_t value);
-  private:
-  int32_t _internal_command_id() const;
-  void _internal_set_command_id(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.C_ATTACK)
@@ -2673,8 +2673,8 @@ class C_ATTACK final :
   int32_t room_id_;
   int32_t attacker_id_;
   int32_t target_id_;
+  int command_id_;
   int32_t client_time_;
-  int32_t command_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -2805,7 +2805,7 @@ class S_ATTACK final :
     kRoomIdFieldNumber = 1,
     kAttackerIdFieldNumber = 2,
     kTargetIdFieldNumber = 3,
-    kHitFieldNumber = 4,
+    kCommandIdFieldNumber = 4,
     kServerTimeFieldNumber = 5,
   };
   // int32 room_id = 1;
@@ -2835,13 +2835,13 @@ class S_ATTACK final :
   void _internal_set_target_id(int32_t value);
   public:
 
-  // .Protocol.SkillType hit = 4;
-  void clear_hit();
-  ::Protocol::SkillType hit() const;
-  void set_hit(::Protocol::SkillType value);
+  // .Protocol.SkillType command_id = 4;
+  void clear_command_id();
+  ::Protocol::SkillType command_id() const;
+  void set_command_id(::Protocol::SkillType value);
   private:
-  ::Protocol::SkillType _internal_hit() const;
-  void _internal_set_hit(::Protocol::SkillType value);
+  ::Protocol::SkillType _internal_command_id() const;
+  void _internal_set_command_id(::Protocol::SkillType value);
   public:
 
   // int32 server_time = 5;
@@ -2863,7 +2863,7 @@ class S_ATTACK final :
   int32_t room_id_;
   int32_t attacker_id_;
   int32_t target_id_;
-  int hit_;
+  int command_id_;
   int32_t server_time_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -4127,7 +4127,27 @@ inline void C_ATTACK::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_ATTACK.target_id)
 }
 
-// int32 client_time = 4;
+// .Protocol.SkillType command_id = 4;
+inline void C_ATTACK::clear_command_id() {
+  command_id_ = 0;
+}
+inline ::Protocol::SkillType C_ATTACK::_internal_command_id() const {
+  return static_cast< ::Protocol::SkillType >(command_id_);
+}
+inline ::Protocol::SkillType C_ATTACK::command_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ATTACK.command_id)
+  return _internal_command_id();
+}
+inline void C_ATTACK::_internal_set_command_id(::Protocol::SkillType value) {
+  
+  command_id_ = value;
+}
+inline void C_ATTACK::set_command_id(::Protocol::SkillType value) {
+  _internal_set_command_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ATTACK.command_id)
+}
+
+// int32 client_time = 5;
 inline void C_ATTACK::clear_client_time() {
   client_time_ = 0;
 }
@@ -4145,26 +4165,6 @@ inline void C_ATTACK::_internal_set_client_time(int32_t value) {
 inline void C_ATTACK::set_client_time(int32_t value) {
   _internal_set_client_time(value);
   // @@protoc_insertion_point(field_set:Protocol.C_ATTACK.client_time)
-}
-
-// int32 command_id = 5;
-inline void C_ATTACK::clear_command_id() {
-  command_id_ = 0;
-}
-inline int32_t C_ATTACK::_internal_command_id() const {
-  return command_id_;
-}
-inline int32_t C_ATTACK::command_id() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_ATTACK.command_id)
-  return _internal_command_id();
-}
-inline void C_ATTACK::_internal_set_command_id(int32_t value) {
-  
-  command_id_ = value;
-}
-inline void C_ATTACK::set_command_id(int32_t value) {
-  _internal_set_command_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.C_ATTACK.command_id)
 }
 
 // -------------------------------------------------------------------
@@ -4231,24 +4231,24 @@ inline void S_ATTACK::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_ATTACK.target_id)
 }
 
-// .Protocol.SkillType hit = 4;
-inline void S_ATTACK::clear_hit() {
-  hit_ = 0;
+// .Protocol.SkillType command_id = 4;
+inline void S_ATTACK::clear_command_id() {
+  command_id_ = 0;
 }
-inline ::Protocol::SkillType S_ATTACK::_internal_hit() const {
-  return static_cast< ::Protocol::SkillType >(hit_);
+inline ::Protocol::SkillType S_ATTACK::_internal_command_id() const {
+  return static_cast< ::Protocol::SkillType >(command_id_);
 }
-inline ::Protocol::SkillType S_ATTACK::hit() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_ATTACK.hit)
-  return _internal_hit();
+inline ::Protocol::SkillType S_ATTACK::command_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ATTACK.command_id)
+  return _internal_command_id();
 }
-inline void S_ATTACK::_internal_set_hit(::Protocol::SkillType value) {
+inline void S_ATTACK::_internal_set_command_id(::Protocol::SkillType value) {
   
-  hit_ = value;
+  command_id_ = value;
 }
-inline void S_ATTACK::set_hit(::Protocol::SkillType value) {
-  _internal_set_hit(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_ATTACK.hit)
+inline void S_ATTACK::set_command_id(::Protocol::SkillType value) {
+  _internal_set_command_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ATTACK.command_id)
 }
 
 // int32 server_time = 5;

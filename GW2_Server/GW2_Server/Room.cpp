@@ -7,6 +7,7 @@
 #include "NavmeshLoader.h"
 #include "ClientPacketHandler.h"
 #include "Minion.h"
+#include "ObjectUtils.h"
 
 // 공용으로 사용할 전역 룸
 //shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -23,29 +24,48 @@ Room::~Room()
 	
 }
 
-bool Room::Enter(PlayerRef player)
+bool Room::Enter(ObjectRef gameObject)
 {
-	if (player == nullptr)
+	if (gameObject == nullptr)
 	{
 		return false;
 	}
 
 	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
-	int32 playerId = player->GetPlayerId();
-	_players.emplace(playerId, player);
-	_objects.emplace(playerId, player);
+
+	int32 objectId = gameObject->GetObjectId();
+	_objects.emplace(objectId, gameObject);
 
 	Protocol::S_ENTER_GAME enterPkt;
 	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
-	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
-	objectInfo->set_object_id(playerId);
-	posInfo->set_x(72.5);
-	posInfo->set_y(0);
-	posInfo->set_x(0);
-	posInfo->set_yaw(0);
-	objectInfo->set_allocated_pos_info(posInfo);
-	enterPkt.set_allocated_player(objectInfo);
+
+	if (shared_ptr<Player> player = static_pointer_cast<Player>(gameObject))
+	{
+		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterPlayer\n");
+		objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+		objectInfo->set_object_id(objectId);
+		posInfo->set_x(72.5);
+		posInfo->set_y(0);
+		posInfo->set_z(0);
+		posInfo->set_yaw(0);
+		objectInfo->set_allocated_pos_info(posInfo);
+		enterPkt.set_allocated_player(objectInfo);
+		_players.emplace(objectId, player);
+	}
+
+	else if (shared_ptr<Minion> minion = static_pointer_cast<Minion>(gameObject))
+	{
+		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
+		objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
+		objectInfo->set_object_id(objectId);
+		posInfo->set_x(minion->GetPosInfo().x());
+		posInfo->set_y(minion->GetPosInfo().y());
+		posInfo->set_z(minion->GetPosInfo().z());
+		posInfo->set_yaw(0);
+		objectInfo->set_allocated_pos_info(posInfo);
+		enterPkt.set_allocated_player(objectInfo);
+	}
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -189,6 +209,20 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 
 void Room::UpdateRoom(float deltaTime)
 {
+	// 미니언 스폰
+	_minionSpawnCoolDown -= deltaTime;
+	while (_minionSpawnAccumulate >= _minionSpawnCoolDown)
+	{
+		_minionSpawnAccumulate -= _minionSpawnCoolDown;
+
+		// TEMP : For TEST
+		GameMath::Vector3 tempPos;
+		tempPos._x(0);
+		tempPos._y(0);
+		tempPos._z(0);
+		SpawnMinion(0, tempPos, Protocol::CAMP_CYBORG);
+	}
+
 	for (auto& [id, obj] : _objects)
 	{
 		//cout << "UpodateRoom is running now" << endl;
@@ -249,9 +283,20 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 	}
 
 	// 미니언 생성
-	shared_ptr<Minion> minion = make_shared<Minion>();
+	shared_ptr<Minion> minion = ObjectUtils::CreateMinion();
 	// 기본 파라미터 세팅
+	minion->SetLaneRoute(route);
+	minion->_laneId = static_cast<uint8>(laneId);
 
+	// 위치 초기화
+	Protocol::PosInfo posInfo;
+	posInfo.set_x(spawnWorldPos._x);
+	posInfo.set_y(spawnWorldPos._y);
+	posInfo.set_z(spawnWorldPos._z);
+	minion->SetPosInfo(posInfo);
+	
+	// Room에 등록한다
+	Enter(minion);
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const

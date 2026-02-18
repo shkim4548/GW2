@@ -64,12 +64,34 @@ public class ObjectService : IObjectService
             }
             else
             {
+                Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+                go = _resourceService.Instantiate("player/FireFighter");
+                if( go == null )
+                {
+                    Debug.Log("resource service instantiate failed");
+                }
 
+                PlayerController pc = go.GetComponent<PlayerController>();
+                pc.transform.position = initPos;
+                pc.Id = objectId;
+                // TODO : Adding RoomId
+                _objects.Add(objectId, go);
             }
         }
-        else if (objectType == ObjectType.Monster)
+        else if (objectType == ObjectType.Minion)
         {
-            
+            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+            go = _resourceService.Instantiate("HumanMeleeMinion");
+            if (go == null)
+            {
+                Debug.Log("resource service instantiate failed");
+            }
+
+            MinionController mc = go.GetComponent<MinionController>();
+            mc.transform.position = initPos;
+            mc.Id = objectId;
+            // TODO : Adding RoomId
+            _objects.Add(objectId, go);
         }
         else
         {

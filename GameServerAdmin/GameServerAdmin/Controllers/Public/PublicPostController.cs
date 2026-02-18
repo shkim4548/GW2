@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.PublicApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAdmin.Controllers.Public;
@@ -17,6 +18,7 @@ public class PublicPostController : ControllerBase
     }
 
     // CREATE
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<PublicPostDetailResponse>> Create(PostCreateRequest request)
     {

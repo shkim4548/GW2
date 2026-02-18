@@ -14,7 +14,7 @@ public:
 	Room();
 	virtual ~Room();
 
-	bool Enter(PlayerRef player);
+	bool Enter(ObjectRef gameObject);
 	void Leave(int32 playerId);
 	void Broadcast(SendBufferRef sendBuffer, int32 exceptId = -1);
 
@@ -60,10 +60,16 @@ private:
 	unordered_map<int32, PlayerRef> _players;
 	int32 _roomId;
 	string _roomName;
+
+	// === Navigation System ===
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 	weak_ptr<Navigation::WalkableGrid> _roomWalkableGrid;
 	bool _isRunning = false;
 	unordered_map<int32, shared_ptr<Navigation::LaneRoute>> _laneRoute;
+
+	// === minion cool time ===
+	float _minionSpawnCoolDown = 5.0f;
+	float _minionSpawnAccumulate = 0.0f;
 };
 
 extern shared_ptr<Room> GRoom;
