@@ -63,7 +63,7 @@ protected:
 	Protocol::CampType _campType = Protocol::CampType::CAMP_NEUTURAL;
 	float _moveSpeed = 100.0f;
 
-	RoomRef _room;
+	weak_ptr<Room> _room;
 
 private:
 	float _moveBroadcastElapsed = 0.0f;
@@ -71,6 +71,5 @@ private:
 	// === 이동상태 이상 탐지 === 
 	GameMath::Vector3 _lastCheckPos;
 	bool _hasLastCheckPos = false;
-
 };
 

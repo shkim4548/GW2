@@ -238,5 +238,5 @@ bool NavmeshLoader::LoadLaneMap(const string& path, Navigation::WalkableGrid& gr
         }
     }
 
-    return false;
+    return true;
 }

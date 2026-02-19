@@ -37,6 +37,8 @@ public:
 	void UpdateRoom(float deltaTime);
 	shared_ptr<Minion> SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team);
 
+	// Lane Controller
+	void InitLaneRoute();
 public:
 	// Object called
 	void CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& OUT targets) const;
@@ -49,8 +51,7 @@ private:
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
 
-	// Lane Controller
-	void InitLaneRoute();
+
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute(int32 laneId) const;
 	void SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route);
 
@@ -66,12 +67,14 @@ private:
 	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 	weak_ptr<Navigation::WalkableGrid> _roomWalkableGrid;
 	bool _isRunning = false;
+	
+	// === laneId ===
 	unordered_map<int32, shared_ptr<Navigation::LaneRoute>> _laneRoute;
+	int32 _laneIdCnt = 1;
 
 	// === minion cool time ===
 	float _minionSpawnCoolDown = 5.0f;
 	float _minionSpawnAccumulate = 0.0f;
 };
 
-extern shared_ptr<Room> GRoom;
-
+//extern shared_ptr<Room> GRoom;

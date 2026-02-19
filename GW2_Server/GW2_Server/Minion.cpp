@@ -90,7 +90,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		_minionState = Protocol::MinionState::MINION_IDLE;
 		return;
 	}
-	if(_currentWaypointIndex < 0 || _currentWaypointIndex >= static_cast<int32>(route->waypoints.empty()))
+	if(_currentWaypointIndex < 0 || _currentWaypointIndex >= static_cast<int32>(route->waypoints.size()))
 	{ 
 		_currentWaypointIndex = 0;
 	}
@@ -125,11 +125,11 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	// 매틱 마다 HandleMinionMove를 호출하지 않도록 한다
 	// 조건: (1) 현재 path가 비었거나 (2) 목표가 바뀌었거나 (3) 일정 시간 지나서 재탐색 필요할 때만 요청
 	auto shouldRequest = _path.empty() || (_lastMoveGoal - nowWp).Length() > 0.05f || (_repathCoolDown <= 0.0f);
-
+	shared_ptr<Room> room = _room.lock();
 	if (shouldRequest)
 	{
 		shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
-		_room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
+		room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
 
 		_lastMoveGoal = nowWp;
 		_repathCoolDown = 0.2f;
@@ -164,11 +164,11 @@ void Minion::UpdateChaseTarget(float deltaTime)
 // 매틱 마다 HandleMinionMove를 호출하지 않도록 한다
 // 조건: (1) 현재 path가 비었거나 (2) 목표가 바뀌었거나 (3) 일정 시간 지나서 재탐색 필요할 때만 요청
 	auto shouldRequest = _path.empty() || (_lastMoveGoal - minionSelfPos).Length() > 0.05f || (_repathCoolDown <= 0.0f);
-
+	shared_ptr<Room> room = _room.lock();
 	if (shouldRequest)
 	{
 		shared_ptr<Minion> minionSelf = static_pointer_cast<Minion>(shared_from_this());
-		_room->HandleMinionMove(minionSelf, minionSelfPos, _moveSpeed, deltaTime, _laneId);
+		room->HandleMinionMove(minionSelf, targetPos, _moveSpeed, deltaTime, _laneId);
 
 		_lastMoveGoal = minionSelfPos;
 		_repathCoolDown = 0.2f;
@@ -202,14 +202,16 @@ void Minion::UpdateAttack(float deltaTime)
 		return;
 
 	_attackCooldown = _attackInterval;
-	_room->HandleMinionAttack(currentTarget);
+	shared_ptr<Room> room = _room.lock();
+	room->HandleMinionAttack(currentTarget);
 }
 
 weak_ptr<Object> Minion::FindBestTarget()
 {
 	vector<shared_ptr<Object>> targets;
 	auto minionSelf = shared_from_this();
-	_room->CollectEnemiesInRange(minionSelf, _detectionRange, OUT targets);
+	shared_ptr<Room> room = _room.lock();
+	room->CollectEnemiesInRange(minionSelf, _detectionRange, OUT targets);
 
 	weak_ptr<Object> bestTarget;
 	int bestPriority = INT_MAX;

@@ -210,7 +210,7 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 void Room::UpdateRoom(float deltaTime)
 {
 	// 미니언 스폰
-	_minionSpawnCoolDown -= deltaTime;
+	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
 	{
 		while (_minionSpawnAccumulate >= _minionSpawnCoolDown)
@@ -301,6 +301,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 	
 	// Room에 등록한다
 	Enter(minion);
+	return minion;
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const
@@ -405,7 +406,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& 
 		}
 
 		GameMath::Vector3 worldPos;
-		if (navSystem->GridToWorld(grid, cell->x, cell->z, worldPos))
+		if (navSystem->GridToWorld(grid, cell->x, cell->z, worldPos) == false)
 		{
 			continue;
 		}
@@ -459,7 +460,88 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 
 void Room::InitLaneRoute()
 {
+	// navigation system
+	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
 
+	if (navSystem == nullptr || gridPtr == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"NavigationSystem or WalkableGrid is nullptr\n");
+		return;
+	}
+	Navigation::WalkableGrid& grid = *gridPtr;
+
+	// laneId 목록 수집
+	unordered_set<int32> laneIds;
+	laneIds.reserve(_laneIdCnt);	// 하드코딩 1로 되어 있음, 테스트 라인은 하나뿜
+	for (int32 z = 0; z < grid.height; ++z)
+	{
+		for (int32 x = 0; x < grid.width; ++x)
+		{
+			const Navigation::GridCell& cell = grid.At(x, z);
+			if (cell.walkable == false)
+				continue;
+
+			// invalid 타일
+			if (cell.laneId <= 0)
+				continue;
+
+			laneIds.insert(cell.laneId);
+		}
+	}
+
+	if (laneIds.empty() == true)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::InitLaneRoute] LaneId is invalid\n");
+		return;
+	}
+
+	// laneId 별 LaneRoute 생성
+	for (int32 laneId : laneIds)
+	{
+		shared_ptr<Navigation::LaneRoute> route = make_shared<Navigation::LaneRoute>();
+		route->laneId = static_cast<uint8>(laneId);
+
+		// 간단 휴리스틱 알고리즘 구현
+		for (int32 z = 0; z < grid.height; ++z)
+		{
+			int32 chosenX = -1;
+			for (int32 x = 0; x < grid.width; ++x)
+			{
+				const Navigation::GridCell& cell = grid.At(x, z);
+				if (cell.walkable == false)
+					continue;
+
+				if (cell.laneId != laneId)
+					continue;
+
+				chosenX = x;
+				break;
+			}
+
+			if (chosenX == -1)
+				continue;
+
+			GameMath::Vector3 wp;
+			// GridToWorld 성공시에만 waypoint 추가
+			if (!navSystem->GridToWorld(grid, chosenX, z, wp))
+				continue;
+
+			route->waypoints.push_back(wp);
+		}
+
+		if (route->waypoints.empty())
+		{
+			GConsoleLogger->WriteStdErr(Color::RED, L"[Room::InitLaneRoute] lane has no waypoints. laneId=%d\n", laneId);
+			continue;
+		}
+
+		// Room의 laneRoute에 등록한다.
+		SetLaneRoute(laneId, route);
+
+		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] laneId=%d, waypoints=%d\n",
+			laneId, static_cast<int32>(route->waypoints.size()));
+	}
 }
 
 weak_ptr<Navigation::LaneRoute> Room::GetLaneRoute(int32 laneId) const
