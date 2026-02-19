@@ -23,6 +23,7 @@ public:
 	int32 GetRoomPlayerCount() { return _players.size(); }
 	void SetRoomName(string roomName) { _roomName = roomName; }
 	string GetRoomName() { return _roomName; }
+	void SetIsRunning(bool isRunning) { _isRunning = isRunning; }
 
 	weak_ptr<Player> GetPlayerById(int32 id) { return weak_ptr<Player>(_players[id]); }
 

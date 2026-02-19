@@ -94,7 +94,7 @@ public class LaneMapExporterWindow : EditorWindow
             }
         }
 
-        string folder = Application.dataPath + "/../Exported";
+        string folder = Application.dataPath + "/../NavMeshExport";
         if (!Directory.Exists(folder))
             Directory.CreateDirectory(folder);
 

@@ -77,7 +77,7 @@ public class AdminUiPostController : Controller
             return View("~/Views/AdminPost/Edit.cshtml", model);
 
         // 레포에 실제 존재하는 DTO: PostUpdateRequest 사용
-        var request = new PostUpdateRequest
+        var request = new AdminPostUpdateRequest
         {
             // ⚠️ PostUpdateRequest 필드 구성에 맞춰 조정
             // 만약 PostId가 DTO에 없다면, 서비스 시그니처가 UpdateAsync(int postId, PostUpdateRequest req)여야 함

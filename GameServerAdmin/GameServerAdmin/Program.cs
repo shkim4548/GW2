@@ -4,14 +4,15 @@ using GameServerAdmin.Application.Notice;
 using GameServerAdmin.Application.Posts;
 using GameServerAdmin.Application.Posts.Public;
 using GameServerAdmin.Application.Validation;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Controllers.MiddleWare;
 using GameServerAdmin.Domain.Identity;
 using GameServerAdmin.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -136,6 +137,7 @@ namespace GameServerAdmin
             builder.Services.AddScoped<IAdminCommentService, AdminCommentService>();
             builder.Services.AddScoped<IPublicNoticeService, PublicNoticeService>();
             builder.Services.AddScoped<IAdminNoticeService, AdminNoticeService>();
+            builder.Services.AddScoped<IUserContext, HttpUserContext>();
 
             var app = builder.Build();
 

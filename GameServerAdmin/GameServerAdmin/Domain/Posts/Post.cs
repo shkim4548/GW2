@@ -85,7 +85,9 @@ namespace GameServerAdmin.Domain.Posts
                 throw new InvalidPostStateException("이미 삭제된 게시글입니다.");
 
             Status = PostStatus.Deleted;
+            IsDeleted = true;
             DeletedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void Restore()
@@ -94,7 +96,9 @@ namespace GameServerAdmin.Domain.Posts
                 throw new InvalidPostStateException("삭제되지 않은 게시글은 복구할 수 없습니다.");
 
             Status = PostStatus.Active;
+            IsDeleted = false;                
             DeletedAt = null;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         private static void ValidateTitle(string title)

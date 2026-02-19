@@ -211,17 +211,21 @@ void Room::UpdateRoom(float deltaTime)
 {
 	// 미니언 스폰
 	_minionSpawnCoolDown -= deltaTime;
-	while (_minionSpawnAccumulate >= _minionSpawnCoolDown)
+	if (_isRunning)
 	{
-		_minionSpawnAccumulate -= _minionSpawnCoolDown;
+		while (_minionSpawnAccumulate >= _minionSpawnCoolDown)
+		{
+			_minionSpawnAccumulate -= _minionSpawnCoolDown;
 
-		// TEMP : For TEST
-		GameMath::Vector3 tempPos;
-		tempPos._x(0);
-		tempPos._y(0);
-		tempPos._z(0);
-		SpawnMinion(0, tempPos, Protocol::CAMP_CYBORG);
+			// TEMP : For TEST, left base location hard coding
+			GameMath::Vector3 tempPos;
+			tempPos._x = -54;
+			tempPos._y = 0;
+			tempPos._z = 105;
+			SpawnMinion(0, tempPos, Protocol::CAMP_CYBORG);
+		}
 	}
+
 
 	for (auto& [id, obj] : _objects)
 	{

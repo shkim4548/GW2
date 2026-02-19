@@ -46,6 +46,9 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());
 	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_EnterGame] Request player id : ");
 	cout << pkt.playerindex() << endl;
+	// TEMP : For test
+	shared_ptr<Room> room = GLobby->GetRoomById(pkt.roomid()).lock();
+	room->SetIsRunning(true);
 	return true;
 }
 
