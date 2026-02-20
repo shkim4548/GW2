@@ -14,7 +14,7 @@ public:
 	Room();
 	virtual ~Room();
 
-	bool Enter(ObjectRef gameObject);
+	bool Enter(PlayerRef gameObject);
 	void Leave(int32 playerId);
 	void Broadcast(SendBufferRef sendBuffer, int32 exceptId = -1);
 
@@ -30,15 +30,18 @@ public:
 public:
 	// Handlers
 	bool HandleEnterPlayer(PlayerRef player);
-	bool HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt);
+	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
 	void HandleMovePlayer(Protocol::C_MOVE movePkt);
+	bool HandleSpawnMinion(MinionRef minion);
+	bool HandleStartGameFlag();
 
 	// 로비에서 호출해야함
 	void UpdateRoom(float deltaTime);
 	shared_ptr<Minion> SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team);
 
 	// Lane Controller
-	void InitLaneRoute();
+	void InitLaneRouteBin();
+	void InitLaneRouteJson();
 public:
 	// Object called
 	void CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& OUT targets) const;

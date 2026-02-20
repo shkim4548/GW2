@@ -73,6 +73,9 @@
     <ClCompile Include="Minion.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="LaneRouteLoader.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="Minion.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="LaneRouteLoader.h">
+      <Filter>GameContents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

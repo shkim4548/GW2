@@ -52,7 +52,7 @@ void Lobby::LobbyInit()
     GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] NavGrid load complete\n");
 
     shared_ptr<Room> room = MakeRoom("TestRoom");
-    room->DoAsync(&Room::InitLaneRoute);
+    room->DoAsync(&Room::InitLaneRouteJson);
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
     cout << _rooms.size() << endl;
 

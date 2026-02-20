@@ -11,6 +11,10 @@ namespace Data
 
     }
 
+    /*-------------------------
+        Navmesh Server Data
+     --------------------------*/
+
     [Serializable]
     public struct NavGridHeader
     {
@@ -40,5 +44,37 @@ namespace Data
         public byte n3;         // -Z
         public int x;
         public int z;
+    }
+
+    /*--------------------------------
+        Minion Line data for server
+     ---------------------------------*/
+    [Serializable]
+    public class LaneRouteFile
+    {
+        public List<LaneRouteData> lanes = new();
+    }
+
+    [Serializable]
+    public class LaneRouteData
+    {
+        public int laneId;
+        public List<Vector3Serializable> waypoints = new();
+    }
+
+    [Serializable]
+    public struct Vector3Serializable
+    {
+        public float x, y, z;
+
+        public Vector3Serializable(float x, float y, float z)
+        {
+            this.x = x; this.y = y; this.z = z;
+        }
+
+        public static Vector3Serializable FromVector3(Vector3 v, bool exportY)
+        {
+            return new Vector3Serializable(v.x, exportY ? v.y : 0f, v.z);
+        }
     }
 }

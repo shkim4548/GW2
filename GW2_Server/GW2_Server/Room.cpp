@@ -8,6 +8,7 @@
 #include "ClientPacketHandler.h"
 #include "Minion.h"
 #include "ObjectUtils.h"
+#include "LaneRouteLoader.h"
 
 // 공용으로 사용할 전역 룸
 //shared_ptr<Room> GRoom = make_shared<Room>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -24,14 +25,14 @@ Room::~Room()
 	
 }
 
-bool Room::Enter(ObjectRef gameObject)
+bool Room::Enter(PlayerRef gameObject)
 {
 	if (gameObject == nullptr)
 	{
 		return false;
 	}
 
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
+	//GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
 
 	int32 objectId = gameObject->GetObjectId();
 	_objects.emplace(objectId, gameObject);
@@ -40,32 +41,18 @@ bool Room::Enter(ObjectRef gameObject)
 	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 
-	if (shared_ptr<Player> player = static_pointer_cast<Player>(gameObject))
-	{
-		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterPlayer\n");
-		objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
-		objectInfo->set_object_id(objectId);
-		posInfo->set_x(72.5);
-		posInfo->set_y(0);
-		posInfo->set_z(0);
-		posInfo->set_yaw(0);
-		objectInfo->set_allocated_pos_info(posInfo);
-		enterPkt.set_allocated_player(objectInfo);
-		_players.emplace(objectId, player);
-	}
-
-	else if (shared_ptr<Minion> minion = static_pointer_cast<Minion>(gameObject))
-	{
-		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
-		objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
-		objectInfo->set_object_id(objectId);
-		posInfo->set_x(minion->GetPosInfo().x());
-		posInfo->set_y(minion->GetPosInfo().y());
-		posInfo->set_z(minion->GetPosInfo().z());
-		posInfo->set_yaw(0);
-		objectInfo->set_allocated_pos_info(posInfo);
-		enterPkt.set_allocated_player(objectInfo);
-	}
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterPlayer\n");
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+	objectInfo->set_object_id(objectId);
+	posInfo->set_x(72.5);
+	posInfo->set_y(0);
+	posInfo->set_z(0);
+	posInfo->set_yaw(0);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+	_players.emplace(objectId, gameObject);
+	// TODO : 나중에 시작 플래그 패킷으로 받는걸로 바꿔야함
+	_isRunning = true;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -107,7 +94,7 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 }
 
 
-bool Room::HandleSkill(PlayerRef player, Protocol::C_SKILL skillPkt)
+bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 {
 	return false;
 }
@@ -166,6 +153,36 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	HandleMovePlayerInternal(player.lock(), gridPath, startWorld, endWorld);
 }
 
+bool Room::HandleSpawnMinion(MinionRef minion)
+{
+	if (minion == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSpawnMinion] minion is nullptr\n");
+		return false;
+	}
+
+	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
+	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
+	Protocol::S_ENTER_GAME enterPkt;
+
+	minion = ObjectUtils::CreateMinion();
+	int32 objectId = minion->GetMinionId();
+	// 여기 들어오기 전에 죽는다. -> 타입 캐스팅 중에 죽는다.
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
+	objectInfo->set_object_id(objectId);
+	posInfo->set_x(minion->GetPosInfo().x());
+	posInfo->set_y(minion->GetPosInfo().y());
+	posInfo->set_z(minion->GetPosInfo().z());
+	posInfo->set_yaw(0);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
+	Broadcast(sendBuffer);
+	return true;
+}
+
 // Path를 player에 할당한다.
 void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld)
 {
@@ -222,7 +239,7 @@ void Room::UpdateRoom(float deltaTime)
 			tempPos._x = -54;
 			tempPos._y = 0;
 			tempPos._z = 105;
-			SpawnMinion(0, tempPos, Protocol::CAMP_CYBORG);
+			SpawnMinion(1, tempPos, Protocol::CAMP_CYBORG);
 		}
 	}
 
@@ -278,20 +295,17 @@ void Room::UpdateRoom(float deltaTime)
 shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team)
 {
 	// route 확보
-	weak_ptr<Navigation::LaneRoute> routeWeak = GetLaneRoute(laneId);
-	shared_ptr<Navigation::LaneRoute> route = routeWeak.lock();
+	shared_ptr<Navigation::LaneRoute> route = GetLaneRoute(laneId).lock();
 	if (route == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::SpawnMinion] LaneRoute missing. laneId=%d\n", laneId);
 		return nullptr;
 	}
-
 	// 미니언 생성
 	shared_ptr<Minion> minion = ObjectUtils::CreateMinion();
 	// 기본 파라미터 세팅
 	minion->SetLaneRoute(route);
 	minion->_laneId = static_cast<uint8>(laneId);
-
 	// 위치 초기화
 	Protocol::PosInfo posInfo;
 	posInfo.set_x(spawnWorldPos._x);
@@ -299,9 +313,12 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 	posInfo.set_z(spawnWorldPos._z);
 	minion->SetPosInfo(posInfo);
 	
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
 	// Room에 등록한다
-	Enter(minion);
+	//Enter(minion);
+	HandleSpawnMinion(minion);
 	return minion;
+	// 여기까진 문제 없다는 것 확인?
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const
@@ -458,7 +475,7 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	Broadcast(sendBuffer);
 }
 
-void Room::InitLaneRoute()
+void Room::InitLaneRouteBin()
 {
 	// navigation system
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
@@ -542,6 +559,42 @@ void Room::InitLaneRoute()
 		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] laneId=%d, waypoints=%d\n",
 			laneId, static_cast<int32>(route->waypoints.size()));
 	}
+}
+
+void Room::InitLaneRouteJson()
+{
+	// 1) NavigationSystem, Grid 유효 여부 체크 (필요하면 유지)
+	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
+
+	if (navSystem == nullptr || gridPtr == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED,
+			L"[Room::InitLaneRoute] NavigationSystem or WalkableGrid is nullptr\n");
+		return;
+	}
+
+	// 2) laneRoutes.json 로드
+	std::unordered_map<int32, shared_ptr<Navigation::LaneRoute>> loadedRoutes;
+
+	// 파일 경로는 네가 실제 배포 구조에 맞춰 조정
+	// 예: "./Data/laneRoutes.json" 또는 "Config/laneRoutes.json"
+	std::string path = "../../GW2_Client/Assets/NavMeshExport/laneRoutes.json";
+
+	if (!LaneRouteLoader::LoadLaneRoutesFromJson(path, loadedRoutes))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED,
+			L"[Room::InitLaneRoute] Failed to load lane routes from %S\n", path.c_str());
+		return;
+	}
+
+	// 3) Room 내부 테이블에 등록
+	for (auto& [laneId, route] : loadedRoutes)
+	{
+		SetLaneRoute(laneId, route);
+	}
+
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] lane routes initialized. count=%d\n", static_cast<int32>(_laneRoute.size()));
 }
 
 weak_ptr<Navigation::LaneRoute> Room::GetLaneRoute(int32 laneId) const
