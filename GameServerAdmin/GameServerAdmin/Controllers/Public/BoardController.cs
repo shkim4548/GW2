@@ -67,7 +67,6 @@ public sealed class BoardController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        // ✅ PublicApi DTO로 매핑 (AdminApi 절대 금지)
         var request = new PublicPostCreateRequest
         {
             // PostType은 지금은 고정값으로 가도 됨 (추정)

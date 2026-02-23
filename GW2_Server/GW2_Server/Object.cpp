@@ -30,72 +30,17 @@ void Object::SetPath(const NavPath& path)
 	_isMoving = true;
 }
 
-bool Object::UpdateMovement(float deltaTime)
+void Object::UpdateMovement(float deltaTime)
 {
-	// 상태부터 우선 체크한다.
-	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Object UpdateMovement] invalid state : move_state_run\n");
-		return false;
-	}
+	if (_movement.speed <= 0.f)
+		return;
 
-	// 경로 유효성 체크, 유효하지 않다면 IDLE로 바꾸고 return
-	if (_pathIndex >= static_cast<int32>(_path.size()))
-	{
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
-		_isMoving = false;
-		return false;
-	}
-
-	const float kArriveEpsilon = 1e-4f;
-	float remainMoveDist = _moveSpeed * deltaTime;
-	bool moved = false;
-
-	// _path를 소모하는 루프를 이용, 한틱만 움직이는 현상을 방지한다.
-	while (remainMoveDist > 0.0f && _pathIndex < static_cast<int32>(_path.size()))
-	{
-		const GameMath::Vector3& target = _path[_pathIndex];
-		GameMath::Vector3 dir = target - _posVector;
-		const float dist = dir.Length();
-
-		// waypoint에 거의 도달한 경우 : 완전히 스냅 + 다음 인덱스로
-		if (dist <= kArriveEpsilon)
-		{
-			_posVector = target;
-			++_pathIndex;
-			continue;
-		}
-
-		// 이번 틱 안에 target까지 도착 가능하다
-		if (dist <= remainMoveDist)
-		{
-			_posVector = target;
-			remainMoveDist -= dist;
-			++_pathIndex;
-			moved = true;
-			continue;
-		}
-
-		// 이번 틱 안에 target까지 못가는 경우, partial move
-		dir = dir.Normalized();
-		_posVector = _posVector + (dir * remainMoveDist);
-		++_pathIndex;
-		moved = true;
-
-	}
-
-	if (_pathIndex >= _path.size())
-	{
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
-		_isMoving = false;
-	}
+	GameMath::Vector3 delta = _movement.direction * _movement.speed * deltaTime;
+	_posVector = _posVector + delta;
 
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
-	std::cout << "posInfo :" << _pos.x() << ' ' << _pos.y() << ' ' << _pos.z() << endl;
-	std::cout << "_posVector : " << _posVector._x << ' ' << _posVector._y << ' ' << _posVector._z << endl;
-	return moved;
 }
 
 void Object::RequestMove(const vector<GameMath::Vector3>& path)
@@ -117,6 +62,11 @@ void Object::RequestMove(const vector<GameMath::Vector3>& path)
 void Object::PostUpdate()
 {
 	_isMoving = (_moveState == Protocol::MOVE_STATE_RUN);
+}
+
+void Object::UpdateController(float deltaTime)
+{
+	cout << "Object::UpdateController" << endl;
 }
 
 void Object::AccumulateMoveTime(float deltaTime)

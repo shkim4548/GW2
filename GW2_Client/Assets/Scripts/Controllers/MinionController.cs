@@ -17,6 +17,7 @@ public class MinionController : BaseController
     public override void UpdateMoving()
     {
         base.UpdateMoving();
+        Debug.Log("Minion State Update Moving");
     }
 
     public override void UpdateSkill()

@@ -11,11 +11,15 @@ class Minion : public Object
 public:
 	Minion();
 	virtual ~Minion();
+	void InitMinion();
 	void SetMinionId(int32 id) { _objectId = id; }
 	int32 GetMinionId() { return _objectId; }
+	void SetMinionTarget(vector<weak_ptr<Object>>& targets);
+	weak_ptr<Object> FindBestTarget(vector<weak_ptr<Object>> targets);
 
 	// called by GameRoom
-	void UpdateMinion(float deltaTime);
+	virtual void UpdateController(float deltaTime) override;
+	virtual void UpdateMovement(float deltaTime) override;
 
 	// === LaneRoute Handler === 
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
@@ -29,7 +33,7 @@ private:
 	void UpdateAttack(float deltaTime);
 
 	// === STATE MACHINE HELPER ===
-	weak_ptr<Object> FindBestTarget();
+	bool RequestFindTarget();
 	int32 GetTargetPriority(shared_ptr<Object> obj);
 	bool ShouldChaseTargetNow(shared_ptr<Object> target);
 	uint8 GetLaneIdFromPos(GameMath::Vector3& targetPos);
@@ -50,7 +54,9 @@ private:
 	weak_ptr<Object> _currentTarget;
 
 	int32 _currentWaypointIndex;
+	// CRITICAL SECTION! RETURNED BY ROOM THREAD! CRITICAL!
 	vector<weak_ptr<Object>> _targets;
+	weak_ptr<Object> _bestTarget;
 	weak_ptr<Navigation::LaneRoute> _route;
 
 	GameMath::Vector3 _lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);

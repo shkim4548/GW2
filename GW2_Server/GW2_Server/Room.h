@@ -44,8 +44,8 @@ public:
 	void InitLaneRouteJson();
 public:
 	// Object called
-	void CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& OUT targets) const;
-	void HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& dest, float speed, float deltaTime, uint8 laneId);
+	void CollectEnemiesInRange(shared_ptr<Object> requester, float range);
+	void HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
 	void HandleMinionAttack(shared_ptr<Object> target);
 
 private:

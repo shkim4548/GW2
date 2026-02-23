@@ -3,8 +3,6 @@
 
 namespace GameMath
 {
-
-
 	/*--------------------
 		Quaternion
 	---------------------*/
@@ -123,6 +121,16 @@ namespace GameMath
 		float _x;
 		float _z;
 	};
+
+	/*-------------------------
+		Movement Simulation
+	---------------------------*/
+	struct Movement
+	{
+	public:
+		Vector3 direction = { 0, 0, 0 };
+		float speed = 0;
+	};
 }
 
 /*-----------------
@@ -171,6 +179,9 @@ struct HitResult
 	GameMath::Vector3 position;	// 교차 지점
 	GameMath::Vector3 normal;		// 삼각형 법선
 };
+
+
+
 
 class GameLogic
 {

@@ -165,9 +165,9 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 	Protocol::S_ENTER_GAME enterPkt;
 
-	minion = ObjectUtils::CreateMinion();
+	//minion = ObjectUtils::CreateMinion();
 	int32 objectId = minion->GetMinionId();
-	// 여기 들어오기 전에 죽는다. -> 타입 캐스팅 중에 죽는다.
+	
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
 	objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
 	objectInfo->set_object_id(objectId);
@@ -177,6 +177,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	posInfo->set_yaw(0);
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
+	_objects.emplace(objectId, minion);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -226,7 +227,7 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 
 void Room::UpdateRoom(float deltaTime)
 {
-	// 미니언 스폰
+	// 0. 미니언 스폰 (기존 로직 유지)
 	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
 	{
@@ -243,49 +244,47 @@ void Room::UpdateRoom(float deltaTime)
 		}
 	}
 
-
+	// Controller Phase : 모든 오브젝트의 의사결정/FSM 틱
 	for (auto& [id, obj] : _objects)
 	{
-		//cout << "UpodateRoom is running now" << endl;
-		// 이동중이 아니라면 스킵한다.
-		if (obj->GetMoveState() != Protocol::MOVE_STATE_RUN)
-		{
-			continue;
-		}
-
-		// Minions
-		for (auto& [id, obj] : _objects)
-		{
-			if (obj == nullptr)
-			{
-				continue;
-			}
-
-			if (auto minion = dynamic_pointer_cast<Minion>(obj))
-			{
-				minion->UpdateMinion(deltaTime);
-			}
-		}
-
-		// 이동 업데이트 한다
-		bool movedThisTick = obj->UpdateMovement(deltaTime);
-		obj->AccumulateMoveTime(deltaTime);
-		if (!movedThisTick)
+		if (obj == nullptr)
 			continue;
 
-		// 브로드 캐스트 타이밍 체크
+		// Player -> path / 입력 처리
+		// Minion -> MinionState FSM (LaneTrace/Chase/Attack 등)
+		obj->UpdateController(deltaTime);
+		// 이번엔 여기는 들어온다
+	}
+
+	// Movement + Broadcast Phase
+	for (auto& [id, obj] : _objects)
+	{
+		if (obj == nullptr)
+			continue;
+
+		// 이동 전 상태 기억
+		bool wasMoving = obj->GetIsMoving();
+
+		// Movement 적분 (movement.direction/speed 기반)
+		obj->UpdateMovement(deltaTime);
+
+		// 이동 후 상태
+		bool isMoving = obj->GetIsMoving();
+
+		// 브로드캐스트 타이머 누적
 		obj->AccumulateMoveTime(deltaTime);
+
+		// 주기적 위치 브로드캐스트
 		if (obj->ShouldBroadcastMove())
 		{
 			BroadcastMoving(obj);
 			obj->ResetBroadcastTimer();
 		}
 
-		// 이동 종료 감지, 일단 이 if 로 들어오지도 않는다.
-		if (obj->GetMoveState() != Protocol::MoveState::MOVE_STATE_RUN)
+		// 이동 종료 감지 : 이전엔 움직였고, 지금은 안 움직이면 END 패킷
+		if (wasMoving && !isMoving)
 		{
 			BroadcastMovingEnd(obj);
-			//cout << "Terminate Moving" << endl;
 		}
 
 		obj->PostUpdate();
@@ -312,18 +311,22 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 	posInfo.set_y(spawnWorldPos._y);
 	posInfo.set_z(spawnWorldPos._z);
 	minion->SetPosInfo(posInfo);
+	minion->SetRoomId(this->GetRoomId());
+	minion->InitMinion();
+	cout << this->GetRoomId() << endl;
+	cout << minion->GetRoomId() << endl;
 	
-	GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
+	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
 	// Room에 등록한다
 	//Enter(minion);
 	HandleSpawnMinion(minion);
 	return minion;
-	// 여기까진 문제 없다는 것 확인?
 }
 
-void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range, vector<shared_ptr<Object>>& targets) const
+void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range)
 {
-	targets.clear();
+	cout << "Start Collect Enemies In Range" << endl;
+	vector<weak_ptr<Object>> rets;
 	if (requester == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::CollectEnemiesInRange] requester is nullptr\n");
@@ -333,15 +336,28 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 	const Protocol::CampType team = requester->GetTeamFlag();
 	const GameMath::Vector3 requesterPos = requester->GetPosVector();
 	const float rangeSquare = range * range;
-	
+	cout << "After Init" << endl;
 	// 선형탐색의 범위를 자신의 라인 안으로만 한정한다.
-	const shared_ptr<Minion>& asMinion = requester->IsMinion() ? static_pointer_cast<Minion>(requester) : nullptr;
+	//const shared_ptr<Minion>& asMinion = requester->IsMinion() ? static_pointer_cast<Minion>(requester) : nullptr;
+	auto asMinion = dynamic_pointer_cast<Minion>(requester);
 	const uint8 myLaneId = asMinion ? asMinion->_laneId : 0;
-
+	if (asMinion == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::CollectEnemiesInRange] asMinion is nullptr\n");
+		return;
+	}
+	// 이 반복문에 들어가지도 못하고 함수 다운
 	for (auto& [id, obj] : _objects)
 	{
+		if (obj == nullptr)
+		{
+			cout << "obj is nullptr" << endl;
+			continue;
+		}
+
 		if (!obj || obj == requester /*|| obj->IsDead()*/)
 			continue;
+
 		if (obj->GetTeamFlag() == team)
 			continue;
 
@@ -360,12 +376,15 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 		float dx = p._x - requesterPos._x;
 		float dz = p._z - requesterPos._z;
 		if (dx * dx + dz * dz <= rangeSquare)
-			targets.push_back(obj);
+			rets.push_back(obj);
 	}
+	cout << "CollectEnemiesInRange End" << endl;
+	asMinion->SetMinionTarget(rets);
 }
 
-void Room::HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& dest, float speed, float deltaTime, uint8 laneId)
+void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
 {
+	cout << "Handle Minion Move start" << endl;
 	// 삭제/상태/권한 우선 체크
 	if (minion == nullptr)
 	{
@@ -439,15 +458,23 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, const GameMath::Vector3& 
 		worldPath.push_back(endWorldPos);
 	}
 
-	// 이동 제공
+	// 이동 제공, 이 state machine이 유효하지 않다.
 	minion->SetMoveState(Protocol::MoveState::MOVE_STATE_RUN);
 	minion->_path = std::move(worldPath);
 	minion->_pathIndex = 0;
 	minion->SetIsMoving(true);
+	int32 minionId = minion->GetMinionId();
+	
+	Protocol::S_MOVE* minionMove = new Protocol::S_MOVE();
+	Protocol::PosInfo* minionPos = new Protocol::PosInfo();
+	minionMove->set_object_id(minionId);
+	//minionMove->set_server_time();
+	cout << "Handle minion move end" << endl;
 }
 
 void Room::HandleMinionAttack(shared_ptr<Object> target)
 {
+
 }
 
 void Room::BroadcastMoving(const ObjectRef& obj)

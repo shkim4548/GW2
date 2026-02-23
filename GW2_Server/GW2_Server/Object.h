@@ -1,7 +1,7 @@
 #pragma once
 #include "GameLogic.h"
 
-namespace GameMath{ struct Vector3; }
+namespace GameMath{ struct Vector3; struct movement; }
 namespace Navigation {  struct GridCell;  class NavigationSystem; }
 using NavPath = std::vector<GameMath::Vector3>;
 constexpr float MOVE_BROADCAST_INTERVAL = 0.1f; // 100ms (10Hz), 가장 일반적인 온라인 게임 브로드캐스트 주기
@@ -26,14 +26,18 @@ public:
 	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }
 	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
+	void SetRoomId(int32 roomId) { _roomId = roomId; }
 
 	// Navigation
 	void SetPath(const NavPath& path);
 	bool GetIsMoving() const { return _isMoving; }
-	bool UpdateMovement(float deltaTime);
+	virtual void UpdateMovement(float deltaTime);
 	void RequestMove(const vector<GameMath::Vector3>& path);
 	void PostUpdate();
 	
+	// MOVEMENT SYSTEM
+	virtual void UpdateController(float deltaTime);
+
 	// Game Room Logic
 	void AccumulateMoveTime(float deltaTime);
 	bool ShouldBroadcastMove() const;
@@ -46,6 +50,12 @@ public:
 	bool IsTurret() const {	return _objectType == Protocol::ObjectType::OBJECT_TYPE_TURRET; }
 	bool IsNexus()  const {	return _objectType == Protocol::ObjectType::OBJECT_TYPE_NEXUS;	}
 	
+	// STATE HELPER
+	bool GetIsMoving() { return _isMoving; }
+
+	// Debug
+	int32 GetRoomId() { return _roomId; }
+
 public:
 	NavPath _path;
 	size_t  _pathIndex = 0;
@@ -62,8 +72,9 @@ protected:
 	Protocol::ObjectType _objectType = Protocol::ObjectType::OBJECT_TYPE_NONE;
 	Protocol::CampType _campType = Protocol::CampType::CAMP_NEUTURAL;
 	float _moveSpeed = 100.0f;
-
+	GameMath::Movement _movement;
 	weak_ptr<Room> _room;
+	int32 _roomId = -1;
 
 private:
 	float _moveBroadcastElapsed = 0.0f;
