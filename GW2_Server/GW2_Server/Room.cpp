@@ -378,13 +378,11 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 		if (dx * dx + dz * dz <= rangeSquare)
 			rets.push_back(obj);
 	}
-	cout << "CollectEnemiesInRange End" << endl;
 	asMinion->SetMinionTarget(rets);
 }
 
 void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
 {
-	cout << "Handle Minion Move start" << endl;
 	// 삭제/상태/권한 우선 체크
 	if (minion == nullptr)
 	{
@@ -421,8 +419,9 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 
 	// PathFinding
 	vector<Navigation::GridCell*> gridPath;
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"sx : %d, sz : %d, tx : %d, tz : %d, laneId : %d\n", sx, sz, tx, tz, laneId);
 	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
-	if (ok == false || gridPath.empty())
+	if (gridPath.empty() || ok == false)
 	{
 		// lane 제한 때문에 실패할 수 있음(정상 케이스도 존재)
 		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed (lane filtered?)\n");
@@ -469,7 +468,6 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	Protocol::PosInfo* minionPos = new Protocol::PosInfo();
 	minionMove->set_object_id(minionId);
 	//minionMove->set_server_time();
-	cout << "Handle minion move end" << endl;
 }
 
 void Room::HandleMinionAttack(shared_ptr<Object> target)

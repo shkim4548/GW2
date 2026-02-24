@@ -202,7 +202,6 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	if (shouldRequest)
 	{
 		shared_ptr<Minion> minionSelf = dynamic_pointer_cast<Minion>(shared_from_this());
-		cout << "should request block" << endl;
 		if (minionSelf == nullptr)
 		{
 			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::LineTrace] minionSelf is nullptr\n");
@@ -210,7 +209,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		}
 		//room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
 		room->DoAsync(&Room::HandleMinionMove, minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
-		cout << "After Do Async" << endl;
+		//cout << "After Do Async" << endl;
 		_lastMoveGoal = nowWp;
 		_repathCoolDown = 0.2f;
 	}
@@ -384,8 +383,24 @@ bool Minion::ShouldChaseTargetNow(shared_ptr<Object> target)
 
 uint8 Minion::GetLaneIdFromPos(GameMath::Vector3& targetPos)
 {
-	// TODO : Only for test
-	return 1;
+	shared_ptr<Room> room = _room.lock();
+	if (room == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::GetLaneIdFromPos] room is nullptr");
+		return 0;
+	}
+
+	//Navigation::NavigationSystem navSystem = room->
+	// 모든 room은 하나의 navmesh를 공유(맵 종류가 하나)
+	shared_ptr<Navigation::NavigationSystem> navSystem = GLobby->GetNavigationSystem().lock();
+	Navigation::WalkableGrid& grid = navSystem->GetGridCells();
+
+	int32 gx, gz;
+	if (navSystem->WorldToGrid(grid, targetPos,  gx, gz))
+		return 0;
+
+	const Navigation::GridCell& cell = grid.At(gx, gz);
+	return static_cast<uint8>(cell.laneId);
 }
 
 void Minion::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
