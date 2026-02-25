@@ -17,6 +17,7 @@ public:
 	bool Enter(PlayerRef gameObject);
 	void Leave(int32 playerId);
 	void Broadcast(SendBufferRef sendBuffer, int32 exceptId = -1);
+	void RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> route);
 
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
 	int32 GetRoomId() { return _roomId; }

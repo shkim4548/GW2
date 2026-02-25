@@ -27,6 +27,8 @@ public sealed class BoardController : Controller
                 PostId = p.PostId,
                 Title = p.Title,
                 CreatedAt = p.CreatedAt,
+                AuthorName = p.AuthorName,
+                ViewCount = p.ViewCount,
             })
             .ToList();
 
@@ -44,7 +46,8 @@ public sealed class BoardController : Controller
             PostId = post.PostId,
             Title = post.Title,
             Content = post.Content,
-            CreatedAt = post.CreatedAt
+            CreatedAt = post.CreatedAt,
+            ViewCount = post.ViewCount,
         };
 
         return View(viewModel);

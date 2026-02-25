@@ -9,5 +9,8 @@
         public string AuthorType { get; set; } = null!; 
         public long AuthorId { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public string AuthorName { get; set; } = null!;
+        public int ViewCount { get; set; }
     }
 }

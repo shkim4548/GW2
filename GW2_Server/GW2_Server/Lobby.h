@@ -8,7 +8,7 @@
 
 class Room;
 class Player;
-namespace Navigation { class NavigationSystem; class WalkableGrid; }
+namespace Navigation { class NavigationSystem; class WalkableGrid; struct LaneRoute; }
 
 class Lobby : public JobQueue
 {
@@ -37,6 +37,10 @@ public:
 	void LobbyUpdate(float deltaTime);
 
 private:
+
+protected:
+	unique_ptr<class LaneRouteLoader> _navRouteLoader;
+	unordered_map<int32, shared_ptr<Navigation::LaneRoute>> _route;
 
 private:
 	// object 단위에서 자신의 소속 room을 갖고 있다.

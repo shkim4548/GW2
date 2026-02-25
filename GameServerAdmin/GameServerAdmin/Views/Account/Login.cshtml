@@ -1,26 +1,55 @@
 ﻿@model GameServerAdmin.Models.Auth.LoginRequest
 
-<h2>로그인</h2>
+@{
+    ViewData["Title"] = "로그인";
+}
 
-<form method="post">
-    @Html.AntiForgeryToken()
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">로그인</h5>
+            </div>
 
-    <div>
-        <label>아이디</label>
-        <input asp-for="UserName" />
-        <span asp-validation-for="UserName"></span>
+            <div class="card-body">
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- 아이디 -->
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label">아이디</label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <!-- 비밀번호 -->
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">비밀번호</label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- 전체 에러 요약 -->
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <!-- 버튼 영역 -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-primary">
+                            로그인
+                        </button>
+
+                        <!-- 회원가입 페이지가 있다면 보조 버튼으로 노출 -->
+                        <a asp-action="Register"
+                           asp-controller="Account"
+                           class="btn btn-outline-secondary btn-sm">
+                            회원가입
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <label>비밀번호</label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <div asp-validation-summary="All"></div>
-
-    <button type="submit">로그인</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

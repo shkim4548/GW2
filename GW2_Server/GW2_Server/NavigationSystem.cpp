@@ -353,6 +353,20 @@ bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, GameMat
 	return true;
 }
 
+bool Navigation::NavigationSystem::WorldToGrid(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT x, int32& OUT z)
+{
+	if (!WorldToGridImpl(grid, worldX, worldZ, x, z))
+		return false;
+
+	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
+		return false;
+
+	if (!grid.At(x, z).walkable)
+		return false;
+
+	return true;
+}
+
 void Navigation::NavigationSystem::BuildGrid(float cellSize)
 {
 	_cellSize = cellSize;
@@ -459,7 +473,8 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 	{
 		const GridCell& startCell = grid.At(startX, startZ);
 		const GridCell& endCell = grid.At(endX, endZ);
-
+		GConsoleLogger->WriteStdOut(Color::WHITE, L"[FindPath] allowedLaneId=%d, start(%d, %d) laneId = %d, end(%d, %d), laneId = %d\n"
+		, allowedLaneId, startX, startZ, startCell.laneId, endX, endZ, endCell.laneId);
 		if (startCell.laneId != allowedLaneId)
 			return false;
 

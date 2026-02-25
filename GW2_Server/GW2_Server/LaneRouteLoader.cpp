@@ -127,3 +127,72 @@ bool LaneRouteLoader::LoadLaneRoutesFromJson(const string& path, unordered_map<i
 
     return true;
 }
+
+void LaneRouteLoader::BakeLaneRoutesToGrid(const unordered_map<int32, shared_ptr<Navigation::LaneRoute>>& routes, Navigation::WalkableGrid& grid)
+{
+    shared_ptr<Navigation::NavigationSystem> navSystem;
+
+    // 1) 초기화: 필요하면 기존 laneId를 0으로 리셋
+    for (auto& cell : grid.cells)
+        cell.laneId = 0;
+
+    // 2) 각 laneRoute 순회
+    for (const auto& kv : routes)
+    {
+        int32 laneId = kv.first;
+        const shared_ptr<Navigation::LaneRoute>& route = kv.second;
+        if (!route) continue;
+
+        uint8 laneIdByte = static_cast<uint8>(laneId);
+
+        const auto& wps = route->waypoints;
+        if (wps.size() == 0)
+            continue;
+
+        // 2-1) 각 웨이포인트를 grid에 찍기
+        for (size_t i = 0; i < wps.size(); ++i)
+        {
+            const GameMath::Vector3& wp = wps[i];
+
+            int32 gx = 0, gz = 0;
+            if (!navSystem->WorldToGrid(grid, wp._x, wp._z, gx, gz))
+                continue;
+
+            if (gx < 0 || gz < 0 || gx >= grid.width || gz >= grid.height)
+                continue;
+
+            Navigation::GridCell& cell = grid.At(gx, gz);
+            cell.laneId = laneIdByte;
+        }
+
+        // 2-2) 웨이포인트 사이의 segment도 메우고 싶다면 (선 따라 찍기)
+        for (size_t i = 1; i < wps.size(); ++i)
+        {
+            const GameMath::Vector3& prev = wps[i - 1];
+            const GameMath::Vector3& cur = wps[i];
+
+            int32 sx, sz, ex, ez;
+            if (!navSystem->WorldToGrid(grid, prev._x, prev._z, sx, sz)) continue;
+            if (!navSystem->WorldToGrid(grid, cur._x, cur._z, ex, ez))   continue;
+
+            // Bresenham 혹은 단순 보간
+            int dx = ex - sx;
+            int dz = ez - sz;
+            int steps = std::max(std::abs(dx), std::abs(dz));
+            if (steps == 0) continue;
+
+            for (int step = 0; step <= steps; ++step)
+            {
+                float t = (steps == 0) ? 0.0f : (float)step / (float)steps;
+                int gx = sx + static_cast<int>(std::round(dx * t));
+                int gz = sz + static_cast<int>(std::round(dz * t));
+
+                if (gx < 0 || gz < 0 || gx >= grid.width || gz >= grid.height)
+                    continue;
+
+                Navigation::GridCell& c = grid.At(gx, gz);
+                c.laneId = laneIdByte;
+            }
+        }
+    }
+}

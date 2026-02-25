@@ -143,6 +143,7 @@ namespace Navigation
 		void BuildConnections(WalkableGrid& grid);
 		bool GridToWorld(WalkableGrid& grid, int32 x, int32 z, GameMath::Vector3& OUT worldPos);
 		bool WorldToGrid(const WalkableGrid& grid, GameMath::Vector3& worldPos, int32& OUT x, int32& OUT z);
+		bool WorldToGrid(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT x, int32& OUT z);
 		void BuildGrid(float cellSize);
 		bool WorldToGridXZ(float worldX, float worldZ, int& OUT outX, int& OUT outZ) const;
 

@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Room.h"
 #include "NavmeshLoader.h"
+#include "LaneRouteLoader.h"
 #include "NavigationSystem.h"
 
 LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다.
@@ -32,14 +33,10 @@ void Lobby::LobbyInit()
         "../../GW2_Client/Assets/NavMeshExport/navgrid.bin",
         *_walkableGrid
     );
-
-    // 미니언 이동 맵 적용
-    bool loadMinionLane = _navmeshLoader->LoadLaneMap(
-        "../../GW2_Client/Assets/NavMeshExport/navlane.bin",
-        *_walkableGrid
-        );
-
-    if (!ok) {
+    
+    bool loadMinionLane = _navRouteLoader->LoadLaneRoutesFromJson("../../GW2_Client/Assets/NavMeshExport/laneRoutes.json", _route);
+    if (!ok) 
+    {
         GConsoleLogger->WriteStdOut(Color::RED, L"[Lobby] NavGrid load failed\n");
         return;
     }
@@ -47,14 +44,17 @@ void Lobby::LobbyInit()
     if (!loadMinionLane)
     {
         GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] Minion Lane load failed");
+        return;
     }
-
+    _navRouteLoader->BakeLaneRoutesToGrid(_route, *_walkableGrid);
     GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] NavGrid load complete\n");
 
     shared_ptr<Room> room = MakeRoom("TestRoom");
     room->DoAsync(&Room::InitLaneRouteJson);
+    room->DoAsync(&Room::RoomInit, _route);
+    
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
-    cout << _rooms.size() << endl;
+    //cout << _rooms.size() << endl;
 
     // DEBUG
     cout << "[NavGrid Loaded]\n";

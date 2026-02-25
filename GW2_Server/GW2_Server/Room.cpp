@@ -88,6 +88,11 @@ void Room::Broadcast(SendBufferRef sendBuffer, int32 exceptId)
 	}
 }
 
+void Room::RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> route)
+{
+	//_laneRoute = route;
+}
+
 bool Room::HandleEnterPlayer(PlayerRef player)
 {
 	return false;
@@ -295,16 +300,18 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 {
 	// route 확보
 	shared_ptr<Navigation::LaneRoute> route = GetLaneRoute(laneId).lock();
-	if (route == nullptr)
+	if (route == nullptr || route->waypoints.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::SpawnMinion] LaneRoute missing. laneId=%d\n", laneId);
 		return nullptr;
 	}
+
 	// 미니언 생성
 	shared_ptr<Minion> minion = ObjectUtils::CreateMinion();
 	// 기본 파라미터 세팅
 	minion->SetLaneRoute(route);
 	minion->_laneId = static_cast<uint8>(laneId);
+
 	// 위치 초기화
 	Protocol::PosInfo posInfo;
 	posInfo.set_x(spawnWorldPos._x);
@@ -313,8 +320,6 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, const GameMath::Vector3& spaw
 	minion->SetPosInfo(posInfo);
 	minion->SetRoomId(this->GetRoomId());
 	minion->InitMinion();
-	cout << this->GetRoomId() << endl;
-	cout << minion->GetRoomId() << endl;
 	
 	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
 	// Room에 등록한다
@@ -613,12 +618,13 @@ void Room::InitLaneRouteJson()
 		return;
 	}
 
+
 	// 3) Room 내부 테이블에 등록
 	for (auto& [laneId, route] : loadedRoutes)
 	{
 		SetLaneRoute(laneId, route);
 	}
-
+	
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] lane routes initialized. count=%d\n", static_cast<int32>(_laneRoute.size()));
 }
 

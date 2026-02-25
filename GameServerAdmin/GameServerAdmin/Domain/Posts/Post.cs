@@ -8,7 +8,7 @@ namespace GameServerAdmin.Domain.Posts
     {
         protected Post() { }
 
-        public Post(string postType, string title, string content, string authorType, long authorId)
+        public Post(string postType, string title, string content, string authorType, long authorId, string authorName)
         {
             ValidateTitle(title);
             ValidateContent(content);
@@ -18,6 +18,9 @@ namespace GameServerAdmin.Domain.Posts
             Content = content;
             AuthorType = authorType;
             AuthorId = authorId;
+            
+            AuthorName = authorName;
+
             Status = PostStatus.Active;
             CreatedAt = DateTime.UtcNow;
 
@@ -37,6 +40,7 @@ namespace GameServerAdmin.Domain.Posts
         public bool IsDeleted { get; private set; }
 
         // 공통 기능 속성 (새로 추가)
+        public string AuthorName { get; private set; } = null!;
         public int ViewCount { get; private set; }
         public bool IsCommentEnabled { get; private set; }
 

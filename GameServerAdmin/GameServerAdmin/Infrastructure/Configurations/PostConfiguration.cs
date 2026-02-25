@@ -41,6 +41,12 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnType("bigint")
                 .IsRequired();
 
+
+            builder.Property(e => e.AuthorName)
+                .HasColumnName("author_name")
+                .HasColumnType("varchar(100)") // 길이는 취향, 50~100 정도
+                .IsRequired();
+
             builder.Property(e => e.CreatedAt)
                 .HasColumnName("created_at")
                 .HasColumnType("timestamp with time zone")

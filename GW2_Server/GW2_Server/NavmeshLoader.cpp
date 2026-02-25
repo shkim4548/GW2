@@ -237,6 +237,5 @@ bool NavmeshLoader::LoadLaneMap(const string& path, Navigation::WalkableGrid& gr
             grid.cells[idx].laneId = laneData[idx];
         }
     }
-
     return true;
 }
