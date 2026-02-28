@@ -23,7 +23,7 @@ public:
 	bool IsDead();
 
 	void SetObjectId(int64 id) { _objectId = id; }
-	void SetPosInfo(Protocol::PosInfo posInfo) { _pos = posInfo; }
+	void SetPosInfo(Protocol::PosInfo posInfo);
 	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
 	void SetRoomId(int32 roomId) { _roomId = roomId; }

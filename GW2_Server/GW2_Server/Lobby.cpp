@@ -15,6 +15,8 @@ Lobby::Lobby()
 	//LobbyInit();
 	_navigationSystem = MakeShared<Navigation::NavigationSystem>();
 	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
+    _navmeshLoader = make_unique<NavmeshLoader>();
+    _navRouteLoader = make_unique<LaneRouteLoader>();
 	//cout << "Lobby Construct" << endl;
 }
 
@@ -22,7 +24,7 @@ Lobby::~Lobby()
 {
 	_rooms.clear();
 	_lobbyPlayers.clear();
-	cout << "Lobby Destroy" << endl;
+    GConsoleLogger->WriteStdOut(Color::YELLOW, L"Lobby Destroctor has been called\n");
 }
 
 void Lobby::LobbyInit()
@@ -33,63 +35,76 @@ void Lobby::LobbyInit()
         "../../GW2_Client/Assets/NavMeshExport/navgrid.bin",
         *_walkableGrid
     );
-    
-    bool loadMinionLane = _navRouteLoader->LoadLaneRoutesFromJson("../../GW2_Client/Assets/NavMeshExport/laneRoutes.json", _route);
-    if (!ok) 
+    GConsoleLogger->WriteStdOut(Color::YELLOW,
+        L"[NavGrid Spec] origin=(%.3f, %.3f) width=%d height=%d cellSize=%.3f\n",
+        _walkableGrid->origin._x,
+        _walkableGrid->origin._z,
+        _walkableGrid->width,
+        _walkableGrid->height,
+        _walkableGrid->cellSize);
+    if (!ok)
     {
         GConsoleLogger->WriteStdOut(Color::RED, L"[Lobby] NavGrid load failed\n");
         return;
     }
 
-    if (!loadMinionLane)
-    {
-        GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] Minion Lane load failed");
-        return;
-    }
-    _navRouteLoader->BakeLaneRoutesToGrid(_route, *_walkableGrid);
     GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Lobby] NavGrid load complete\n");
 
-    shared_ptr<Room> room = MakeRoom("TestRoom");
-    room->DoAsync(&Room::InitLaneRouteJson);
-    room->DoAsync(&Room::RoomInit, _route);
-    
-    GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
-    //cout << _rooms.size() << endl;
+    _navigationSystem->BuildConnections(*_walkableGrid);
 
-    // DEBUG
+    bool okLaneMap = _navmeshLoader->LoadLaneMap(
+        "../../GW2_Client/Assets/NavMeshExport/laneMap.bin",
+        *_walkableGrid);
+    if (!okLaneMap)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] LaneMap load failed\n");
+        return;
+    }
+
+    _navigationSystem->Init(*_walkableGrid);
+
+    _navigationSystem->PrintGridSummary(*_walkableGrid);
+    _navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
+
+    // === 기존처럼 3x3 neighbor + laneId 간략 덤프 추가해도 좋음 (디버그용) ===
     cout << "[NavGrid Loaded]\n";
     cout << "width     : " << _walkableGrid->width << "\n";
     cout << "height    : " << _walkableGrid->height << "\n";
     cout << "cellSize  : " << _walkableGrid->cellSize << "\n";
     cout << "cellCount : " << _walkableGrid->cells.size() << endl;
 
-    // 제거: BuildWalkableGrid는 파일 데이터를 덮어씀
-    // _navigationSystem->BuildWalkableGrid(*_walkableGrid, ...);
-
-    // 추가: Connections만 빌드
-    _navigationSystem->BuildConnections(*_walkableGrid);
-
-    // Init
-    _navigationSystem->Init(*_walkableGrid);
-
-    // 검증
-    _navigationSystem->PrintGridSummary(*_walkableGrid);
-    _navigationSystem->VerifyWorldGridInvariant(*_walkableGrid);
-
-    // ===== 검증 로그 =====
     cout << "[Connections Verification - First 3x3]" << endl;
-    for (int z = 0; z < min(3, _walkableGrid->height); ++z) {
-        for (int x = 0; x < min(3, _walkableGrid->width); ++x) {
+    for (int z = 0; z < min(3, _walkableGrid->height); ++z)
+    {
+        for (int x = 0; x < min(3, _walkableGrid->width); ++x)
+        {
             auto& cell = _walkableGrid->At(x, z);
-            if (cell.walkable) {
-                cout << "Cell(" << x << "," << z << ") N="
-                    << (int)cell.neighbors[0] << " E="
-                    << (int)cell.neighbors[1] << " S="
-                    << (int)cell.neighbors[2] << " W="
-                    << (int)cell.neighbors[3] << endl;
+            if (cell.walkable)
+            {
+                cout << "Cell(" << x << "," << z << ") laneId="
+                    << (int)cell.laneId
+                    << " N=" << (int)cell.neighbors[0]
+                    << " E=" << (int)cell.neighbors[1]
+                    << " S=" << (int)cell.neighbors[2]
+                    << " W=" << (int)cell.neighbors[3] << endl;
             }
         }
     }
+
+    // LaneRoute(waypoints)는 여전히 미니언 중앙선용으로 Room 에게만 넘김
+    bool loadMinionLane = _navRouteLoader->LoadLaneRoutesFromJson(
+        "../../GW2_Client/Assets/NavMeshExport/laneRoutes.json",
+        _route);
+    if (!loadMinionLane)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] Minion LaneRoute load failed\n");
+        return;
+    }
+    _navigationSystem->DebugCheckLaneRouteCoverage(*_walkableGrid, _route, *_navigationSystem);
+    shared_ptr<Room> room = MakeRoom("TestRoom");
+    room->DoAsync(&Room::RoomInit, _route);
+
+    GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 }
 
 

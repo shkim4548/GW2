@@ -56,9 +56,11 @@ public sealed class BoardController : Controller
     // GET /board/create
     [Authorize] // 글쓰기는 로그인 필요 (정책은 네 선택)
     [HttpGet("/board/create")]
+    [ValidateAntiForgeryToken]
     public IActionResult Create()
     {
-        return View(new PublicPostCreateViewModel());
+        var model = new PublicPostCreateViewModel();
+        return View(model);
     }
 
     // POST /board/create

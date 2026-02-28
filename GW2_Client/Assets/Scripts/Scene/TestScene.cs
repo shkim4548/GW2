@@ -19,6 +19,9 @@ public class TestScene : BaseScene
         enterGamePkt.RoomId = 0;
         network.Send(enterGamePkt);
         Debug.Log("TestScene");
+
+        LaneDebugProbe probe = GetComponent<LaneDebugProbe>();
+        probe.CheckLaneTile();
     }
 
     public override void Clear()

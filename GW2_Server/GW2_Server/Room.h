@@ -38,7 +38,7 @@ public:
 
 	// 로비에서 호출해야함
 	void UpdateRoom(float deltaTime);
-	shared_ptr<Minion> SpawnMinion(int32 laneId, const GameMath::Vector3& spawnWorldPos, Protocol::CampType team);
+	shared_ptr<Minion> SpawnMinion(int32 laneId, Protocol::CampType team);
 
 	// Lane Controller
 	void InitLaneRouteBin();

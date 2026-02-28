@@ -14,7 +14,10 @@ public:
 	void InitMinion();
 	void SetMinionId(int32 id) { _objectId = id; }
 	int32 GetMinionId() { return _objectId; }
+	uint8 GetLaneId() { return _laneId; }
+	int32 GetCurrentWaypointIndex() { return _currentWaypointIndex; }
 	void SetMinionTarget(vector<weak_ptr<Object>>& targets);
+	void SetMinionLaneId(uint8 laneId) { _laneId = laneId; }
 	weak_ptr<Object> FindBestTarget(vector<weak_ptr<Object>> targets);
 
 	// called by GameRoom

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GameServerAdmin.Common.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace GameServerAdmin.Common.Security;
 
@@ -18,11 +19,13 @@ public sealed class HttpUserContext : IUserContext
     {
         get
         {
-            var user = _accessor.HttpContext?.User;
-            if (user is null)
-                throw new InvalidOperationException("HttpContext is not available.");
+            var httpContext = _accessor.HttpContext;
+            var user = httpContext?.User;
 
-            // 레포에 이미 있는 ClaimsPrincipalExtensions를 사용
+            if (user == null || user.Identity?.IsAuthenticated != true)
+                throw new UnauthorizedException("User is not authenticated.");
+
+            // ClaimsPrincipalExtensions 사용
             return user.GetActorIdOrThrow();
         }
     }
@@ -31,9 +34,14 @@ public sealed class HttpUserContext : IUserContext
     {
         get
         {
-            // (추정) Public은 일반 유저 작성으로 취급.
-            // 추후 Admin이 Public API로 쓰는 케이스가 있다면 Role 기반으로 분기 가능.
-            return "User";
+            var httpContext = _accessor.HttpContext;
+            var user = httpContext?.User;
+
+            if (user == null || user.Identity?.IsAuthenticated != true)
+                return "Anonymous";
+
+            // "User" / "Admin" 등
+            return user.GetActorTypeOrDefault("User");
         }
     }
 }

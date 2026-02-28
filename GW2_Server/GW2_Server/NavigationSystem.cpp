@@ -473,13 +473,20 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 	{
 		const GridCell& startCell = grid.At(startX, startZ);
 		const GridCell& endCell = grid.At(endX, endZ);
-		GConsoleLogger->WriteStdOut(Color::WHITE, L"[FindPath] allowedLaneId=%d, start(%d, %d) laneId = %d, end(%d, %d), laneId = %d\n"
+		GConsoleLogger->WriteStdOut(Color::WHITE, L"[Navigation::FindPath] allowedLaneId=%d, start(%d, %d) startLaneId = %d, end(%d, %d), endLaneId = %d\n"
 		, allowedLaneId, startX, startZ, startCell.laneId, endX, endZ, endCell.laneId);
 		if (startCell.laneId != allowedLaneId)
 			return false;
 
 		if (endCell.laneId != allowedLaneId)
+		{
+			GConsoleLogger->WriteStdErr(
+				Color::RED,
+				L"[FindPath] end cell lane mismatch: endLane=%d allowed=%d\n",
+				endCell.laneId,
+				allowedLaneId);
 			return false;
+		}
 	}
 
 	vector<NodeRecord> records(W * H);
@@ -757,13 +764,87 @@ uint8 Navigation::NavigationSystem::GetLaneId(const WalkableGrid& grid, GameMath
 	return grid.cells[idx].laneId;
 }
 
+void Navigation::NavigationSystem::DebugCheckLaneRouteCoverage(const Navigation::WalkableGrid& grid, const unordered_map<int32, shared_ptr<Navigation::LaneRoute>> routes, Navigation::NavigationSystem& navSystem)
+{
+	for (const auto& kv : routes)
+	{
+		int32 laneId = kv.first;
+		auto route = kv.second;
+		if (!route || route->waypoints.empty())
+			continue;
+
+		uint8 laneByte = static_cast<uint8>(laneId);
+
+		for (size_t i = 0; i < route->waypoints.size(); ++i)
+		{
+			const auto& wp = route->waypoints[i];
+
+			int32 gx = 0, gz = 0;
+			if (!navSystem.WorldToGrid(grid, wp._x, wp._z, gx, gz))
+			{
+				GConsoleLogger->WriteStdOut(Color::RED,
+					L"[DebugLaneRoute] laneId=%d wp[%zu] WorldToGrid failed (%.2f, %.2f)\n",
+					laneId, i, wp._x, wp._z);
+				continue;
+			}
+
+			if (gx < 0 || gz < 0 || gx >= grid.width || gz >= grid.height)
+			{
+				GConsoleLogger->WriteStdOut(Color::RED,
+					L"[DebugLaneRoute] laneId=%d wp[%zu] mapped out of grid (%d,%d)\n",
+					laneId, i, gx, gz);
+				continue;
+			}
+
+			const auto& cell = grid.At(gx, gz);
+
+			GConsoleLogger->WriteStdOut(Color::YELLOW,
+				L"[DebugLaneRoute] laneId=%d wp[%d] world=(%.3f, %.3f) -> grid(%d,%d) laneId=%d\n",
+				laneId,
+				(int)i,
+				wp._x,
+				wp._z,
+				gx,
+				gz,
+				cell.laneId);
+
+			if (cell.laneId != laneByte)
+			{
+				for (int dz = -1; dz <= 1; ++dz)
+				{
+					for (int dx = -1; dx <= 1; ++dx)
+					{
+						int nx = gx + dx;
+						int nz = gz + dz;
+
+						if (nx < 0 || nz < 0 || nx >= grid.width || nz >= grid.height)
+							continue;
+
+						auto& ncell = grid.At(nx, nz);
+
+						GConsoleLogger->WriteStdOut(
+							Color::WHITE,
+							L"    neighbor(%d,%d) laneId=%d\n",
+							nx,
+							nz,
+							ncell.laneId);
+					}
+				}
+
+				GConsoleLogger->WriteStdOut(Color::RED,
+					L"[DebugLaneRoute] MISMATCH: laneId=%d wp[%zu] grid(%d,%d) laneId=%d (expected %d)\n",
+					laneId, i, gx, gz, cell.laneId, laneByte);
+			}
+		}
+	}
+}
+
 bool Navigation::NavigationSystem::WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& X, int32& Z)
 {
 	float localX = (worldX - grid.origin._x) / grid.cellSize;
 	float localZ = (worldZ - grid.origin._z) / grid.cellSize;
-
-	int32 x = static_cast<int32>(std::floor(localX + 0.5f));
-	int32 z = static_cast<int32>(std::floor(localZ + 0.5f));
+	int32 x = static_cast<int32>(std::floor(localX));
+	int32 z = static_cast<int32>(std::floor(localZ));
 
 	if (x < 0 || z < 0 || x >= grid.width || z >= grid.height)
 		return false;

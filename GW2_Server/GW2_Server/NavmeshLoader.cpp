@@ -214,28 +214,67 @@ bool NavmeshLoader::LoadNavGridBin(const string& path, Navigation::WalkableGrid&
 
 bool NavmeshLoader::LoadLaneMap(const string& path, Navigation::WalkableGrid& grid)
 {
-    ifstream file(path, ios::binary);
-    if (!file.is_open())
+    ifstream ifs(path, ios::binary);
+    if (!ifs.is_open())
     {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Failed to open file: %S\n", path.c_str());
         return false;
     }
 
-    size_t size = static_cast<size_t>(grid.width) * grid.height;
-    vector<uint8> laneData(size);
-
-    file.read(reinterpret_cast<char*>(laneData.data()), size);
-    if (file.gcount() != static_cast<streamsize>(size))
+    LaneMapHeader header{};
+    ifs.read(reinterpret_cast<char*>(&header), sizeof(header));
+    if (!ifs)
     {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Failed to read header: %S\n", path.c_str());
         return false;
     }
 
+    if (header.magic != 0x4C4E4D50) // 'LNMP'
+    {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Invalid magic in %S\n", path.c_str());
+        return false;
+    }
+
+    if (header.version != 1)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Unsupported version(%d) in %S\n", header.version, path.c_str());
+        return false;
+    }
+
+    if (header.width != grid.width || header.height != grid.height)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Size mismatch. laneMap=(%d,%d) grid=(%d,%d)\n",
+            header.width, header.height, grid.width, grid.height);
+        return false;
+    }
+
+    const size_t cellCount = static_cast<size_t>(grid.width) * grid.height;
+    vector<uint8> laneBuf(cellCount);
+    ifs.read(reinterpret_cast<char*>(laneBuf.data()), laneBuf.size());
+    if (!ifs)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED,
+            L"[LaneMapLoader] Failed to read lane data: %S\n", path.c_str());
+        return false;
+    }
+
+    // laneId Àû¿ë (row-major: idx = z * width + x)
     for (int32 z = 0; z < grid.height; ++z)
     {
         for (int32 x = 0; x < grid.width; ++x)
         {
-            int32 idx = z * grid.width + x;
-            grid.cells[idx].laneId = laneData[idx];
+            size_t idx = static_cast<size_t>(z) * grid.width + x;
+            Navigation::GridCell& cell = grid.At(x, z);
+            cell.laneId = laneBuf[idx];
         }
     }
+
+    GConsoleLogger->WriteStdOut(Color::GREEN,
+        L"[LaneMapLoader] Loaded laneMap from %S\n", path.c_str());
     return true;
 }

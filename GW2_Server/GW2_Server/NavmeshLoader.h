@@ -16,6 +16,15 @@ struct NavmeshBinaryData
 	Navigation::WalkableGrid grid;
 };
 
+struct LaneMapHeader
+{
+	uint32 magic;		// LNMP
+	uint16 version;		// 1
+	uint16 reserved;	// 0;
+	int32 width;
+	int32 height;
+};
+
 class NavmeshLoader
 {
 public:
@@ -24,4 +33,5 @@ public:
 	bool LoadJsonMeshFile(const string& path, vector<GameMath::Vector3>& outVertices, vector<int32>& outIndices);
 	bool LoadNavGridBin(const string& path, Navigation::WalkableGrid& OUT outGrid);
 	bool LoadLaneMap(const string& path, Navigation::WalkableGrid& grid);
+	
 };

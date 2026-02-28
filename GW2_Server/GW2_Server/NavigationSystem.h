@@ -175,6 +175,9 @@ namespace Navigation
 		// Minion
 		uint8 GetLaneId(const WalkableGrid& grid, GameMath::Vector3& worldPos);
 
+		// DEBUG
+		void DebugCheckLaneRouteCoverage(const Navigation::WalkableGrid& grid, const unordered_map<int32, shared_ptr<Navigation::LaneRoute>> routes, Navigation::NavigationSystem& navSystem);
+
 	private:
 		static bool WorldToGridImpl(const WalkableGrid& grid, float worldX, float worldZ, int32& OUT X, int32& OUT Z);
 
