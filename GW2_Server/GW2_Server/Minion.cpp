@@ -65,6 +65,8 @@ weak_ptr<Object> Minion::FindBestTarget(vector<weak_ptr<Object>> targets)
 
 void Minion::UpdateController(float deltaTime)
 {
+	cout << _minionState << '\n';
+
 	switch (_minionState)
 	{
 	case Protocol::MinionState::MINION_IDLE:
@@ -91,6 +93,75 @@ void Minion::UpdateController(float deltaTime)
 
 void Minion::UpdateMovement(float deltaTime)
 {
+	//GConsoleLogger->WriteStdOut(Color::WHITE, L"Minion UpdateMovement\n");
+	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
+	{
+		_movement.speed = 0.0f;
+		return;
+	}
+
+	if (_pathIndex >= static_cast<int32>(_path.size()))
+	{
+		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		_isMoving = false;
+		_movement.speed = 0.0f;
+		return;
+	}
+
+	const float kArriveEpsilon = 1e-4f;
+	float remainMoveDist = _moveSpeed * deltaTime;
+
+	while (remainMoveDist > 0.0f && _pathIndex < static_cast<int32>(_path.size()))
+	{
+		const GameMath::Vector3& target = _path[_pathIndex];
+		GameMath::Vector3 dir = target - _posVector;
+		const float dist = dir.Length();
+
+		// 타겟 노드에 상당히 근접
+		if(dist <= kArriveEpsilon)
+		{
+			_posVector = target;
+			++_pathIndex;
+			continue;
+		}
+
+		// 이번 프레임에 target까지 도달 가능 -> target까지 이동하고 다음 노드로
+		if (dist <= remainMoveDist)
+		{
+			_posVector = target;
+			remainMoveDist -= dist;
+			++_pathIndex;
+			continue;
+		}
+
+		// target까지는 못 가므로, 그 방향으로 remainMoveDist 만큼만 이동한다
+		dir = dir.Normalized();
+		GameMath::Vector3 delta = dir * remainMoveDist;
+		_posVector = _posVector + delta;
+
+		// PosInfo 동기화
+		_pos.set_x(_posVector._x);
+		_pos.set_y(_posVector._y);
+		_pos.set_z(_posVector._z);
+
+		// 이동중 상태 유지
+		_isMoving = true;
+		_movement.speed = _moveSpeed;
+		
+		return;
+	}
+
+	// path를 다 소비한 경우
+	_pos.set_x(_posVector._x);
+	_pos.set_y(_posVector._y);
+	_pos.set_z(_posVector._z);
+
+	if (_pathIndex >= static_cast<int32>(_path.size()))
+	{
+		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		_isMoving = false;
+		_movement.speed = 0.0f;
+	}
 }
 
 void Minion::UpdateIdle(float deltaTime)

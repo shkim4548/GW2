@@ -81,6 +81,7 @@ public class PacketHandler
         bc.PosInfo = pos;
         bc.LastServerTime = movePkt.ServerTime;
         bc._isMoving = true;
+        bc.State = movePkt.ServerPosInfo.State;
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -148,6 +149,8 @@ public class PacketHandler
         bc._isMoving = false;
         bc.transform.position = serverPos;
         // TODO: STATE 변경 + ROTATION 변경
+        bc.State = endMovePkt.ServerPosInfo.State;
+        Debug.Log(endMovePkt.ServerPosInfo.State);
     }
 
     internal static void S_MOVE_STARTHandler(PacketSession session, IMessage message)

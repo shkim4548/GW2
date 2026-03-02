@@ -72,7 +72,7 @@ void Object::PostUpdate()
 
 void Object::UpdateController(float deltaTime)
 {
-	cout << "Object::UpdateController" << endl;
+	//cout << "Object::UpdateController" << endl;
 }
 
 void Object::AccumulateMoveTime(float deltaTime)

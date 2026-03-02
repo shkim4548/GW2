@@ -3,6 +3,7 @@ using System;
 using GameServerAdmin.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameServerAdmin.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260302093316_AddPlayerCurrency")]
+    partial class AddPlayerCurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,74 +204,6 @@ namespace GameServerAdmin.Migrations
                         .HasDatabaseName("IX_player_currency_user_currency");
 
                     b.ToTable("player_currency", (string)null);
-                });
-
-            modelBuilder.Entity("GameServerAdmin.Domain.Game.Stages.PlayerStageClear", b =>
-                {
-                    b.Property<long>("PlayerStageClearId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("player_stage_clear_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("PlayerStageClearId"));
-
-                    b.Property<DateTime>("ClearedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("cleared_at");
-
-                    b.Property<int>("StageId")
-                        .HasColumnType("integer")
-                        .HasColumnName("stage_id");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("PlayerStageClearId");
-
-                    b.HasIndex("UserId", "StageId")
-                        .HasDatabaseName("IX_player_stage_clear_user_stage");
-
-                    b.ToTable("player_stage_clear", (string)null);
-                });
-
-            modelBuilder.Entity("GameServerAdmin.Domain.Game.Stages.Stage", b =>
-                {
-                    b.Property<int>("StageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("stage_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StageId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_enabled");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<int>("RequiredStamina")
-                        .HasColumnType("integer")
-                        .HasColumnName("required_stamina");
-
-                    b.Property<long>("RewardGem")
-                        .HasColumnType("bigint")
-                        .HasColumnName("reward_gem");
-
-                    b.Property<long>("RewardGold")
-                        .HasColumnType("bigint")
-                        .HasColumnName("reward_gold");
-
-                    b.HasKey("StageId");
-
-                    b.ToTable("stage", (string)null);
                 });
 
             modelBuilder.Entity("GameServerAdmin.Domain.Identity.AppRole", b =>

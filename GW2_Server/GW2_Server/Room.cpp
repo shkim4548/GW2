@@ -256,48 +256,37 @@ void Room::UpdateRoom(float deltaTime)
 		}
 	}
 
-	// Controller Phase : 모든 오브젝트의 의사결정/FSM 틱
+	// 1) Controller Phase
 	for (auto& [id, obj] : _objects)
 	{
 		if (obj == nullptr)
 			continue;
 
-		// Player -> path / 입력 처리
-		// Minion -> MinionState FSM (LaneTrace/Chase/Attack 등)
-		obj->UpdateController(deltaTime);
-		// 이번엔 여기는 들어온다
+		obj->UpdateController(deltaTime);  // Player/Minion 공통
 	}
 
-	// Movement + Broadcast Phase
+	// 2) Movement + Broadcast Phase
 	for (auto& [id, obj] : _objects)
 	{
 		if (obj == nullptr)
 			continue;
 
-		// 이동 전 상태 기억
 		bool wasMoving = obj->GetIsMoving();
 
-		// Movement 적분 (movement.direction/speed 기반)
 		obj->UpdateMovement(deltaTime);
 
-		// 이동 후 상태
 		bool isMoving = obj->GetIsMoving();
 
-		// 브로드캐스트 타이머 누적
 		obj->AccumulateMoveTime(deltaTime);
 
-		// 주기적 위치 브로드캐스트
 		if (obj->ShouldBroadcastMove())
 		{
 			BroadcastMoving(obj);
 			obj->ResetBroadcastTimer();
 		}
 
-		// 이동 종료 감지 : 이전엔 움직였고, 지금은 안 움직이면 END 패킷
 		if (wasMoving && !isMoving)
-		{
 			BroadcastMovingEnd(obj);
-		}
 
 		obj->PostUpdate();
 	}
@@ -402,35 +391,32 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 
 void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
 {
-	// 삭제/상태/권한 우선 체크
 	if (minion == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr\n");
 		return;
 	}
-	// 포인터로 받아와서
+
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
 	if (navSystem == nullptr)
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] navSystem is nullptr\n");
 		return;
 	}
 	if (gridPtr == nullptr)
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion grid is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] gridPtr is nullptr\n");
 		return;
 	}
 
-	// grid는 참조로만 가져와야한다. 미리 포인터 소유권을 확보해서 nullptr을 점검>
 	Navigation::WalkableGrid& grid = *gridPtr;
 
-	// lane을 가져온다
 	uint8 minionLaneId = minion->GetLaneId();
 	shared_ptr<Navigation::LaneRoute> route = minion->GetLaneRoute().lock();
 	if (route == nullptr || route->waypoints.empty())
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion worldGrid is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] lane route invalid\n");
 		return;
 	}
 
@@ -443,44 +429,100 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 
 	// start cell
 	const GameMath::Vector3& startPos = minion->GetPosVector();
-	// WorldPos -> GridPos
 	int32 sx = 0, sz = 0, tx = 0, tz = 0;
-	if (navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz) == false)
+	if (!navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(start) fail\n");
 		return;
 	}
 
-	// target cell
+	// target cell (현재 waypoint)
 	const GameMath::Vector3& targetPos = route->waypoints[wpIndex];
-	if (navSystem->WorldToGrid(grid, targetPos._x, targetPos._z, tx, tz) == false)
+	if (!navSystem->WorldToGrid(grid, targetPos._x, targetPos._z, tx, tz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(target) fail\n");
 		return;
 	}
 
-	// PathFinding
+	// --- A* PathFinding ---
 	vector<Navigation::GridCell*> gridPath;
-	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] sx : %d, sz : %d, tx : %d, tz : %d, laneId : %d\n", sx, sz, tx, tz, minionLaneId);
+	GConsoleLogger->WriteStdOut(
+		Color::WHITE,
+		L"[Room::HandleMinionMove] sx : %d, sz : %d, tx : %d, tz : %d, laneId : %d\n",
+		sx, sz, tx, tz, minionLaneId);
+
 	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, minionLaneId);
-	if (gridPath.empty() || ok == false)
+
+	GConsoleLogger->WriteStdOut(
+		Color::WHITE,
+		L"[Room::HandleMinionMove] FindPath ok=%d gridPathSize=%d\n",
+		ok ? 1 : 0,
+		static_cast<int32>(gridPath.size()));
+
+	if (!ok || gridPath.empty())
 	{
-		// lane 제한 때문에 실패할 수 있음(정상 케이스도 존재)
-		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed (lane filtered?)\n");
+		GConsoleLogger->WriteStdErr(
+			Color::YELLOW,
+			L"[Room::HandleMinionMove] FindPath failed (lane filtered or no path)\n");
 		return;
 	}
 
-	// Finding 된 Path에 따라 이동처리 시작
-	Navigation::GridCell* nextCell = gridPath.size() > 1 ? gridPath[1] : gridPath[0];
-	GameMath::Vector3 nextWorldPos;
-	if (navSystem->GridToWorld(grid, nextCell->x, nextCell->z, nextWorldPos))
+	// --- GridPath -> NavPath (world space) ---
+	vector<GameMath::Vector3> navPath;
+	navPath.reserve(gridPath.size());
+
+	int successCount = 0;
+	int failCount = 0;
+
+	for (Navigation::GridCell* cell : gridPath)
 	{
-		Protocol::PosInfo newPos;
-		newPos.set_x(nextWorldPos._x);
-		newPos.set_y(nextWorldPos._y);
-		newPos.set_z(nextWorldPos._z);
-		minion->SetPosInfo(newPos);
+#if 1
+		// 안전 버전: GridToWorld를 통하지 않고 직접 world pos 계산
+		GameMath::Vector3 wp;
+		wp._x = grid.origin._x + (cell->x + 0.5f) * grid.cellSize;
+		wp._z = grid.origin._z + (cell->z + 0.5f) * grid.cellSize;
+		wp._y = 0.0f;
+		navPath.push_back(wp);
+		++successCount;
+#else
+		// 만약 GridToWorld를 꼭 쓰고 싶다면 이 분기에서 실패/성공을 나눠서 로그
+		GameMath::Vector3 wp;
+		if (navSystem->GridToWorld(grid, cell->x, cell->z, wp))
+		{
+			navPath.push_back(wp);
+			++successCount;
+		}
+		else
+		{
+			++failCount;
+			const Navigation::GridCell& c = grid.At(cell->x, cell->z);
+			GConsoleLogger->WriteStdErr(
+				Color::RED,
+				L"[Room::HandleMinionMove] GridToWorld failed for (%d,%d) walkable=%d laneId=%d\n",
+				cell->x, cell->z,
+				c.walkable ? 1 : 0,
+				c.laneId);
+		}
+#endif
 	}
+
+	GConsoleLogger->WriteStdOut(
+		Color::GREEN,
+		L"[Room::HandleMinionMove] navPath built. success=%d fail=%d\n",
+		successCount,
+		failCount);
+
+	if (navPath.empty())
+	{
+		GConsoleLogger->WriteStdErr(
+			Color::RED,
+			L"[Room::HandleMinionMove] navPath is empty AFTER conversion\n");
+		return;
+	}
+
+	// --- 미니언에 이동 경로 전달 ---
+	minion->RequestMove(navPath);
+	minion->SetMoveState(Protocol::MoveState::MOVE_STATE_RUN);
 }
 
 void Room::HandleMinionAttack(shared_ptr<Object> target)
@@ -496,6 +538,8 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	// TODO : POS는 & 형태로 가져오는 것이 유리할 것이다
 	Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
 	*pos = obj->GetPosInfo();
+	pos->set_state(obj->GetMoveState());
+	//cout << obj->GetObjectId() << " : " <<  pos->state() << endl;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(movePkt);
 	Broadcast(sendBuffer);
@@ -508,6 +552,8 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	endMovePkt.set_object_id(obj->GetObjectId());
 	Protocol::PosInfo* pos = endMovePkt.mutable_server_pos_info();
 	*pos = obj->GetPosInfo();
+	pos->set_state(obj->GetMoveState());
+	//cout << pos->state() << endl;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
 	Broadcast(sendBuffer);

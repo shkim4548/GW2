@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Domain.Admins;
+﻿using GameServerAdmin.Domain.Accounts;
+using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Domain.Identity;
 using GameServerAdmin.Domain.Users;
 using GameServerAdmin.Infrastructure.Persistence;
@@ -36,7 +37,9 @@ namespace GameServerAdmin.Controllers.Auth
         }
 
         /// <summary>
-        /// JWT 로그인
+        /// JWT 로그인 (일반 유저 + 관리자 공용)
+        /// AppUser.UserType == "Admin" 이면 Admin 도메인 기준으로 토큰을 발급한다.
+        /// 그렇지 않으면 User 도메인 기준으로 토큰을 발급한다.
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
@@ -45,12 +48,12 @@ namespace GameServerAdmin.Controllers.Auth
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // 1) Identity(AppUser) 기준으로 사용자 조회
+            // 1) Identity(AppUser) 조회
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
                 return Unauthorized();
 
-            // 2) 패스워드 검증
+            // 2) 비밀번호 검증
             var signInResult = await _signInManager.CheckPasswordSignInAsync(
                 user,
                 request.Password,
@@ -59,50 +62,135 @@ namespace GameServerAdmin.Controllers.Auth
             if (!signInResult.Succeeded)
                 return Unauthorized();
 
-            // 3) 역할 조회
+            // 3) 역할(Role) 조회
             var roles = await _userManager.GetRolesAsync(user);
 
-            // 4) 도메인 기준 Actor(User 또는 Admin) 조회
+            // 4) 도메인 기준 Actor(User 또는 Admin) 결정
             long actorId;
             string actorType;
 
             if (string.Equals(user.UserType, "Admin", StringComparison.OrdinalIgnoreCase))
             {
-                // Admin 계정
+                // ==============================
+                // Admin 로그인 처리
+                // ==============================
+
                 if (user.AdminId == null)
-                    return Unauthorized();
+                {
+                    // AppUser.AdminId가 비어 있으면 Admin 도메인 자동 생성
+                    var admin = new Admin
+                    {
+                        LoginId = user.UserName ?? $"admin_{user.Id}",
+                        PasswordHash = string.Empty, // 인증에는 사용하지 않고, NOT NULL 제약만 맞춘다.
+                        Role = "Super",              // 기본 권한명 (필요시 변경 가능)
+                        CreatedAt = DateTime.UtcNow,
+                        LastLoginAt = DateTime.UtcNow,
+                        IsActive = true
+                    };
 
-                var admin = await _dbContext.Admins
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(a => a.AdminId == user.AdminId.Value);
+                    _dbContext.Admins.Add(admin);
+                    await _dbContext.SaveChangesAsync();
 
-                if (admin == null || !admin.IsActive)
-                    return Unauthorized();
+                    // AppUser와 Admin 연결
+                    user.AdminId = admin.AdminId;
+                    await _userManager.UpdateAsync(user);
 
-                actorId = admin.AdminId;
+                    actorId = admin.AdminId;
+                }
+                else
+                {
+                    var admin = await _dbContext.Admins
+                        .FirstOrDefaultAsync(a => a.AdminId == user.AdminId.Value);
+
+                    if (admin == null || !admin.IsActive)
+                        return Unauthorized();
+
+                    admin.LastLoginAt = DateTime.UtcNow;
+                    await _dbContext.SaveChangesAsync();
+
+                    actorId = admin.AdminId;
+                }
+
                 actorType = "Admin";
             }
             else
             {
-                // 기본값: 일반 유저
-                if (user.AccountId == null)
-                    return Unauthorized();
+                // ==============================
+                // 일반 유저 로그인 처리
+                // (게임 플레이어용 Actor = User)
+                // ==============================
 
-                var domainUser = await _dbContext.Users
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(u => u.AccountId == user.AccountId.Value);
-
-                if (domainUser == null)
-                    return Unauthorized();
-
-                actorId = domainUser.UserId;
                 actorType = "User";
+
+                if (user.AccountId == null)
+                {
+                    // Account + User 도메인 자동 생성
+                    var account = new Account
+                    {
+                        LoginId = user.UserName ?? $"user_{user.Id}",
+                        PasswordHash = string.Empty, // 실제 로그인은 Identity가 처리
+                        CreatedAt = DateTime.UtcNow,
+                        LastLoginAt = DateTime.UtcNow,
+                        IsBanned = false
+                    };
+
+                    _dbContext.Accounts.Add(account);
+                    await _dbContext.SaveChangesAsync();
+
+                    var domainUser = new User
+                    {
+                        AccountId = account.AccountId,
+                        Nickname = user.NickName ?? user.UserName ?? $"Player_{account.AccountId}",
+                        Level = 1,
+                        CreatedAt = DateTime.UtcNow,
+                        LastLoginAt = DateTime.UtcNow,
+                        Status = "Active"
+                    };
+
+                    _dbContext.Users.Add(domainUser);
+                    await _dbContext.SaveChangesAsync();
+
+                    user.AccountId = account.AccountId;
+                    await _userManager.UpdateAsync(user);
+
+                    actorId = domainUser.UserId;
+                }
+                else
+                {
+                    var accountId = user.AccountId.Value;
+
+                    var domainUser = await _dbContext.Users
+                        .FirstOrDefaultAsync(u => u.AccountId == accountId);
+
+                    if (domainUser == null)
+                    {
+                        domainUser = new User
+                        {
+                            AccountId = accountId,
+                            Nickname = user.NickName ?? user.UserName ?? $"Player_{accountId}",
+                            Level = 1,
+                            CreatedAt = DateTime.UtcNow,
+                            LastLoginAt = DateTime.UtcNow,
+                            Status = "Active"
+                        };
+
+                        _dbContext.Users.Add(domainUser);
+                        await _dbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        domainUser.LastLoginAt = DateTime.UtcNow;
+                        await _dbContext.SaveChangesAsync();
+                    }
+
+                    actorId = domainUser.UserId;
+                }
             }
 
             // 5) 클레임 구성
             var claims = new List<Claim>
             {
-                // Identity 기준 키(AppUser.Id) - 기술적인 사용자 식별자
+                // Identity(AppUser) 기준 키
                 new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
 
@@ -110,7 +198,7 @@ namespace GameServerAdmin.Controllers.Auth
                 new(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty),
                 new(ClaimTypes.Name, user.UserName ?? string.Empty),
 
-                // 도메인 기준 Actor(User/Admin)
+                // 도메인 Actor(User/Admin)
                 new("actor_id", actorId.ToString()),
                 new("actor_type", actorType),
             };

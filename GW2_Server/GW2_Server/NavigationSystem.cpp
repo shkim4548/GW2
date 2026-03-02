@@ -473,18 +473,13 @@ bool Navigation::NavigationSystem::FindPath(const WalkableGrid& grid, int32 star
 	{
 		const GridCell& startCell = grid.At(startX, startZ);
 		const GridCell& endCell = grid.At(endX, endZ);
-		GConsoleLogger->WriteStdOut(Color::WHITE, L"[Navigation::FindPath] allowedLaneId=%d, start(%d, %d) startLaneId = %d, end(%d, %d), endLaneId = %d\n"
-		, allowedLaneId, startX, startZ, startCell.laneId, endX, endZ, endCell.laneId);
+		//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Navigation::FindPath] allowedLaneId=%d, start(%d, %d) startLaneId = %d, end(%d, %d), endLaneId = %d\n", allowedLaneId, startX, startZ, startCell.laneId, endX, endZ, endCell.laneId);
 		if (startCell.laneId != allowedLaneId)
 			return false;
 
 		if (endCell.laneId != allowedLaneId)
 		{
-			GConsoleLogger->WriteStdErr(
-				Color::RED,
-				L"[FindPath] end cell lane mismatch: endLane=%d allowed=%d\n",
-				endCell.laneId,
-				allowedLaneId);
+			GConsoleLogger->WriteStdErr(Color::RED, L"[FindPath] end cell lane mismatch: endLane=%d allowed=%d\n", endCell.laneId, allowedLaneId);
 			return false;
 		}
 	}
