@@ -41,6 +41,12 @@ namespace GameServerAdmin.Domain.Game.Inventory
         [Column("amount")]
         public long Amount { get; private set; }
 
+        /// <summary>
+        /// 낙관적 동시성 제어용 RowVersion
+        /// </summary>
+        [Timestamp] // System.ComponentModel.DataAnnotations
+        public byte[] RowVersion { get; private set; } = default!;
+
         public void Add(long value)
         {
             if (value < 0)

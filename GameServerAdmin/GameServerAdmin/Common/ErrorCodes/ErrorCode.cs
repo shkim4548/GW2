@@ -46,5 +46,8 @@
         NOTICE_ALREADY_DELETED,
         NOTICE_NOT_PUBLISHED,
         NOTICE_NOT_DELETED,
+
+        // ==== Bad Request ====
+        BAD_REQUEST,
     }
 }

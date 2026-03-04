@@ -24,6 +24,7 @@ public:
 
 	void SetObjectId(int64 id) { _objectId = id; }
 	void SetPosInfo(Protocol::PosInfo posInfo);
+	void SetPosVector(GameMath::Vector3& posVector);
 	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
@@ -33,10 +34,15 @@ public:
 	bool GetIsMoving() const { return _isMoving; }
 	virtual void UpdateMovement(float deltaTime);
 	void RequestMove(const vector<GameMath::Vector3>& path);
+	void RequestMoveFrom(const vector<GameMath::Vector3>& path, int32 startIndex);
 	void PostUpdate();
 	
 	// MOVEMENT SYSTEM
 	virtual void UpdateController(float deltaTime);
+	
+	// Network Helper
+	void MarkForceBroadcastMove();
+	void OnMoveBroadcastSent();
 
 	// Game Room Logic
 	void AccumulateMoveTime(float deltaTime);
@@ -76,9 +82,11 @@ protected:
 	weak_ptr<Room> _room;
 	int32 _roomId = -1;
 
-private:
-	float _moveBroadcastElapsed = 0.0f;
+	mutable float _moveBroadcastElapsed = 0.0f;
+	static constexpr float MOVE_BROADCAST_INTERVAL = 0.1f;
+	bool _forceBroadcastMove = false;  // ★ 추가
 
+private:
 	// === 이동상태 이상 탐지 === 
 	GameMath::Vector3 _lastCheckPos;
 	bool _hasLastCheckPos = false;

@@ -32,6 +32,12 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnType("bigint")
                 .IsRequired();
 
+            // 낙관적 동시성 토큰 매핑
+            builder.Property(x => x.RowVersion)
+                .HasColumnName("row_version")
+                .IsRowVersion() // ConcurrencyToken + byte[] timestamp
+                .IsConcurrencyToken();
+
             builder.HasIndex(x => new { x.UserId, x.CurrencyType })
                    .HasDatabaseName("IX_player_currency_user_currency")
                    .IsUnique();

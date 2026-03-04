@@ -18,10 +18,13 @@ public enum PacketId : ushort
         PKT_C_MOVE = 1007,
         PKT_S_MOVE = 1008,
         PKT_S_MOVE_END = 1009,
-        PKT_C_SKILL = 1010,
-        PKT_S_SKILL = 1011,
-        PKT_C_ENTER_LOBBY = 1012,
-        PKT_S_ENTER_LOBBY = 1013,
+        PKT_S_MINION_MOVE = 1010,
+        PKT_C_SKILL = 1011,
+        PKT_S_SKILL = 1012,
+        PKT_C_ENTER_LOBBY = 1013,
+        PKT_S_ENTER_LOBBY = 1014,
+        PKT_C_ATTACK = 1015,
+        PKT_S_ATTACK = 1016,
 }
 
 public class PacketManager
@@ -55,10 +58,14 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_MOVE, PacketHandler.S_MOVEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_MOVE_END, MakePacket<S_MOVE_END>);
         _handler.Add((ushort)PacketId.PKT_S_MOVE_END, PacketHandler.S_MOVE_ENDHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_MINION_MOVE, MakePacket<S_MINION_MOVE>);
+        _handler.Add((ushort)PacketId.PKT_S_MINION_MOVE, PacketHandler.S_MINION_MOVEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_SKILL, MakePacket<S_SKILL>);
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, MakePacket<S_ENTER_LOBBY>);
         _handler.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, PacketHandler.S_ENTER_LOBBYHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_ATTACK, MakePacket<S_ATTACK>);
+        _handler.Add((ushort)PacketId.PKT_S_ATTACK, PacketHandler.S_ATTACKHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

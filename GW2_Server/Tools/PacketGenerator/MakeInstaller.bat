@@ -15,5 +15,6 @@ IF ERRORLEVEL 1 (
 )
 
 XCOPY /Y PacketGenerator.exe "../../Common/Protobuf/bin"
+XCOPY /Y /E /I Templates "../../Common/Protobuf/bin/Templates"  ¡ç Ãß°¡
 
 PAUSE

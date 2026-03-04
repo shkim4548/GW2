@@ -81,7 +81,7 @@ public class ObjectService : IObjectService
         else if (objectType == ObjectType.Minion)
         {
             Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-            go = _resourceService.Instantiate("Minion/HumanMeleeMinion");
+            go = _resourceService.Instantiate("Minion/TestMinion");
             if (go == null)
             {
                 Debug.Log("resource service instantiate failed");

@@ -1,3 +1,4 @@
+using GameServerAdmin.Application.AdminGame;
 using GameServerAdmin.Application.Comments.Admin;
 using GameServerAdmin.Application.Comments.Public;
 using GameServerAdmin.Application.Game.Inventory;
@@ -197,6 +198,8 @@ namespace GameServerAdmin
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IStageService, StageService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<IAdminGameUserService, AdminGameUserService>();
+
 
             var app = builder.Build();
 

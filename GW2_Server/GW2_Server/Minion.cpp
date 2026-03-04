@@ -9,6 +9,10 @@ Minion::Minion()
 	_minionState = Protocol::MinionState::MINION_IDLE;
 	_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	_objectType = Protocol::ObjectType::OBJECT_TYPE_MINION;
+
+	_currentWaypointIndex = 0;
+	_repathCoolDown = 0.0f;
+	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 }
 
 Minion::~Minion()
@@ -65,8 +69,6 @@ weak_ptr<Object> Minion::FindBestTarget(vector<weak_ptr<Object>> targets)
 
 void Minion::UpdateController(float deltaTime)
 {
-	cout << _minionState << '\n';
-
 	switch (_minionState)
 	{
 	case Protocol::MinionState::MINION_IDLE:
@@ -93,7 +95,6 @@ void Minion::UpdateController(float deltaTime)
 
 void Minion::UpdateMovement(float deltaTime)
 {
-	//GConsoleLogger->WriteStdOut(Color::WHITE, L"Minion UpdateMovement\n");
 	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
 	{
 		_movement.speed = 0.0f;
@@ -143,24 +144,33 @@ void Minion::UpdateMovement(float deltaTime)
 		_pos.set_x(_posVector._x);
 		_pos.set_y(_posVector._y);
 		_pos.set_z(_posVector._z);
-
+		SetPosInfo(_pos);
 		// 이동중 상태 유지
 		_isMoving = true;
 		_movement.speed = _moveSpeed;
-		
+		// 이동 중 (remainMoveDist 소진 후 return 직전)
+		GConsoleLogger->WriteStdOut(Color::GREEN,
+			L"[Minion::UpdateMovement] moving. posVector=(%.3f, %.3f) pathIndex=%d\n",
+			_posVector._x, _posVector._z, _pathIndex);
 		return;
 	}
+	GConsoleLogger->WriteStdOut(Color::GREEN,
+		L"[Minion::UpdateMovement] path done. posVector=(%.3f, %.3f) pathIndex=%d pathSize=%d\n",
+		_posVector._x, _posVector._z,
+		_pathIndex, static_cast<int32>(_path.size()));
 
 	// path를 다 소비한 경우
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
+	SetPosInfo(_pos);
 
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
 		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 		_isMoving = false;
 		_movement.speed = 0.0f;
+		_repathCoolDown = 0.0f;
 	}
 }
 
@@ -201,26 +211,28 @@ void Minion::UpdateIdle(float deltaTime)
 void Minion::UpdateLaneTrace(float deltaTime)
 {
 	GameMath::Vector3 myPos = GetPosVector();
-
-	// repath 쿨다운 감소
+	GConsoleLogger->WriteStdOut(Color::WHITE,
+		L"[LaneTrace] myPos=(%.3f,%.3f) wpIdx=%d pathSize=%d moveState=%d repathCD=%.3f\n",
+		myPos._x, myPos._z,
+		_currentWaypointIndex,              // ← wpIdx
+		static_cast<int32>(_path.size()),   // ← pathSize
+		static_cast<int32>(_moveState),     // ← moveState
+		_repathCoolDown);
 	_repathCoolDown -= deltaTime;
 
-	// 타겟 탐색
+	// 1) Chase 전환 체크
 	shared_ptr<Object> target = FindBestTarget(_targets).lock();
 	if (target != nullptr)
 	{
-		// 플레이어가 라인 안에 있어도 waypoint가 더 가깝다면 waypoint로 이동한다.
 		if (ShouldChaseTargetNow(target))
 		{
 			_currentTarget = target;
 			_minionState = Protocol::MinionState::MINION_CHASE_TARGET;
 			return;
 		}
-
-		// false면 계속해서 라인을 따라간다.
 	}
 
-	// waypoint 따라 이동한다
+	// 2) LaneRoute 유효성 체크
 	shared_ptr<Navigation::LaneRoute> route = _route.lock();
 	if (route == nullptr || route->waypoints.empty())
 	{
@@ -228,41 +240,51 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		return;
 	}
 
-	if(_currentWaypointIndex < 0 || _currentWaypointIndex >= static_cast<int32>(route->waypoints.size()))
-	{ 
+	if (_currentWaypointIndex < 0 ||
+		_currentWaypointIndex >= static_cast<int32>(route->waypoints.size()))
+	{
 		_currentWaypointIndex = 0;
 	}
 
 	GameMath::Vector3 nowWp = route->waypoints[_currentWaypointIndex];
-
 	float distToNextPoint = GameMath::Vector3::GetDistTanceXZ(myPos, nowWp);
 
-	// 도착 판정
-	if (distToNextPoint < 0.3f)
+	// 3) waypoint 근처이면 스냅 + 다음 waypoint 전환
+	//const float kSnapDistance = _moveSpeed * 0.1f * 2.0f;
+	const float kSnapDistance = 1.0f;
+
+	if (distToNextPoint <= kSnapDistance)
 	{
+		// 서버 좌표를 정확히 wp에 맞춘다 (posVector + PosInfo 동기화)
+		SetPosVector(nowWp);  // _posVector, _pos 둘 다 세팅되도록 구현
+
+		// 더 이상 이 wp를 향한 path는 필요 없음
+		_path.clear();
+		_pathIndex = 0;
+		_isMoving = false;
+		_movement.speed = 0.0f;
+
+		MarkForceBroadcastMove();
+		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+
 		if (_currentWaypointIndex + 1 < static_cast<int32>(route->waypoints.size()))
 		{
 			++_currentWaypointIndex;
-			nowWp = route->waypoints[_currentWaypointIndex];
-
-			// 다음 waypoint로 넘어갈 때는 기존 path를 버리고, 다음 tick에 새 path 요청
-			_path.clear();
-			_pathIndex = 0;
 			_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 			_repathCoolDown = 0.0f;
+			return;
 		}
 		else
 		{
-			// TODO : 마지막 웨이포인트에 도착 -> 넥서스 근처 로직
 			_minionState = Protocol::MinionState::MINION_IDLE;
-			// TODO : StopMovement 구현
 			return;
 		}
 	}
-	// 현재 목표 중간점으로 이동
-	// 매틱 마다 HandleMinionMove를 호출하지 않도록 한다
-	// 조건: (1) 현재 path가 비었거나 (2) 목표가 바뀌었거나 (3) 일정 시간 지나서 재탐색 필요할 때만 요청
-	auto shouldRequest = _path.empty() || (_lastMoveGoal - nowWp).Length() > 0.05f || (_repathCoolDown <= 0.0f);
+
+	// 4) Path 요청 여부 판단
+	bool goalChanged = (_lastMoveGoal - nowWp).Length() > 0.05f;
+	bool shouldRequest = (_path.empty() || goalChanged) && (_repathCoolDown <= 0.0f);
+
 	shared_ptr<Room> room = _room.lock();
 	if (room == nullptr)
 	{
@@ -275,12 +297,12 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		shared_ptr<Minion> minionSelf = dynamic_pointer_cast<Minion>(shared_from_this());
 		if (minionSelf == nullptr)
 		{
-			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::LineTrace] minionSelf is nullptr\n");
+			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::UpdateLaneTrace] minionSelf is nullptr\n");
 			return;
 		}
-		//room->HandleMinionMove(minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
-		room->DoAsync(&Room::HandleMinionMove, minionSelf, nowWp, _moveSpeed, deltaTime, _laneId);
-		//cout << "After Do Async" << endl;
+
+		int32 capturedWpIndex = _currentWaypointIndex;
+		room->DoAsync(&Room::HandleMinionMove, minionSelf, nowWp, _moveSpeed, deltaTime, _laneId, capturedWpIndex);
 		_lastMoveGoal = nowWp;
 		_repathCoolDown = 0.2f;
 	}
@@ -467,7 +489,7 @@ uint8 Minion::GetLaneIdFromPos(GameMath::Vector3& targetPos)
 	Navigation::WalkableGrid& grid = navSystem->GetGridCells();
 
 	int32 gx, gz;
-	if (navSystem->WorldToGrid(grid, targetPos,  gx, gz))
+	if (!navSystem->WorldToGrid(grid, targetPos,  gx, gz))
 		return 0;
 
 	const Navigation::GridCell& cell = grid.At(gx, gz);

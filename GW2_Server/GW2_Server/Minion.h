@@ -28,6 +28,7 @@ public:
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
 
+
 private:
 	// === STATE MACHINE ===
 	void UpdateIdle(float deltaTime);
@@ -48,15 +49,15 @@ public:
 private:
 	Protocol::MinionState _minionState;
 
-	float _moveSpeed;
+	float _moveSpeed = 100.0f;
 	float _attackRange;
-	float _detectionRange;
+	float _detectionRange =  5.0f;
 	float _attackCooldown;
 	float _attackInterval;
 
 	weak_ptr<Object> _currentTarget;
 
-	int32 _currentWaypointIndex;
+	int32 _currentWaypointIndex = 0;
 	// CRITICAL SECTION! RETURNED BY ROOM THREAD! CRITICAL!
 	vector<weak_ptr<Object>> _targets;
 	weak_ptr<Object> _bestTarget;

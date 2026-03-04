@@ -21,24 +21,27 @@ public class MinionController : BaseController
 
     public override void UpdateMoving()
     {
-        base.UpdateMoving();
-        Debug.Log("Minion State Update Moving");
-        Vector3 current = transform.position;
+        //base.UpdateMoving();
+        //Debug.Log("Minion State Update Moving");
+        //Vector3 current = transform.position;
+        //Vector3 serverPosVector = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
+
+        //float dist = Vector3.Distance(current, serverPosVector);
+
+        //// 스냅이 필요한경우
+        //if(dist > _snapDistance)
+        //{
+        //    transform.position = serverPosVector;
+        //}
+
+        //// 평상시 -> 부드럽게 보간해준다.
+        //if(dist > 0.01f)
+        //{
+        //    transform.position = Vector3.MoveTowards(current, serverPosVector, _lerpSpeed * Time.deltaTime);
+        //}
         Vector3 serverPosVector = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
 
-        float dist = Vector3.Distance(current, serverPosVector);
-
-        // 스냅이 필요한경우
-        if(dist > _snapDistance)
-        {
-            transform.position = serverPosVector;
-        }
-
-        // 평상시 -> 부드럽게 보간해준다.
-        if(dist > 0.01f)
-        {
-            transform.position = Vector3.MoveTowards(current, serverPosVector, _lerpSpeed * Time.deltaTime);
-        }
+        transform.position = serverPosVector;
     }
 
     public override void UpdateSkill()

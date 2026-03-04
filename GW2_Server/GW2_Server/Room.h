@@ -46,7 +46,7 @@ public:
 public:
 	// Object called
 	void CollectEnemiesInRange(shared_ptr<Object> requester, float range);
-	void HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
+	void HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex);
 	void HandleMinionAttack(shared_ptr<Object> target);
 
 private:

@@ -69,7 +69,7 @@ float GameMath::Vector3::DirectionVectorToYaw(GameMath::Vector3 dir)
 
 GameMath::Vector3 GameMath::Vector3::Lerp(Vector3 start, Vector3 end, float t)
 {
-	t = clamp(t, 0.0f, 0.1f);
+	t = clamp(t, 0.0f, 1.0f);
 	return start + (end - start) * t;
 }
 

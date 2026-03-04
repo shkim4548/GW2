@@ -37,7 +37,7 @@ def main():
     parser.parse_proto(proto_path)
 
     if getattr(sys, 'frozen', False):
-        template_dir = os.path.join(sys._MEIPASS, 'Templates') if hasattr(sys, '_MEIPASS') else 'Templates'
+        template_dir = os.path.join(os.path.dirname(sys.executable), 'Templates')
     else:
         template_dir = os.path.join(os.path.dirname(__file__), 'Templates')
 

@@ -82,6 +82,8 @@ public class PacketHandler
         bc.LastServerTime = movePkt.ServerTime;
         bc._isMoving = true;
         bc.State = movePkt.ServerPosInfo.State;
+        Debug.Log(
+        $"[S_MOVEHandler] Minion {targetId} serverPos=({pos.X:F2}, {pos.Y:F2}, {pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -154,6 +156,16 @@ public class PacketHandler
     }
 
     internal static void S_MOVE_STARTHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_MINION_MOVEHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_ATTACKHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();
     }

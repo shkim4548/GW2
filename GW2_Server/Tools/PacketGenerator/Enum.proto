@@ -6,10 +6,12 @@ option csharp_namespace = "Google.Protobuf.Enum";
 enum ObjectType
 {
 	OBJECT_TYPE_NONE = 0;
-	OBJECT_TYPE_PLAYER = 2;
-	OBJECT_TYPE_MONSTER = 3;
-	OBJECT_TYPE_ENV = 4;
+	OBJECT_TYPE_PLAYER = 1;
+	OBJECT_TYPE_MINION = 2;
+	OBJECT_TYPE_TURRET = 3;
+	OBJECT_TYPE_NEXUS = 4;
 }
+
 enum PlayerType
 {
 	PLAYER_TYPE_NONE = 0;
@@ -29,6 +31,15 @@ enum MoveState
 	MOVE_STATE_DIE = 5;
 }
 
+enum MinionState
+{
+	MINION_IDLE = 0;
+	MINION_LINE_TRACE = 1;
+	MINION_CHASE_TARGET = 2;
+	MINION_ATTACK = 3;
+	MINION_DEAD = 4;
+}
+
 enum SkillType
 {
 	SKILL_ID_NONE = 0;
@@ -39,9 +50,10 @@ enum SkillType
 
 enum CampType
 {
-	CAMP_HUMAN = 0;
-	CAMP_CYBORG = 1;
-	CAMP_NEUTURAL = 2;
+	CAMP_NONE = 0;
+	CAMP_HUMAN = 1;
+	CAMP_CYBORG = 2;
+	CAMP_NEUTURAL = 3;
 }
 
 enum CellFlags

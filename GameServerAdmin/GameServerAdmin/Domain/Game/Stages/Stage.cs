@@ -64,5 +64,22 @@ namespace GameServerAdmin.Domain.Game.Stages
 
         public void Disable() => IsEnabled = false;
         public void Enable() => IsEnabled = true;
+
+        public void Update(string name, int requiredStamina, long rewardGold, long rewardGem)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new DomainException("스테이지 이름은 필수입니다.");
+
+            if (requiredStamina < 0)
+                throw new DomainException("RequiredStamina는 0 이상이어야 합니다.");
+
+            if (rewardGold < 0 || rewardGem < 0)
+                throw new DomainException("보상 값은 0 이상이어야 합니다.");
+
+            Name = name;
+            RequiredStamina = requiredStamina;
+            RewardGold = rewardGold;
+            RewardGem = rewardGem;
+        }
     }
 }

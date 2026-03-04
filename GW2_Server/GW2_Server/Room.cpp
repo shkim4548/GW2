@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Lobby.h"
 #include "Room.h"
 #include "Player.h"
@@ -10,8 +10,8 @@
 #include "ObjectUtils.h"
 #include "LaneRouteLoader.h"
 
-// °ø¿ëÀ¸·Î »ç¿ëÇÒ Àü¿ª ·ë
-//shared_ptr<Room> GRoom = make_shared<Room>();	//¸ğµç Å¬¶ó¸¦ ¿©±â¿¡ Á¢¼Ó½ÃÄÑ¼­ È®ÀÎÇÑ´Ù.
+// ê³µìš©ìœ¼ë¡œ ì‚¬ìš©í•  ì „ì—­ ë£¸
+//shared_ptr<Room> GRoom = make_shared<Room>();	//ëª¨ë“  í´ë¼ë¥¼ ì—¬ê¸°ì— ì ‘ì†ì‹œì¼œì„œ í™•ì¸í•œë‹¤.
 
 Room::Room()
 {
@@ -36,7 +36,12 @@ bool Room::Enter(PlayerRef gameObject)
 
 	int32 objectId = gameObject->GetObjectId();
 	_objects.emplace(objectId, gameObject);
-
+	GConsoleLogger->WriteStdOut(
+		Color::GREEN,
+		L"[Room::SpawnMinion] objId=%d pos=(%.2f,%.2f)\n",
+		gameObject->GetObjectId(),
+		gameObject->GetPosVector()._x,
+		gameObject->GetPosVector()._z);
 	Protocol::S_ENTER_GAME enterPkt;
 	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
@@ -51,7 +56,7 @@ bool Room::Enter(PlayerRef gameObject)
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
 	_players.emplace(objectId, gameObject);
-	// TODO : ³ªÁß¿¡ ½ÃÀÛ ÇÃ·¡±× ÆĞÅ¶À¸·Î ¹Ş´Â°É·Î ¹Ù²ã¾ßÇÔ
+	// TODO : ë‚˜ì¤‘ì— ì‹œì‘ í”Œë˜ê·¸ íŒ¨í‚·ìœ¼ë¡œ ë°›ëŠ”ê±¸ë¡œ ë°”ê¿”ì•¼í•¨
 	_isRunning = true;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
@@ -149,7 +154,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	if (!ok || gridPath.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] GridCell is nullptr\n");
-		// TODO : ÀÌµ¿ ½ÇÆĞ ±¸Çö
+		// TODO : ì´ë™ ì‹¤íŒ¨ êµ¬í˜„
 		return;
 	}
 
@@ -158,7 +163,7 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	if (player.lock() == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] player is nullptr\n");
-		// TODO : ÀÌµ¿ ½ÇÆĞ ±¸Çö
+		// TODO : ì´ë™ ì‹¤íŒ¨ êµ¬í˜„
 		return;
 	}
 	//cout << "End of HandleMovePlayer" << endl;
@@ -196,7 +201,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	return true;
 }
 
-// Path¸¦ player¿¡ ÇÒ´çÇÑ´Ù.
+// Pathë¥¼ playerì— í• ë‹¹í•œë‹¤.
 void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld)
 {
 	vector<GameMath::Vector3> worldPath;
@@ -229,7 +234,7 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayerInternal] player is nullptr");
 		return;
 	}
-	// ÀÌ ºÎºĞÀÌ ºüÁ®ÀÖ¾úÀ½
+	// ì´ ë¶€ë¶„ì´ ë¹ ì ¸ìˆì—ˆìŒ
 	//player->GetMoveState();
 	player->SetMoveState(Protocol::MOVE_STATE_RUN);
 	player->_path = move(worldPath);
@@ -239,7 +244,7 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 
 void Room::UpdateRoom(float deltaTime)
 {
-	// 0. ¹Ì´Ï¾ğ ½ºÆù (±âÁ¸ ·ÎÁ÷ À¯Áö)
+	// 0. ë¯¸ë‹ˆì–¸ ìŠ¤í° (ê¸°ì¡´ ë¡œì§ ìœ ì§€)
 	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
 	{
@@ -262,7 +267,7 @@ void Room::UpdateRoom(float deltaTime)
 		if (obj == nullptr)
 			continue;
 
-		obj->UpdateController(deltaTime);  // Player/Minion °øÅë
+		obj->UpdateController(deltaTime);  // Player/Minion ê³µí†µ
 	}
 
 	// 2) Movement + Broadcast Phase
@@ -294,7 +299,7 @@ void Room::UpdateRoom(float deltaTime)
 
 shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 {
-	// route È®º¸
+	// route í™•ë³´
 	shared_ptr<Navigation::LaneRoute> route = GetLaneRoute(laneId).lock();
 	if (route == nullptr || route->waypoints.empty())
 	{
@@ -302,21 +307,31 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 		return nullptr;
 	}
 
-	// ½ºÆù À§Ä¡ ÃÊ±âÈ­
+	// ìŠ¤í° ìœ„ì¹˜ ì´ˆê¸°í™”
 	const GameMath::Vector3& spawnWorldPos = route->waypoints.front();
 
-	// ¹Ì´Ï¾ğ »ı¼º
+	// ë¯¸ë‹ˆì–¸ ìƒì„±
 	shared_ptr<Minion> minion = ObjectUtils::CreateMinion();
 	if (minion == nullptr)
 		return nullptr;
 
-	// ±âº» ÆÄ¶ó¹ÌÅÍ ¼¼ÆÃ
+	GConsoleLogger->WriteStdOut(
+		Color::GREEN,
+		L"[Room::SpawnMinion] objId=%d minionId=%d laneId=%d pos=(%.2f,%.2f)\n",
+		minion->GetObjectId(),
+		minion->GetMinionId(),
+		minion->GetLaneId(),
+		minion->GetPosVector()._x,
+		minion->GetPosVector()._z);
+
+	// ê¸°ë³¸ íŒŒë¼ë¯¸í„° ì„¸íŒ…
 	minion->SetLaneRoute(route);
 	//minion->_laneId = static_cast<uint8>(laneId);
 	minion->SetMinionLaneId(laneId);
 	cout << "TEMP : MinionLaneId : " << minion->_laneId << endl;
+	
 
-	// À§Ä¡ ÃÊ±âÈ­
+	// ìœ„ì¹˜ ì´ˆê¸°í™”
 	Protocol::PosInfo posInfo;
 	posInfo.set_x(spawnWorldPos._x);
 	posInfo.set_y(spawnWorldPos._y);
@@ -326,7 +341,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	minion->InitMinion();
 	
 	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
-	// Room¿¡ µî·ÏÇÑ´Ù
+	// Roomì— ë“±ë¡í•œë‹¤
 	HandleSpawnMinion(minion);
 	return minion;
 }
@@ -345,7 +360,7 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 	const GameMath::Vector3 requesterPos = requester->GetPosVector();
 	const float rangeSquare = range * range;
 	cout << "After Init" << endl;
-	// ¼±ÇüÅ½»öÀÇ ¹üÀ§¸¦ ÀÚ½ÅÀÇ ¶óÀÎ ¾ÈÀ¸·Î¸¸ ÇÑÁ¤ÇÑ´Ù.
+	// ì„ í˜•íƒìƒ‰ì˜ ë²”ìœ„ë¥¼ ìì‹ ì˜ ë¼ì¸ ì•ˆìœ¼ë¡œë§Œ í•œì •í•œë‹¤.
 	//const shared_ptr<Minion>& asMinion = requester->IsMinion() ? static_pointer_cast<Minion>(requester) : nullptr;
 	auto asMinion = dynamic_pointer_cast<Minion>(requester);
 	const uint8 myLaneId = asMinion ? asMinion->_laneId : 0;
@@ -354,7 +369,7 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::CollectEnemiesInRange] asMinion is nullptr\n");
 		return;
 	}
-	// ÀÌ ¹İº¹¹®¿¡ µé¾î°¡Áöµµ ¸øÇÏ°í ÇÔ¼ö ´Ù¿î
+	// ì´ ë°˜ë³µë¬¸ì— ë“¤ì–´ê°€ì§€ë„ ëª»í•˜ê³  í•¨ìˆ˜ ë‹¤ìš´
 	for (auto& [id, obj] : _objects)
 	{
 		if (obj == nullptr)
@@ -369,11 +384,11 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 		if (obj->GetTeamFlag() == team)
 			continue;
 
-		// (¼±ÅÃ) ¹Ì´Ï¾ğÀÌ¸é °°Àº laneId ´ë»ó¸¸
+		// (ì„ íƒ) ë¯¸ë‹ˆì–¸ì´ë©´ ê°™ì€ laneId ëŒ€ìƒë§Œ
 		if (asMinion)
 		{
-			// Å¸°ÙÀÌ ÇÃ·¹ÀÌ¾î/¹Ì´Ï¾ğ/Æ÷Å¾ÀÏ ¼ö ÀÖÀ¸´Ï, laneId¸¦ ¾î¶»°Ô ²¨³¾Áö Á¤Ã¥ ÇÊ¿ä
-			// °¡Àå ´Ü¼ø: Å¸°Ù À§Ä¡·Î grid¿¡¼­ laneId Á¶È¸
+			// íƒ€ê²Ÿì´ í”Œë ˆì´ì–´/ë¯¸ë‹ˆì–¸/í¬íƒ‘ì¼ ìˆ˜ ìˆìœ¼ë‹ˆ, laneIdë¥¼ ì–´ë–»ê²Œ êº¼ë‚¼ì§€ ì •ì±… í•„ìš”
+			// ê°€ì¥ ë‹¨ìˆœ: íƒ€ê²Ÿ ìœ„ì¹˜ë¡œ gridì—ì„œ laneId ì¡°íšŒ
 			GameMath::Vector3 nowPos = obj->GetPosVector();
 			uint8 targetLaneId = _navigationSystem.lock()->GetLaneId(_navigationSystem.lock()->GetGridCells(), nowPos);
 			if (targetLaneId != myLaneId)
@@ -389,13 +404,16 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 	asMinion->SetMinionTarget(rets);
 }
 
-void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
+void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex)
 {
 	if (minion == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr\n");
 		return;
 	}
+	// DEBUG
+	GameMath::Vector3 debugPos = minion->GetPosVector();
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] startworld = %.3f, %.3f\n", debugPos._x, debugPos._z);
 
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
@@ -420,7 +438,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		return;
 	}
 
-	int32 wpIndex = minion->GetCurrentWaypointIndex();
+	//wpIndex = minion->GetCurrentWaypointIndex();
 	if (wpIndex < 0 || wpIndex >= static_cast<int32>(route->waypoints.size()))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion waypoint is invalid\n");
@@ -429,6 +447,15 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 
 	// start cell
 	const GameMath::Vector3& startPos = minion->GetPosVector();
+	GameMath::Vector3 tStartPos = startPos;
+	const uint8 startLane = navSystem->GetLaneId(grid, tStartPos);
+	if (startLane == 0)
+	{
+		GConsoleLogger->WriteStdErr(Color::YELLOW,
+			L"[Room::HandleMinionMove] startLane=0 (off-lane). objId=%d start=(%.2f,%.2f)\n",
+			minion->GetObjectId(), startPos._x, startPos._z);
+		return;
+	}
 	int32 sx = 0, sz = 0, tx = 0, tz = 0;
 	if (!navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz))
 	{
@@ -436,8 +463,18 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		return;
 	}
 
-	// target cell (ÇöÀç waypoint)
+	// target cell (í˜„ì¬ waypoint)
 	const GameMath::Vector3& targetPos = route->waypoints[wpIndex];
+	GameMath::Vector3 tTargetPos = targetPos;
+	const uint8 targetLane = navSystem->GetLaneId(grid, tTargetPos);
+	if (targetLane == 0 || targetLane != minionLaneId)
+	{
+		GConsoleLogger->WriteStdErr(Color::YELLOW,
+			L"[Room::HandleMinionMove] targetLane invalid. objId=%d wp=%d allowLane=%d targetLane=%d target=(%.2f,%.2f)\n",
+			minion->GetObjectId(), wpIndex, minionLaneId, targetLane, targetPos._x, targetPos._z);
+		return;
+	}
+
 	if (!navSystem->WorldToGrid(grid, targetPos._x, targetPos._z, tx, tz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(target) fail\n");
@@ -477,7 +514,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	for (Navigation::GridCell* cell : gridPath)
 	{
 #if 1
-		// ¾ÈÀü ¹öÀü: GridToWorld¸¦ ÅëÇÏÁö ¾Ê°í Á÷Á¢ world pos °è»ê
+		// ì•ˆì „ ë²„ì „: GridToWorldë¥¼ í†µí•˜ì§€ ì•Šê³  ì§ì ‘ world pos ê³„ì‚°
 		GameMath::Vector3 wp;
 		wp._x = grid.origin._x + (cell->x + 0.5f) * grid.cellSize;
 		wp._z = grid.origin._z + (cell->z + 0.5f) * grid.cellSize;
@@ -485,7 +522,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		navPath.push_back(wp);
 		++successCount;
 #else
-		// ¸¸¾à GridToWorld¸¦ ²À ¾²°í ½Í´Ù¸é ÀÌ ºĞ±â¿¡¼­ ½ÇÆĞ/¼º°øÀ» ³ª´²¼­ ·Î±×
+		// ë§Œì•½ GridToWorldë¥¼ ê¼­ ì“°ê³  ì‹¶ë‹¤ë©´ ì´ ë¶„ê¸°ì—ì„œ ì‹¤íŒ¨/ì„±ê³µì„ ë‚˜ëˆ ì„œ ë¡œê·¸
 		GameMath::Vector3 wp;
 		if (navSystem->GridToWorld(grid, cell->x, cell->z, wp))
 		{
@@ -520,9 +557,37 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		return;
 	}
 
-	// --- ¹Ì´Ï¾ğ¿¡ ÀÌµ¿ °æ·Î Àü´Ş ---
+	// ë§ˆì§€ë§‰ì— ë§ˆì§€ë§‰ ëª©í‘œì  ê°•ì œ ì¶”ê°€
+	if (!navPath.empty())
+		navPath.push_back(dest);
+	else
+		navPath.push_back(dest);
+
+	if (navPath.empty())
+		return;
+
+	// --- ë¯¸ë‹ˆì–¸ì— ì´ë™ ê²½ë¡œ ì „ë‹¬ ---
 	minion->RequestMove(navPath);
-	minion->SetMoveState(Protocol::MoveState::MOVE_STATE_RUN);
+
+	// S_MINION_MOVE ë¸Œë¡œë“œìºìŠ¤íŠ¸ â€” í´ë¼ì´ì–¸íŠ¸ì— ê²½ë¡œ ì „ë‹¬
+	Protocol::S_MINION_MOVE minionMovePkt;
+	minionMovePkt.set_object_id(minion->GetObjectId());
+
+	Protocol::PosInfo* startPosInfo = minionMovePkt.mutable_start_pos();
+	startPosInfo->set_x(minion->GetPosVector()._x);
+	startPosInfo->set_y(minion->GetPosVector()._y);
+	startPosInfo->set_z(minion->GetPosVector()._z);
+
+	for (const auto& wp : navPath)
+	{
+		Protocol::PosInfo* pathPoint = minionMovePkt.add_nav_path();
+		pathPoint->set_x(wp._x);
+		pathPoint->set_y(wp._y);
+		pathPoint->set_z(wp._z);
+	}
+
+	SendBufferRef minionMoveBuffer = ClientPacketHandler::MakeSendBuffer(minionMovePkt);
+	Broadcast(minionMoveBuffer);
 }
 
 void Room::HandleMinionAttack(shared_ptr<Object> target)
@@ -535,11 +600,12 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	// Moving Start
 	Protocol::S_MOVE movePkt;
 	movePkt.set_object_id(obj->GetObjectId());
-	// TODO : POS´Â & ÇüÅÂ·Î °¡Á®¿À´Â °ÍÀÌ À¯¸®ÇÒ °ÍÀÌ´Ù
+	// TODO : POSëŠ” & í˜•íƒœë¡œ ê°€ì ¸ì˜¤ëŠ” ê²ƒì´ ìœ ë¦¬í•  ê²ƒì´ë‹¤
 	Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
 	*pos = obj->GetPosInfo();
 	pos->set_state(obj->GetMoveState());
 	//cout << obj->GetObjectId() << " : " <<  pos->state() << endl;
+	obj->OnMoveBroadcastSent(); // íƒ€ì´ë¨¸/í”Œë˜ê·¸ ë¦¬ì…‹
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(movePkt);
 	Broadcast(sendBuffer);
@@ -572,7 +638,7 @@ void Room::InitLaneRouteBin()
 	}
 	Navigation::WalkableGrid& grid = *gridPtr;
 
-	// laneId ¸ñ·Ï ¼öÁı
+	// laneId ëª©ë¡ ìˆ˜ì§‘
 	unordered_set<int32> laneIds;
 	laneIds.reserve(_laneIdCnt);
 	for (int32 z = 0; z < grid.height; ++z)
@@ -583,7 +649,7 @@ void Room::InitLaneRouteBin()
 			if (cell.walkable == false)
 				continue;
 
-			// invalid Å¸ÀÏ
+			// invalid íƒ€ì¼
 			if (cell.laneId <= 0)
 				continue;
 
@@ -597,13 +663,13 @@ void Room::InitLaneRouteBin()
 		return;
 	}
 
-	// laneId º° LaneRoute »ı¼º
+	// laneId ë³„ LaneRoute ìƒì„±
 	for (int32 laneId : laneIds)
 	{
 		shared_ptr<Navigation::LaneRoute> route = make_shared<Navigation::LaneRoute>();
 		route->laneId = static_cast<uint8>(laneId);
 
-		// °£´Ü ÈŞ¸®½ºÆ½ ¾Ë°í¸®Áò ±¸Çö
+		// ê°„ë‹¨ íœ´ë¦¬ìŠ¤í‹± ì•Œê³ ë¦¬ì¦˜ êµ¬í˜„
 		for (int32 z = 0; z < grid.height; ++z)
 		{
 			int32 chosenX = -1;
@@ -624,7 +690,7 @@ void Room::InitLaneRouteBin()
 				continue;
 
 			GameMath::Vector3 wp;
-			// GridToWorld ¼º°ø½Ã¿¡¸¸ waypoint Ãß°¡
+			// GridToWorld ì„±ê³µì‹œì—ë§Œ waypoint ì¶”ê°€
 			if (!navSystem->GridToWorld(grid, chosenX, z, wp))
 				continue;
 
@@ -637,7 +703,7 @@ void Room::InitLaneRouteBin()
 			continue;
 		}
 
-		// RoomÀÇ laneRoute¿¡ µî·ÏÇÑ´Ù.
+		// Roomì˜ laneRouteì— ë“±ë¡í•œë‹¤.
 		SetLaneRoute(laneId, route);
 
 		GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] laneId=%d, waypoints=%d\n",
@@ -647,7 +713,7 @@ void Room::InitLaneRouteBin()
 
 void Room::InitLaneRouteJson()
 {
-	// 1) NavigationSystem, Grid À¯È¿ ¿©ºÎ Ã¼Å© (ÇÊ¿äÇÏ¸é À¯Áö)
+	// 1) NavigationSystem, Grid ìœ íš¨ ì—¬ë¶€ ì²´í¬ (í•„ìš”í•˜ë©´ ìœ ì§€)
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
 
@@ -658,11 +724,11 @@ void Room::InitLaneRouteJson()
 		return;
 	}
 
-	// 2) laneRoutes.json ·Îµå
+	// 2) laneRoutes.json ë¡œë“œ
 	std::unordered_map<int32, shared_ptr<Navigation::LaneRoute>> loadedRoutes;
 
-	// ÆÄÀÏ °æ·Î´Â ³×°¡ ½ÇÁ¦ ¹èÆ÷ ±¸Á¶¿¡ ¸ÂÃç Á¶Á¤
-	// ¿¹: "./Data/laneRoutes.json" ¶Ç´Â "Config/laneRoutes.json"
+	// íŒŒì¼ ê²½ë¡œëŠ” ë„¤ê°€ ì‹¤ì œ ë°°í¬ êµ¬ì¡°ì— ë§ì¶° ì¡°ì •
+	// ì˜ˆ: "./Data/laneRoutes.json" ë˜ëŠ” "Config/laneRoutes.json"
 	std::string path = "../../GW2_Client/Assets/NavMeshExport/laneRoutes.json";
 
 	if (!LaneRouteLoader::LoadLaneRoutesFromJson(path, loadedRoutes))
@@ -673,7 +739,7 @@ void Room::InitLaneRouteJson()
 	}
 
 
-	// 3) Room ³»ºÎ Å×ÀÌºí¿¡ µî·Ï
+	// 3) Room ë‚´ë¶€ í…Œì´ë¸”ì— ë“±ë¡
 	for (auto& [laneId, route] : loadedRoutes)
 	{
 		SetLaneRoute(laneId, route);

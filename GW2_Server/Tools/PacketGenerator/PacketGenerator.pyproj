@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>PacketGenerator</Name>
     <RootNamespace>PacketGenerator</RootNamespace>
-    <InterpreterId>MSBuild|LaptopEnv|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
