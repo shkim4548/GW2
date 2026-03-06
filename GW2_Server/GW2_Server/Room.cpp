@@ -22,7 +22,7 @@ Room::Room()
 Room::~Room()
 {
 	_players.clear();
-	
+
 }
 
 bool Room::Enter(PlayerRef gameObject)
@@ -184,7 +184,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 
 	//minion = ObjectUtils::CreateMinion();
 	int32 objectId = minion->GetMinionId();
-	
+
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
 	objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
 	objectInfo->set_object_id(objectId);
@@ -329,7 +329,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	//minion->_laneId = static_cast<uint8>(laneId);
 	minion->SetMinionLaneId(laneId);
 	cout << "TEMP : MinionLaneId : " << minion->_laneId << endl;
-	
+
 
 	// 위치 초기화
 	Protocol::PosInfo posInfo;
@@ -339,7 +339,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	minion->SetPosInfo(posInfo);
 	minion->SetRoomId(this->GetRoomId());
 	minion->InitMinion();
-	
+
 	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
 	// Room에 등록한다
 	HandleSpawnMinion(minion);
@@ -355,7 +355,7 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::CollectEnemiesInRange] requester is nullptr\n");
 		return;
 	}
-	
+
 	const Protocol::CampType team = requester->GetTeamFlag();
 	const GameMath::Vector3 requesterPos = requester->GetPosVector();
 	const float rangeSquare = range * range;
@@ -406,6 +406,14 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 
 void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex)
 {
+	// _pathPending은 이 함수가 종료될 때 반드시 해제되어야 함 (성공/실패 무관)
+	struct PendingGuard {
+		shared_ptr<Minion>& m;
+		~PendingGuard() {
+			if (m) m->ClearPathPending();
+		}
+	} guard{ minion };
+
 	if (minion == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr\n");
@@ -505,8 +513,28 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	}
 
 	// --- GridPath -> NavPath (world space) ---
+	// [DIAGNOSTIC] gridPath 첫/마지막 셀 좌표 출력 - 경로 방향 확인
+	if (!gridPath.empty())
+	{
+		Navigation::GridCell* first = gridPath.front();
+		Navigation::GridCell* last = gridPath.back();
+		float wx0 = grid.origin._x + (first->x + 0.5f) * grid.cellSize;
+		float wz0 = grid.origin._z + (first->z + 0.5f) * grid.cellSize;
+		float wx1 = grid.origin._x + (last->x + 0.5f) * grid.cellSize;
+		float wz1 = grid.origin._z + (last->z + 0.5f) * grid.cellSize;
+		GConsoleLogger->WriteStdOut(Color::YELLOW,
+			L"[DIAG] gridPath[0]=(%d,%d) world=(%.2f,%.2f)  gridPath[last]=(%d,%d) world=(%.2f,%.2f)\n",
+			first->x, first->z, wx0, wz0,
+			last->x, last->z, wx1, wz1);
+		GConsoleLogger->WriteStdOut(Color::YELLOW,
+			L"[DIAG] startPos=(%.2f,%.2f) destPos=(%.2f,%.2f) targetPos=(%.2f,%.2f)\n",
+			startPos._x, startPos._z, dest._x, dest._z, targetPos._x, targetPos._z);
+	}
+
 	vector<GameMath::Vector3> navPath;
 	navPath.reserve(gridPath.size());
+
+	navPath.push_back(startPos);
 
 	int successCount = 0;
 	int failCount = 0;
@@ -572,6 +600,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	// S_MINION_MOVE 브로드캐스트 — 클라이언트에 경로 전달
 	Protocol::S_MINION_MOVE minionMovePkt;
 	minionMovePkt.set_object_id(minion->GetObjectId());
+	minionMovePkt.set_speed(minion->GetMoveSpeed());
 
 	Protocol::PosInfo* startPosInfo = minionMovePkt.mutable_start_pos();
 	startPosInfo->set_x(minion->GetPosVector()._x);
@@ -744,7 +773,7 @@ void Room::InitLaneRouteJson()
 	{
 		SetLaneRoute(laneId, route);
 	}
-	
+
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] lane routes initialized. count=%d\n", static_cast<int32>(_laneRoute.size()));
 }
 

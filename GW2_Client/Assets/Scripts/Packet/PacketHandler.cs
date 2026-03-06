@@ -1,4 +1,4 @@
-using Google.Protobuf;
+ï»¿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Struct;
 using ServerCore;
@@ -14,12 +14,33 @@ public class PacketHandler
     {
         S_ENTER_GAME enterGamePkt = message as S_ENTER_GAME;
         int roomId = (int)enterGamePkt.Player.RoomId;
-        
-        //var objectService = DI.Container.Resolve<IObjectService>();
+
         var objectService = Bootstrapper.Instance.ObjectService;
         Debug.Log($"[PacketHandler] After ObjectService");
-        // TEST : EnterGameÀ¸·Î ¹Ş¾ÒÀ¸¸é ¹«Á¶°Ç ³» ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ´Ù
         objectService.Add(enterGamePkt.Player, true);
+
+        // â˜… ìŠ¤í° í›„ ì„œë²„ PosInfoë¥¼ transform.positionì— ì¦‰ì‹œ ë°˜ì˜
+        //   objectService.Add()ê°€ Prefab ê¸°ë³¸ ìœ„ì¹˜ë¡œ ìƒì„±í•˜ë¯€ë¡œ ëª…ì‹œì ìœ¼ë¡œ ì„¸íŒ…
+        int objectId = enterGamePkt.Player.ObjectId;
+        GameObject go = objectService.FindById(objectId);
+        if (go != null)
+        {
+            PosInfo spawnPos = enterGamePkt.Player.PosInfo;
+            Vector3 worldPos = new Vector3(spawnPos.X, spawnPos.Y, spawnPos.Z);
+            go.transform.position = worldPos;
+
+            // BaseController PosInfoë„ ë™ê¸°í™”
+            BaseController bc = go.GetComponent<BaseController>();
+            if (bc != null)
+                bc.PosInfo = spawnPos;
+
+            Debug.Log($"[S_ENTER_GAMEHandler] objectId={objectId} " +
+                      $"spawnPos=({worldPos.x:F2},{worldPos.y:F2},{worldPos.z:F2})");
+        }
+        else
+        {
+            Debug.LogWarning($"[S_ENTER_GAMEHandler] objectId={objectId} not found after Add()");
+        }
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)
@@ -30,7 +51,7 @@ public class PacketHandler
         if (recvLoginpkt.Success == false)
             return;
 
-        // ·Î±×ÀÎ ¿Ï·á½Ã Lobby ÀÔÀå ¿äÃ»
+        // ë¡œê·¸ì¸ ì™„ë£Œì‹œ Lobby ì…ì¥ ìš”ì²­
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
         //var networkService = DI.Container.Resolve<INetworkService>();
         var networkService = Bootstrapper.Instance.NetworkService;
@@ -38,7 +59,7 @@ public class PacketHandler
         Debug.Log(networkService.GetNetworkId());
         networkService.Send(enterLobbyRequest);
 
-        // ¹öÆ° Äİ¹éµî È£Ãâ ºóµµ°¡ ³·Àº ºÎºĞÀº Lazy Resolve
+        // ë²„íŠ¼ ì½œë°±ë“± í˜¸ì¶œ ë¹ˆë„ê°€ ë‚®ì€ ë¶€ë¶„ì€ Lazy Resolve
         //var sceneService = DI.Container.Resolve<ISceneService>();
         var sceneService = Bootstrapper.Instance.SceneService;
         sceneService.LoadScene(Define.Scene.Lobby);
@@ -47,43 +68,57 @@ public class PacketHandler
     public static void S_MOVEHandler(PacketSession session, IMessage message)
     {
         S_MOVE movePkt = message as S_MOVE;
-        //var objectService = DI.Container.Resolve<IObjectService>();
         var objectService = Bootstrapper.Instance.ObjectService;
 
         int targetId = movePkt.ObjectId;
         GameObject go = objectService.FindById(targetId);
-        if(go == null)
+        if (go == null)
         {
-            Debug.Log($"[S_MOVEHandler] : objectService findById is nullptr");
+            Debug.Log($"[S_MOVEHandler] objectService findById is null. id={targetId}");
             return;
         }
 
-        // ³»²¨´Â ¼ö½ÅÇÏÁö ¾Ê´Â´Ù -> ÀÌ°Ô ¸Â´Â°¡´Â ´Ù½ÃÇÑ¹ø Ã¼Å©ÇØºÁ¾ßÇÔ
-        if(objectService.MyPlayer.Id == movePkt.ObjectId)
+        // ë‚´ í”Œë ˆì´ì–´ëŠ” ì²˜ë¦¬í•˜ì§€ ì•ŠìŒ
+        if (objectService.MyPlayer.Id == movePkt.ObjectId)
+            return;
+
+        BaseController bc = go.GetComponent<BaseController>();
+        if (bc == null)
         {
+            Debug.Log($"[S_MOVEHandler] BaseController not found. id={targetId}");
             return;
         }
 
-        //
-        BaseController bc = go. GetComponent<BaseController>();
-        if(bc == null)
+        // â˜… Phase 1-B : ë¯¸ë‹ˆì–¸ì€ S_MOVEê°€ navPath ì´ë™ì„ ê°„ì„­í•˜ì§€ ì•Šë„ë¡ ë¶„ê¸°
+        //   - PosInfo / State / _isMoving ì„ ë®ì–´ì“°ì§€ ì•ŠìŒ
+        //   - ì„œë²„ ê¸°ì¤€ ìœ„ì¹˜ë§Œ SetServerRefPos()ë¡œ ì „ë‹¬ (Phase 2 ë³´ì •ì—ì„œ ì‚¬ìš©)
+        MinionController mc = bc as MinionController;
+        if (mc != null)
         {
-            Debug.Log($"[S_MOVEHandler] : bc is nullptr, type casting faileds");
-            return;
+            Vector3 serverPos = new Vector3(
+                movePkt.ServerPosInfo.X,
+                movePkt.ServerPosInfo.Y,
+                movePkt.ServerPosInfo.Z);
+
+            mc.SetServerRefPos(serverPos, movePkt.ServerTime);
+
+            Debug.Log($"[S_MOVEHandler] Minion {targetId} " +
+                      $"serverRefPos=({serverPos.x:F2},{serverPos.z:F2}) t={movePkt.ServerTime}");
+            return; // â† ì—¬ê¸°ì„œ ë°˜ë“œì‹œ return â€” navPath ì´ë™ì— ì¼ì ˆ ê°„ì„­í•˜ì§€ ì•ŠìŒ
         }
 
+        // í”Œë ˆì´ì–´ ì²˜ë¦¬ (ê¸°ì¡´ ë¡œì§ ê·¸ëŒ€ë¡œ)
         PosInfo pos = new PosInfo();
         pos.X = movePkt.ServerPosInfo.X;
         pos.Y = movePkt.ServerPosInfo.Y;
         pos.Z = movePkt.ServerPosInfo.Z;
 
-        // ¼­¹öÀÇ ±ÇÀ§ÀÖ´Â Á¤º¸¸¦ Àü´Ş
         bc.PosInfo = pos;
         bc.LastServerTime = movePkt.ServerTime;
         bc._isMoving = true;
         bc.State = movePkt.ServerPosInfo.State;
-        Debug.Log(
-        $"[S_MOVEHandler] Minion {targetId} serverPos=({pos.X:F2}, {pos.Y:F2}, {pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
+        Debug.Log($"[S_MOVEHandler] Player {targetId} " +
+                  $"serverPos=({pos.X:F2},{pos.Y:F2},{pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -123,34 +158,56 @@ public class PacketHandler
 
     public static void S_MOVE_ENDHandler(PacketSession session, IMessage message)
     {
-        // EndOfMoving Recv
         S_MOVE_END endMovePkt = message as S_MOVE_END;
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
-        
+
         int targetId = endMovePkt.ObjectId;
-        GameObject go = objectService.FindById(endMovePkt.ObjectId);
-        BaseController bc = go.GetComponent<BaseController>();
-        
-        // ½º³À Àü Å¬¶ó À§Ä¡
-        Vector3 clientPosBefore = bc.transform.position;
-
-        // ¼­¹ö ±âÁØ ÃÖÁ¾ À§Ä¡
-        PosInfo finalPos = endMovePkt.ServerPosInfo;
-        Vector3 serverPos = new Vector3(finalPos.X, finalPos.Y, finalPos.Z);
-
-        float diff = Vector3.Distance(clientPosBefore, serverPos);
-        if (diff > 0.05f)
+        GameObject go = objectService.FindById(targetId);
+        if (go == null)
         {
-            Debug.LogWarning($"[S_MOVE_END] desync: diff={diff}, client={clientPosBefore}, server={serverPos}");
+            Debug.LogWarning($"[S_MOVE_END] objectId={targetId} not found");
+            return;
         }
 
-        bc._isMoving = false;
+        BaseController bc = go.GetComponent<BaseController>();
+        if (bc == null)
+        {
+            Debug.LogWarning($"[S_MOVE_END] BaseController not found. id={targetId}");
+            return;
+        }
 
-        // ¿©±â¼­´Â ½º³ÀÀÌ Çã¿ëµÈ´Ù
+        // ì˜µì…˜ A : ë¯¸ë‹ˆì–¸ì€ navPathê°€ ìì²´ì ìœ¼ë¡œ ArriveAtDestination()ì„ ì²˜ë¦¬í•œë‹¤.
+        // S_MOVE_ENDë¡œ ìœ„ì¹˜/ìƒíƒœë¥¼ ê°•ì œ ë®ì–´ì“°ë©´ ê²½ë¡œ ì¬ìƒ ë„ì¤‘ ê°•ì œ ì •ì§€ë˜ë¯€ë¡œ ë¶„ê¸°.
+        MinionController mc = bc as MinionController;
+        if (mc != null)
+        {
+            // ì„œë²„ ìµœì¢… ìœ„ì¹˜ë¥¼ ë³´ì • ì°¸ì¡°ê°’ìœ¼ë¡œë§Œ ì „ë‹¬
+            // navPathê°€ ì´ë¯¸ ì™„ì£¼í–ˆê±°ë‚˜ ë‹¤ìŒ SetNavPath() ì „ê¹Œì§€ ìœ„ì¹˜ ê¸°ì¤€ì ìœ¼ë¡œ í™œìš©
+            Vector3 serverPos = new Vector3(
+                endMovePkt.ServerPosInfo.X,
+                endMovePkt.ServerPosInfo.Y,
+                endMovePkt.ServerPosInfo.Z);
+
+            mc.SetServerRefPos(serverPos, endMovePkt.ServerTime);
+
+            Debug.Log($"[S_MOVE_END] Minion {targetId} " +
+                      $"serverFinalPos=({serverPos.x:F2},{serverPos.z:F2})");
+            return; // â† navPath ì´ë™ ë° ìƒíƒœì— ì¼ì ˆ ê°„ì„­í•˜ì§€ ì•ŠìŒ
+        }
+
+        // í”Œë ˆì´ì–´ ì²˜ë¦¬ (ê¸°ì¡´ ë¡œì§ ê·¸ëŒ€ë¡œ)
+        Vector3 clientPosBefore = bc.transform.position;
+
+        PosInfo finalPos = endMovePkt.ServerPosInfo;
+        Vector3 playerServerPos = new Vector3(finalPos.X, finalPos.Y, finalPos.Z);
+
+        float diff = Vector3.Distance(clientPosBefore, playerServerPos);
+        if (diff > 0.05f)
+            Debug.LogWarning($"[S_MOVE_END] desync: diff={diff:F2}, client={clientPosBefore}, server={playerServerPos}");
+
         bc.PosInfo = finalPos;
         bc._isMoving = false;
-        bc.transform.position = serverPos;
-        // TODO: STATE º¯°æ + ROTATION º¯°æ
+        bc.transform.position = playerServerPos;
         bc.State = endMovePkt.ServerPosInfo.State;
         Debug.Log(endMovePkt.ServerPosInfo.State);
     }
@@ -162,7 +219,50 @@ public class PacketHandler
 
     internal static void S_MINION_MOVEHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_MINION_MOVE minionMovePkt = message as S_MINION_MOVE;
+        if (minionMovePkt == null)
+        {
+            Debug.LogError("[S_MINION_MOVEHandler] message casting failed");
+            return;
+        }
+
+        var objectService = Bootstrapper.Instance.ObjectService;
+        int targetId = minionMovePkt.ObjectId;
+
+        GameObject go = objectService.FindById(targetId);
+        if (go == null)
+        {
+            Debug.LogWarning($"[S_MINION_MOVEHandler] objectId={targetId} not found");
+            return;
+        }
+
+        MinionController mc = go.GetComponent<MinionController>();
+        if (mc == null)
+        {
+            Debug.LogWarning($"[S_MINION_MOVEHandler] objectId={targetId} has no MinionController");
+            return;
+        }
+
+        // PosInfo ë¦¬ìŠ¤íŠ¸ â†’ Vector3 ë¦¬ìŠ¤íŠ¸ ë³€í™˜
+        List<Vector3> navPath = new List<Vector3>(minionMovePkt.NavPath.Count);
+        foreach (PosInfo pt in minionMovePkt.NavPath)
+        {
+            navPath.Add(new Vector3(pt.X, pt.Y, pt.Z));
+        }
+
+        if (navPath.Count == 0)
+        {
+            Debug.LogWarning($"[S_MINION_MOVEHandler] objectId={targetId} empty navPath received");
+            return;
+        }
+
+        Debug.Log($"[S_MINION_MOVEHandler] objectId={targetId} navPath.Count={navPath.Count}" +
+                  $" first=({navPath[0].x:F2},{navPath[0].z:F2})" +
+                  $" last=({navPath[navPath.Count - 1].x:F2},{navPath[navPath.Count - 1].z:F2})");
+
+        // MinionControllerì— ê²½ë¡œ ì „ë‹¬ â†’ ë‚´ë¶€ì—ì„œ Updateë§ˆë‹¤ ë”°ë¼ ì´ë™
+        mc.SetMoveSpeed(minionMovePkt.Speed);
+        mc.SetNavPath(navPath);
     }
 
     internal static void S_ATTACKHandler(PacketSession session, IMessage message)

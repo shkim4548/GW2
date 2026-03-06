@@ -195,6 +195,14 @@ bool NavmeshLoader::LoadNavGridBin(const string& path, Navigation::WalkableGrid&
     outGrid.cells.clear();
     outGrid.cells.resize(cellCount);
 
+    // cell.x, cell.z 초기화 (GridCell 멤버에 초기값 없으므로 반드시 세팅)
+    for (int32 z = 0; z < height; ++z)
+        for (int32 x = 0; x < width; ++x)
+        {
+            outGrid.cells[static_cast<size_t>(z) * width + x].x = x;
+            outGrid.cells[static_cast<size_t>(z) * width + x].z = z;
+        }
+
     // -----------------------------
     // 3. Cell Data (walkable only)
     // -----------------------------
@@ -208,6 +216,14 @@ bool NavmeshLoader::LoadNavGridBin(const string& path, Navigation::WalkableGrid&
 
         outGrid.cells[i].walkable = (walkable != 0);
     }
+
+    // cell.x, cell.z 초기화 (FindPath 경로 재구성 시 GridToWorld 변환에 필요)
+    for (int32 z = 0; z < height; ++z)
+        for (int32 x = 0; x < width; ++x)
+        {
+            outGrid.At(x, z).x = x;
+            outGrid.At(x, z).z = z;
+        }
 
     return true;
 }

@@ -38,15 +38,15 @@ public class BaseController : MonoBehaviour
         get { return _posInfo; }
         set
         {
-            if (_posInfo != value)
+            if (value == null)
                 return;
 
-            State = value.State;
+            _posInfo.X = value.X;
+            _posInfo.Y = value.Y;
+            _posInfo.Z = value.Z;
 
-            // 3차원 좌표 설정
-            PosInfo.X = value.X;
-            PosInfo.Y = value.Y;
-            PosInfo.Z = value.Z;
+            // State setter를 통해 UpdateAnimation()까지 호출
+            State = value.State;
         }
     }
 

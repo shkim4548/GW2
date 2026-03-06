@@ -1,4 +1,4 @@
-using GameServerAdmin.Application.AdminGame;
+ï»¿using GameServerAdmin.Application.AdminGame;
 using GameServerAdmin.Application.Comments.Admin;
 using GameServerAdmin.Application.Comments.Public;
 using GameServerAdmin.Application.Game.Inventory;
@@ -20,6 +20,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+#if DEBUG
+using GameServerAdmin.Common.Security.TestAuth;
+#endif
 
 namespace GameServerAdmin
 {
@@ -29,7 +32,7 @@ namespace GameServerAdmin
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // DBContext µî·Ï
+            // DBContext ë“±ë¡
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseNpgsql(
@@ -37,34 +40,34 @@ namespace GameServerAdmin
                     );
             });
 
-            // Identity ¼³Á¤
+            // Identity ì„¤ì •
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
-                // password Á¤Ã¥
+                // password ì •ì±…
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
 
-                // Lockout ¼³Á¤
+                // Lockout ì„¤ì •
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
 
-                // User ¼³Á¤
+                // User ì„¤ì •
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = false;
             }).AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            // ÄíÅ° ¸®´ÙÀÌ·ºÆ® °æ·Î
+            // ì¿ í‚¤ ë¦¬ë‹¤ì´ë ‰íŠ¸ ê²½ë¡œ
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/account/login";
                 options.AccessDeniedPath = "/account/denied";
 
-                // Admin UI·Î µé¾î°¡´Ù ¸·È÷¸é /admin/loginÀ¸·Î º¸³»±â
+                // Admin UIë¡œ ë“¤ì–´ê°€ë‹¤ ë§‰íˆë©´ /admin/loginìœ¼ë¡œ ë³´ë‚´ê¸°
                 options.Events.OnRedirectToLogin = context =>
                 {
                     if (context.Request.Path.StartsWithSegments("/admin") || context.Request.Path.StartsWithSegments("/Admin") || context.Request.Path.Value?.StartsWith("/AdminUi", StringComparison.OrdinalIgnoreCase) == true)
@@ -78,7 +81,7 @@ namespace GameServerAdmin
                 };
             });
 
-            // JWT + Cookie(Identity) È¥¿ë: ¿äÃ»¿¡ µû¶ó ÀÚµ¿ ¼±ÅÃ
+            // JWT + Cookie(Identity) í˜¼ìš©: ìš”ì²­ì— ë”°ë¼ ìë™ ì„ íƒ
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = "SmartAuth";
@@ -88,16 +91,16 @@ namespace GameServerAdmin
             {
                 options.ForwardDefaultSelector = context =>
                 {
-                    // 1) Authorization: Bearer ... °¡ ÀÖÀ¸¸é JWT
+                    // 1) Authorization: Bearer ... ê°€ ìˆìœ¼ë©´ JWT
                     var authHeader = context.Request.Headers.Authorization.ToString();
                     if (!string.IsNullOrWhiteSpace(authHeader) && authHeader.StartsWith("Bearer "))
                         return JwtBearerDefaults.AuthenticationScheme;
 
-                    // 2) /api ·Î ½ÃÀÛÇÏ¸é JWT
+                    // 2) /api ë¡œ ì‹œì‘í•˜ë©´ JWT
                     if (context.Request.Path.StartsWithSegments("/api"))
                         return JwtBearerDefaults.AuthenticationScheme;
 
-                    // 3) ±× ¿Ü(UI)´Â Identity Cookie
+                    // 3) ê·¸ ì™¸(UI)ëŠ” Identity Cookie
                     return IdentityConstants.ApplicationScheme;
                 };
             })
@@ -122,7 +125,7 @@ namespace GameServerAdmin
                         Console.WriteLine("### JWT Authentication Failed ###");
                         Console.WriteLine(context.Exception.ToString());
 
-                        // µğ¹ö±ë¿ë: ÅäÅ«ÀÌ µé¾î¿Ô´ÂÁö, µé¾î¿Ô´Ù¸é ¾î¶² °ªÀÎÁö
+                        // ë””ë²„ê¹…ìš©: í† í°ì´ ë“¤ì–´ì™”ëŠ”ì§€, ë“¤ì–´ì™”ë‹¤ë©´ ì–´ë–¤ ê°’ì¸ì§€
                         if (context.Request.Headers.ContainsKey("Authorization"))
                         {
                             Console.WriteLine("Authorization: " + context.Request.Headers["Authorization"]);
@@ -144,18 +147,18 @@ namespace GameServerAdmin
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                // ±âº» ¹®¼­ Á¤º¸ (ÀÌ¸§Àº ¾Æ¹«·¸°Ô³ª ±¦ÂúÁö¸¸ v1 ÇÏ³ª´Â Àâ¾ÆµÎ´Â °Ô ÁÁ´Ù)
+                // ê¸°ë³¸ ë¬¸ì„œ ì •ë³´ (ì´ë¦„ì€ ì•„ë¬´ë ‡ê²Œë‚˜ ê´œì°®ì§€ë§Œ v1 í•˜ë‚˜ëŠ” ì¡ì•„ë‘ëŠ” ê²Œ ì¢‹ë‹¤)
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "GameServerAdmin API",
                     Version = "v1"
                 });
 
-                // JWT Bearer º¸¾È ½ºÅ°¸¶ Á¤ÀÇ
+                // JWT Bearer ë³´ì•ˆ ìŠ¤í‚¤ë§ˆ ì •ì˜
                 var securityScheme = new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Description = "JWT Authorization header using the Bearer scheme. ¿¹) 'Bearer {token}'",
+                    Description = "JWT Authorization header using the Bearer scheme. ì˜ˆ) 'Bearer {token}'",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
@@ -167,10 +170,10 @@ namespace GameServerAdmin
                     }
                 };
 
-                // ½ºÅ°¸¶ µî·Ï
+                // ìŠ¤í‚¤ë§ˆ ë“±ë¡
                 c.AddSecurityDefinition("Bearer", securityScheme);
 
-                // Àü¿ª Security Requirement ¼³Á¤ (¸ğµç API¿¡ ±âº»À¸·Î Àû¿ë)
+                // ì „ì—­ Security Requirement ì„¤ì • (ëª¨ë“  APIì— ê¸°ë³¸ìœ¼ë¡œ ì ìš©)
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -203,7 +206,7 @@ namespace GameServerAdmin
 
             var app = builder.Build();
 
-            // DB ÃÊ±âÈ­
+            // DB ì´ˆê¸°í™”
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -229,9 +232,9 @@ namespace GameServerAdmin
                 app.UseHsts();
             }
 
-            // Https »ç¿ë
+            // Https ì‚¬ìš©
             app.UseHttpsRedirection();
-            // wwwroot, css, jsµî Á¤Àû ÆÄÀÏ »ç¿ë
+            // wwwroot, css, jsë“± ì •ì  íŒŒì¼ ì‚¬ìš©
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -239,7 +242,7 @@ namespace GameServerAdmin
             app.UseAuthentication();
             app.UseAuthorization();
             
-            // MVC View¿ë ±âº» ¶ó¿ìÆ® (Board/Index¸¦ ±âº»À¸·Î
+            // MVC Viewìš© ê¸°ë³¸ ë¼ìš°íŠ¸ (Board/Indexë¥¼ ê¸°ë³¸ìœ¼ë¡œ
             app.MapControllerRoute
                 (name: "default",
                 pattern: "{controller=Board}/{action=Index}/{id?}"

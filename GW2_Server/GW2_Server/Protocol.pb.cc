@@ -158,7 +158,8 @@ constexpr S_MINION_MOVE::S_MINION_MOVE(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : nav_path_()
   , start_pos_(nullptr)
-  , object_id_(0){}
+  , object_id_(0)
+  , speed_(0){}
 struct S_MINION_MOVEDefaultTypeInternal {
   constexpr S_MINION_MOVEDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -357,6 +358,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MINION_MOVE, object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MINION_MOVE, start_pos_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MINION_MOVE, nav_path_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_MINION_MOVE, speed_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_SKILL, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -425,12 +427,12 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 65, -1, -1, sizeof(::Protocol::S_MOVE)},
   { 76, -1, -1, sizeof(::Protocol::S_MOVE_END)},
   { 87, -1, -1, sizeof(::Protocol::S_MINION_MOVE)},
-  { 96, -1, -1, sizeof(::Protocol::C_SKILL)},
-  { 105, -1, -1, sizeof(::Protocol::S_SKILL)},
-  { 114, -1, -1, sizeof(::Protocol::C_ENTER_LOBBY)},
-  { 121, -1, -1, sizeof(::Protocol::S_ENTER_LOBBY)},
-  { 129, -1, -1, sizeof(::Protocol::C_ATTACK)},
-  { 140, -1, -1, sizeof(::Protocol::S_ATTACK)},
+  { 97, -1, -1, sizeof(::Protocol::C_SKILL)},
+  { 106, -1, -1, sizeof(::Protocol::S_SKILL)},
+  { 115, -1, -1, sizeof(::Protocol::C_ENTER_LOBBY)},
+  { 122, -1, -1, sizeof(::Protocol::S_ENTER_LOBBY)},
+  { 130, -1, -1, sizeof(::Protocol::C_ATTACK)},
+  { 141, -1, -1, sizeof(::Protocol::S_ATTACK)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -475,23 +477,24 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "ND\022\017\n\007room_id\030\001 \001(\005\022\021\n\tobject_id\030\002 \001(\005\022*"
   "\n\017server_pos_info\030\003 \001(\0132\021.Protocol.PosIn"
   "fo\022\023\n\013server_time\030\004 \001(\005\022\021\n\tcorrected\030\005 \001"
-  "(\010\"m\n\rS_MINION_MOVE\022\021\n\tobject_id\030\001 \001(\005\022$"
+  "(\010\"|\n\rS_MINION_MOVE\022\021\n\tobject_id\030\001 \001(\005\022$"
   "\n\tstart_pos\030\002 \001(\0132\021.Protocol.PosInfo\022#\n\010"
-  "nav_path\030\003 \003(\0132\021.Protocol.PosInfo\"C\n\007C_S"
-  "KILL\022\020\n\010skill_id\030\001 \001(\005\022\021\n\ttarget_id\030\002 \001("
-  "\005\022\023\n\013attacker_id\030\003 \001(\003\"C\n\007S_SKILL\022\020\n\010ski"
-  "ll_id\030\001 \001(\005\022\021\n\ttarget_id\030\002 \001(\003\022\023\n\013attack"
-  "er_id\030\003 \001(\003\"%\n\rC_ENTER_LOBBY\022\024\n\014player_i"
-  "ndex\030\001 \001(\005\"J\n\rS_ENTER_LOBBY\022\021\n\tplayer_id"
-  "\030\001 \001(\005\022&\n\nroom_infos\030\002 \003(\0132\022.Protocol.Ro"
-  "omInfo\"\201\001\n\010C_ATTACK\022\017\n\007room_id\030\001 \001(\005\022\023\n\013"
-  "attacker_id\030\002 \001(\005\022\021\n\ttarget_id\030\003 \001(\005\022\'\n\n"
-  "command_id\030\004 \001(\0162\023.Protocol.SkillType\022\023\n"
-  "\013client_time\030\005 \001(\005\"\201\001\n\010S_ATTACK\022\017\n\007room_"
-  "id\030\001 \001(\005\022\023\n\013attacker_id\030\002 \001(\005\022\021\n\ttarget_"
-  "id\030\003 \001(\005\022\'\n\ncommand_id\030\004 \001(\0162\023.Protocol."
-  "SkillType\022\023\n\013server_time\030\005 \001(\005B\033\252\002\030Googl"
-  "e.Protobuf.Protocolb\006proto3"
+  "nav_path\030\003 \003(\0132\021.Protocol.PosInfo\022\r\n\005spe"
+  "ed\030\004 \001(\002\"C\n\007C_SKILL\022\020\n\010skill_id\030\001 \001(\005\022\021\n"
+  "\ttarget_id\030\002 \001(\005\022\023\n\013attacker_id\030\003 \001(\003\"C\n"
+  "\007S_SKILL\022\020\n\010skill_id\030\001 \001(\005\022\021\n\ttarget_id\030"
+  "\002 \001(\003\022\023\n\013attacker_id\030\003 \001(\003\"%\n\rC_ENTER_LO"
+  "BBY\022\024\n\014player_index\030\001 \001(\005\"J\n\rS_ENTER_LOB"
+  "BY\022\021\n\tplayer_id\030\001 \001(\005\022&\n\nroom_infos\030\002 \003("
+  "\0132\022.Protocol.RoomInfo\"\201\001\n\010C_ATTACK\022\017\n\007ro"
+  "om_id\030\001 \001(\005\022\023\n\013attacker_id\030\002 \001(\005\022\021\n\ttarg"
+  "et_id\030\003 \001(\005\022\'\n\ncommand_id\030\004 \001(\0162\023.Protoc"
+  "ol.SkillType\022\023\n\013client_time\030\005 \001(\005\"\201\001\n\010S_"
+  "ATTACK\022\017\n\007room_id\030\001 \001(\005\022\023\n\013attacker_id\030\002"
+  " \001(\005\022\021\n\ttarget_id\030\003 \001(\005\022\'\n\ncommand_id\030\004 "
+  "\001(\0162\023.Protocol.SkillType\022\023\n\013server_time\030"
+  "\005 \001(\005B\033\252\002\030Google.Protobuf.Protocolb\006prot"
+  "o3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -499,7 +502,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 1507, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  false, false, 1522, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
   &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 17,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
@@ -2985,15 +2988,17 @@ S_MINION_MOVE::S_MINION_MOVE(const S_MINION_MOVE& from)
   } else {
     start_pos_ = nullptr;
   }
-  object_id_ = from.object_id_;
+  ::memcpy(&object_id_, &from.object_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&speed_) -
+    reinterpret_cast<char*>(&object_id_)) + sizeof(speed_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_MINION_MOVE)
 }
 
 inline void S_MINION_MOVE::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&start_pos_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&object_id_) -
-    reinterpret_cast<char*>(&start_pos_)) + sizeof(object_id_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&speed_) -
+    reinterpret_cast<char*>(&start_pos_)) + sizeof(speed_));
 }
 
 S_MINION_MOVE::~S_MINION_MOVE() {
@@ -3029,7 +3034,9 @@ void S_MINION_MOVE::Clear() {
     delete start_pos_;
   }
   start_pos_ = nullptr;
-  object_id_ = 0;
+  ::memset(&object_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&speed_) -
+      reinterpret_cast<char*>(&object_id_)) + sizeof(speed_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3065,6 +3072,14 @@ const char* S_MINION_MOVE::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // float speed = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
+          speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -3119,6 +3134,16 @@ uint8_t* S_MINION_MOVE::_InternalSerialize(
       InternalWriteMessage(3, this->_internal_nav_path(i), target, stream);
   }
 
+  // float speed = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_speed = this->_internal_speed();
+  uint32_t raw_speed;
+  memcpy(&raw_speed, &tmp_speed, sizeof(tmp_speed));
+  if (raw_speed != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_speed(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3154,6 +3179,15 @@ size_t S_MINION_MOVE::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_object_id());
   }
 
+  // float speed = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_speed = this->_internal_speed();
+  uint32_t raw_speed;
+  memcpy(&raw_speed, &tmp_speed, sizeof(tmp_speed));
+  if (raw_speed != 0) {
+    total_size += 1 + 4;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -3183,6 +3217,13 @@ void S_MINION_MOVE::MergeFrom(const S_MINION_MOVE& from) {
   if (from._internal_object_id() != 0) {
     _internal_set_object_id(from._internal_object_id());
   }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_speed = from._internal_speed();
+  uint32_t raw_speed;
+  memcpy(&raw_speed, &tmp_speed, sizeof(tmp_speed));
+  if (raw_speed != 0) {
+    _internal_set_speed(from._internal_speed());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3202,8 +3243,8 @@ void S_MINION_MOVE::InternalSwap(S_MINION_MOVE* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   nav_path_.InternalSwap(&other->nav_path_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_MINION_MOVE, object_id_)
-      + sizeof(S_MINION_MOVE::object_id_)
+      PROTOBUF_FIELD_OFFSET(S_MINION_MOVE, speed_)
+      + sizeof(S_MINION_MOVE::speed_)
       - PROTOBUF_FIELD_OFFSET(S_MINION_MOVE, start_pos_)>(
           reinterpret_cast<char*>(&start_pos_),
           reinterpret_cast<char*>(&other->start_pos_));

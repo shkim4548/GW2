@@ -1971,6 +1971,7 @@ class S_MINION_MOVE final :
     kNavPathFieldNumber = 3,
     kStartPosFieldNumber = 2,
     kObjectIdFieldNumber = 1,
+    kSpeedFieldNumber = 4,
   };
   // repeated .Protocol.PosInfo nav_path = 3;
   int nav_path_size() const;
@@ -2017,6 +2018,15 @@ class S_MINION_MOVE final :
   void _internal_set_object_id(int32_t value);
   public:
 
+  // float speed = 4;
+  void clear_speed();
+  float speed() const;
+  void set_speed(float value);
+  private:
+  float _internal_speed() const;
+  void _internal_set_speed(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_MINION_MOVE)
  private:
   class _Internal;
@@ -2027,6 +2037,7 @@ class S_MINION_MOVE final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::PosInfo > nav_path_;
   ::Protocol::PosInfo* start_pos_;
   int32_t object_id_;
+  float speed_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -4283,6 +4294,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::PosInfo >&
 S_MINION_MOVE::nav_path() const {
   // @@protoc_insertion_point(field_list:Protocol.S_MINION_MOVE.nav_path)
   return nav_path_;
+}
+
+// float speed = 4;
+inline void S_MINION_MOVE::clear_speed() {
+  speed_ = 0;
+}
+inline float S_MINION_MOVE::_internal_speed() const {
+  return speed_;
+}
+inline float S_MINION_MOVE::speed() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MINION_MOVE.speed)
+  return _internal_speed();
+}
+inline void S_MINION_MOVE::_internal_set_speed(float value) {
+  
+  speed_ = value;
+}
+inline void S_MINION_MOVE::set_speed(float value) {
+  _internal_set_speed(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MINION_MOVE.speed)
 }
 
 // -------------------------------------------------------------------

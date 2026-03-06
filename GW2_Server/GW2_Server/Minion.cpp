@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Minion.h"
 #include "Room.h"
 #include "NavigationSystem.h"
@@ -37,8 +37,8 @@ void Minion::SetMinionTarget(vector<weak_ptr<Object>>& targets)
 
 weak_ptr<Object> Minion::FindBestTarget(vector<weak_ptr<Object>> targets)
 {
-	// ÀÏºÎ·¯ race condition ¹æÁö¸¦ À§ÇØ º¹»çÇØ¼­ »ç¿ë
-		// Set ÇÑ ±è¿¡ best target pointer ±îÁö ¸¸µé¾îÁÖÀÚ
+	// ï¿½ÏºÎ·ï¿½ race condition ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½
+		// Set ï¿½ï¿½ ï¿½è¿¡ best target pointer ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	shared_ptr<Object> best;
 	int bestScore = INT_MIN;
 
@@ -62,7 +62,7 @@ weak_ptr<Object> Minion::FindBestTarget(vector<weak_ptr<Object>> targets)
 		return {};
 	}
 
-	// 5) ÀÚ±â »óÅÂ¿¡ ±â·ÏÇÏ°í ¾àÇÏ°Ô ¸®ÅÏ
+	// 5) ï¿½Ú±ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_currentTarget = best;
 	return _currentTarget;
 }
@@ -88,7 +88,7 @@ void Minion::UpdateController(float deltaTime)
 		UpdateAttack(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_DEAD:
-		// TODO : ¹Ì´Ï¾ð Á¦°Å ÈÄ º¸»ó Áö±Þ
+		// TODO : ï¿½Ì´Ï¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		break;
 	}
 }
@@ -118,15 +118,15 @@ void Minion::UpdateMovement(float deltaTime)
 		GameMath::Vector3 dir = target - _posVector;
 		const float dist = dir.Length();
 
-		// Å¸°Ù ³ëµå¿¡ »ó´çÈ÷ ±ÙÁ¢
-		if(dist <= kArriveEpsilon)
+		// Å¸ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		if (dist <= kArriveEpsilon)
 		{
 			_posVector = target;
 			++_pathIndex;
 			continue;
 		}
 
-		// ÀÌ¹ø ÇÁ·¹ÀÓ¿¡ target±îÁö µµ´Þ °¡´É -> target±îÁö ÀÌµ¿ÇÏ°í ´ÙÀ½ ³ëµå·Î
+		// ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ targetï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> targetï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (dist <= remainMoveDist)
 		{
 			_posVector = target;
@@ -135,20 +135,20 @@ void Minion::UpdateMovement(float deltaTime)
 			continue;
 		}
 
-		// target±îÁö´Â ¸ø °¡¹Ç·Î, ±× ¹æÇâÀ¸·Î remainMoveDist ¸¸Å­¸¸ ÀÌµ¿ÇÑ´Ù
+		// targetï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ç·ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ remainMoveDist ï¿½ï¿½Å­ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ñ´ï¿½
 		dir = dir.Normalized();
 		GameMath::Vector3 delta = dir * remainMoveDist;
 		_posVector = _posVector + delta;
 
-		// PosInfo µ¿±âÈ­
+		// PosInfo ï¿½ï¿½ï¿½ï¿½È­
 		_pos.set_x(_posVector._x);
 		_pos.set_y(_posVector._y);
 		_pos.set_z(_posVector._z);
 		SetPosInfo(_pos);
-		// ÀÌµ¿Áß »óÅÂ À¯Áö
+		// ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		_isMoving = true;
 		_movement.speed = _moveSpeed;
-		// ÀÌµ¿ Áß (remainMoveDist ¼ÒÁø ÈÄ return Á÷Àü)
+		// ï¿½Ìµï¿½ ï¿½ï¿½ (remainMoveDist ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ return ï¿½ï¿½ï¿½ï¿½)
 		GConsoleLogger->WriteStdOut(Color::GREEN,
 			L"[Minion::UpdateMovement] moving. posVector=(%.3f, %.3f) pathIndex=%d\n",
 			_posVector._x, _posVector._z, _pathIndex);
@@ -159,7 +159,7 @@ void Minion::UpdateMovement(float deltaTime)
 		_posVector._x, _posVector._z,
 		_pathIndex, static_cast<int32>(_path.size()));
 
-	// path¸¦ ´Ù ¼ÒºñÇÑ °æ¿ì
+	// pathï¿½ï¿½ ï¿½ï¿½ ï¿½Òºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	_pos.set_x(_posVector._x);
 	_pos.set_y(_posVector._y);
 	_pos.set_z(_posVector._z);
@@ -182,7 +182,7 @@ void Minion::UpdateIdle(float deltaTime)
 		return;
 	}
 
-	// °ø°ÝÇÒ Å¸°Ù ÀÖ´ÂÁö È®ÀÎ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	shared_ptr<Object> target = FindBestTarget(_targets).lock();
 	//if (target == nullptr)
 		//cout << "target is nullptr" << endl;
@@ -195,17 +195,18 @@ void Minion::UpdateIdle(float deltaTime)
 		return;
 	}
 
-	// ¾ÆÁ÷ ¾È°¬´ø waypoint°¡ ³²¾ÆÀÖÀ¸¸é ÀÌµ¿ ½ÃÀÛ
+	// ë‚¨ì€ waypointê°€ ìžˆì„ ë•Œë§Œ LINE_TRACEë¡œ ì „í™˜, ëª¨ë‘ ì™„ë£Œí–ˆìœ¼ë©´ IDLE ìœ ì§€
 	shared_ptr<Navigation::LaneRoute> route = _route.lock();
-	if (route == nullptr)
-		cout << "route is nullptr" << endl;
 	if (route != nullptr)
 	{
-		cout << "IDLE TO MINION_LINE_TRACE" << endl;
-		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
-		return;
+		if (_currentWaypointIndex < static_cast<int32>(route->waypoints.size()))
+		{
+			GConsoleLogger->WriteStdOut(Color::WHITE, L"IDLE TO MINION_LINE_TRACE\n");
+			_minionState = Protocol::MinionState::MINION_LINE_TRACE;
+			return;
+		}
+		// _currentWaypointIndex >= size â†’ ëª¨ë“  waypoint ì™„ë£Œ â†’ IDLE ìœ ì§€
 	}
-	// ÀÌµ¿ Æ÷ÀÎÆ®¿¡ Á¾Á¡ÀÌ ÀÖÀ¸¸é state Á¾·á
 }
 
 void Minion::UpdateLaneTrace(float deltaTime)
@@ -214,13 +215,13 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	GConsoleLogger->WriteStdOut(Color::WHITE,
 		L"[LaneTrace] myPos=(%.3f,%.3f) wpIdx=%d pathSize=%d moveState=%d repathCD=%.3f\n",
 		myPos._x, myPos._z,
-		_currentWaypointIndex,              // ¡ç wpIdx
-		static_cast<int32>(_path.size()),   // ¡ç pathSize
-		static_cast<int32>(_moveState),     // ¡ç moveState
+		_currentWaypointIndex,              // ï¿½ï¿½ wpIdx
+		static_cast<int32>(_path.size()),   // ï¿½ï¿½ pathSize
+		static_cast<int32>(_moveState),     // ï¿½ï¿½ moveState
 		_repathCoolDown);
 	_repathCoolDown -= deltaTime;
 
-	// 1) Chase ÀüÈ¯ Ã¼Å©
+	// 1) Chase ï¿½ï¿½È¯ Ã¼Å©
 	shared_ptr<Object> target = FindBestTarget(_targets).lock();
 	if (target != nullptr)
 	{
@@ -232,7 +233,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		}
 	}
 
-	// 2) LaneRoute À¯È¿¼º Ã¼Å©
+	// 2) LaneRoute ï¿½ï¿½È¿ï¿½ï¿½ Ã¼Å©
 	shared_ptr<Navigation::LaneRoute> route = _route.lock();
 	if (route == nullptr || route->waypoints.empty())
 	{
@@ -249,16 +250,16 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	GameMath::Vector3 nowWp = route->waypoints[_currentWaypointIndex];
 	float distToNextPoint = GameMath::Vector3::GetDistTanceXZ(myPos, nowWp);
 
-	// 3) waypoint ±ÙÃ³ÀÌ¸é ½º³À + ´ÙÀ½ waypoint ÀüÈ¯
+	// 3) waypoint ï¿½ï¿½Ã³ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ waypoint ï¿½ï¿½È¯
 	//const float kSnapDistance = _moveSpeed * 0.1f * 2.0f;
 	const float kSnapDistance = 1.0f;
 
 	if (distToNextPoint <= kSnapDistance)
 	{
-		// ¼­¹ö ÁÂÇ¥¸¦ Á¤È®È÷ wp¿¡ ¸ÂÃá´Ù (posVector + PosInfo µ¿±âÈ­)
-		SetPosVector(nowWp);  // _posVector, _pos µÑ ´Ù ¼¼ÆÃµÇµµ·Ï ±¸Çö
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ wpï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (posVector + PosInfo ï¿½ï¿½ï¿½ï¿½È­)
+		SetPosVector(nowWp);  // _posVector, _pos ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ÃµÇµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-		// ´õ ÀÌ»ó ÀÌ wp¸¦ ÇâÇÑ path´Â ÇÊ¿ä ¾øÀ½
+		// ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½ï¿½ wpï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ pathï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		_path.clear();
 		_pathIndex = 0;
 		_isMoving = false;
@@ -280,11 +281,17 @@ void Minion::UpdateLaneTrace(float deltaTime)
 			return;
 		}
 	}
+	// 4) Path ìš”ì²­ íŒë‹¨
+	// repathCoolDown ìŒìˆ˜ ëˆ„ì  ë°©ì§€
+	if (_repathCoolDown < 0.0f)
+		_repathCoolDown = 0.0f;
 
-	// 4) Path ¿äÃ» ¿©ºÎ ÆÇ´Ü
 	bool goalChanged = (_lastMoveGoal - nowWp).Length() > 0.05f;
-	bool shouldRequest = (_path.empty() || goalChanged) && (_repathCoolDown <= 0.0f);
-
+	bool isMovingToSameGoal = (_isMoving || _pathPending) && !_path.empty() && !goalChanged;
+	bool shouldRequest = !isMovingToSameGoal
+		&& !_pathPending                      // DoAsync ì‹¤í–‰ ì¤‘ì´ë©´ ìž¬ìš”ì²­ ì°¨ë‹¨
+		&& (_path.empty() || goalChanged)
+		&& (_repathCoolDown <= 0.0f);
 	shared_ptr<Room> room = _room.lock();
 	if (room == nullptr)
 	{
@@ -301,10 +308,11 @@ void Minion::UpdateLaneTrace(float deltaTime)
 			return;
 		}
 
+		_pathPending = true;
 		int32 capturedWpIndex = _currentWaypointIndex;
 		room->DoAsync(&Room::HandleMinionMove, minionSelf, nowWp, _moveSpeed, deltaTime, _laneId, capturedWpIndex);
 		_lastMoveGoal = nowWp;
-		_repathCoolDown = 0.2f;
+		_repathCoolDown = 0.5f;
 	}
 }
 
@@ -325,16 +333,16 @@ void Minion::UpdateChaseTarget(float deltaTime)
 
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(minionSelfPos, targetPos);
 
-	// °ø°Ý »ç°Å¸® ¾ÈÀÌ¸é attack »óÅÂ ÁøÀÔ
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ attack ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (distToTarget <= _attackRange)
 	{
 		_minionState = Protocol::MinionState::MINION_ATTACK;
 		return;
 	}
 
-	// ÇöÀç ¸ñÇ¥ Áß°£Á¡À¸·Î ÀÌµ¿
-	// ¸ÅÆ½ ¸¶´Ù HandleMinionMove¸¦ È£ÃâÇÏÁö ¾Êµµ·Ï ÇÑ´Ù
-	// Á¶°Ç: (1) ÇöÀç path°¡ ºñ¾ú°Å³ª (2) ¸ñÇ¥°¡ ¹Ù²î¾ú°Å³ª (3) ÀÏÁ¤ ½Ã°£ Áö³ª¼­ ÀçÅ½»ö ÇÊ¿äÇÒ ¶§¸¸ ¿äÃ»
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+	// ï¿½ï¿½Æ½ ï¿½ï¿½ï¿½ï¿½ HandleMinionMoveï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½
+	// ï¿½ï¿½ï¿½ï¿½: (1) ï¿½ï¿½ï¿½ï¿½ pathï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å³ï¿½ (2) ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½Å³ï¿½ (3) ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»
 	auto shouldRequest = _path.empty() || (_lastMoveGoal - minionSelfPos).Length() > 0.05f || (_repathCoolDown <= 0.0f);
 	shared_ptr<Room> room = _room.lock();
 	if (shouldRequest)
@@ -362,13 +370,13 @@ void Minion::UpdateAttack(float deltaTime)
 
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(minionSelfPos, targetPos);
 
-	// 1. Å¸°ÙÀÌ »ç°Å¸® ¹ÛÀ¸·Î ³ª°¡¸é ´Ù½Ã chase·Î ÀüÈ¯
+	// 1. Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ chaseï¿½ï¿½ ï¿½ï¿½È¯
 	if (distToTarget > _attackRange)
 	{
 		_minionState = Protocol::MinionState::MINION_CHASE_TARGET;
 		return;
 	}
-	// 2. »ç°Å¸® ¾È -> ÄðÅ¸ÀÓ Ã¼Å© ÈÄ °ø°Ý
+	// 2. ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ -> ï¿½ï¿½Å¸ï¿½ï¿½ Ã¼Å© ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_attackCooldown -= deltaTime;
 	if (_attackCooldown > 0.0f)
 		return;
@@ -382,7 +390,7 @@ bool Minion::RequestFindTarget()
 {
 	//vector<shared_ptr<Object>>& targets;
 	shared_ptr<Minion> minionSelf = make_shared<Minion>();
-	// ÀÎÀÚ Å¸ÀÔ ¸ÂÃçÁÖ±â À§ÇÑ ¹®Àå
+	// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	shared_ptr<Object> tMinionSelf = static_pointer_cast<Object>(minionSelf);
 	shared_ptr<Room> room = _room.lock();
 
@@ -404,7 +412,7 @@ bool Minion::RequestFindTarget()
 
 int32 Minion::GetTargetPriority(shared_ptr<Object> obj)
 {
-	// TODO : ¾Æ±º °ø°Ý ±ÝÁö
+	// TODO : ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (obj->GetTeamFlag() == GetTeamFlag())
 		return -1;
 
@@ -437,23 +445,23 @@ bool Minion::ShouldChaseTargetNow(shared_ptr<Object> target)
 	GameMath::Vector3 minionSelfPos = GetPosVector();
 	GameMath::Vector3 targetPos = target->GetPosVector();
 
-	// ÇöÀç ¿þÀÌÆ÷ÀÎÆ®
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	shared_ptr<Navigation::LaneRoute> route = _route.lock();
 	if (route == nullptr)
 	{
-		// ·çÆ® ¼Ò¸ê È¤Àº ¾ÆÁ÷ ¹ÌÁÖÀÔ
+		// ï¿½ï¿½Æ® ï¿½Ò¸ï¿½ È¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		_minionState = Protocol::MinionState::MINION_IDLE;
 		return false;
 	}
 
-	// waypoint À¯È¿¼º °Ë»ç
+	// waypoint ï¿½ï¿½È¿ï¿½ï¿½ ï¿½Ë»ï¿½
 	if (route->waypoints.empty())
 	{
 		_minionState = Protocol::MinionState::MINION_IDLE;
 		return false;
 	}
 
-	// ÇöÀç waypoint ÁÂÇ¥
+	// ï¿½ï¿½ï¿½ï¿½ waypoint ï¿½ï¿½Ç¥
 	GameMath::Vector3 waypoints = route->waypoints[_currentWaypointIndex];
 
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(minionSelfPos, targetPos);
@@ -466,7 +474,7 @@ bool Minion::ShouldChaseTargetNow(shared_ptr<Object> target)
 		{
 			if (distToWaypoint < distToTarget)
 			{
-				// ¾ÆÁ÷Àº ¶óÀÎ ¿ì¼±
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ì¼±
 				return false;
 			}
 		}
@@ -484,12 +492,12 @@ uint8 Minion::GetLaneIdFromPos(GameMath::Vector3& targetPos)
 	}
 
 	//Navigation::NavigationSystem navSystem = room->
-	// ¸ðµç roomÀº ÇÏ³ªÀÇ navmesh¸¦ °øÀ¯(¸Ê Á¾·ù°¡ ÇÏ³ª)
+	// ï¿½ï¿½ï¿½ roomï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ navmeshï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½)
 	shared_ptr<Navigation::NavigationSystem> navSystem = GLobby->GetNavigationSystem().lock();
 	Navigation::WalkableGrid& grid = navSystem->GetGridCells();
 
 	int32 gx, gz;
-	if (!navSystem->WorldToGrid(grid, targetPos,  gx, gz))
+	if (!navSystem->WorldToGrid(grid, targetPos, gx, gz))
 		return 0;
 
 	const Navigation::GridCell& cell = grid.At(gx, gz);

@@ -266,6 +266,8 @@ void Navigation::NavigationSystem::BuildCells(WalkableGrid& grid)
 			// 지면이 있으면 이동 가능하다.
 			grid.At(x, z).walkable = true;
 			grid.At(x, z).height = y;
+			grid.At(x, z).x = x;
+			grid.At(x, z).z = z;
 		}
 	}
 

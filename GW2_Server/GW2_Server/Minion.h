@@ -16,9 +16,12 @@ public:
 	int32 GetMinionId() { return _objectId; }
 	uint8 GetLaneId() { return _laneId; }
 	int32 GetCurrentWaypointIndex() { return _currentWaypointIndex; }
+	float GetMoveSpeed() { return _moveSpeed; }
+
 	void SetMinionTarget(vector<weak_ptr<Object>>& targets);
 	void SetMinionLaneId(uint8 laneId) { _laneId = laneId; }
 	weak_ptr<Object> FindBestTarget(vector<weak_ptr<Object>> targets);
+	void ClearPathPending() { _pathPending = false; 	}
 
 	// called by GameRoom
 	virtual void UpdateController(float deltaTime) override;
@@ -49,7 +52,7 @@ public:
 private:
 	Protocol::MinionState _minionState;
 
-	float _moveSpeed = 100.0f;
+	float _moveSpeed = 10.0f;
 	float _attackRange;
 	float _detectionRange =  5.0f;
 	float _attackCooldown;
@@ -65,4 +68,5 @@ private:
 
 	GameMath::Vector3 _lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 	float _repathCoolDown = 0.0f;
+	bool _pathPending = false;  // DoAsync 요청 후 RequestMove 완료 전까지 중복 요청 방지
 };
