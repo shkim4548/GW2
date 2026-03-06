@@ -1,13 +1,14 @@
 ﻿using GameServerAdmin.Domain.Accounts;
 using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Domain.Comments;
+using GameServerAdmin.Domain.Game.Inventory;
 using GameServerAdmin.Domain.Identity;
 using GameServerAdmin.Domain.Notices;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Domain.Users;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
 namespace GameServerAdmin.Infrastructure.Persistence
@@ -22,6 +23,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<Notice> Notices => Set<Notice>();
+        public DbSet<AdminCurrencyLog> AdminCurrencyLogs => Set<AdminCurrencyLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

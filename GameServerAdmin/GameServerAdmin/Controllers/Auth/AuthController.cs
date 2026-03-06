@@ -144,7 +144,7 @@ namespace GameServerAdmin.Controllers.Auth
                         Level = 1,
                         CreatedAt = DateTime.UtcNow,
                         LastLoginAt = DateTime.UtcNow,
-                        Status = "Active"
+                        Status = UserStatus.Active,
                     };
 
                     _dbContext.Users.Add(domainUser);
@@ -171,7 +171,7 @@ namespace GameServerAdmin.Controllers.Auth
                             Level = 1,
                             CreatedAt = DateTime.UtcNow,
                             LastLoginAt = DateTime.UtcNow,
-                            Status = "Active"
+                            Status = UserStatus.Active,
                         };
 
                         _dbContext.Users.Add(domainUser);

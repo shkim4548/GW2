@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameServerAdmin.Domain.Users;
+using System;
 using System.Collections.Generic;
 
 namespace GameServerAdmin.Models.AdminGame.UserApi
@@ -15,7 +16,7 @@ namespace GameServerAdmin.Models.AdminGame.UserApi
         public string LoginId { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public long Level { get; set; }
-        public string Status { get; set; } = null!;
+        public UserStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
 

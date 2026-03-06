@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameServerAdmin.Domain.Users;
+using System;
 
 namespace GameServerAdmin.Models.Game.PlayerApi
 {
@@ -23,6 +24,6 @@ namespace GameServerAdmin.Models.Game.PlayerApi
         public DateTime? LastLoginAt { get; set; }
 
         /// <summary>계정 상태 (예: Active, Banned 등)</summary>
-        public string Status { get; set; } = null!;
+        public UserStatus Status { get; set; }
     }
 }
