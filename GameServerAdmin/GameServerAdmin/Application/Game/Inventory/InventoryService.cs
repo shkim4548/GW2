@@ -4,6 +4,7 @@ using GameServerAdmin.Domain.Game.Inventory;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Game.InventoryApi;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameServerAdmin.Application.Game.Inventory
 {
@@ -13,6 +14,9 @@ namespace GameServerAdmin.Application.Game.Inventory
         /// 현재 로그인한 유저의 재화 상태 조회
         /// </summary>
         Task<InventoryStateResponse> GetMyCurrenciesAsync();
+
+        Task<InventoryStateResponse> AddCurrencyAsync(AddCurrencyRequest request);
+
     }
 
     /// <summary>
@@ -75,6 +79,25 @@ namespace GameServerAdmin.Application.Game.Inventory
                     })
                     .ToList()
             };
+        }
+
+        public async Task<InventoryStateResponse> AddCurrencyAsync(AddCurrencyRequest request)
+        {
+            var userId = GetCurrentUserId();
+
+            var currency = await _db.Set<PlayerCurrency>()
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.CurrencyType == request.CurrencyType);
+
+            if (currency is null)
+            {
+                currency = new PlayerCurrency(userId, request.CurrencyType, 0);
+                _db.Set<PlayerCurrency>().Add(currency);
+            }
+
+            currency.Add(request.Amount); // 도메인 규칙 적용
+            await _db.SaveChangesAsync();
+
+            return await GetMyCurrenciesAsync(); // 변경 후 전체 재화 상태 반환
         }
     }
 }

@@ -31,5 +31,13 @@ namespace GameServerAdmin.Controllers.Game
             var result = await _inventoryService.GetMyCurrenciesAsync();
             return Ok(result);
         }
+
+        [HttpPost("currency/add")]
+        public async Task<ActionResult<InventoryStateResponse>> AddCurrency(
+            [FromBody] AddCurrencyRequest request)
+        {
+            var result = await _inventoryService.AddCurrencyAsync(request);
+            return Ok(result);
+        }
     }
 }

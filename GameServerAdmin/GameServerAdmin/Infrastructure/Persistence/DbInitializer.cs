@@ -1,5 +1,7 @@
-﻿using GameServerAdmin.Domain.Identity;
+﻿using GameServerAdmin.Domain.Game.Stages;
+using GameServerAdmin.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Infrastructure.Persistence
 {
@@ -24,7 +26,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
             const string userName = "user";
             const string userPassword = "testUser123";
 
-            if(await roleManager.RoleExistsAsync(userRole) == false)
+            if (await roleManager.RoleExistsAsync(userRole) == false)
             {
                 await roleManager.CreateAsync(new AppRole(userRole));
             }
@@ -102,6 +104,20 @@ namespace GameServerAdmin.Infrastructure.Persistence
                     throw new Exception($"Admin role assignment failed: {errors}");
                 }
             }
+        }
+        public static async Task SeedStagesAsync(AppDbContext db)
+        {
+            if (await db.Set<Stage>().AnyAsync()) return; // 이미 있으면 스킵
+
+            var stages = new[]
+            {
+                new Stage(1, "초원 1구역", requiredStamina: 3, rewardGold: 100, rewardGem: 1),
+                new Stage(2, "초원 2구역", requiredStamina: 5, rewardGold: 200, rewardGem: 2),
+                new Stage(3, "동굴 입구",  requiredStamina: 8, rewardGold: 400, rewardGem: 5),
+            };
+
+            db.Set<Stage>().AddRange(stages);
+            await db.SaveChangesAsync();
         }
     }
 }
