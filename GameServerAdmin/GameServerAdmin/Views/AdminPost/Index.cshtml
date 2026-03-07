@@ -59,9 +59,7 @@
                 <td>
                     @if (!post.IsDeleted)
                     {
-                        <form asp-action="SoftDelete"
-                              asp-controller="AdminUiPost"
-                              asp-route-id="@post.PostId"
+                        <form action="/admin/ui/posts/@post.PostId/soft-delete"
                               method="post"
                               style="display:inline;">
                             @Html.AntiForgeryToken()
@@ -72,9 +70,7 @@
                     }
                     else
                     {
-                        <form asp-action="Restore"
-                              asp-controller="AdminUiPost"
-                              asp-route-id="@post.PostId"
+                        <form action="/admin/ui/posts/@post.PostId/restore"
                               method="post"
                               style="display:inline;">
                             @Html.AntiForgeryToken()
@@ -83,9 +79,7 @@
                             </button>
                         </form>
 
-                        <form asp-action="HardDelete"
-                              asp-controller="AdminUiPost"
-                              asp-route-id="@post.PostId"
+                        <form action="/admin/ui/posts/@post.PostId/hard-delete"
                               method="post"
                               style="display:inline;">
                             @Html.AntiForgeryToken()
