@@ -58,8 +58,9 @@ private:
 
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute(int32 laneId) const;
 	void SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route);
+	// static
+	static vector<GameMath::Vector3> SmoothPath(const vector<GameMath::Vector3>& path, const Navigation::WalkableGrid& grid, shared_ptr<Navigation::NavigationSystem> navSystem, uint8 laneId);
 
-	void DeleteRoom();
 
 private:
 	unordered_map<int32, ObjectRef> _objects;

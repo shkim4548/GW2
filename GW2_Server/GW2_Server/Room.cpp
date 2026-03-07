@@ -594,6 +594,12 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	if (navPath.empty())
 		return;
 
+	// Path Smoothing
+	size_t beforeSize = navPath.size();
+	navPath = SmoothPath(navPath, grid, navSystem, minionLaneId);
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[SmoothPath] %zu → %zu nodes\n",
+		beforeSize, navPath.size());
+
 	// --- 미니언에 이동 경로 전달 ---
 	minion->RequestMove(navPath);
 
@@ -790,6 +796,84 @@ void Room::SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route)
 	_laneRoute[laneId] = move(route);
 }
 
-void Room::DeleteRoom()
+vector<GameMath::Vector3> Room::SmoothPath(const vector<GameMath::Vector3>& path, const Navigation::WalkableGrid& grid, shared_ptr<Navigation::NavigationSystem> navSystem, uint8 laneId)
 {
+	// 노드가 2개 이하면 스무딩 불필요
+	if (path.size() <= 2)
+		return path;
+
+	// line of sight : 두 world 좌표 사이가 직선 통과 가능한가?
+	auto lineOfSight = [&](const GameMath::Vector3& from, const GameMath::Vector3& to) -> bool
+		{
+			int32 x0, z0, x1, z1;
+			if (!navSystem->WorldToGrid(grid, from._x, from._z, x0, z0))
+				return false;
+			if (!navSystem->WorldToGrid(grid, to._x, to._z, x1, z1))
+				return false;
+
+			// Bresenham 직선 래스터라이즈
+			int32 dx = abs(x1 - x0);
+			int32 dz = abs(z1 - z0);
+			int32 sx = (x0 < x1) ? 1 : -1;
+			int32 sz = (z0 < z1) ? 1 : -1;
+			int32 err = dx - dz;
+			int32 cx = x0, cz = z0;
+
+			while (true)
+			{
+				// 그리드 범위 초과 -> 통과 불가
+				if (cx < 0 || cz < 0 || cx >= grid.width || cz >= grid.height)
+					return false;
+
+				const Navigation::GridCell& cell = grid.At(cx, cz);
+
+				// 가동 불가 지역
+				if (!cell.walkable)
+					return false;
+
+				// laneId 필터
+				if (laneId != 0 && cell.laneId != laneId)
+					return false;
+
+				// 목적지 도달
+				if (cx == x1 && cz == z1)
+					break;
+
+				// Bresenham 진행
+				int32 e2 = 2 * err;
+				if (e2 > -dz)
+				{
+					err -= dz;
+					cx += sx;
+				}
+
+				if (e2 < dx)
+				{
+					err += dx;
+					cz += sz;
+				}
+			}
+			return true;
+		};
+	// Greedy anchor 처리
+	vector<GameMath::Vector3> smoothed;
+	smoothed.reserve(16);
+	smoothed.push_back(path[0]);
+
+	// anchor 탐색
+	size_t anchor = 0;
+	while (anchor < path.size() - 1)
+	{
+		// anchor에서 직선으로 닿을 수 있는 가장 먼 노드를 찾는다
+		size_t reach = anchor + 1;
+		for (size_t i = anchor + 2; i < path.size(); ++i)
+		{
+			if (lineOfSight(path[anchor], path[i]))
+				reach = i;
+			// 레인이 꺾이는 경우를 위해 끝까지 탐색한다. -> break가 없다
+		}
+		smoothed.push_back(path[reach]);
+		anchor = reach;
+	}
+	return smoothed;
 }
