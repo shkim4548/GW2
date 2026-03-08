@@ -81,6 +81,7 @@ public class AdminUiPostController : Controller
         {
             // ⚠️ PostUpdateRequest 필드 구성에 맞춰 조정
             // 만약 PostId가 DTO에 없다면, 서비스 시그니처가 UpdateAsync(int postId, PostUpdateRequest req)여야 함
+            PostId = id,
             Title = model.Title,
             Content = model.Content
         };

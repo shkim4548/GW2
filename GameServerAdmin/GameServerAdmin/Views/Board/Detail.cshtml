@@ -1,50 +1,152 @@
-﻿@model GameServerAdmin.Models.Posts.PublicUi.PublicPostDetailViewModel
+﻿@model GameServerAdmin.Models.Posts.PublicUi.PublicBoardDetailViewModel
 
 @{
     ViewData["Title"] = "게시글 상세";
+    var post = Model.Post;
+    var comments = Model.Comments;
 }
 
+{{/* ── 게시글 ── */}}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">게시글 상세</h2>
-    <div>
-        <a asp-controller="Board" asp-action="Index" class="btn btn-outline-secondary btn-sm">
-            목록으로
-        </a>
-    </div>
+    <a asp-controller="Board" asp-action="Index" class="btn btn-outline-secondary btn-sm">목록으로</a>
 </div>
 
 <div class="card mb-3">
     <div class="card-header">
-        <h4 class="mb-1">@Model.Title</h4>
+        <h4 class="mb-1">@post.Title</h4>
         <div class="text-muted small">
-            @Model.AuthorName · @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm") · 조회수 @Model.ViewCount
+            @post.AuthorName · @post.CreatedAt.ToString("yyyy-MM-dd HH:mm") · 조회수 @post.ViewCount
         </div>
     </div>
     <div class="card-body">
-        <div class="mb-3">
-            @Html.Raw(Model.Content) <!-- 실제 필드명/처리 방식에 맞게 -->
-        </div>
+        @Html.Raw(post.Content)
     </div>
 </div>
 
-<div class="d-flex justify-content-between">
-    <div>
-        <!-- 필요시 이전/다음 글 -->
-    </div>
-    <div>
-        <a asp-controller="Board" asp-action="Edit" asp-route-id="@Model.PostId"
-           class="btn btn-secondary btn-sm">
-            수정
-        </a>
-        <form asp-controller="Board"
-              asp-action="Delete"
-              asp-route-id="@Model.PostId"
-              method="post"
-              class="d-inline">
-            <button type="submit" class="btn btn-danger btn-sm"
-                    onclick="return confirm('삭제하시겠습니까?');">
-                삭제
-            </button>
-        </form>
-    </div>
+<div class="d-flex justify-content-end mb-4">
+    <a asp-controller="Board" asp-action="Edit" asp-route-id="@post.PostId"
+       class="btn btn-secondary btn-sm me-1">수정</a>
+    <form asp-controller="Board" asp-action="Delete" asp-route-id="@post.PostId"
+          method="post" class="d-inline">
+        <button type="submit" class="btn btn-danger btn-sm"
+                onclick="return confirm('삭제하시겠습니까?');">
+            삭제
+        </button>
+    </form>
 </div>
+
+<hr />
+
+{{/* ── 댓글 목록 ── */}}
+<div class="mb-2">
+    <strong>댓글 @comments.CommentCount 개</strong>
+    @if (comments.ReplyCount > 0)
+    {
+        <span class="text-muted small">(대댓글 @comments.ReplyCount 개 포함)</span>
+    }
+</div>
+
+@foreach (var comment in comments.Comments)
+{
+    <div class="border rounded p-3 mb-2">
+        <div class="d-flex justify-content-between">
+            <span>
+                <strong>@comment.AuthorName</strong>
+                <span class="text-muted small ms-2">@comment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+            </span>
+            <div>
+                @if (Model.CurrentUserId == comment.AuthorId)
+                {
+                    <form action="/board/@post.PostId/comments/@comment.Id/delete"
+                          method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('댓글을 삭제하시겠습니까?');">
+                            삭제
+                        </button>
+                    </form>
+                }
+                @if (Model.IsAuthenticated)
+                {
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-1"
+                            onclick="toggleReplyForm(@comment.Id)">
+                        답글
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="mt-1">@comment.Content</div>
+
+        {{/* 대댓글 목록 */}}
+        @foreach (var reply in comment.Replies)
+        {
+            <div class="border-start border-2 ps-3 mt-2 ms-3">
+                <div class="d-flex justify-content-between">
+                    <span>
+                        <span class="text-muted">└</span>
+                        <strong>@reply.AuthorName</strong>
+                        <span class="text-muted small ms-2">@reply.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    </span>
+                    @if (Model.CurrentUserId == reply.AuthorId)
+                    {
+                        <form action="/board/@post.PostId/comments/@reply.Id/delete"
+                              method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('대댓글을 삭제하시겠습니까?');">
+                                삭제
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div class="mt-1">@reply.Content</div>
+            </div>
+        }
+
+        {{/* 대댓글 입력 폼 (답글 버튼 클릭 시 표시) */}}
+        @if (Model.IsAuthenticated)
+        {
+            <div id="reply-form-@comment.Id" class="mt-2 ms-3" style="display:none;">
+                <form action="/board/@post.PostId/comments/@comment.Id/replies" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="input-group">
+                        <input type="text" name="content" class="form-control form-control-sm"
+                               placeholder="대댓글을 입력하세요..." maxlength="1000" required />
+                        <button type="submit" class="btn btn-sm btn-primary">등록</button>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+}
+
+<hr />
+
+{{/* ── 댓글 작성 ── */}}
+@if (Model.IsAuthenticated)
+{
+    <form action="/board/@post.PostId/comments" method="post" class="mb-3">
+        @Html.AntiForgeryToken()
+        <div class="mb-2">
+            <textarea name="comment" class="form-control" rows="3"
+                  placeholder="댓글을 입력하세요..." maxlength="1000" required></textarea>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary btn-sm">댓글 등록</button>
+        </div>
+    </form>
+}
+else
+{
+    <p class="text-muted">
+        <a asp-controller="Account" asp-action="Login">로그인</a> 후 댓글을 작성할 수 있습니다.
+    </p>
+}
+
+<script>
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById('reply-form-' + commentId);
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>

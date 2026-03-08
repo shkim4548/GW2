@@ -1,9 +1,12 @@
 ﻿using GameServerAdmin.Domain.Identity;
+using GameServerAdmin.Domain.Users;
+using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameServerAdmin.Controllers.Auth
 {
@@ -11,11 +14,13 @@ namespace GameServerAdmin.Controllers.Auth
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly AppDbContext _db;
 
-        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, AppDbContext db)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _db = db;
         }
 
         [AllowAnonymous]
@@ -75,16 +80,14 @@ namespace GameServerAdmin.Controllers.Auth
             return View("~/Views/Account/Register.cshtml", new GameServerAdmin.Models.Auth.RegisterRequest());
         }
 
-        // 🔹 회원가입 처리
         [AllowAnonymous]
         [HttpPost("/account/register")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(GameServerAdmin.Models.Auth.RegisterRequest request)
+        public async Task<IActionResult> Register(Models.Auth.RegisterRequest request)
         {
             if (!ModelState.IsValid)
                 return View("~/Views/Account/Register.cshtml", request);
 
-            // 동일 아이디 존재 여부 체크
             var existing = await _userManager.FindByNameAsync(request.UserName);
             if (existing != null)
             {
@@ -92,29 +95,38 @@ namespace GameServerAdmin.Controllers.Auth
                 return View("~/Views/Account/Register.cshtml", request);
             }
 
-            var user = new AppUser
+            // 1) AppUser (Identity) 생성
+            var appUser = new AppUser
             {
                 UserName = request.UserName,
-                NickName = request.UserName,       // 추정: 닉네임은 일단 아이디와 동일하게
+                NickName = request.UserName,
                 CreatedAt = DateTime.UtcNow,
-                UserType = "User"                  // 추정: 기본은 일반 유저
+                UserType = "User"
             };
 
-            var result = await _userManager.CreateAsync(user, request.Password);
-
+            var result = await _userManager.CreateAsync(appUser, request.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
-                {
                     ModelState.AddModelError(string.Empty, error.Description);
-                }
                 return View("~/Views/Account/Register.cshtml", request);
             }
 
-            // 여기서 바로 로그인까지 할지 말지는 선택사항
-            // 테스트용이니까, 일단 로그인 없이 로그인 페이지로 보내는 걸로
+            // 2) 도메인 User 생성 후 AppUser.AccountId 연결
+            var domainUser = new User
+            {
+                AccountId = appUser.Id,   // AppUser.Id로 연결
+                Nickname = request.UserName,
+                Level = 1,
+                CreatedAt = DateTime.UtcNow,
+                Status = UserStatus.Active
+            };
+            _db.Users.Add(domainUser);
+            await _db.SaveChangesAsync();
+
             return RedirectToAction("Login", "Account");
         }
+
 
         [AllowAnonymous]
         [HttpGet("/account/denied")]

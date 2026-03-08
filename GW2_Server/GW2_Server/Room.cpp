@@ -338,6 +338,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	posInfo.set_z(spawnWorldPos._z);
 	minion->SetPosInfo(posInfo);
 	minion->SetRoomId(this->GetRoomId());
+	minion->SetMinionTeam(team);
 	minion->InitMinion();
 
 	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
@@ -385,7 +386,7 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 			continue;
 
 		// (선택) 미니언이면 같은 laneId 대상만
-		if (asMinion)
+		if (asMinion && obj->IsMinion())
 		{
 			// 타겟이 플레이어/미니언/포탑일 수 있으니, laneId를 어떻게 꺼낼지 정책 필요
 			// 가장 단순: 타겟 위치로 grid에서 laneId 조회
@@ -628,6 +629,89 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 void Room::HandleMinionAttack(shared_ptr<Object> target)
 {
 
+}
+
+void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
+{
+	if (minion == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleChaseMove] minion is nullptr\n");
+		return;
+	}
+
+	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
+	if (navSystem == nullptr || gridPtr == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleChaseMove] nav is nullptr\n");
+		return;
+	}
+
+	Navigation::WalkableGrid& grid = *gridPtr;
+
+	// startCell
+	const GameMath::Vector3& startPos = minion->GetPosVector();
+	int32 sx = 0, sz = 0, tx = 0, tz = 0;
+	if (!navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleChaseMove] WorldToGrid(start) fail\n");
+		return;
+	}
+
+	// dest cell: laneId 필터 없이 허용, 플레이어의 위치는 다른 laneId일 수 있음
+	GameMath::Vector3 clampedDest = dest;
+	if (!navSystem->WorldToGrid(grid, clampedDest._x, clampedDest._z, tx, tz))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleChaseMove] WorldToGrid(dest) fail\n");
+		return;
+	}
+
+	// A* 알고리즘 -> laneId = 0으로 레인 필터를 해제한다 -> Chase는 Lane 경계를 넘을 수 있다.
+	vector<Navigation::GridCell*> gridPath;
+	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
+	if (ok == false || gridPath.empty())
+	{
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleChaseMove] FindPath failed\n");
+		return;
+	}
+
+	// GridsPath -> world navpath
+	vector<GameMath::Vector3> navPath;
+	navPath.reserve(gridPath.size() + 1);
+	for (Navigation::GridCell* cell : gridPath)
+	{
+		GameMath::Vector3 wp;
+		wp._x = grid.origin._x + (cell->x + 0.5f) * grid.cellSize;
+		wp._z = grid.origin._z + (cell->z + 0.5f) * grid.cellSize;
+		wp._y = 0.0f;
+		navPath.push_back(wp);
+	}
+	navPath.push_back(dest);	// 마지막은 타겟의 실제 위치
+
+	// Path Smoothing
+	size_t before = navPath.size();
+	navPath = SmoothPath(navPath, grid, navSystem, 0);	// 레인과 무관하게 스무딩한다
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::HandleChaseMove] SmoothPath %zu -> %zu\n", before, navPath.size());
+
+	// 미니언에 경로 전달
+	minion->RequestMove(navPath);
+
+	// S_MINION_MOVE 브로드캐스트
+	Protocol::S_MINION_MOVE pkt;
+	pkt.set_object_id(minion->GetObjectId());
+	Protocol::PosInfo* startInfo = pkt.mutable_start_pos();
+	startInfo->set_x(startPos._x);
+	startInfo->set_y(startPos._y);
+	startInfo->set_z(startPos._z);
+	for (const auto& wp : navPath)
+	{
+		Protocol::PosInfo* p = pkt.add_nav_path();
+		p->set_x(wp._x);
+		p->set_y(wp._y);
+		p->set_z(wp._z);
+	}
+	SendBufferRef buf = ClientPacketHandler::MakeSendBuffer(pkt);
+	Broadcast(buf);
 }
 
 void Room::BroadcastMoving(const ObjectRef& obj)

@@ -1,4 +1,6 @@
-﻿using GameServerAdmin.Application.Posts.Public;
+﻿using GameServerAdmin.Application.Comments.Public;
+using GameServerAdmin.Application.Posts.Public;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Models.Posts.PublicApi;
 using GameServerAdmin.Models.Posts.PublicUi;
 using Microsoft.AspNetCore.Authorization;
@@ -9,10 +11,14 @@ namespace GameServerAdmin.Controllers.Public;
 public sealed class BoardController : Controller
 {
     private readonly IPublicPostService _postService;
+    private readonly IPublicCommentService _commentService;
+    private readonly IUserContext _userContext;
 
-    public BoardController(IPublicPostService postService)
+    public BoardController(IPublicPostService postService, IPublicCommentService commentService, IUserContext userContext)
     {
         _postService = postService;
+        _commentService = commentService;
+        _userContext = userContext;
     }
 
     // GET /board
@@ -40,23 +46,31 @@ public sealed class BoardController : Controller
     public async Task<IActionResult> Detail(int id)
     {
         var post = await _postService.GetByIdAsync(id);
+        var comments = await _commentService.GetCommentsByPostAsync(id);
 
-        var viewModel = new PublicPostDetailViewModel
+        var vm = new PublicBoardDetailViewModel
         {
-            PostId = post.PostId,
-            Title = post.Title,
-            Content = post.Content,
-            CreatedAt = post.CreatedAt,
-            ViewCount = post.ViewCount,
+            Post = new PublicPostDetailViewModel
+            {
+                PostId = post.PostId,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                ViewCount = post.ViewCount,
+                AuthorName = post.AuthorName,
+            },
+            Comments = comments,
+            IsAuthenticated = _userContext.IsAuthenticated,
+            CurrentUserId = _userContext.IsAuthenticated ? _userContext.ActorId : null
         };
 
-        return View(viewModel);
+        return View(vm);
     }
 
     // GET /board/create
     [Authorize] // 글쓰기는 로그인 필요 (정책은 네 선택)
     [HttpGet("/board/create")]
-    [ValidateAntiForgeryToken]
+    //[ValidateAntiForgeryToken]
     public IActionResult Create()
     {
         var model = new PublicPostCreateViewModel();
@@ -82,5 +96,14 @@ public sealed class BoardController : Controller
 
         var created = await _postService.CreateAsync(request);
         return RedirectToAction(nameof(Detail), new { id = created.PostId });
+    }
+
+    [Authorize]
+    [HttpPost]                      // ← /Board/Delete/{id} (컨벤셔널 라우팅)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _postService.DeleteAsync(id);
+        return RedirectToAction(nameof(Index));
     }
 }

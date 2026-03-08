@@ -21,6 +21,8 @@ namespace GameServerAdmin.Application.Comments.Public
         Task DeleteCommentAsync(long postId, long commentId, long authorId);
         Task<CommentListResponse> GetCommentsByPostAsync(int postId);
         Task<PagedResponse<AdminCommentListItemDto>> GetAllCommentsAsync(AdminCommentListQuery query);
+        CommentResponse MapToCommentResponse(Domain.Comments.Comment comment, List<Domain.Comments.Comment> replies, Dictionary<long, string> authorNames);
+        ReplyResponse MapToReplyResponse(Domain.Comments.Comment reply, Dictionary<long, string> authorName);
     }
 
     public class PublicCommentService : IPublicCommentService
@@ -37,7 +39,7 @@ namespace GameServerAdmin.Application.Comments.Public
             var post = await _db.Posts.FindAsync(postId);
             if(post == null)
             {
-                throw new PostNotFoundException(postId);
+                throw new CommentNotFoundException(postId);
             }
 
             if(post.IsDeleted)
@@ -57,7 +59,7 @@ namespace GameServerAdmin.Application.Comments.Public
             var post = await _db.Posts.FindAsync(postId);
             if (post == null)
             {
-                throw new PostNotFoundException(postId);
+                throw new CommentNotFoundException(postId);
             }
 
             if(post.IsDeleted)
@@ -117,16 +119,21 @@ namespace GameServerAdmin.Application.Comments.Public
 
         public async Task<CommentListResponse> GetCommentsByPostAsync(int postId)
         {
-            var post = await _db.Comments.FindAsync(postId);
-            if(post == null)
-            {
-                throw new PostNotFoundException(postId);
-            }
+            // FIX: Posts 테이블에서 검증
+            var post = await _db.Posts.FindAsync((long)postId);
+            if (post == null)
+                throw new Common.Exceptions.Comment.PostNotFoundException(postId);
 
             var allComments = await _db.Comments
                 .Where(c => c.PostId == postId && c.Status == CommentStatus.Active)
                 .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
+
+            // 작성자 ID 목록으로 닉네임 한 번에 조회
+            var authorIds = allComments.Select(c => c.AuthorId).Distinct().ToList();
+            var authorNames = await _db.Users
+                .Where(u => authorIds.Contains(u.UserId))
+                .ToDictionaryAsync(u => u.UserId, u => u.Nickname);
 
             var rootComments = allComments.Where(c => !c.ParentCommentId.HasValue).ToList();
 
@@ -135,8 +142,7 @@ namespace GameServerAdmin.Application.Comments.Public
                 var replies = allComments
                     .Where(c => c.ParentCommentId == root.Id)
                     .ToList();
-
-                return MapToCommentResponse(root, replies);
+                return MapToCommentResponse(root, replies, authorNames);
             }).ToList();
 
             return new CommentListResponse
@@ -146,6 +152,35 @@ namespace GameServerAdmin.Application.Comments.Public
                 CommentCount = rootComments.Count,
                 ReplyCount = allComments.Count - rootComments.Count,
                 Comments = commentResponses
+            };
+        }
+
+        public CommentResponse MapToCommentResponse(Comment comment, List<Comment> replies, Dictionary<long, string> authorNames)
+        {
+            return new CommentResponse
+            {
+                Id = comment.Id,
+                PostId = comment.PostId,
+                AuthorId = comment.AuthorId,
+                AuthorName = authorNames.GetValueOrDefault(comment.AuthorId, "(알 수 없음)"),
+                Content = comment.Content,
+                CreatedAt = comment.CreatedAt,
+                UpdatedAt = comment.UpdatedAt,
+                Replies = replies.Select(r => MapToReplyResponse(r, authorNames)).ToList()
+            };
+        }
+
+        public ReplyResponse MapToReplyResponse(Comment reply, Dictionary<long, string> authorName)
+        {
+            return new ReplyResponse
+            {
+                Id = reply.Id,
+                ParentCommentId = reply.ParentCommentId!.Value,
+                AuthorId = reply.AuthorId,
+                AuthorName = authorName.GetValueOrDefault(reply.AuthorId, "(알 수 없음)"),
+                Content = reply.Content,
+                CreatedAt = reply.CreatedAt,
+                UpdatedAt = reply.UpdatedAt
             };
         }
 
@@ -212,5 +247,7 @@ namespace GameServerAdmin.Application.Comments.Public
                 UpdatedAt = reply.UpdatedAt
             };
         }
+
+
     }
 }

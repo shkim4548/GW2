@@ -20,6 +20,8 @@ public:
 
 	void SetMinionTarget(vector<weak_ptr<Object>>& targets);
 	void SetMinionLaneId(uint8 laneId) { _laneId = laneId; }
+	void SetMinionTeam(Protocol::CampType camp) { _campType = camp; }
+
 	weak_ptr<Object> FindBestTarget(vector<weak_ptr<Object>> targets);
 	void ClearPathPending() { _pathPending = false; 	}
 
@@ -68,5 +70,6 @@ private:
 
 	GameMath::Vector3 _lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 	float _repathCoolDown = 0.0f;
+	float _findTargetCoolDown = 0.0f;
 	bool _pathPending = false;  // DoAsync 요청 후 RequestMove 완료 전까지 중복 요청 방지
 };

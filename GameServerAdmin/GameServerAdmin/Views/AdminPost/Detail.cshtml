@@ -29,6 +29,41 @@
 <hr />
 
 <div>
-    <a asp-controller="AdminUiPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
+    @if (!Model.IsDeleted)
+    {
+        { {/* 정상 게시글: 수정 + 소프트 삭제 */} }
+        <a asp-controller="AdminUiPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
+
+        <form action="/admin/ui/posts/@Model.PostId/soft-delete"
+              method="post"
+              style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
+                삭제
+            </button>
+        </form>
+    }
+    else
+    {
+        { {/* 삭제된 게시글: 복구 + 완전 삭제 (수정 버튼 없음) */} }
+        <form action="/admin/ui/posts/@Model.PostId/restore"
+              method="post"
+              style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit">
+                복구
+            </button>
+        </form>
+
+        <form action="/admin/ui/posts/@Model.PostId/hard-delete"
+              method="post"
+              style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" onclick="return confirm('정말 완전히 삭제하시겠습니까? 복구 불가합니다.');">
+                완전 삭제
+            </button>
+        </form>
+    }
+
     <a asp-controller="AdminUiPost" asp-action="Index">목록</a>
 </div>

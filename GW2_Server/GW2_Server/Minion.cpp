@@ -220,8 +220,16 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		static_cast<int32>(_moveState),     // �� moveState
 		_repathCoolDown);
 	_repathCoolDown -= deltaTime;
+	_findTargetCoolDown -= deltaTime;
 
-	// 1) Chase ��ȯ üũ
+	// 1. 주기적으로 주변 적 탐색 요청
+	if (_findTargetCoolDown <= 0.0f)
+	{
+		RequestFindTarget();
+		_findTargetCoolDown = 0.5f;
+	}
+
+	// 2) Chase ��ȯ üũ
 	shared_ptr<Object> target = FindBestTarget(_targets).lock();
 	if (target != nullptr)
 	{
@@ -321,7 +329,6 @@ void Minion::UpdateChaseTarget(float deltaTime)
 	shared_ptr<Object> currentTarget = _currentTarget.lock();
 	if (currentTarget == nullptr || currentTarget->IsDead())
 	{
-		//currentTarget = nullptr;
 		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
 		return;
 	}
@@ -330,27 +337,44 @@ void Minion::UpdateChaseTarget(float deltaTime)
 
 	GameMath::Vector3 minionSelfPos = GetPosVector();
 	GameMath::Vector3 targetPos = currentTarget->GetPosVector();
-
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(minionSelfPos, targetPos);
 
-	// ���� ��Ÿ� ���̸� attack ���� ����
+	// 공격 범위 진입 -> Attack 상태로 전환
 	if (distToTarget <= _attackRange)
 	{
 		_minionState = Protocol::MinionState::MINION_ATTACK;
 		return;
 	}
 
-	// ���� ��ǥ �߰������� �̵�
-	// ��ƽ ���� HandleMinionMove�� ȣ������ �ʵ��� �Ѵ�
-	// ����: (1) ���� path�� ����ų� (2) ��ǥ�� �ٲ���ų� (3) ���� �ð� ������ ��Ž�� �ʿ��� ���� ��û
-	auto shouldRequest = _path.empty() || (_lastMoveGoal - minionSelfPos).Length() > 0.05f || (_repathCoolDown <= 0.0f);
-	shared_ptr<Room> room = _room.lock();
-	if (shouldRequest)
+	// leash이탈 -> LINETRACE 복귀
+	if (distToTarget > _detectionRange * 1.5f)
 	{
-		shared_ptr<Minion> minionSelf = dynamic_pointer_cast<Minion>(shared_from_this());
-		//room->HandleMinionMove(minionSelf, targetPos, _moveSpeed, deltaTime, _laneId);
+		_currentTarget.reset();
+		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
+		return;
+	}
 
-		_lastMoveGoal = minionSelfPos;
+	// 경로 요청 판단
+	bool goalChanged = (_lastMoveGoal - targetPos).Length() > 0.5f;
+	bool shouldRequest = (_path.empty() || goalChanged) && (_repathCoolDown <= 0.0f);
+
+	if (shouldRequest == true)
+	{
+		shared_ptr<Room> room = _room.lock();
+		if (room == nullptr)
+		{
+			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::UpdateChaseTarget] room is nullptr\n");
+			return;
+		}
+
+		shared_ptr<Minion> minionSelf = dynamic_pointer_cast<Minion>(shared_from_this());
+		if (minionSelf == nullptr)
+		{
+			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::UpdateChaseTarget] minionSelf is nullptr\n");
+			return;
+		}
+		room->DoAsync(&Room::HandleChaseMove, minionSelf, targetPos, _moveSpeed, deltaTime, _laneId);
+		_lastMoveGoal = targetPos;
 		_repathCoolDown = 0.2f;
 	}
 }
@@ -388,25 +412,21 @@ void Minion::UpdateAttack(float deltaTime)
 
 bool Minion::RequestFindTarget()
 {
-	//vector<shared_ptr<Object>>& targets;
-	shared_ptr<Minion> minionSelf = make_shared<Minion>();
-	// ���� Ÿ�� �����ֱ� ���� ����
-	shared_ptr<Object> tMinionSelf = static_pointer_cast<Object>(minionSelf);
 	shared_ptr<Room> room = _room.lock();
-
-	if (tMinionSelf == nullptr)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::FindBestTarget] minion self is nullptr\n");
-		return false;
-	}
-
 	if (room == nullptr)
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::FindBestTarget] room is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::RequestFindTarget] room is nullptr\n");
 		return false;
 	}
 
-	room->DoAsync(&Room::CollectEnemiesInRange, tMinionSelf, _detectionRange);
+	shared_ptr<Object> minionSelf = dynamic_pointer_cast<Object>(shared_from_this());
+	if (minionSelf == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::RequestFindTarget] minionSelf is nullptr\n");
+		return false;
+	}
+
+	room->DoAsync(&Room::CollectEnemiesInRange, minionSelf, _detectionRange);
 	return true;
 }
 

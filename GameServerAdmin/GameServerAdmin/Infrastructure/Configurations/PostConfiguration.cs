@@ -47,6 +47,11 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
                 .HasColumnType("varchar(100)") // 길이는 취향, 50~100 정도
                 .IsRequired();
 
+            builder.Property(e => e.Status)
+                .HasColumnName("status")
+                .HasColumnType("integer")
+                .IsRequired();
+
             builder.Property(e => e.CreatedAt)
                 .HasColumnName("created_at")
                 .HasColumnType("timestamp with time zone")
@@ -54,6 +59,11 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.UpdatedAt)
                 .HasColumnName("updated_at")
+                .HasColumnType("timestamp with time zone")
+                .IsRequired(false);
+
+            builder.Property(e => e.DeletedAt)                 // ← 추가
+                .HasColumnName("deleted_at")
                 .HasColumnType("timestamp with time zone")
                 .IsRequired(false);
 

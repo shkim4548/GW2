@@ -59,6 +59,7 @@ namespace GameServerAdmin
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = false;
             }).AddEntityFrameworkStores<AppDbContext>()
+                .AddClaimsPrincipalFactory<AppUserClaimsPrincipalFactory>()
                 .AddDefaultTokenProviders();
 
             // 쿠키 리다이렉트 경로
