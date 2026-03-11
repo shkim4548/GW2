@@ -45,6 +45,7 @@ public class MyPlayerController : PlayerController
         _inputService.KeyAction += OnKeyEvent;
 
         Id = _networkService.GetNetworkId();
+        _campType = Google.Protobuf.Enum.CampType.CampHuman;
     }
 
     public override void UpdateIdle()
@@ -145,20 +146,12 @@ public class MyPlayerController : PlayerController
 
     public void OnMouseEvent(Define.MouseEvent evt)
     {
+        if (evt != Define.MouseEvent.Click)
+            return;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
-        Debug.Log("OnMouseEvent");
         RaycastHit hit;
-        //if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
-        //{
-        //    _destPos = hit.point;
-        //    _moveToDest = true;
-        //    //UpdateMoving();
-        //    State = MoveState.Run;
-        //    // 상태 변화 확인
-        //    Debug.Log("Raycast Road");
-        //    RequestMove(_destPos);
-        //}
         // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
         {
@@ -169,7 +162,7 @@ public class MyPlayerController : PlayerController
                 // TEMP
                 _target = hit.collider.gameObject;
                 float dist = Vector3.Distance(transform.position, _target.transform.position);
-                Debug.Log($"TryAttackTarget before : {dist}");
+                Debug.Log($"TryAttackTarget before dist : {dist}, range : {_attackRange}");
                 if(dist <= _attackRange)
                 {
                     // 사거리 내부면 바로 공격
@@ -297,11 +290,11 @@ public class MyPlayerController : PlayerController
 
     private void SendAttackPacket(int targetId)
     {
-        C_ATTACK attackPkt = new C_ATTACK();
+        C_SKILL attackPkt = new C_SKILL();
         attackPkt.RoomId = RoomId;
         attackPkt.AttackerId = Id;
         attackPkt.TargetId = targetId;
-        attackPkt.CommandId = SkillType.SkillIdAttack;
+        attackPkt.SkillId = SkillType.SkillIdAttack;
         attackPkt.ClientTime = GetClientTime();
         _networkService.Send(attackPkt);
         Debug.Log($"[MyPlayer] SendAttackPacket targetId={targetId}");

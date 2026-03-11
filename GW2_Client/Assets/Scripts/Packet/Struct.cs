@@ -27,21 +27,21 @@ namespace Google.Protobuf.Struct {
             "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIm4KB1Bvc0lu",
             "Zm8SEQoJb2JqZWN0X2lkGAEgASgFEgkKAXgYAiABKAISCQoBeRgDIAEoAhIJ",
             "CgF6GAQgASgCEgsKA3lhdxgFIAEoAhIiCgVzdGF0ZRgGIAEoDjITLlByb3Rv",
-            "Y29sLk1vdmVTdGF0ZSK1AQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
+            "Y29sLk1vdmVTdGF0ZSLIAQoKT2JqZWN0SW5mbxIRCglvYmplY3RfaWQYASAB",
             "KAUSDwoHcm9vbV9pZBgCIAEoBRIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
             "b3RvY29sLk9iamVjdFR5cGUSDAoEbmFtZRgEIAEoCRIjCghwb3NfaW5mbxgF",
             "IAEoCzIRLlByb3RvY29sLlBvc0luZm8SJQoJc3RhdF9pbmZvGAYgASgLMhIu",
-            "UHJvdG9jb2wuU3RhdEluZm8iRQoIU3RhdEluZm8SCgoCaHAYASABKAQSDgoG",
-            "bWF4X2hwGAIgASgEEg4KBmF0dGFjaxgDIAEoBBINCgVzcGVlZBgEIAEoBCIu",
-            "CgtWZWN0b3IzSW5mbxIJCgF4GAEgASgCEgkKAXkYAiABKAISCQoBehgDIAEo",
-            "AiIsCghSb29tSW5mbxIOCgZyb29tSWQYASABKAUSEAoIcm9tbU5hbWUYAiAB",
-            "KAkiGwoJU2tpbGxJbmZvEg4KBmRhbWFnZRgBIAEoAkIZqgIWR29vZ2xlLlBy",
-            "b3RvYnVmLlN0cnVjdGIGcHJvdG8z"));
+            "UHJvdG9jb2wuU3RhdEluZm8SEQoJdGVhbV9mbGFnGAcgASgFIkUKCFN0YXRJ",
+            "bmZvEgoKAmhwGAEgASgEEg4KBm1heF9ocBgCIAEoBBIOCgZhdHRhY2sYAyAB",
+            "KAQSDQoFc3BlZWQYBCABKAQiLgoLVmVjdG9yM0luZm8SCQoBeBgBIAEoAhIJ",
+            "CgF5GAIgASgCEgkKAXoYAyABKAIiLAoIUm9vbUluZm8SDgoGcm9vbUlkGAEg",
+            "ASgFEhAKCHJvbW1OYW1lGAIgASgJIhsKCVNraWxsSW5mbxIOCgZkYW1hZ2UY",
+            "ASABKAJCGaoCFkdvb2dsZS5Qcm90b2J1Zi5TdHJ1Y3RiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.PosInfo), global::Google.Protobuf.Struct.PosInfo.Parser, new[]{ "ObjectId", "X", "Y", "Z", "Yaw", "State" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "RoomId", "ObjectType", "Name", "PosInfo", "StatInfo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "RoomId", "ObjectType", "Name", "PosInfo", "StatInfo", "TeamFlag" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.Vector3Info), global::Google.Protobuf.Struct.Vector3Info.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.RoomInfo), global::Google.Protobuf.Struct.RoomInfo.Parser, new[]{ "RoomId", "RommName" }, null, null, null, null),
@@ -466,6 +466,7 @@ namespace Google.Protobuf.Struct {
       name_ = other.name_;
       posInfo_ = other.posInfo_ != null ? other.posInfo_.Clone() : null;
       statInfo_ = other.statInfo_ != null ? other.statInfo_.Clone() : null;
+      teamFlag_ = other.teamFlag_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -538,15 +539,27 @@ namespace Google.Protobuf.Struct {
     /// <summary>Field number for the "stat_info" field.</summary>
     public const int StatInfoFieldNumber = 6;
     private global::Google.Protobuf.Struct.StatInfo statInfo_;
-    /// <summary>
-    /// ...
-    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Google.Protobuf.Struct.StatInfo StatInfo {
       get { return statInfo_; }
       set {
         statInfo_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "team_flag" field.</summary>
+    public const int TeamFlagFieldNumber = 7;
+    private int teamFlag_;
+    /// <summary>
+    /// ...
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int TeamFlag {
+      get { return teamFlag_; }
+      set {
+        teamFlag_ = value;
       }
     }
 
@@ -571,6 +584,7 @@ namespace Google.Protobuf.Struct {
       if (Name != other.Name) return false;
       if (!object.Equals(PosInfo, other.PosInfo)) return false;
       if (!object.Equals(StatInfo, other.StatInfo)) return false;
+      if (TeamFlag != other.TeamFlag) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -584,6 +598,7 @@ namespace Google.Protobuf.Struct {
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (posInfo_ != null) hash ^= PosInfo.GetHashCode();
       if (statInfo_ != null) hash ^= StatInfo.GetHashCode();
+      if (TeamFlag != 0) hash ^= TeamFlag.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -626,6 +641,10 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(50);
         output.WriteMessage(StatInfo);
       }
+      if (TeamFlag != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(TeamFlag);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -660,6 +679,10 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(50);
         output.WriteMessage(StatInfo);
       }
+      if (TeamFlag != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(TeamFlag);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -687,6 +710,9 @@ namespace Google.Protobuf.Struct {
       }
       if (statInfo_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(StatInfo);
+      }
+      if (TeamFlag != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TeamFlag);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -723,6 +749,9 @@ namespace Google.Protobuf.Struct {
           StatInfo = new global::Google.Protobuf.Struct.StatInfo();
         }
         StatInfo.MergeFrom(other.StatInfo);
+      }
+      if (other.TeamFlag != 0) {
+        TeamFlag = other.TeamFlag;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -769,6 +798,10 @@ namespace Google.Protobuf.Struct {
             input.ReadMessage(StatInfo);
             break;
           }
+          case 56: {
+            TeamFlag = input.ReadInt32();
+            break;
+          }
         }
       }
     #endif
@@ -812,6 +845,10 @@ namespace Google.Protobuf.Struct {
               StatInfo = new global::Google.Protobuf.Struct.StatInfo();
             }
             input.ReadMessage(StatInfo);
+            break;
+          }
+          case 56: {
+            TeamFlag = input.ReadInt32();
             break;
           }
         }

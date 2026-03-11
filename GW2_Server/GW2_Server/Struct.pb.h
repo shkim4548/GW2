@@ -415,6 +415,7 @@ class ObjectInfo final :
     kObjectIdFieldNumber = 1,
     kRoomIdFieldNumber = 2,
     kObjectTypeFieldNumber = 3,
+    kTeamFlagFieldNumber = 7,
   };
   // string name = 4;
   void clear_name();
@@ -493,6 +494,15 @@ class ObjectInfo final :
   void _internal_set_object_type(::Protocol::ObjectType value);
   public:
 
+  // int32 team_flag = 7;
+  void clear_team_flag();
+  int32_t team_flag() const;
+  void set_team_flag(int32_t value);
+  private:
+  int32_t _internal_team_flag() const;
+  void _internal_set_team_flag(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.ObjectInfo)
  private:
   class _Internal;
@@ -506,6 +516,7 @@ class ObjectInfo final :
   int32_t object_id_;
   int32_t room_id_;
   int object_type_;
+  int32_t team_flag_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Struct_2eproto;
 };
@@ -1588,6 +1599,26 @@ inline void ObjectInfo::set_allocated_stat_info(::Protocol::StatInfo* stat_info)
   }
   stat_info_ = stat_info;
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.stat_info)
+}
+
+// int32 team_flag = 7;
+inline void ObjectInfo::clear_team_flag() {
+  team_flag_ = 0;
+}
+inline int32_t ObjectInfo::_internal_team_flag() const {
+  return team_flag_;
+}
+inline int32_t ObjectInfo::team_flag() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.team_flag)
+  return _internal_team_flag();
+}
+inline void ObjectInfo::_internal_set_team_flag(int32_t value) {
+  
+  team_flag_ = value;
+}
+inline void ObjectInfo::set_team_flag(int32_t value) {
+  _internal_set_team_flag(value);
+  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.team_flag)
 }
 
 // -------------------------------------------------------------------

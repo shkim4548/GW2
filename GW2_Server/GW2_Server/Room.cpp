@@ -249,6 +249,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
 	objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
 	objectInfo->set_object_id(objectId);
+	objectInfo->set_team_flag(Protocol::CampType::CAMP_CYBORG);
 	posInfo->set_x(minion->GetPosInfo().x());
 	posInfo->set_y(minion->GetPosInfo().y());
 	posInfo->set_z(minion->GetPosInfo().z());

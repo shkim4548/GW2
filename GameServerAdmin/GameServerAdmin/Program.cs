@@ -222,6 +222,7 @@ namespace GameServerAdmin
                 await DbInitializer.SeedAdminUserAsync(userManager, roleManager);
                 await DbInitializer.SeedDefaultUserAsync(userManager, roleManager);
                 await DbInitializer.SeedTestUsersAsync(userManager, db);
+                await DbInitializer.SeedTestNoticesAsync(db);
             }
 
             // Configure the HTTP request pipeline.

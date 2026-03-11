@@ -43,7 +43,8 @@ constexpr ObjectInfo::ObjectInfo(
   , object_id_(0)
   , room_id_(0)
   , object_type_(0)
-{}
+
+  , team_flag_(0){}
 struct ObjectInfoDefaultTypeInternal {
   constexpr ObjectInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -137,6 +138,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, name_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, pos_info_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, stat_info_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, team_flag_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::StatInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -175,10 +177,10 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::PosInfo)},
   { 12, -1, -1, sizeof(::Protocol::ObjectInfo)},
-  { 24, -1, -1, sizeof(::Protocol::StatInfo)},
-  { 34, -1, -1, sizeof(::Protocol::Vector3Info)},
-  { 43, -1, -1, sizeof(::Protocol::RoomInfo)},
-  { 51, -1, -1, sizeof(::Protocol::SkillInfo)},
+  { 25, -1, -1, sizeof(::Protocol::StatInfo)},
+  { 35, -1, -1, sizeof(::Protocol::Vector3Info)},
+  { 44, -1, -1, sizeof(::Protocol::RoomInfo)},
+  { 52, -1, -1, sizeof(::Protocol::SkillInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -194,25 +196,25 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"n\n\007"
   "PosInfo\022\021\n\tobject_id\030\001 \001(\005\022\t\n\001x\030\002 \001(\002\022\t\n"
   "\001y\030\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\013\n\003yaw\030\005 \001(\002\022\"\n\005stat"
-  "e\030\006 \001(\0162\023.Protocol.MoveState\"\265\001\n\nObjectI"
+  "e\030\006 \001(\0162\023.Protocol.MoveState\"\310\001\n\nObjectI"
   "nfo\022\021\n\tobject_id\030\001 \001(\005\022\017\n\007room_id\030\002 \001(\005\022"
   ")\n\013object_type\030\003 \001(\0162\024.Protocol.ObjectTy"
   "pe\022\014\n\004name\030\004 \001(\t\022#\n\010pos_info\030\005 \001(\0132\021.Pro"
   "tocol.PosInfo\022%\n\tstat_info\030\006 \001(\0132\022.Proto"
-  "col.StatInfo\"E\n\010StatInfo\022\n\n\002hp\030\001 \001(\004\022\016\n\006"
-  "max_hp\030\002 \001(\004\022\016\n\006attack\030\003 \001(\004\022\r\n\005speed\030\004 "
-  "\001(\004\".\n\013Vector3Info\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002"
-  "\022\t\n\001z\030\003 \001(\002\",\n\010RoomInfo\022\016\n\006roomId\030\001 \001(\005\022"
-  "\020\n\010rommName\030\002 \001(\t\"\033\n\tSkillInfo\022\016\n\006damage"
-  "\030\001 \001(\002B\031\252\002\026Google.Protobuf.Structb\006proto"
-  "3"
+  "col.StatInfo\022\021\n\tteam_flag\030\007 \001(\005\"E\n\010StatI"
+  "nfo\022\n\n\002hp\030\001 \001(\004\022\016\n\006max_hp\030\002 \001(\004\022\016\n\006attac"
+  "k\030\003 \001(\004\022\r\n\005speed\030\004 \001(\004\".\n\013Vector3Info\022\t\n"
+  "\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\",\n\010RoomIn"
+  "fo\022\016\n\006roomId\030\001 \001(\005\022\020\n\010rommName\030\002 \001(\t\"\033\n\t"
+  "SkillInfo\022\016\n\006damage\030\001 \001(\002B\031\252\002\026Google.Pro"
+  "tobuf.Structb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Struct_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto = {
-  false, false, 561, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
+  false, false, 580, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
   &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 6,
   schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
   file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto, file_level_service_descriptors_Struct_2eproto,
@@ -623,8 +625,8 @@ ObjectInfo::ObjectInfo(const ObjectInfo& from)
     stat_info_ = nullptr;
   }
   ::memcpy(&object_id_, &from.object_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&object_type_) -
-    reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
+    static_cast<size_t>(reinterpret_cast<char*>(&team_flag_) -
+    reinterpret_cast<char*>(&object_id_)) + sizeof(team_flag_));
   // @@protoc_insertion_point(copy_constructor:Protocol.ObjectInfo)
 }
 
@@ -635,8 +637,8 @@ name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&pos_info_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&object_type_) -
-    reinterpret_cast<char*>(&pos_info_)) + sizeof(object_type_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&team_flag_) -
+    reinterpret_cast<char*>(&pos_info_)) + sizeof(team_flag_));
 }
 
 ObjectInfo::~ObjectInfo() {
@@ -679,8 +681,8 @@ void ObjectInfo::Clear() {
   }
   stat_info_ = nullptr;
   ::memset(&object_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&object_type_) -
-      reinterpret_cast<char*>(&object_id_)) + sizeof(object_type_));
+      reinterpret_cast<char*>(&team_flag_) -
+      reinterpret_cast<char*>(&object_id_)) + sizeof(team_flag_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -737,6 +739,14 @@ const char* ObjectInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_stat_info(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 team_flag = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          team_flag_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -815,6 +825,12 @@ uint8_t* ObjectInfo::_InternalSerialize(
         6, _Internal::stat_info(this), target, stream);
   }
 
+  // int32 team_flag = 7;
+  if (this->_internal_team_flag() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_team_flag(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -868,6 +884,11 @@ size_t ObjectInfo::ByteSizeLong() const {
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_object_type());
   }
 
+  // int32 team_flag = 7;
+  if (this->_internal_team_flag() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_team_flag());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -908,6 +929,9 @@ void ObjectInfo::MergeFrom(const ObjectInfo& from) {
   if (from._internal_object_type() != 0) {
     _internal_set_object_type(from._internal_object_type());
   }
+  if (from._internal_team_flag() != 0) {
+    _internal_set_team_flag(from._internal_team_flag());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -933,8 +957,8 @@ void ObjectInfo::InternalSwap(ObjectInfo* other) {
       &other->name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ObjectInfo, object_type_)
-      + sizeof(ObjectInfo::object_type_)
+      PROTOBUF_FIELD_OFFSET(ObjectInfo, team_flag_)
+      + sizeof(ObjectInfo::team_flag_)
       - PROTOBUF_FIELD_OFFSET(ObjectInfo, pos_info_)>(
           reinterpret_cast<char*>(&pos_info_),
           reinterpret_cast<char*>(&other->pos_info_));

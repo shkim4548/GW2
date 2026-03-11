@@ -186,6 +186,33 @@ namespace GameServerAdmin.Infrastructure.Persistence
                 await db.SaveChangesAsync();
             }
         }
+        public static async Task SeedTestNoticesAsync(AppDbContext db)
+        {
+            if (await db.Notices.AnyAsync())
+                return;
 
+            var notices = new[]
+            {
+        new Domain.Notices.Notice(
+            "서버 점검 안내",
+            "2026-03-15 00:00 ~ 06:00 서버 점검 예정입니다.",
+            adminId: 1,
+            Domain.Notices.NoticeCategory.Maintenance,
+            Domain.Notices.NoticePriority.Urgent),
+
+        new Domain.Notices.Notice(
+            "v1.2 업데이트 패치 노트",
+            "새로운 미니언 추가 및 밸런스 조정이 이루어졌습니다.",
+            adminId: 1,
+            Domain.Notices.NoticeCategory.Update,
+            Domain.Notices.NoticePriority.Normal),
+    };
+
+            foreach (var n in notices)
+                n.Publish();
+
+            db.Notices.AddRange(notices);
+            await db.SaveChangesAsync();
+        }
     }
 }

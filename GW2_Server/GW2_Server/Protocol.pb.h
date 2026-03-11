@@ -2168,14 +2168,16 @@ class C_SKILL final :
     kSkillIdFieldNumber = 1,
     kTargetIdFieldNumber = 2,
     kAttackerIdFieldNumber = 3,
+    kRoomIdFieldNumber = 4,
+    kClientTimeFieldNumber = 5,
   };
-  // int32 skill_id = 1;
+  // .Protocol.SkillType skill_id = 1;
   void clear_skill_id();
-  int32_t skill_id() const;
-  void set_skill_id(int32_t value);
+  ::Protocol::SkillType skill_id() const;
+  void set_skill_id(::Protocol::SkillType value);
   private:
-  int32_t _internal_skill_id() const;
-  void _internal_set_skill_id(int32_t value);
+  ::Protocol::SkillType _internal_skill_id() const;
+  void _internal_set_skill_id(::Protocol::SkillType value);
   public:
 
   // int32 target_id = 2;
@@ -2187,13 +2189,31 @@ class C_SKILL final :
   void _internal_set_target_id(int32_t value);
   public:
 
-  // int64 attacker_id = 3;
+  // int32 attacker_id = 3;
   void clear_attacker_id();
-  int64_t attacker_id() const;
-  void set_attacker_id(int64_t value);
+  int32_t attacker_id() const;
+  void set_attacker_id(int32_t value);
   private:
-  int64_t _internal_attacker_id() const;
-  void _internal_set_attacker_id(int64_t value);
+  int32_t _internal_attacker_id() const;
+  void _internal_set_attacker_id(int32_t value);
+  public:
+
+  // int32 room_id = 4;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
+  private:
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
+  public:
+
+  // int32 client_time = 5;
+  void clear_client_time();
+  int32_t client_time() const;
+  void set_client_time(int32_t value);
+  private:
+  int32_t _internal_client_time() const;
+  void _internal_set_client_time(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.C_SKILL)
@@ -2203,9 +2223,11 @@ class C_SKILL final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int32_t skill_id_;
+  int skill_id_;
   int32_t target_id_;
-  int64_t attacker_id_;
+  int32_t attacker_id_;
+  int32_t room_id_;
+  int32_t client_time_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -4320,22 +4342,22 @@ inline void S_MINION_MOVE::set_speed(float value) {
 
 // C_SKILL
 
-// int32 skill_id = 1;
+// .Protocol.SkillType skill_id = 1;
 inline void C_SKILL::clear_skill_id() {
   skill_id_ = 0;
 }
-inline int32_t C_SKILL::_internal_skill_id() const {
-  return skill_id_;
+inline ::Protocol::SkillType C_SKILL::_internal_skill_id() const {
+  return static_cast< ::Protocol::SkillType >(skill_id_);
 }
-inline int32_t C_SKILL::skill_id() const {
+inline ::Protocol::SkillType C_SKILL::skill_id() const {
   // @@protoc_insertion_point(field_get:Protocol.C_SKILL.skill_id)
   return _internal_skill_id();
 }
-inline void C_SKILL::_internal_set_skill_id(int32_t value) {
+inline void C_SKILL::_internal_set_skill_id(::Protocol::SkillType value) {
   
   skill_id_ = value;
 }
-inline void C_SKILL::set_skill_id(int32_t value) {
+inline void C_SKILL::set_skill_id(::Protocol::SkillType value) {
   _internal_set_skill_id(value);
   // @@protoc_insertion_point(field_set:Protocol.C_SKILL.skill_id)
 }
@@ -4360,24 +4382,64 @@ inline void C_SKILL::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_SKILL.target_id)
 }
 
-// int64 attacker_id = 3;
+// int32 attacker_id = 3;
 inline void C_SKILL::clear_attacker_id() {
-  attacker_id_ = int64_t{0};
+  attacker_id_ = 0;
 }
-inline int64_t C_SKILL::_internal_attacker_id() const {
+inline int32_t C_SKILL::_internal_attacker_id() const {
   return attacker_id_;
 }
-inline int64_t C_SKILL::attacker_id() const {
+inline int32_t C_SKILL::attacker_id() const {
   // @@protoc_insertion_point(field_get:Protocol.C_SKILL.attacker_id)
   return _internal_attacker_id();
 }
-inline void C_SKILL::_internal_set_attacker_id(int64_t value) {
+inline void C_SKILL::_internal_set_attacker_id(int32_t value) {
   
   attacker_id_ = value;
 }
-inline void C_SKILL::set_attacker_id(int64_t value) {
+inline void C_SKILL::set_attacker_id(int32_t value) {
   _internal_set_attacker_id(value);
   // @@protoc_insertion_point(field_set:Protocol.C_SKILL.attacker_id)
+}
+
+// int32 room_id = 4;
+inline void C_SKILL::clear_room_id() {
+  room_id_ = 0;
+}
+inline int32_t C_SKILL::_internal_room_id() const {
+  return room_id_;
+}
+inline int32_t C_SKILL::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_SKILL.room_id)
+  return _internal_room_id();
+}
+inline void C_SKILL::_internal_set_room_id(int32_t value) {
+  
+  room_id_ = value;
+}
+inline void C_SKILL::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_SKILL.room_id)
+}
+
+// int32 client_time = 5;
+inline void C_SKILL::clear_client_time() {
+  client_time_ = 0;
+}
+inline int32_t C_SKILL::_internal_client_time() const {
+  return client_time_;
+}
+inline int32_t C_SKILL::client_time() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_SKILL.client_time)
+  return _internal_client_time();
+}
+inline void C_SKILL::_internal_set_client_time(int32_t value) {
+  
+  client_time_ = value;
+}
+inline void C_SKILL::set_client_time(int32_t value) {
+  _internal_set_client_time(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_SKILL.client_time)
 }
 
 // -------------------------------------------------------------------

@@ -17,6 +17,6 @@
 </div>
 
 <div style="margin-top:16px;">
-    <a asp-controller="AdminUiNotice" asp-action="Edit" asp-route-noticeId="@Model.NoticeId">수정</a>
-    <a asp-controller="AdminUiNotice" asp-action="Index">목록</a>
+    <a href="/admin/ui/notice/edit?noticeId=@Model.NoticeId">수정/관리</a>
+    <a href="/admin/ui/notice/list">목록</a>
 </div>

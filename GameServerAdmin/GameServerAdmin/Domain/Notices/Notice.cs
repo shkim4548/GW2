@@ -12,6 +12,12 @@ namespace GameServerAdmin.Domain.Notices
             ValidateContent(content);
 
             Title = title;
+            Content = content;
+            AdminId = adminId;
+            Category = category;
+            Priority = priority;
+            Status = NoticeStatus.Draft;
+            CreatedAt = DateTime.UtcNow;
         }
 
         // 기본 속성

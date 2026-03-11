@@ -66,15 +66,18 @@ bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt)
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
-	auto room = gameSession->_room.lock();
+	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Handle_C_SKILL] C_SKILL is recved\n");
+	//auto room = gameSession->_room.lock();
+	shared_ptr<Room> room = GLobby->GetRoomById(pkt.room_id()).lock();
 	if (room == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_SKILL] room is nullptr\n");
+		return false;
 	}
 
 	shared_ptr<Object> attacker = gameSession->_currentPlayer.load();
 	room->DoAsync(&Room::HandleSkill, attacker, pkt);
-	return false;
+	return true;
 }
 
 bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)

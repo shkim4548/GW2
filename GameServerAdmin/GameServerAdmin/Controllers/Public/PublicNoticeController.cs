@@ -11,7 +11,7 @@ namespace GameServerAdmin.Controllers.Public
     {
         private readonly IPublicNoticeService _noticeService;
 
-        public PublicNoticeController(PublicNoticeService publicNoticeService)
+        public PublicNoticeController(IPublicNoticeService publicNoticeService)
         {
             _noticeService = publicNoticeService;
         }
