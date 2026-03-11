@@ -110,10 +110,71 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 	return false;
 }
 
-
 bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 {
-	return false;
+	if (attacker == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] attacker is nullptr\n");
+		return false;
+	}
+
+	auto targetIter = _objects.find(skillPkt.target_id());
+	if (targetIter == _objects.end())
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] target not found\n");
+		return false;
+	}
+
+	shared_ptr<Object> target = targetIter->second;
+
+	// 팀체크
+	if (attacker->GetTeamFlag() == target->GetTeamFlag())
+	{
+		return false;
+	}
+
+	// 거리 체크
+	// TODO : 하드코딩, 3.0f
+	const float attackRange = 3.0f;
+	GameMath::Vector3 attackerPos = attacker->GetPosVector();
+	GameMath::Vector3 targetPos = target->GetPosVector();
+	float dist = GameMath::Vector3::GetDistTanceXZ(attackerPos, targetPos);
+	if (dist > attackRange)
+	{
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleSkill] out of range dist=%.2f\n", dist);
+		return false;
+	}
+
+	// SkillType 분기
+	switch (skillPkt.skill_id())
+	{
+	case Protocol::SkillType::SKILL_ID_ATTACK:
+	{
+		const uint64_t damage = 10; // 임시 고정값
+		bool died = target->ApplyDamage(damage);
+
+		GConsoleLogger->WriteStdOut(Color::GREEN,
+			L"[Room::HandleSkill] attacker=%lld target=%d dmg=%llu hp=%llu died=%d\n",
+			attacker->GetObjectId(), target->GetObjectId(),
+			damage, target->GetHp(), died ? 1 : 0);
+
+		// TODO: died == true 시 사망 처리
+
+		// S_SKILL 브로드캐스트
+		Protocol::S_SKILL resPkt;
+		resPkt.set_skill_id(skillPkt.skill_id());
+		resPkt.set_attacker_id(attacker->GetObjectId());
+		resPkt.set_target_id(skillPkt.target_id());
+
+		SendBufferRef buf = ClientPacketHandler::MakeSendBuffer(resPkt);
+		Broadcast(buf);
+		break;
+	}
+	default:
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] unknown skill_id\n");
+		break;
+	}
+	return true;
 }
 
 void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
@@ -328,8 +389,6 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	minion->SetLaneRoute(route);
 	//minion->_laneId = static_cast<uint8>(laneId);
 	minion->SetMinionLaneId(laneId);
-	cout << "TEMP : MinionLaneId : " << minion->_laneId << endl;
-
 
 	// 위치 초기화
 	Protocol::PosInfo posInfo;
@@ -360,7 +419,6 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 	const Protocol::CampType team = requester->GetTeamFlag();
 	const GameMath::Vector3 requesterPos = requester->GetPosVector();
 	const float rangeSquare = range * range;
-	cout << "After Init" << endl;
 	// 선형탐색의 범위를 자신의 라인 안으로만 한정한다.
 	//const shared_ptr<Minion>& asMinion = requester->IsMinion() ? static_pointer_cast<Minion>(requester) : nullptr;
 	auto asMinion = dynamic_pointer_cast<Minion>(requester);

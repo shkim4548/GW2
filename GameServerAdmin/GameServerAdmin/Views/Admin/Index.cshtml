@@ -1,12 +1,75 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using GameServerAdmin.Models.Users.AdminUi
+@model AdminUserListViewModel
+
 @{
-    ViewData["Title"] = "Admin Home";
+    ViewData["Title"] = "유저 관리";
 }
 
-<h1>Admin Home</h1>
-<ul>
-    <li><a asp-controller = "AdminUiPost" asp-action = "Index">게시글 관리</a></li>
-    <li><a asp-controller = "AdminUiComment" asp-action = "Index">댓글 관리</a></li>
-</ul>
+<h2 class="mb-3">유저 관리</h2>
+
+{{/* 검색 폼 */}}
+<form method="get" action="/admin/ui/users" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input type="text" name="nickname" value="@Model.Nickname"
+               class="form-control" placeholder="닉네임 검색" />
+    </div>
+    <div class="col-auto">
+        <input type="number" name="userId" value="@Model.UserId"
+               class="form-control" placeholder="UserId 검색" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">검색</button>
+    </div>
+</form>
+
+@if (!Model.HasSearched)
+{
+    <p class="text-muted">닉네임 또는 UserId로 검색하세요. (최대 50건)</p>
+}
+else if (!Model.Results.Any())
+{
+    <p class="text-muted">검색 결과가 없습니다.</p>
+}
+else
+{
+    <div class="mb-2 text-muted small">검색 결과: @Model.Results.Count 건</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>UserId</th>
+                <th>닉네임</th>
+                <th>레벨</th>
+                <th>상태</th>
+                <th>생성일</th>
+                <th>마지막 접속</th>
+                <th>상세</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.Results)
+            {
+                <tr>
+                    <td>@u.UserId</td>
+                    <td>@u.Nickname</td>
+                    <td>@u.Level</td>
+                    <td>
+                        @if (u.Status == "Banned")
+                        {
+                            <span class="badge bg-danger">밴</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">정상</span>
+                        }
+                    </td>
+                    <td>@u.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>@(u.LastLoginAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                    <td>
+                        <a href="/admin/ui/users/@u.UserId"
+                           class="btn btn-sm btn-outline-secondary">상세</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

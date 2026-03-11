@@ -185,7 +185,7 @@ namespace GameServerAdmin.Application.Game.Stages
             if (!_userContext.IsAuthenticated)
                 throw new UnauthorizedException("로그인이 필요합니다.");
 
-            if (!string.Equals(_userContext.ActorType, "User", StringComparison.OrdinalIgnoreCase))
+            if (_userContext.ActorType != ActorType.USER)
                 throw new ForbiddenException("플레이어 전용 API입니다.");
 
             if (_userContext.ActorId <= 0)

@@ -33,7 +33,6 @@ public:
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
 
-
 private:
 	// === STATE MACHINE ===
 	void UpdateIdle(float deltaTime);
@@ -54,7 +53,7 @@ public:
 private:
 	Protocol::MinionState _minionState;
 
-	float _moveSpeed = 10.0f;
+	float _moveSpeed = 3.0f;
 	float _attackRange;
 	float _detectionRange =  5.0f;
 	float _attackCooldown;

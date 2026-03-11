@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2642974130612399573}
   - component: {fileID: 4061662964627242348}
   - component: {fileID: 1316193380575905087}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TestMinion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,5 +126,5 @@ MonoBehaviour:
   _moveSpeed: 100
   _rotationSpeed: 1
   _campType: 0
-  _lerpSpeed: 10
+  _arriveEpsilon: 0.05
   _snapDistance: 1

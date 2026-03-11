@@ -13,6 +13,10 @@ Minion::Minion()
 	_currentWaypointIndex = 0;
 	_repathCoolDown = 0.0f;
 	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
+
+	// Stat 초기화
+	_statInfo.set_hp(100);
+	_statInfo.set_max_hp(100);
 }
 
 Minion::~Minion()
@@ -80,7 +84,7 @@ void Minion::UpdateController(float deltaTime)
 		UpdateLaneTrace(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_CHASE_TARGET:
-		cout << "MinionState::MINION_CHASE_TARGET" << endl;
+		//cout << "MinionState::MINION_CHASE_TARGET" << endl;
 		UpdateChaseTarget(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_ATTACK:
@@ -149,15 +153,15 @@ void Minion::UpdateMovement(float deltaTime)
 		_isMoving = true;
 		_movement.speed = _moveSpeed;
 		// �̵� �� (remainMoveDist ���� �� return ����)
-		GConsoleLogger->WriteStdOut(Color::GREEN,
-			L"[Minion::UpdateMovement] moving. posVector=(%.3f, %.3f) pathIndex=%d\n",
-			_posVector._x, _posVector._z, _pathIndex);
+		//GConsoleLogger->WriteStdOut(Color::GREEN,
+		//	L"[Minion::UpdateMovement] moving. posVector=(%.3f, %.3f) pathIndex=%d\n",
+		//	_posVector._x, _posVector._z, _pathIndex);
 		return;
 	}
-	GConsoleLogger->WriteStdOut(Color::GREEN,
-		L"[Minion::UpdateMovement] path done. posVector=(%.3f, %.3f) pathIndex=%d pathSize=%d\n",
-		_posVector._x, _posVector._z,
-		_pathIndex, static_cast<int32>(_path.size()));
+	//GConsoleLogger->WriteStdOut(Color::GREEN,
+	//	L"[Minion::UpdateMovement] path done. posVector=(%.3f, %.3f) pathIndex=%d pathSize=%d\n",
+	//	_posVector._x, _posVector._z,
+	//	_pathIndex, static_cast<int32>(_path.size()));
 
 	// path�� �� �Һ��� ���
 	_pos.set_x(_posVector._x);
@@ -212,13 +216,13 @@ void Minion::UpdateIdle(float deltaTime)
 void Minion::UpdateLaneTrace(float deltaTime)
 {
 	GameMath::Vector3 myPos = GetPosVector();
-	GConsoleLogger->WriteStdOut(Color::WHITE,
-		L"[LaneTrace] myPos=(%.3f,%.3f) wpIdx=%d pathSize=%d moveState=%d repathCD=%.3f\n",
-		myPos._x, myPos._z,
-		_currentWaypointIndex,              // �� wpIdx
-		static_cast<int32>(_path.size()),   // �� pathSize
-		static_cast<int32>(_moveState),     // �� moveState
-		_repathCoolDown);
+	//GConsoleLogger->WriteStdOut(Color::WHITE,
+	//	L"[LaneTrace] myPos=(%.3f,%.3f) wpIdx=%d pathSize=%d moveState=%d repathCD=%.3f\n",
+	//	myPos._x, myPos._z,
+	//	_currentWaypointIndex,              // �� wpIdx
+	//	static_cast<int32>(_path.size()),   // �� pathSize
+	//	static_cast<int32>(_moveState),     // �� moveState
+	//	_repathCoolDown);
 	_repathCoolDown -= deltaTime;
 	_findTargetCoolDown -= deltaTime;
 

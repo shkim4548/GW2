@@ -20,6 +20,8 @@ namespace GameServerAdmin.Application.AdminGame
         Task<AdminGrantCurrencyResponse> GrantCurrencyAsync(long userId, AdminGrantCurrencyRequest request);
         Task BanUserAsync(long userId);
         Task UnbanUserAsync(long userId);
+        Task<(List<AdminUserSearchItemResponse> Users, int TotalCount)> GetAllUsersAsync(int page, int pageSize);
+
     }
 
     /// <summary>
@@ -41,7 +43,7 @@ namespace GameServerAdmin.Application.AdminGame
             if (!_userContext.IsAuthenticated)
                 throw new UnauthorizedException("로그인이 필요합니다.");
 
-            if (!string.Equals(_userContext.ActorType, "Admin", StringComparison.OrdinalIgnoreCase))
+            if (_userContext.ActorType != ActorType.ADMIN)
                 throw new ForbiddenException("관리자 계정만 접근할 수 있습니다.");
         }
 
@@ -237,6 +239,30 @@ namespace GameServerAdmin.Application.AdminGame
 
             user.Unban();
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<(List<AdminUserSearchItemResponse> Users, int TotalCount)> GetAllUsersAsync(int page, int pageSize)
+        {
+            EnsureAdminActor();
+
+            var query = _db.Set<User>().AsNoTracking();
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .OrderByDescending(u => u.UserId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (users.Select(u => new AdminUserSearchItemResponse
+            {
+                UserId = u.UserId,
+                Nickname = u.Nickname,
+                Level = u.Level,
+                Status = u.Status.ToString(),
+                CreatedAt = u.CreatedAt,
+                LastLoginAt = u.LastLoginAt
+            }).ToList(), totalCount);
         }
     }
 }

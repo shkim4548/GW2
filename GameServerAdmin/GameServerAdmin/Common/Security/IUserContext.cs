@@ -8,5 +8,5 @@ public interface IUserContext
 {
     bool IsAuthenticated { get; }
     long ActorId { get; }          // 인증 필수 API에서는 항상 값이 있어야 함
-    string ActorType { get; }      // "User" / "Admin" 등 (추정: string 유지)
+    ActorType ActorType { get; }      // "User" / "Admin" 등 (추정: string 유지)
 }

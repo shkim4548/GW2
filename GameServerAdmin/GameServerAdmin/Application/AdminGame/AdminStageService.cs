@@ -134,7 +134,7 @@ namespace GameServerAdmin.Application.AdminGame
             if (!_userContext.IsAuthenticated)
                 throw new UnauthorizedException("로그인이 필요합니다.");
 
-            if (!string.Equals(_userContext.ActorType, "Admin", StringComparison.OrdinalIgnoreCase))
+            if (_userContext.ActorType != ActorType.USER)
                 throw new ForbiddenException("관리자 전용 API입니다.");
 
             if (_userContext.ActorId <= 0)

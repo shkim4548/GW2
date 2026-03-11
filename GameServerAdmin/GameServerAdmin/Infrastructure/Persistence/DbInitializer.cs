@@ -1,5 +1,7 @@
-﻿using GameServerAdmin.Domain.Game.Stages;
+﻿using GameServerAdmin.Domain.Game.Inventory;
+using GameServerAdmin.Domain.Game.Stages;
 using GameServerAdmin.Domain.Identity;
+using GameServerAdmin.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,9 +61,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
             }
         }
 
-        public static async Task SeedAdminUserAsync(
-            UserManager<AppUser> userManager,
-            RoleManager<AppRole> roleManager)
+        public static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
             const string adminUserName = "admin";
             const string adminPassword = "testPassword1"; // ⚠ 개발용. 실서비스에선 환경변수 권장
@@ -80,6 +80,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
                 adminUser = new AppUser
                 {
                     UserName = adminUserName,
+                    UserType = "Admin",
                     // Email 필수면 추가:
                     // Email = "admin@example.com",
                     // EmailConfirmed = true
@@ -119,5 +120,72 @@ namespace GameServerAdmin.Infrastructure.Persistence
             db.Set<Stage>().AddRange(stages);
             await db.SaveChangesAsync();
         }
+
+        public static async Task SeedTestUsersAsync(UserManager<AppUser> userManager, AppDbContext db)
+        {
+            // 이미 테스트 유저가 있으면 스킵
+            if (await userManager.FindByNameAsync("testuser1") != null) return;
+
+            var testUsers = new[]
+            {
+        new { UserName = "testuser1", Nickname = "용사홍길동", Level = 15L, Status = UserStatus.Active  },
+        new { UserName = "testuser2", Nickname = "초보모험가",  Level = 3L,  Status = UserStatus.Active  },
+        new { UserName = "testuser3", Nickname = "제재된유저",  Level = 8L,  Status = UserStatus.Banned  },
+    };
+
+            foreach (var t in testUsers)
+            {
+                // 1) AppUser 생성
+                var appUser = new AppUser
+                {
+                    UserName = t.UserName,
+                    NickName = t.Nickname,
+                    UserType = "User",
+                    CreatedAt = DateTime.UtcNow
+                };
+                var result = await userManager.CreateAsync(appUser, "testUser123");
+                if (!result.Succeeded) continue;
+
+                await userManager.AddToRoleAsync(appUser, "User");
+
+                // 2) 도메인 User 생성
+                var domainUser = new User
+                {
+                    AccountId = appUser.Id,
+                    Nickname = t.Nickname,
+                    Level = t.Level,
+                    Status = t.Status,
+                    CreatedAt = DateTime.UtcNow
+                };
+                db.Users.Add(domainUser);
+                await db.SaveChangesAsync();
+
+                // 3) 재화 지급
+                var currencies = t.UserName switch
+                {
+                    "testuser1" => new[]
+                    {
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Gold,    5000),
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Gem,      100),
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Stamina,   20),
+            },
+                    "testuser2" => new[]
+                    {
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Gold,    200),
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Stamina,   5),
+            },
+                    "testuser3" => new[]
+                    {
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Gold,   1500),
+                new PlayerCurrency(domainUser.UserId, CurrencyType.Gem,      50),
+            },
+                    _ => Array.Empty<PlayerCurrency>()
+                };
+
+                db.Set<PlayerCurrency>().AddRange(currencies);
+                await db.SaveChangesAsync();
+            }
+        }
+
     }
 }

@@ -33,17 +33,17 @@ public sealed class BoardCommentController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteComment(long postId, long commentId)
     {
-        await _commentService.DeleteCommentAsync(postId, commentId, _userContext.ActorId);
+        await _commentService.DeleteCommentAsync(postId, commentId, _userContext.ActorId, _userContext.ActorType);
         return RedirectToAction("Detail", "Board", new { id = postId });
     }
 
     // POST /board/{postId}/comments/{parentCommentId}/replies
     [HttpPost("/board/{postId:long}/comments/{parentCommentId:int}/replies")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateReply(long postId, int parentCommentId, [FromForm] string content)
+    public async Task<IActionResult> CreateReply(long postId, long parentCommentId, [FromForm] string content)
     {
         await _commentService.CreateReplyAsync(
-            (int)postId, parentCommentId, (int)_userContext.ActorId,
+            postId, parentCommentId, _userContext.ActorId,
             new CreateReplyRequest { Content = content });
         return RedirectToAction("Detail", "Board", new { id = postId });
     }

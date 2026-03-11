@@ -44,6 +44,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
             builder.Property(e => e.Status)
                 .HasColumnName("status")
                 .HasColumnType("text")
+                .HasConversion<string>()
                 .IsRequired();
 
             builder.HasIndex(e => e.AccountId)

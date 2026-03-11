@@ -1,4 +1,6 @@
-﻿namespace GameServerAdmin.Models.Posts.PublicApi
+﻿using GameServerAdmin.Common.Security;
+
+namespace GameServerAdmin.Models.Posts.PublicApi
 {
     public class PublicPostDetailResponse
     {
@@ -6,7 +8,7 @@
         public string PostType { get; set; } = null!; 
         public string Title { get; set; } = null!; 
         public string Content { get; set; } = null!; 
-        public string AuthorType { get; set; } = null!; 
+        public ActorType AuthorType { get; set; } 
         public long AuthorId { get; set; }
         public DateTime CreatedAt { get; set; }
 

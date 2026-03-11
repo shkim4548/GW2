@@ -11,6 +11,7 @@ namespace GameServerAdmin.Controllers.Game
     /// </summary>
     [ApiController]
     [Route("api/game/inventory")]
+    [Tags("Game - Inventory")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public sealed class GameInventoryController : ControllerBase
     {

@@ -11,6 +11,7 @@ namespace GameServerAdmin.Controllers.Game
     /// </summary>
     [ApiController]
     [Route("api/game/player")]
+    [Tags("Game - Player")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // /api 요청은 Program.cs의 SmartAuth 때문에 기본적으로 JWT를 사용
     public sealed class GamePlayerController : ControllerBase
     {

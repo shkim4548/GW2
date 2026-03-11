@@ -44,7 +44,7 @@ namespace GameServerAdmin.Application.Game.Players
             if (!_userContext.IsAuthenticated)
                 throw new UnauthorizedException("로그인이 필요합니다.");
 
-            if (!string.Equals(_userContext.ActorType, "User", StringComparison.OrdinalIgnoreCase))
+            if (_userContext.ActorType != ActorType.USER)
                 throw new ForbiddenException("일반 유저만 접근할 수 있습니다.");
 
             var userId = _userContext.ActorId;

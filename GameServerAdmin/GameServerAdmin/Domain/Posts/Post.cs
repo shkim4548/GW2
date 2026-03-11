@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Common.Exceptions;
 using GameServerAdmin.Common.Exceptions.Post;
 using GameServerAdmin.Common.Interfaces;
+using GameServerAdmin.Common.Security;
 
 namespace GameServerAdmin.Domain.Posts
 {
@@ -8,7 +9,7 @@ namespace GameServerAdmin.Domain.Posts
     {
         protected Post() { }
 
-        public Post(string postType, string title, string content, string authorType, long authorId, string authorName)
+        public Post(string postType, string title, string content, ActorType authorType, long authorId, string authorName)
         {
             ValidateTitle(title);
             ValidateContent(content);
@@ -34,7 +35,7 @@ namespace GameServerAdmin.Domain.Posts
         public string PostType { get; private set; } = null!;
         public string Title { get; private set; } = null!;
         public string Content { get; private set; } = null!;
-        public string AuthorType { get; private set; } = null!;
+        public ActorType AuthorType { get; private set; }
         public long AuthorId { get; private set; }
         public PostStatus Status { get; private set; }
         public bool IsDeleted { get; private set; }

@@ -1,4 +1,5 @@
-﻿using GameServerAdmin.Models.Posts.PublicApi;
+﻿using GameServerAdmin.Common.Security;
+using GameServerAdmin.Models.Posts.PublicApi;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameServerAdmin.Models.Posts.PublicUi
@@ -35,7 +36,7 @@ namespace GameServerAdmin.Models.Posts.PublicUi
         public string PostType { get; init; } = null!;
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
-        public string AuthorType { get; init; } = null!;
+        public ActorType AuthorType { get; init; }
         public long AuthorId { get; init; }
         public DateTime CreatedAt { get; init; }
         public string AuthorName { get; init; } = null!;

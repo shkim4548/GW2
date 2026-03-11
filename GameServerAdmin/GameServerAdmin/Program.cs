@@ -20,6 +20,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using GameServerAdmin.Application.AdminAccount;
+
 #if DEBUG
 using GameServerAdmin.Common.Security.TestAuth;
 #endif
@@ -203,7 +205,7 @@ namespace GameServerAdmin
             builder.Services.AddScoped<IStageService, StageService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<IAdminGameUserService, AdminGameUserService>();
-
+            builder.Services.AddScoped<IAdminAccountService, AdminAccountService>();
 
             var app = builder.Build();
 
@@ -214,10 +216,12 @@ namespace GameServerAdmin
 
                 var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var db = services.GetRequiredService<AppDbContext>();   // ← 추가
 
                 await DbInitializer.SeedRolesAsync(roleManager);
                 await DbInitializer.SeedAdminUserAsync(userManager, roleManager);
                 await DbInitializer.SeedDefaultUserAsync(userManager, roleManager);
+                await DbInitializer.SeedTestUsersAsync(userManager, db);
             }
 
             // Configure the HTTP request pipeline.

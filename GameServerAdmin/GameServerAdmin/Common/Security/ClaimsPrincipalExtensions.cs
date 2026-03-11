@@ -42,7 +42,7 @@ public static class ClaimsPrincipalExtensions
     ///  2) user_type (과거 호환용)
     ///  3) 기본값
     /// </summary>
-    public static string GetActorTypeOrDefault(this ClaimsPrincipal user, string defaultValue = "User")
+    public static ActorType GetActorTypeOrDefault(this ClaimsPrincipal user, ActorType defaultValue = ActorType.USER)
     {
         if (user.Identity?.IsAuthenticated != true)
             return defaultValue;
@@ -53,6 +53,8 @@ public static class ClaimsPrincipalExtensions
         if (string.IsNullOrWhiteSpace(value))
             return defaultValue;
 
-        return value;
+        return Enum.TryParse<ActorType>(value, ignoreCase: true, out var result)
+            ? result
+            : defaultValue;
     }
 }

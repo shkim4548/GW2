@@ -19,6 +19,7 @@ public:
 	Protocol::MoveState GetMoveState() const { return _moveState; }
 	Protocol::ObjectType GetObjectType() const { return _objectType; }
 	Protocol::CampType GetTeamFlag() const { return _campType; }
+	float GetHp() { return _statInfo.hp(); }
 	// TODO : 사망 여부 체크 로직 필요
 	bool IsDead();
 
@@ -58,6 +59,9 @@ public:
 	
 	// STATE HELPER
 	bool GetIsMoving() { return _isMoving; }
+
+	// STAT HELPER
+	bool ApplyDamage(uint64 dmg);
 
 	// Debug
 	int32 GetRoomId() { return _roomId; }

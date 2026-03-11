@@ -11,6 +11,7 @@ namespace GameServerAdmin.Controllers.Game
     /// </summary>
     [ApiController]
     [Route("api/game/stage")]
+    [Tags("Game - Stage")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public sealed class GameStageController : ControllerBase
     {

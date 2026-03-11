@@ -76,6 +76,7 @@
     <ClCompile Include="LaneRouteLoader.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
+    <ClCompile Include="StatLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -132,6 +133,7 @@
     <ClInclude Include="LaneRouteLoader.h">
       <Filter>GameContents</Filter>
     </ClInclude>
+    <ClInclude Include="StatLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Enum.proto">

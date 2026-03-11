@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Models.Posts.AdminApi;
 
 namespace GameServerAdmin.Models.Posts.AdminUi
@@ -9,7 +10,7 @@ namespace GameServerAdmin.Models.Posts.AdminUi
         public string PostType { get; init; } = null!;
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
-        public string AuthorType { get; init; } = null!;
+        public ActorType AuthorType { get; init; }
         public long AuthorId { get; init; }
         public bool IsDeleted { get; init; }
         public DateTime CreatedAt { get; init; }

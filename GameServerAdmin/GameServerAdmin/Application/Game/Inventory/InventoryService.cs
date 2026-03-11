@@ -38,7 +38,7 @@ namespace GameServerAdmin.Application.Game.Inventory
             if (!_userContext.IsAuthenticated)
                 throw new UnauthorizedException("로그인이 필요합니다.");
 
-            if (!string.Equals(_userContext.ActorType, "User", StringComparison.OrdinalIgnoreCase))
+            if (_userContext.ActorType != ActorType.USER)
                 throw new ForbiddenException("일반 유저만 인벤토리 API를 사용할 수 있습니다.");
 
             return _userContext.ActorId; // 여기서 ActorId는 User.UserId 여야 한다.

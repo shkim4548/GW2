@@ -11,6 +11,7 @@ namespace GameServerAdmin.Controllers.BackOffice
     /// </summary>
     [ApiController]
     [Route("api/admin/game/users")]
+    [Tags("Admin - GameUser")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public sealed class AdminGameUserController : ControllerBase
     {

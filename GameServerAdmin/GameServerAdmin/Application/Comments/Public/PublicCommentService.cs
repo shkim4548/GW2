@@ -2,6 +2,7 @@
 using GameServerAdmin.Common.Exceptions.Comment;
 using GameServerAdmin.Common.Exceptions.Post;
 using GameServerAdmin.Common.Models;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Domain.Comments;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Comments.AdminApi;
@@ -16,9 +17,9 @@ namespace GameServerAdmin.Application.Comments.Public
             Public Comment Service
         -----------------------------*/
         Task<CommentResponse> CreateCommentAsync(long postId, long authorId, CreateCommentRequest request);
-        Task<ReplyResponse> CreateReplyAsync(int postId, int parentCommentId, int authorId, CreateReplyRequest request);
+        Task<ReplyResponse> CreateReplyAsync(long postId, long parentCommentId, long authorId, CreateReplyRequest request);
         Task<CommentResponse> UpdateCommentAsync(long postId, long commentId, long authorId, UpdateCommentRequest request);
-        Task DeleteCommentAsync(long postId, long commentId, long authorId);
+        Task DeleteCommentAsync(long postId, long commentId, long authorId, ActorType actorType);
         Task<CommentListResponse> GetCommentsByPostAsync(int postId);
         Task<PagedResponse<AdminCommentListItemDto>> GetAllCommentsAsync(AdminCommentListQuery query);
         CommentResponse MapToCommentResponse(Domain.Comments.Comment comment, List<Domain.Comments.Comment> replies, Dictionary<long, string> authorNames);
@@ -54,7 +55,7 @@ namespace GameServerAdmin.Application.Comments.Public
             return MapToCommentResponse(comment);
         }
 
-        public async Task<ReplyResponse> CreateReplyAsync(int postId, int parentCommentId, int authorId, CreateReplyRequest request)
+        public async Task<ReplyResponse> CreateReplyAsync(long postId, long parentCommentId, long authorId, CreateReplyRequest request)
         {
             var post = await _db.Posts.FindAsync(postId);
             if (post == null)
@@ -90,7 +91,7 @@ namespace GameServerAdmin.Application.Comments.Public
             return MapToReplyResponse(reply);
         }
 
-        public async Task DeleteCommentAsync(long postId, long commentId, long authorId)
+        public async Task DeleteCommentAsync(long postId, long commentId, long authorId, ActorType actorType)
         {
             var comment = await _db.Comments.FindAsync(commentId);
             if (comment == null)

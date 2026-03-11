@@ -1,4 +1,5 @@
 ﻿using GameServerAdmin.Application.Comments.Public;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Models.Comments.AdminApi;
 using GameServerAdmin.Models.Comments.PublicApi;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,12 @@ namespace GameServerAdmin.Controllers.Public
     public class PublicCommentController : ControllerBase
     {
         private readonly IPublicCommentService _commentService;
+        private readonly IUserContext _userContext;
 
-        public PublicCommentController(IPublicCommentService commentService)
+        public PublicCommentController(IPublicCommentService commentService, IUserContext userContext)
         {
             _commentService = commentService;
+            _userContext = userContext;
         }
 
         // 댓글 작성
@@ -69,10 +72,11 @@ namespace GameServerAdmin.Controllers.Public
         /// 댓글 삭제 (Soft Delete)
         /// DELETE /api/posts/{postId}/comments/{commentId}
         /// </summary>
+        [Authorize]
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteComment([FromRoute] long postId, [FromRoute] long commentId, [FromQuery] long authorId)
         {
-            await _commentService.DeleteCommentAsync(postId, commentId, authorId);
+            await _commentService.DeleteCommentAsync(postId, commentId, authorId, _userContext.ActorType);
             return NoContent();
         }
 

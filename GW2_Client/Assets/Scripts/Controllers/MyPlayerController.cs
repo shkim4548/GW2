@@ -18,6 +18,11 @@ public class MyPlayerController : PlayerController
     GameObject _target;
     NavMeshAgent _navAgent;
 
+    private float _attackRange = 15.0f;
+    private bool _chaseToAttack = false;
+    private float _chaseCooldown = 0.0f;
+    private Vector3 _lastTargetPos;
+
     private int _clientMoveStartTime;
     private bool _needsCorrection = false;
 
@@ -50,9 +55,33 @@ public class MyPlayerController : PlayerController
     public override void UpdateMoving()
     {
         base.UpdateMoving();
+        // 추적 중이면 매 프레임 타겟 거리 갱신
+        if (_chaseToAttack && _target != null)
+        {
+            _chaseCooldown -= Time.deltaTime;
+            Vector3 targetPos = _target.transform.position;
+            float dist = Vector3.Distance(transform.position, targetPos);
+
+            if (dist <= _attackRange)
+            {
+                TryAttackTarget();
+                _chaseToAttack = false;
+                StopMovement();
+                return;
+            }
+
+            if (_chaseCooldown <= 0f &&
+                Vector3.Distance(_lastTargetPos, targetPos) > 0.5f)
+            {
+                RequestMove(targetPos);
+                _lastTargetPos = targetPos;
+                _chaseCooldown = 0.3f;
+            }
+        }
+
         //Debug.Log("UpdateMoving");
         // 보정 필요성부터 확인
-        if(_needsCorrection)
+        if (_needsCorrection)
         {
             CorrectPosition();
         }
@@ -120,29 +149,61 @@ public class MyPlayerController : PlayerController
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
         Debug.Log("OnMouseEvent");
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
-        {
-            _destPos = hit.point;
-            _moveToDest = true;
-            //UpdateMoving();
-            State = MoveState.Run;
-            // 상태 변화 확인
-            //Debug.Log(State);
-            RequestMove(_destPos);
-        }
+        //if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
+        //{
+        //    _destPos = hit.point;
+        //    _moveToDest = true;
+        //    //UpdateMoving();
+        //    State = MoveState.Run;
+        //    // 상태 변화 확인
+        //    Debug.Log("Raycast Road");
+        //    RequestMove(_destPos);
+        //}
         // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
-        else if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Creature")))
+        if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
         {
+            Debug.Log("Raycast Objects hit");
             // 진영이 다르고 사거리 내에 있다면 상태를 전이시킨다.
             if (hit.collider.gameObject.GetComponent<BaseController>()._campType != this._campType)
             {
-                // 
+                // TEMP
+                _target = hit.collider.gameObject;
+                float dist = Vector3.Distance(transform.position, _target.transform.position);
+                Debug.Log($"TryAttackTarget before : {dist}");
+                if(dist <= _attackRange)
+                {
+                    // 사거리 내부면 바로 공격
+                    TryAttackTarget();
+                    Debug.Log("TryAttackTarget");
+                }
+                else
+                {
+                    // 사거리 밖이다.
+                    _chaseToAttack = true;
+                    _lastTargetPos = _target.transform.position;
+                    _chaseCooldown = 0.0f;
+                    State = MoveState.Run;
+                    RequestMove(_target.transform.position);
+                    Debug.Log("TryAttackTarget else block");
+                }
             }
-            // 사거리 밖에 있다면, 추적시킨다.
-            else
-            {
-                Debug.Log("OnMouseEvent Else block");
-            }
+            
+        }
+        else if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
+        {
+            _destPos = hit.point;
+            _moveToDest = true;
+            _chaseToAttack = false;  // 이동 명령 시 추적 취소
+                                     //UpdateMoving();
+            State = MoveState.Run;
+            // 상태 변화 확인
+            Debug.Log("Raycast Road");
+            RequestMove(_destPos);
+        }
+        // 사거리 밖에 있다면, 추적시킨다.
+        else
+        {
+            Debug.Log("OnMouseEvent Else block");
         }
     }
 
@@ -220,6 +281,32 @@ public class MyPlayerController : PlayerController
         _path.Clear();
         _pathIndex = 0;
     }
+
+    private void TryAttackTarget()
+    {
+        if (_target == null) 
+            return;
+        BaseController targetBc = _target.GetComponent<BaseController>();
+        if (targetBc == null) 
+            return;
+
+        SendAttackPacket(targetBc.Id);
+        _target = null;
+        Debug.Log("TryAttackTarget Test Log");
+    }
+
+    private void SendAttackPacket(int targetId)
+    {
+        C_ATTACK attackPkt = new C_ATTACK();
+        attackPkt.RoomId = RoomId;
+        attackPkt.AttackerId = Id;
+        attackPkt.TargetId = targetId;
+        attackPkt.CommandId = SkillType.SkillIdAttack;
+        attackPkt.ClientTime = GetClientTime();
+        _networkService.Send(attackPkt);
+        Debug.Log($"[MyPlayer] SendAttackPacket targetId={targetId}");
+    }
+
 
     public void RequestMove(Vector3 worldPosition)
     {

@@ -1,0 +1,67 @@
+﻿@model List<GameServerAdmin.Models.Admin.AdminUi.AdminAccountListItemViewModel>
+
+@{
+    ViewData["Title"] = "Admin 계정 관리";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Admin 계정 관리</h2>
+    <a asp-action="Create" class="btn btn-primary btn-sm">+ 계정 추가</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>아이디</th>
+            <th>역할</th>
+            <th>상태</th>
+            <th>생성일</th>
+            <th>마지막 로그인</th>
+            <th>관리</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var admin in Model)
+        {
+            <tr class="@(admin.IsActive ? "" : "table-secondary text-muted")">
+                <td>@admin.LoginId</td>
+                <td>@admin.Role</td>
+                <td>
+                    @if (admin.IsActive)
+                    {
+                        <span class="badge bg-success">활성</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">비활성</span>
+                    }
+                </td>
+                <td>@admin.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(admin.LastLoginAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                <td>
+                    @if (admin.IsActive)
+                    {
+                        <form asp-action="Deactivate" asp-route-adminId="@admin.AdminId"
+                              method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('@admin.LoginId 계정을 비활성화하시겠습니까?');">
+                                비활성화
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Activate" asp-route-adminId="@admin.AdminId"
+                              method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                활성화
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

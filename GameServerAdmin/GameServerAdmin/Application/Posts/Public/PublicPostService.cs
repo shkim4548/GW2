@@ -5,6 +5,7 @@ using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Posts.PublicApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GameServerAdmin.Application.Posts.Public;
 
@@ -36,10 +37,24 @@ public sealed class PublicPostService : IPublicPostService
 
     private void EnsureOwner(Post post)
     {
-        // (추정) 더 안전한 정책: AuthorId + AuthorType 모두 비교
-        // (불명확) AuthorType이 항상 "User"로 저장되는지, Admin도 작성 가능한지에 따라 정책 변경 가능
+        // Post.AuthorType은 string이므로 .ToString() 비교
         if (post.AuthorId != _userContext.ActorId || post.AuthorType != _userContext.ActorType)
-            throw new UnauthorizedAccessException("You are not the owner of this post.");
+            throw new Common.Exceptions.ForbiddenException("본인이 작성한 게시글만 수정할 수 있습니다.");
+    }
+
+    private void EnsureCanDelete(Post post)
+    {
+        bool isUnknownAuthor = post.AuthorId == 0;
+
+        if (isUnknownAuthor)
+        {
+            if (_userContext.ActorType != ActorType.ADMIN)
+                throw new Common.Exceptions.ForbiddenException("작성자를 알 수 없는 게시글은 관리자만 삭제할 수 있습니다.");
+            return;
+        }
+
+        if (post.AuthorId != _userContext.ActorId || post.AuthorType != _userContext.ActorType)
+            throw new Common.Exceptions.ForbiddenException("본인이 작성한 게시글만 삭제할 수 있습니다.");
     }
 
     public async Task<PublicPostDetailResponse> CreateAsync(PublicPostCreateRequest request)
@@ -66,7 +81,7 @@ public sealed class PublicPostService : IPublicPostService
         // 3) ActorType + ActorId 기반으로 AuthorName 조회
         string authorName;
 
-        if (actorType == "User") // HttpUserContext.ActorType이 현재 "User" 고정(코드 기준)
+        if (actorType == ActorType.USER) // HttpUserContext.ActorType이 현재 "User" 고정(코드 기준)
         {
             var user = await _db.Users
                 .AsNoTracking()
@@ -75,7 +90,7 @@ public sealed class PublicPostService : IPublicPostService
             // 닉네임 없을 때의 fallback 정책은 자유롭게
             authorName = user?.Nickname ?? "(알 수 없음)";
         }
-        else if (actorType == "Admin")
+        else if (actorType == ActorType.ADMIN)
         {
             var admin = await _db.Admins
                 .AsNoTracking()
@@ -211,7 +226,7 @@ public sealed class PublicPostService : IPublicPostService
         if (post is null)
             throw new PostNotFoundException(postId);
 
-        EnsureOwner(post);
+        EnsureCanDelete(post);
 
         post.SoftDelete();
         await _db.SaveChangesAsync();

@@ -16,6 +16,7 @@ using System.Text;
 namespace GameServerAdmin.Controllers.Auth
 {
     [ApiController]
+    [Tags("Auth")]
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
@@ -24,11 +25,7 @@ namespace GameServerAdmin.Controllers.Auth
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _dbContext;
 
-        public AuthController(
-            UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
-            IConfiguration configuration,
-            AppDbContext dbContext)
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, AppDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -111,7 +108,7 @@ namespace GameServerAdmin.Controllers.Auth
                     actorId = admin.AdminId;
                 }
 
-                actorType = "Admin";
+                actorType = "ADMIN";
             }
             else
             {
@@ -120,7 +117,7 @@ namespace GameServerAdmin.Controllers.Auth
                 // (게임 플레이어용 Actor = User)
                 // ==============================
 
-                actorType = "User";
+                actorType = "USER";
 
                 if (user.AccountId == null)
                 {

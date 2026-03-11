@@ -34,6 +34,7 @@ namespace GameServerAdmin.Infrastructure.Persistence.Configurations
             builder.Property(e => e.AuthorType)
                 .HasColumnName("author_type")
                 .HasMaxLength(20)
+                .HasConversion<string>()   // ← enum을 string으로 저장/읽기
                 .IsRequired();
 
             builder.Property(e => e.AuthorId)

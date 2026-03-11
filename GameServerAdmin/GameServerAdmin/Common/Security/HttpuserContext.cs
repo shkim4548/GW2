@@ -30,7 +30,7 @@ public sealed class HttpUserContext : IUserContext
         }
     }
 
-    public string ActorType
+    public ActorType ActorType
     {
         get
         {
@@ -38,10 +38,9 @@ public sealed class HttpUserContext : IUserContext
             var user = httpContext?.User;
 
             if (user == null || user.Identity?.IsAuthenticated != true)
-                return "Anonymous";
+                return ActorType.USER;
 
-            // "User" / "Admin" 등
-            return user.GetActorTypeOrDefault("User");
+            return user.GetActorTypeOrDefault(ActorType.USER);
         }
     }
 }

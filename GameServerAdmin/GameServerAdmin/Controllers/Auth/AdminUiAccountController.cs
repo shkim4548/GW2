@@ -1,4 +1,6 @@
-﻿using GameServerAdmin.Domain.Identity;
+﻿using GameServerAdmin.Domain.Admins;
+using GameServerAdmin.Domain.Identity;
+using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,11 +12,13 @@ namespace GameServerAdmin.Controllers.Auth
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly AppDbContext _db;
 
-        public AdminUiAccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public AdminUiAccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, AppDbContext db)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _db = db;
         }
 
         [AllowAnonymous]
@@ -48,6 +52,25 @@ namespace GameServerAdmin.Controllers.Auth
             {
                 ModelState.AddModelError(string.Empty, "관리자 계정이 아닙니다");
                 return View("~/Views/AdminAccount/Login.cshtml", request);
+            }
+
+            // Admin 도메인 엔티티 자동 생성
+            if(user.AdminId == null)
+            {
+                var admin = new Admin
+                {
+                    LoginId = user.UserName!,
+                    PasswordHash = string.Empty,
+                    Role = roles.Contains("SuperAdmin") ? "SuperAdmin" : "Admin",
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _db.Admins.Add(admin);
+                await _db.SaveChangesAsync();
+
+                user.AdminId = admin.AdminId;
+                user.UserType = "Admin";
+                await _userManager.UpdateAsync(user);
             }
 
             var result = await _signInManager.PasswordSignInAsync(

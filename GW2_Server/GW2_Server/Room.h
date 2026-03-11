@@ -30,8 +30,6 @@ public:
 
 public:
 	// Handlers
-	bool HandleEnterPlayer(PlayerRef player);
-	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
 	void HandleMovePlayer(Protocol::C_MOVE movePkt);
 	bool HandleSpawnMinion(MinionRef minion);
 	bool HandleStartGameFlag();
@@ -49,6 +47,11 @@ public:
 	void HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex);
 	void HandleMinionAttack(shared_ptr<Object> target);
 	void HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
+
+	// Players
+	bool HandleEnterPlayer(PlayerRef player);
+	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
+	void HandleAttack(int32 attackerId, int32 targetId, Protocol::SkillType commandId);
 
 private:
 	// internal
