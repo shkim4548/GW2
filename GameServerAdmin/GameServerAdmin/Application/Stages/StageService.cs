@@ -24,11 +24,13 @@ namespace GameServerAdmin.Application.Game.Stages
     {
         private readonly AppDbContext _db;
         private readonly IUserContext _userContext;
+        private readonly ILogger<StageService> _logger;
 
-        public StageService(AppDbContext db, IUserContext userContext)
+        public StageService(AppDbContext db, IUserContext userContext, ILogger<StageService> logger)
         {
             _db = db;
             _userContext = userContext;
+            _logger = logger;
         }
 
         /// <summary>
@@ -91,6 +93,8 @@ namespace GameServerAdmin.Application.Game.Stages
 
                 await _db.SaveChangesAsync();
             });
+
+            _logger.LogInformation("Stage entered: UserId={UserId} StageId={StageId} RemainingStamina={Stamina}", userId, request.StageId, remainingStamina);
 
             return new EnterStageResponse
             {
@@ -166,6 +170,8 @@ namespace GameServerAdmin.Application.Game.Stages
             // 읽기 정확성을 위해 다시 NoTracking으로 읽어도 된다. (성능에 따라 선택)
             // 여기서는 gold/gem 로컬 변수의 Amount를 그대로 사용한다.
 
+            _logger.LogInformation("Stage cleared: UserId={UserId} StageId={StageId} RewardGold={Gold} RewardGem={Gem}", userId, request.StageId, stage.RewardGold, stage.RewardGem);
+
             return new ClearStageResponse
             {
                 Stage = ToStageInfo(stage),
@@ -225,6 +231,8 @@ namespace GameServerAdmin.Application.Game.Stages
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    _logger.LogWarning("Concurrency retry {Retry}/{Max}", retry, maxRetryCount);
+
                     retry++;
                     if (retry >= maxRetryCount)
                         throw;

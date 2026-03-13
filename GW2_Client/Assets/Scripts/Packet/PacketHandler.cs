@@ -123,7 +123,28 @@ public class PacketHandler
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_SKILL skillPkt = message as S_SKILL;
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
+
+        GameObject target = objectService.FindById((int)skillPkt.TargetId);
+        GameObject attacker = objectService.FindById((int)skillPkt.AttackerId);
+
+        if (attacker != null)
+        {
+            BaseController attackerBc = attacker.GetComponent<BaseController>();
+            if (attackerBc != null)
+                attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
+        }
+
+        if (target != null)
+        {
+            BaseController targetBc = target.GetComponent<BaseController>();
+            if (targetBc != null)
+            {
+                // HP 갱신 (proto에 remaining_hp 추가 시)
+                // targetBc.SetHp(skillPkt.RemainingHp);
+            }
+        }
     }
 
     public static void S_SPAWNHandler(PacketSession session, IMessage message)
@@ -268,5 +289,17 @@ public class PacketHandler
     internal static void S_ATTACKHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();
+    }
+
+    public static void S_DIEHandler(PacketSession session, IMessage message)
+    {
+        S_DIE diePkt = message as S_DIE;
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
+
+        GameObject go = objectService.FindById(diePkt.TargetId);
+        if (go == null) return;
+
+        // 오브젝트 제거 또는 사망 애니메이션 처리
+        objectService.Remove(diePkt.TargetId);
     }
 }

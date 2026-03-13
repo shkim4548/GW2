@@ -62,6 +62,7 @@ def main():
     with open(cs_file, 'w', encoding='utf-8') as f:
         f.write(output_cs)
 
+    print(output_cs)
     print('[OK] Generated:', cs_file)
     print('[DONE] Packet generation completed')
 

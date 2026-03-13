@@ -3,124 +3,113 @@
 @model GameServerAdmin.Models.Posts.AdminUi.AdminPostListViewModel
 
 @{
-    ViewData["Title"] = "Admin 게시판 관리";
+    ViewData["Title"] = "게시글 관리";
 }
 
-<h2>Admin 게시판 관리</h2>
-
-<form asp-action="Index" asp-controller="AdminUiPost" method="get">
-    <label>삭제 여부 필터: </label>
-    <select name="IsDeleted">
-        <option value="" selected="@(Model.Query.IsDeleted == null)">전체</option>
-        <option value="false" selected="@(Model.Query.IsDeleted == false)">정상</option>
-        <option value="true" selected="@(Model.Query.IsDeleted == true)">삭제됨</option>
-    </select>
-
-    <label>페이지:</label>
-    <input type="number" name="Page" value="@Model.Query.Page" min="1" />
-
-    <label>PageSize:</label>
-    <input type="number" name="PageSize" value="@Model.Query.PageSize" min="1" max="100" />
-
-    <button type="submit">적용</button>
-</form>
-
-<hr />
-
-<table>
-    <thead>
-        <tr>
-            <th>PostId</th>
-            <th>Type</th>
-            <th>Title</th>
-            <th>삭제 여부</th>
-            <th>작성일</th>
-            <th>관리</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var post in Model.PagedResult.Items)
-        {
-            <tr>
-                <td>@post.PostId</td>
-                <td>@post.PostType</td>
-
-                @* (선택) 제목 클릭 시 상세로 이동 *@
-                <td>
-                    <a asp-controller="AdminUiPost"
-                       asp-action="Detail"
-                       asp-route-id="@post.PostId">
-                        @post.Title
-                    </a>
-                </td>
-
-                <td>@(post.IsDeleted ? "삭제됨" : "정상")</td>
-                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>
-                    @if (!post.IsDeleted)
-                    {
-                        <form action="/admin/ui/posts/@post.PostId/soft-delete"
-                              method="post"
-                              style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
-                                삭제
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form action="/admin/ui/posts/@post.PostId/restore"
-                              method="post"
-                              style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit">
-                                복구
-                            </button>
-                        </form>
-
-                        <form action="/admin/ui/posts/@post.PostId/hard-delete"
-                              method="post"
-                              style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" onclick="return confirm('정말 완전히 삭제하시겠습니까?');">
-                                완전 삭제
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<hr />
-
-<div>
-    <span>총 @Model.PagedResult.TotalCount 개</span><br />
-    <span>페이지 @Model.PagedResult.Page / @Model.PagedResult.TotalPages</span>
+<div class="admin-filter d-flex gap-2 align-items-center">
+    <form asp-action="Index" asp-controller="AdminUiPost" method="get"
+          class="d-flex gap-2 align-items-center flex-wrap">
+        <select name="IsDeleted" class="form-select form-select-sm" style="width:100px;">
+            <option value="" selected="@(Model.Query.IsDeleted == null)">전체</option>
+            <option value="false" selected="@(Model.Query.IsDeleted == false)">정상</option>
+            <option value="true" selected="@(Model.Query.IsDeleted == true)">삭제됨</option>
+        </select>
+        <input type="number" name="Page" value="@Model.Query.Page" min="1"
+               class="form-control form-control-sm" style="width:70px;" />
+        <input type="number" name="PageSize" value="@Model.Query.PageSize" min="1" max="100"
+               class="form-control form-control-sm" style="width:70px;" />
+        <button type="submit" class="btn btn-primary btn-sm">적용</button>
+    </form>
 </div>
 
-<div>
-    @if (Model.PagedResult.HasPrevious)
-    {
-        <a asp-action="Index"
-           asp-controller="AdminUiPost"
-           asp-route-Page="@(Model.PagedResult.Page - 1)"
-           asp-route-PageSize="@Model.PagedResult.PageSize"
-           asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">
-            이전
-        </a>
-    }
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h6>총 @Model.PagedResult.TotalCount 개 · 페이지 @Model.PagedResult.Page / @Model.PagedResult.TotalPages</h6>
+    </div>
 
-    @if (Model.PagedResult.HasNext)
-    {
-        <a asp-action="Index"
-           asp-controller="AdminUiPost"
-           asp-route-Page="@(Model.PagedResult.Page + 1)"
-           asp-route-PageSize="@Model.PagedResult.PageSize"
-           asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())">
-            다음
-        </a>
-    }
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>PostId</th>
+                <th>Type</th>
+                <th>제목</th>
+                <th>상태</th>
+                <th>작성일</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in Model.PagedResult.Items)
+            {
+                <tr>
+                    <td class="text-muted">@post.PostId</td>
+                    <td class="text-muted">@post.PostType</td>
+                    <td>
+                        <a asp-controller="AdminUiPost" asp-action="Detail" asp-route-id="@post.PostId">
+                            @post.Title
+                        </a>
+                    </td>
+                    <td>
+                        @if (post.IsDeleted)
+                        {
+                            <span class="badge bg-secondary fw-normal">삭제됨</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success fw-normal">정상</span>
+                        }
+                    </td>
+                    <td class="text-muted">@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (!post.IsDeleted)
+                        {
+                            <form action="/admin/ui/posts/@post.PostId/soft-delete"
+                                  method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"
+                                        onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
+                                    삭제
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form action="/admin/ui/posts/@post.PostId/restore"
+                                  method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2">복구</button>
+                            </form>
+                            <form action="/admin/ui/posts/@post.PostId/hard-delete"
+                                  method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"
+                                        onclick="return confirm('완전히 삭제하시겠습니까?');">
+                                    완전삭제
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="p-2 border-top d-flex gap-2">
+        @if (Model.PagedResult.HasPrevious)
+        {
+            <a asp-action="Index" asp-controller="AdminUiPost"
+               asp-route-Page="@(Model.PagedResult.Page - 1)"
+               asp-route-PageSize="@Model.PagedResult.PageSize"
+               asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())"
+               class="btn btn-sm btn-outline-secondary">이전</a>
+        }
+        @if (Model.PagedResult.HasNext)
+        {
+            <a asp-action="Index" asp-controller="AdminUiPost"
+               asp-route-Page="@(Model.PagedResult.Page + 1)"
+               asp-route-PageSize="@Model.PagedResult.PageSize"
+               asp-route-IsDeleted="@(Model.Query.IsDeleted?.ToString().ToLower())"
+               class="btn btn-sm btn-outline-secondary">다음</a>
+        }
+    </div>
 </div>

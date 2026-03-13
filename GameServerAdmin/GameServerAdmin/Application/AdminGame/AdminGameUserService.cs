@@ -31,11 +31,13 @@ namespace GameServerAdmin.Application.AdminGame
     {
         private readonly AppDbContext _db;
         private readonly IUserContext _userContext;
+        private readonly ILogger<AdminGameUserService> _logger;
 
-        public AdminGameUserService(AppDbContext db, IUserContext userContext)
+        public AdminGameUserService(AppDbContext db, IUserContext userContext, ILogger<AdminGameUserService> logger)
         {
             _db = db;
             _userContext = userContext;
+            _logger = logger;
         }
 
         private void EnsureAdminActor()
@@ -143,8 +145,7 @@ namespace GameServerAdmin.Application.AdminGame
             }).ToList();
         }
 
-        public async Task<AdminGrantCurrencyResponse> GrantCurrencyAsync(
-            long userId, AdminGrantCurrencyRequest request)
+        public async Task<AdminGrantCurrencyResponse> GrantCurrencyAsync(long userId, AdminGrantCurrencyRequest request)
         {
             EnsureAdminActor();
 
@@ -200,6 +201,8 @@ namespace GameServerAdmin.Application.AdminGame
 
                 await _db.SaveChangesAsync();
                 await tx.CommitAsync();
+                _logger.LogInformation("[Admin] Grant currency: AdminId={AdminId} UserId={UserId} Type={Type} Change={Change} Before={Before} After={After}", 
+                    _userContext.ActorId, userId, request.CurrencyType, request.ChangeAmount, beforeAmount, afterAmount);
             }
             catch
             {
@@ -227,6 +230,8 @@ namespace GameServerAdmin.Application.AdminGame
 
             user.Ban(); // 도메인 규칙: 이미 밴이면 DomainException
             await _db.SaveChangesAsync();
+            _logger.LogWarning("[Admin] User banned: AdminId={AdminId} UserId={UserId}",
+                _userContext.ActorId, userId);
         }
 
         public async Task UnbanUserAsync(long userId)
@@ -239,6 +244,9 @@ namespace GameServerAdmin.Application.AdminGame
 
             user.Unban();
             await _db.SaveChangesAsync();
+
+            _logger.LogInformation("[Admin] User unbanned: AdminId={AdminId} UserId={UserId}",
+                _userContext.ActorId, userId);
         }
 
         public async Task<(List<AdminUserSearchItemResponse> Users, int TotalCount)> GetAllUsersAsync(int page, int pageSize)

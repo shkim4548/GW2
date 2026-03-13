@@ -79,13 +79,16 @@ message S_MINION_MOVE
 	int32 object_id = 1;
 	PosInfo start_pos = 2;
 	repeated PosInfo nav_path = 3;
+	float   speed      = 4;
 }
 
 message C_SKILL
 {
-	int32 skill_id = 1;
+	SkillType skill_id = 1;
 	int32 target_id = 2;
-	int64 attacker_id = 3;
+	int32 attacker_id = 3;
+	int32 room_id = 4;
+	int32 client_time = 5;
 }
 
 message S_SKILL
@@ -106,20 +109,8 @@ message S_ENTER_LOBBY
 	repeated RoomInfo room_infos = 2;
 }
 
-message C_ATTACK
+message S_DIE
 {
 	int32 room_id = 1;
-	int32 attacker_id = 2;
-	int32 target_id = 3;
-	SkillType command_id = 4;
-	int32 client_time = 5;
-}
-
-message S_ATTACK
-{
-	int32 room_id = 1;
-	int32 attacker_id = 2;
-	int32 target_id = 3;
-	SkillType command_id = 4;	// enum SkillType
-	int32 server_time = 5;
+	int32 target_id = 2;
 }

@@ -52,14 +52,9 @@ namespace Google.Protobuf.Protocol {
             "EhEKCXRhcmdldF9pZBgCIAEoAxITCgthdHRhY2tlcl9pZBgDIAEoAyIlCg1D",
             "X0VOVEVSX0xPQkJZEhQKDHBsYXllcl9pbmRleBgBIAEoBSJKCg1TX0VOVEVS",
             "X0xPQkJZEhEKCXBsYXllcl9pZBgBIAEoBRImCgpyb29tX2luZm9zGAIgAygL",
-            "MhIuUHJvdG9jb2wuUm9vbUluZm8igQEKCENfQVRUQUNLEg8KB3Jvb21faWQY",
-            "ASABKAUSEwoLYXR0YWNrZXJfaWQYAiABKAUSEQoJdGFyZ2V0X2lkGAMgASgF",
-            "EicKCmNvbW1hbmRfaWQYBCABKA4yEy5Qcm90b2NvbC5Ta2lsbFR5cGUSEwoL",
-            "Y2xpZW50X3RpbWUYBSABKAUigQEKCFNfQVRUQUNLEg8KB3Jvb21faWQYASAB",
-            "KAUSEwoLYXR0YWNrZXJfaWQYAiABKAUSEQoJdGFyZ2V0X2lkGAMgASgFEicK",
-            "CmNvbW1hbmRfaWQYBCABKA4yEy5Qcm90b2NvbC5Ta2lsbFR5cGUSEwoLc2Vy",
-            "dmVyX3RpbWUYBSABKAVCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Qcm90b2NvbGIG",
-            "cHJvdG8z"));
+            "MhIuUHJvdG9jb2wuUm9vbUluZm8iKwoFU19ESUUSDwoHcm9vbV9pZBgBIAEo",
+            "BRIRCgl0YXJnZXRfaWQYAiABKAVCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Qcm90",
+            "b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, global::Google.Protobuf.Struct.StructReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -78,8 +73,7 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_SKILL), global::Google.Protobuf.Protocol.S_SKILL.Parser, new[]{ "SkillId", "TargetId", "AttackerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_ENTER_LOBBY), global::Google.Protobuf.Protocol.C_ENTER_LOBBY.Parser, new[]{ "PlayerIndex" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ENTER_LOBBY), global::Google.Protobuf.Protocol.S_ENTER_LOBBY.Parser, new[]{ "PlayerId", "RoomInfos" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_ATTACK), global::Google.Protobuf.Protocol.C_ATTACK.Parser, new[]{ "RoomId", "AttackerId", "TargetId", "CommandId", "ClientTime" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ATTACK), global::Google.Protobuf.Protocol.S_ATTACK.Parser, new[]{ "RoomId", "AttackerId", "TargetId", "CommandId", "ServerTime" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_DIE), global::Google.Protobuf.Protocol.S_DIE.Parser, new[]{ "RoomId", "TargetId" }, null, null, null, null)
           }));
     }
     #endregion
@@ -3976,16 +3970,16 @@ namespace Google.Protobuf.Protocol {
 
   }
 
-  public sealed partial class C_ATTACK : pb::IMessage<C_ATTACK>
+  public sealed partial class S_DIE : pb::IMessage<S_DIE>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<C_ATTACK> _parser = new pb::MessageParser<C_ATTACK>(() => new C_ATTACK());
+    private static readonly pb::MessageParser<S_DIE> _parser = new pb::MessageParser<S_DIE>(() => new S_DIE());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<C_ATTACK> Parser { get { return _parser; } }
+    public static pb::MessageParser<S_DIE> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -4001,7 +3995,7 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public C_ATTACK() {
+    public S_DIE() {
       OnConstruction();
     }
 
@@ -4009,19 +4003,16 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public C_ATTACK(C_ATTACK other) : this() {
+    public S_DIE(S_DIE other) : this() {
       roomId_ = other.roomId_;
-      attackerId_ = other.attackerId_;
       targetId_ = other.targetId_;
-      commandId_ = other.commandId_;
-      clientTime_ = other.clientTime_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public C_ATTACK Clone() {
-      return new C_ATTACK(this);
+    public S_DIE Clone() {
+      return new S_DIE(this);
     }
 
     /// <summary>Field number for the "room_id" field.</summary>
@@ -4036,20 +4027,8 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
-    /// <summary>Field number for the "attacker_id" field.</summary>
-    public const int AttackerIdFieldNumber = 2;
-    private int attackerId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int AttackerId {
-      get { return attackerId_; }
-      set {
-        attackerId_ = value;
-      }
-    }
-
     /// <summary>Field number for the "target_id" field.</summary>
-    public const int TargetIdFieldNumber = 3;
+    public const int TargetIdFieldNumber = 2;
     private int targetId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -4060,39 +4039,15 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
-    /// <summary>Field number for the "command_id" field.</summary>
-    public const int CommandIdFieldNumber = 4;
-    private global::Google.Protobuf.Enum.SkillType commandId_ = global::Google.Protobuf.Enum.SkillType.SkillIdNone;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Google.Protobuf.Enum.SkillType CommandId {
-      get { return commandId_; }
-      set {
-        commandId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "client_time" field.</summary>
-    public const int ClientTimeFieldNumber = 5;
-    private int clientTime_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int ClientTime {
-      get { return clientTime_; }
-      set {
-        clientTime_ = value;
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as C_ATTACK);
+      return Equals(other as S_DIE);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(C_ATTACK other) {
+    public bool Equals(S_DIE other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -4100,10 +4055,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (RoomId != other.RoomId) return false;
-      if (AttackerId != other.AttackerId) return false;
       if (TargetId != other.TargetId) return false;
-      if (CommandId != other.CommandId) return false;
-      if (ClientTime != other.ClientTime) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4112,10 +4064,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
-      if (AttackerId != 0) hash ^= AttackerId.GetHashCode();
       if (TargetId != 0) hash ^= TargetId.GetHashCode();
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) hash ^= CommandId.GetHashCode();
-      if (ClientTime != 0) hash ^= ClientTime.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -4138,21 +4087,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(RoomId);
       }
-      if (AttackerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(AttackerId);
-      }
       if (TargetId != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteInt32(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        output.WriteRawTag(32);
-        output.WriteEnum((int) CommandId);
-      }
-      if (ClientTime != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(ClientTime);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -4168,21 +4105,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(RoomId);
       }
-      if (AttackerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(AttackerId);
-      }
       if (TargetId != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteInt32(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        output.WriteRawTag(32);
-        output.WriteEnum((int) CommandId);
-      }
-      if (ClientTime != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(ClientTime);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -4197,17 +4122,8 @@ namespace Google.Protobuf.Protocol {
       if (RoomId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
       }
-      if (AttackerId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(AttackerId);
-      }
       if (TargetId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CommandId);
-      }
-      if (ClientTime != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientTime);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -4217,24 +4133,15 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(C_ATTACK other) {
+    public void MergeFrom(S_DIE other) {
       if (other == null) {
         return;
       }
       if (other.RoomId != 0) {
         RoomId = other.RoomId;
       }
-      if (other.AttackerId != 0) {
-        AttackerId = other.AttackerId;
-      }
       if (other.TargetId != 0) {
         TargetId = other.TargetId;
-      }
-      if (other.CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        CommandId = other.CommandId;
-      }
-      if (other.ClientTime != 0) {
-        ClientTime = other.ClientTime;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -4256,19 +4163,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            AttackerId = input.ReadInt32();
-            break;
-          }
-          case 24: {
             TargetId = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            CommandId = (global::Google.Protobuf.Enum.SkillType) input.ReadEnum();
-            break;
-          }
-          case 40: {
-            ClientTime = input.ReadInt32();
             break;
           }
         }
@@ -4291,359 +4186,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 16: {
-            AttackerId = input.ReadInt32();
-            break;
-          }
-          case 24: {
             TargetId = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            CommandId = (global::Google.Protobuf.Enum.SkillType) input.ReadEnum();
-            break;
-          }
-          case 40: {
-            ClientTime = input.ReadInt32();
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class S_ATTACK : pb::IMessage<S_ATTACK>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<S_ATTACK> _parser = new pb::MessageParser<S_ATTACK>(() => new S_ATTACK());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<S_ATTACK> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.Protocol.ProtocolReflection.Descriptor.MessageTypes[16]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public S_ATTACK() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public S_ATTACK(S_ATTACK other) : this() {
-      roomId_ = other.roomId_;
-      attackerId_ = other.attackerId_;
-      targetId_ = other.targetId_;
-      commandId_ = other.commandId_;
-      serverTime_ = other.serverTime_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public S_ATTACK Clone() {
-      return new S_ATTACK(this);
-    }
-
-    /// <summary>Field number for the "room_id" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private int roomId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int RoomId {
-      get { return roomId_; }
-      set {
-        roomId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "attacker_id" field.</summary>
-    public const int AttackerIdFieldNumber = 2;
-    private int attackerId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int AttackerId {
-      get { return attackerId_; }
-      set {
-        attackerId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "target_id" field.</summary>
-    public const int TargetIdFieldNumber = 3;
-    private int targetId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int TargetId {
-      get { return targetId_; }
-      set {
-        targetId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "command_id" field.</summary>
-    public const int CommandIdFieldNumber = 4;
-    private global::Google.Protobuf.Enum.SkillType commandId_ = global::Google.Protobuf.Enum.SkillType.SkillIdNone;
-    /// <summary>
-    /// enum SkillType
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Google.Protobuf.Enum.SkillType CommandId {
-      get { return commandId_; }
-      set {
-        commandId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "server_time" field.</summary>
-    public const int ServerTimeFieldNumber = 5;
-    private int serverTime_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int ServerTime {
-      get { return serverTime_; }
-      set {
-        serverTime_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as S_ATTACK);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(S_ATTACK other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (RoomId != other.RoomId) return false;
-      if (AttackerId != other.AttackerId) return false;
-      if (TargetId != other.TargetId) return false;
-      if (CommandId != other.CommandId) return false;
-      if (ServerTime != other.ServerTime) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (RoomId != 0) hash ^= RoomId.GetHashCode();
-      if (AttackerId != 0) hash ^= AttackerId.GetHashCode();
-      if (TargetId != 0) hash ^= TargetId.GetHashCode();
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) hash ^= CommandId.GetHashCode();
-      if (ServerTime != 0) hash ^= ServerTime.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (RoomId != 0) {
-        output.WriteRawTag(8);
-        output.WriteInt32(RoomId);
-      }
-      if (AttackerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(AttackerId);
-      }
-      if (TargetId != 0) {
-        output.WriteRawTag(24);
-        output.WriteInt32(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        output.WriteRawTag(32);
-        output.WriteEnum((int) CommandId);
-      }
-      if (ServerTime != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(ServerTime);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0) {
-        output.WriteRawTag(8);
-        output.WriteInt32(RoomId);
-      }
-      if (AttackerId != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(AttackerId);
-      }
-      if (TargetId != 0) {
-        output.WriteRawTag(24);
-        output.WriteInt32(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        output.WriteRawTag(32);
-        output.WriteEnum((int) CommandId);
-      }
-      if (ServerTime != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(ServerTime);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (RoomId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
-      }
-      if (AttackerId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(AttackerId);
-      }
-      if (TargetId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TargetId);
-      }
-      if (CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CommandId);
-      }
-      if (ServerTime != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ServerTime);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(S_ATTACK other) {
-      if (other == null) {
-        return;
-      }
-      if (other.RoomId != 0) {
-        RoomId = other.RoomId;
-      }
-      if (other.AttackerId != 0) {
-        AttackerId = other.AttackerId;
-      }
-      if (other.TargetId != 0) {
-        TargetId = other.TargetId;
-      }
-      if (other.CommandId != global::Google.Protobuf.Enum.SkillType.SkillIdNone) {
-        CommandId = other.CommandId;
-      }
-      if (other.ServerTime != 0) {
-        ServerTime = other.ServerTime;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            RoomId = input.ReadInt32();
-            break;
-          }
-          case 16: {
-            AttackerId = input.ReadInt32();
-            break;
-          }
-          case 24: {
-            TargetId = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            CommandId = (global::Google.Protobuf.Enum.SkillType) input.ReadEnum();
-            break;
-          }
-          case 40: {
-            ServerTime = input.ReadInt32();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 8: {
-            RoomId = input.ReadInt32();
-            break;
-          }
-          case 16: {
-            AttackerId = input.ReadInt32();
-            break;
-          }
-          case 24: {
-            TargetId = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            CommandId = (global::Google.Protobuf.Enum.SkillType) input.ReadEnum();
-            break;
-          }
-          case 40: {
-            ServerTime = input.ReadInt32();
             break;
           }
         }

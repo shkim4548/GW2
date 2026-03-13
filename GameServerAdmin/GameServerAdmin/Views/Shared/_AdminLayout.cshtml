@@ -1,54 +1,237 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
 }
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Admin</title>
+    <title>@ViewData["Title"] - GW2 Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f5f6f7;
+            font-size: 14px;
+        }
+
+        .admin-wrap {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .admin-sidebar {
+            width: 220px;
+            min-width: 220px;
+            background: #1c1d1f;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .admin-sidebar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid #2e2f31;
+            text-decoration: none;
+            display: block;
+        }
+
+            .admin-sidebar-brand:hover {
+                color: #fff;
+            }
+
+        .admin-nav {
+            padding: 12px 0;
+            flex: 1;
+        }
+
+        .admin-nav-section {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 10px 20px 4px;
+        }
+
+        .admin-nav-link {
+            display: block;
+            color: #bbb;
+            font-size: 0.875rem;
+            padding: 7px 20px;
+            text-decoration: none;
+            transition: background 0.1s, color 0.1s;
+        }
+
+            .admin-nav-link:hover {
+                background: #2a2b2d;
+                color: #fff;
+            }
+
+        .admin-nav-divider {
+            border-top: 1px solid #2e2f31;
+            margin: 8px 0;
+        }
+
+        /* ── Main ── */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .admin-topbar {
+            background: #fff;
+            border-bottom: 1px solid #dde1e7;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-topbar-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .admin-content {
+            padding: 24px;
+            flex: 1;
+        }
+
+        /* ── Admin Panel ── */
+        .admin-panel {
+            background: #fff;
+            border: 1px solid #dde1e7;
+            margin-bottom: 16px;
+        }
+
+        .admin-panel-header {
+            padding: 10px 16px;
+            border-bottom: 2px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .admin-panel-header h6 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 0.9rem;
+            }
+
+        .admin-panel-body {
+            padding: 16px;
+        }
+
+        /* ── Admin Table ── */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+            .admin-table thead th {
+                font-size: 0.75rem;
+                color: #888;
+                font-weight: 500;
+                padding: 7px 10px;
+                border-bottom: 1px solid #dde1e7;
+                background: #fafafa;
+                white-space: nowrap;
+            }
+
+            .admin-table tbody tr {
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+                .admin-table tbody tr:hover td {
+                    background: #f8f9fa;
+                }
+
+            .admin-table tbody td {
+                padding: 8px 10px;
+                vertical-align: middle;
+            }
+
+            .admin-table a {
+                color: #0066cc;
+                text-decoration: none;
+            }
+
+                .admin-table a:hover {
+                    text-decoration: underline;
+                }
+
+        /* ── Filter Bar ── */
+        .admin-filter {
+            background: #fff;
+            border: 1px solid #dde1e7;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+
+        /* ── Detail Table ── */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+            .detail-table th {
+                width: 140px;
+                background: #fafafa;
+                border: 1px solid #eee;
+                padding: 8px 12px;
+                font-weight: 500;
+                color: #555;
+                white-space: nowrap;
+            }
+
+            .detail-table td {
+                border: 1px solid #eee;
+                padding: 8px 12px;
+            }
+    </style>
 </head>
 <body>
-    <div style="display:flex; min-height:100vh;">
+    <div class="admin-wrap">
 
-        <!-- Sidebar -->
-        <aside style="width:240px; background:#f3f4f6; padding:16px;">
-            <h2 style="margin:0 0 12px 0;">Admin</h2>
-
-            <nav style="display:flex; flex-direction:column; gap:8px;">
-                <a asp-controller="AdminUiPost" asp-action="Index">게시글 관리</a>
-                <a asp-controller="AdminUiComment" asp-action="Index">댓글 관리</a>
-                <a href="/admin/ui/notice/list">공지 관리</a>
-
-                <hr />
-
-                <a asp-controller="AdminUiUser" asp-action="Index">유저 관리</a>
-                <a asp-controller="AdminUiServer" asp-action="Index">게임 서버</a>
-                <a asp-controller="AdminUiLog" asp-action="Index">로그 조회</a>
+        <aside class="admin-sidebar">
+            <a href="/admin/ui/users" class="admin-sidebar-brand">GW2 Admin</a>
+            <nav class="admin-nav">
+                <div class="admin-nav-section">커뮤니티</div>
+                <a asp-controller="AdminUiPost" asp-action="Index" class="admin-nav-link">게시글 관리</a>
+                <a asp-controller="AdminUiComment" asp-action="Index" class="admin-nav-link">댓글 관리</a>
+                <a href="/admin/ui/notice/list" class="admin-nav-link">공지 관리</a>
+                <div class="admin-nav-divider"></div>
+                <div class="admin-nav-section">게임</div>
+                <a asp-controller="AdminUiUser" asp-action="Index" class="admin-nav-link">유저 관리</a>
+                <a asp-controller="AdminUiServer" asp-action="Index" class="admin-nav-link">게임 서버</a>
+                <a asp-controller="AdminUiLog" asp-action="Index" class="admin-nav-link">로그 조회</a>
+                <div class="admin-nav-divider"></div>
+                <div class="admin-nav-section">시스템</div>
+                <a asp-controller="AdminUiAccountMgmt" asp-action="Index" class="admin-nav-link">Admin 계정</a>
             </nav>
         </aside>
 
-        <!-- Main -->
-        <main style="flex:1; padding:24px;">
-            <header style="display:flex; align-items:center; justify-content:space-between;">
-                <div style="font-size:20px; font-weight:700;">
-                    @ViewData["Title"]
-                </div>
-                <div>
-                    <span style="opacity:.7;">(Admin Area)</span>
-                </div>
-            </header>
+        <div class="admin-main">
+            <div class="admin-topbar">
+                <span class="admin-topbar-title">@ViewData["Title"]</span>
+                <span class="text-muted" style="font-size:0.8rem;">GW2 Admin Panel</span>
+            </div>
 
-            <hr style="margin:16px 0;" />
-
-            @RenderBody()
-        </main>
+            <div class="admin-content">
+                @RenderBody()
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

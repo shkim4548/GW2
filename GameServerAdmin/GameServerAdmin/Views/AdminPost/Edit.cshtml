@@ -1,34 +1,45 @@
 ﻿@model GameServerAdmin.Models.Posts.AdminUi.AdminPostEditViewModel
 
 @{
-    ViewData["Title"] = "게시글 수정 (Admin)";
+    ViewData["Title"] = "게시글 수정";
 }
 
-<h2>게시글 수정 (Admin)</h2>
+<div class="mb-2">
+    <a asp-controller="AdminUiPost" asp-action="Detail" asp-route-id="@Model.PostId"
+       class="text-muted small">&larr; 상세로</a>
+</div>
 
-<form asp-action="Edit" asp-controller="AdminUiPost" method="post">
-    @Html.AntiForgeryToken()
-
-    @* Hidden으로 PostId 유지 *@
-    <input type="hidden" asp-for="PostId" />
-
-    <div asp-validation-summary="ModelOnly"></div>
-
-    <div>
-        <label asp-for="Title"></label><br />
-        <input asp-for="Title" />
-        <span asp-validation-for="Title"></span>
+<div class="admin-panel" style="max-width:800px;">
+    <div class="admin-panel-header">
+        <h6>게시글 수정 #@Model.PostId</h6>
     </div>
+    <div class="admin-panel-body">
+        <form asp-action="Edit" asp-controller="AdminUiPost" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="PostId" />
 
-    <div>
-        <label asp-for="Content"></label><br />
-        <textarea asp-for="Content" rows="10" cols="80"></textarea>
-        <span asp-validation-for="Content"></span>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label small fw-bold"></label>
+                <input asp-for="Title" class="form-control form-control-sm" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label small fw-bold"></label>
+                <textarea asp-for="Content" class="form-control form-control-sm" rows="15"></textarea>
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-controller="AdminUiPost" asp-action="Detail" asp-route-id="@Model.PostId"
+                   class="btn btn-outline-secondary btn-sm">취소</a>
+                <button type="submit" class="btn btn-primary btn-sm">저장</button>
+            </div>
+        </form>
     </div>
-
-    <button type="submit">저장</button>
-    <a asp-controller="AdminUiPost" asp-action="Detail" asp-route-id="@Model.PostId">취소</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

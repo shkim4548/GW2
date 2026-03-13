@@ -323,15 +323,15 @@ public class MyPlayerController : PlayerController
 
         // TargetPosition
         movePacket.TargetPos = new PosInfo();
-        movePacket.TargetPos.X = _destPos.x;
-        movePacket.TargetPos.Y = _destPos.y;
-        movePacket.TargetPos.Z = _destPos.z;
+        movePacket.TargetPos.X = nowPosition.x;
+        movePacket.TargetPos.Y = nowPosition.y;
+        movePacket.TargetPos.Z = nowPosition.z;
 
         // clientTime
         movePacket.ClientTime = GetClientTime();
         _clientMoveStartTime = movePacket.ClientTime;
 
         _networkService.Send(movePacket);
-        Debug.Log($"movePkt destPos, startPos: {_destPos}, {this.transform.position}");
+        Debug.Log($"movePkt destPos, startPos: {nowPosition}, {this.transform.position}");
     }
 }

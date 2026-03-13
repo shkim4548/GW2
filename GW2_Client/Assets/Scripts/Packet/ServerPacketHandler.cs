@@ -23,8 +23,7 @@ public enum PacketId : ushort
         PKT_S_SKILL = 1012,
         PKT_C_ENTER_LOBBY = 1013,
         PKT_S_ENTER_LOBBY = 1014,
-        PKT_C_ATTACK = 1015,
-        PKT_S_ATTACK = 1016,
+        PKT_S_DIE = 1015,
 }
 
 public class PacketManager
@@ -64,8 +63,8 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_SKILL, PacketHandler.S_SKILLHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, MakePacket<S_ENTER_LOBBY>);
         _handler.Add((ushort)PacketId.PKT_S_ENTER_LOBBY, PacketHandler.S_ENTER_LOBBYHandler);
-        _onRecv.Add((ushort)PacketId.PKT_S_ATTACK, MakePacket<S_ATTACK>);
-        _handler.Add((ushort)PacketId.PKT_S_ATTACK, PacketHandler.S_ATTACKHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_DIE, MakePacket<S_DIE>);
+        _handler.Add((ushort)PacketId.PKT_S_DIE, PacketHandler.S_DIEHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

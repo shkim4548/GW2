@@ -4,28 +4,40 @@
     ViewData["Title"] = "글쓰기";
 }
 
-<h2>글쓰기</h2>
+<div class="mb-2">
+    <a asp-controller="Board" asp-action="Index" class="text-muted small">&larr; 목록으로</a>
+</div>
 
-<form asp-action="Create" asp-controller="Board" method="post">
-    @Html.AntiForgeryToken()
-
-    <div asp-validation-summary="ModelOnly"></div>
-
-    <div>
-        <label asp-for="Title"></label><br />
-        <input asp-for="Title" />
-        <span asp-validation-for="Title"></span>
+<div class="post-box">
+    <div class="post-title-bar">
+        <h5 class="mb-0 fw-bold">글쓰기</h5>
     </div>
 
-    <div>
-        <label asp-for="Content"></label><br />
-        <textarea asp-for="Content" rows="10" cols="80"></textarea>
-        <span asp-validation-for="Content"></span>
-    </div>
+    <div class="p-3">
+        <form asp-action="Create" asp-controller="Board" method="post">
+            @Html.AntiForgeryToken()
 
-    <button type="submit">등록</button>
-    <a asp-controller="Board" asp-action="Index">취소</a>
-</form>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <input asp-for="Title" class="form-control" placeholder="제목을 입력하세요" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <textarea asp-for="Content" class="form-control" rows="15"
+                          placeholder="내용을 입력하세요"></textarea>
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-controller="Board" asp-action="Index"
+                   class="btn btn-outline-secondary btn-sm">취소</a>
+                <button type="submit" class="btn btn-primary btn-sm">등록</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

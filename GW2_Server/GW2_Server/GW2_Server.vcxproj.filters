@@ -76,7 +76,10 @@
     <ClCompile Include="LaneRouteLoader.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
-    <ClCompile Include="StatLoader.cpp" />
+    <ClCompile Include="StatLoader.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Turret.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -133,7 +136,10 @@
     <ClInclude Include="LaneRouteLoader.h">
       <Filter>GameContents</Filter>
     </ClInclude>
-    <ClInclude Include="StatLoader.h" />
+    <ClInclude Include="StatLoader.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Turret.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Enum.proto">

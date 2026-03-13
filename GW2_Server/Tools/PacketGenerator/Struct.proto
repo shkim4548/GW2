@@ -23,6 +23,7 @@ message ObjectInfo
 	string name = 4;
 	PosInfo pos_info = 5;
 	StatInfo stat_info = 6;
+	int32 team_flag = 7;
 	// ...
 }
 

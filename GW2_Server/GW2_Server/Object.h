@@ -65,13 +65,16 @@ public:
 
 	// Debug
 	int32 GetRoomId() { return _roomId; }
+	virtual void OnDead() = 0;
+
+protected:
 
 public:
 	NavPath _path;
 	size_t  _pathIndex = 0;
 
 protected:
-	int64 _objectId = 0;
+	int32 _objectId = 0;
 	Protocol::PosInfo _pos;
 	Protocol::StatInfo _statInfo;
 	GameMath::Vector3 _posVector;

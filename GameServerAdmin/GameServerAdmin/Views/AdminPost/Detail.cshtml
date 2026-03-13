@@ -1,69 +1,73 @@
 ﻿@model GameServerAdmin.Models.Posts.AdminUi.AdminPostDetailViewModel
 
 @{
-    ViewData["Title"] = "게시글 상세 (Admin)";
+    ViewData["Title"] = "게시글 상세";
 }
 
-<h2>게시글 상세 (Admin)</h2>
-
-<div>
-    <span>PostId: @Model.PostId</span><br />
-    <span>Type: @Model.PostType</span><br />
-    <span>Author: @Model.AuthorType (@Model.AuthorId)</span><br />
-    <span>작성일: @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span><br />
-    <span>삭제 여부: @(Model.IsDeleted ? "삭제됨" : "정상")</span><br />
-    @if (Model.DeletedAt.HasValue)
-    {
-        <span>삭제일: @Model.DeletedAt.Value.ToString("yyyy-MM-dd HH:mm")</span>
-        <br />
-    }
+<div class="mb-2">
+    <a asp-controller="AdminUiPost" asp-action="Index" class="text-muted small">&larr; 목록으로</a>
 </div>
 
-<hr />
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h6>게시글 #@Model.PostId</h6>
+        <div class="d-flex gap-1">
+            @if (!Model.IsDeleted)
+            {
+                <a asp-controller="AdminUiPost" asp-action="Edit" asp-route-id="@Model.PostId"
+                   class="btn btn-sm btn-outline-secondary py-0 px-2">수정</a>
+                <form action="/admin/ui/posts/@Model.PostId/soft-delete" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"
+                            onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
+                        삭제
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form action="/admin/ui/posts/@Model.PostId/restore" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2">복구</button>
+                </form>
+                <form action="/admin/ui/posts/@Model.PostId/hard-delete" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"
+                            onclick="return confirm('완전히 삭제하시겠습니까? 복구 불가합니다.');">
+                        완전삭제
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
 
-<div>
-    <h3>내용</h3>
-    <pre style="white-space:pre-wrap;">@Model.Content</pre>
-</div>
+    <div class="admin-panel-body">
+        <table class="detail-table mb-3">
+            <tbody>
+                <tr><th>PostId</th><td>@Model.PostId</td></tr>
+                <tr><th>Type</th><td>@Model.PostType</td></tr>
+                <tr><th>작성자</th><td>@Model.AuthorType (@Model.AuthorId)</td></tr>
+                <tr><th>작성일</th><td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td></tr>
+                <tr>
+                    <th>상태</th>
+                    <td>
+                        @if (Model.IsDeleted)
+                        {
+                            <span class="badge bg-secondary fw-normal">삭제됨</span>
+                            @if (Model.DeletedAt.HasValue)
+                            {
+                                <span class="text-muted ms-2 small">@Model.DeletedAt.Value.ToString("yyyy-MM-dd HH:mm")</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-success fw-normal">정상</span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-<hr />
-
-<div>
-    @if (!Model.IsDeleted)
-    {
-        { {/* 정상 게시글: 수정 + 소프트 삭제 */} }
-        <a asp-controller="AdminUiPost" asp-action="Edit" asp-route-id="@Model.PostId">수정</a>
-
-        <form action="/admin/ui/posts/@Model.PostId/soft-delete"
-              method="post"
-              style="display:inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit" onclick="return confirm('이 게시글을 삭제하시겠습니까?');">
-                삭제
-            </button>
-        </form>
-    }
-    else
-    {
-        { {/* 삭제된 게시글: 복구 + 완전 삭제 (수정 버튼 없음) */} }
-        <form action="/admin/ui/posts/@Model.PostId/restore"
-              method="post"
-              style="display:inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit">
-                복구
-            </button>
-        </form>
-
-        <form action="/admin/ui/posts/@Model.PostId/hard-delete"
-              method="post"
-              style="display:inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit" onclick="return confirm('정말 완전히 삭제하시겠습니까? 복구 불가합니다.');">
-                완전 삭제
-            </button>
-        </form>
-    }
-
-    <a asp-controller="AdminUiPost" asp-action="Index">목록</a>
+        <div style="background:#fafafa; border:1px solid #eee; padding:16px; white-space:pre-wrap; font-size:0.875rem; line-height:1.7;">@Model.Content</div>
+    </div>
 </div>

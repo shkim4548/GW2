@@ -13,6 +13,6 @@ struct UnitStat
 class StatLoader
 {
 public:
-	bool LoadUnitStatsFromJson(const string& path, unordered_map<string, UnitStat>& outStats);
+	bool LoadUnitStatsFromJson(const string& path, unordered_map<string, UnitStat>& OUT outStats);
 };
 

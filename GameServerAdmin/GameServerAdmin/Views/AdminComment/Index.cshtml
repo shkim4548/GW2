@@ -4,47 +4,63 @@
     ViewData["Title"] = "댓글 관리";
 }
 
-<h2>댓글 관리</h2>
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h6>총 @Model.TotalCount 개</h6>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>PostId</th>
-            <th>내용</th>
-            <th>작성자</th>
-            <th>상태</th>
-            <th>생성일</th>
-            <th>액션</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
+    <table class="admin-table">
+        <thead>
             <tr>
-                <td>@item.Id</td>
-                <td>@item.PostId</td>
-                <td>@item.Content</td>
-                @*<td>@item.AuthorName</td>*@
-                <td>@item.Status</td>
-                <td>@item.CreatedAt</td>
-                <td>
-                    @if (item.Status.ToString() != "Deleted")
-                    {
-                        <form asp-action="Delete" method="post" style="display:inline;">
-                            <input type="hidden" name="commentId" value="@item.Id" />
-                            <button type="submit">삭제</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form asp-action="Restore" method="post" style="display:inline;">
-                            <input type="hidden" name="commentId" value="@item.Id" />
-                            <button type="submit">복구</button>
-                        </form>
-                    }
-                </td>
+                <th>Id</th>
+                <th>PostId</th>
+                <th>내용</th>
+                <th>상태</th>
+                <th>생성일</th>
+                <th>관리</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="text-muted">@item.Id</td>
+                    <td class="text-muted">@item.PostId</td>
+                    <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">@item.Content</td>
+                    <td>
+                        @if (item.Status.ToString() == "Deleted")
+                        {
+                            <span class="badge bg-secondary fw-normal">삭제됨</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success fw-normal">정상</span>
+                        }
+                    </td>
+                    <td class="text-muted">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (item.Status.ToString() != "Deleted")
+                        {
+                            <form asp-action="Delete" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="commentId" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2"
+                                        onclick="return confirm('삭제하시겠습니까?');">
+                                    삭제
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Restore" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="commentId" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2">복구</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

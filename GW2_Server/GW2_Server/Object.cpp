@@ -163,9 +163,11 @@ bool Object::ValidateMovement(float deltaTime)
 
 bool Object::ApplyDamage(uint64 dmg)
 {
-	uint64 cur = _statInfo.hp();
-	uint64 after = (dmg >= cur) ? 0 : cur - dmg;
+	float cur = _statInfo.hp();
+	float after = (dmg >= cur) ? 0 : cur - dmg;
 	_statInfo.set_hp(after);
+
+	GConsoleLogger->WriteStdErr(Color::GREEN, L"[Object::ApplyDamage] after : %d\n", after);
 
 	return after == 0;
 }

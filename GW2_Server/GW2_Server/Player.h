@@ -17,6 +17,10 @@ public:
 	// Contents
 	void StartMove(const GameMath::Vector3& startPos, const GameMath::Vector3& targetPos, const vector<Navigation::GridCell*>& path, int32 clientTime);
 	virtual void UpdateController(float deltaTime) override;
+
+protected:
+	virtual void OnDead() override;
+
 private:
 	// Server System
 	string name;

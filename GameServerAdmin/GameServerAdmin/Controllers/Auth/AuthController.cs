@@ -24,13 +24,15 @@ namespace GameServerAdmin.Controllers.Auth
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _dbContext;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, AppDbContext dbContext)
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, AppDbContext dbContext, ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         /// <summary>
@@ -48,7 +50,10 @@ namespace GameServerAdmin.Controllers.Auth
             // 1) Identity(AppUser) 조회
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
+            {
+                _logger.LogWarning("Login failed - user not found: {UserName}", request.UserName);
                 return Unauthorized();
+            }
 
             // 2) 비밀번호 검증
             var signInResult = await _signInManager.CheckPasswordSignInAsync(
@@ -57,7 +62,10 @@ namespace GameServerAdmin.Controllers.Auth
                 lockoutOnFailure: false);
 
             if (!signInResult.Succeeded)
+            {
+                _logger.LogWarning("Login failed - wrong password: {UserName}", request.UserName);
                 return Unauthorized();
+            }
 
             // 3) 역할(Role) 조회
             var roles = await _userManager.GetRolesAsync(user);
@@ -100,7 +108,10 @@ namespace GameServerAdmin.Controllers.Auth
                         .FirstOrDefaultAsync(a => a.AdminId == user.AdminId.Value);
 
                     if (admin == null || !admin.IsActive)
+                    {
+                        _logger.LogWarning("Login failed - admin inactive or not found: {UserName}", user.UserName);
                         return Unauthorized();
+                    }
 
                     admin.LastLoginAt = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
@@ -223,6 +234,8 @@ namespace GameServerAdmin.Controllers.Auth
                 notBefore: DateTime.UtcNow,
                 expires: expiresAt,
                 signingCredentials: credentials);
+
+            _logger.LogInformation("Login success: {UserName} ActorType={ActorType} ActorId={ActorId}", user.UserName, actorType, actorId);
 
             // 7) 응답
             return Ok(new LoginResponse

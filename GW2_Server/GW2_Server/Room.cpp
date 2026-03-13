@@ -56,8 +56,11 @@ bool Room::Enter(PlayerRef gameObject)
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
 	_players.emplace(objectId, gameObject);
+	
 	// TODO : 나중에 시작 플래그 패킷으로 받는걸로 바꿔야함
 	_isRunning = true;
+	GameMath::Vector3 spawnPos(72.5f, 0.0f, 0.0f);
+	gameObject->SetPosVector(spawnPos);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -409,7 +412,6 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range)
 {
-	cout << "Start Collect Enemies In Range" << endl;
 	vector<weak_ptr<Object>> rets;
 	if (requester == nullptr)
 	{
@@ -685,9 +687,36 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	Broadcast(minionMoveBuffer);
 }
 
-void Room::HandleMinionAttack(shared_ptr<Object> target)
+void Room::HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> target)
 {
+	if (attacker == nullptr || target == nullptr)
+	{
+		return;
+	}
 
+	if (target->IsDead())
+		return;
+
+	// 데미지 적용
+	uint64 dmg = attacker->GetStatInfo().attack();
+	bool died = target->ApplyDamage(dmg);
+
+	GConsoleLogger->WriteStdOut(Color::GREEN,
+		L"[Room::HandleMinionAttack] attacker=%d target=%d dmg=%llu died=%d\n",
+		attacker->GetObjectId(), target->GetObjectId(), dmg, died);
+
+	// S_SKILL 브로드캐스트 (클라이언트에 피격 알림)
+	Protocol::S_SKILL skillPkt;
+	skillPkt.set_skill_id(0);  // 0 = 기본공격
+	skillPkt.set_attacker_id(attacker->GetObjectId());
+	skillPkt.set_target_id(target->GetObjectId());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
+
+	// 사망 처리
+	if (died)
+	{
+		target->OnDead();  // → Minion::OnDead() or Player::OnDead()
+	}
 }
 
 void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId)
@@ -771,6 +800,22 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 	}
 	SendBufferRef buf = ClientPacketHandler::MakeSendBuffer(pkt);
 	Broadcast(buf);
+}
+
+void Room::HandleRemoveObject(int32 id)
+{
+	ObjectRef target = _objects.find(id)->second;
+	if (target == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleRemoveObject] remove target is nullptr\n");
+		return;
+	}
+
+	Protocol::S_DIE diePkt;
+	diePkt.set_target_id(id);
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(diePkt);
+
+	_objects.erase(id);
 }
 
 void Room::BroadcastMoving(const ObjectRef& obj)

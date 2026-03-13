@@ -21,8 +21,7 @@ enum : uint16
 	PKT_S_SKILL = 1012,
 	PKT_C_ENTER_LOBBY = 1013,
 	PKT_S_ENTER_LOBBY = 1014,
-	PKT_C_ATTACK = 1015,
-	PKT_S_ATTACK = 1016,
+	PKT_S_DIE = 1015,
 };
 
 // Custom Handlers
@@ -34,7 +33,6 @@ bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt);
 bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt);
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt);
 bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt);
-bool Handle_C_ATTACK(PacketSessionRef& session, Protocol::C_ATTACK& pkt);
 
 class ClientPacketHandler
 {
@@ -50,7 +48,6 @@ public:
 		GPacketHandler[PKT_C_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_MOVE>(Handle_C_MOVE, session, buffer, len); };
 		GPacketHandler[PKT_C_SKILL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SKILL>(Handle_C_SKILL, session, buffer, len); };
 		GPacketHandler[PKT_C_ENTER_LOBBY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_LOBBY>(Handle_C_ENTER_LOBBY, session, buffer, len); };
-		GPacketHandler[PKT_C_ATTACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ATTACK>(Handle_C_ATTACK, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -66,7 +63,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_MINION_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MINION_MOVE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_SKILL& pkt) { return MakeSendBuffer(pkt, PKT_S_SKILL); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_LOBBY& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_LOBBY); }
-	static SendBufferRef MakeSendBuffer(Protocol::S_ATTACK& pkt) { return MakeSendBuffer(pkt, PKT_S_ATTACK); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_DIE& pkt) { return MakeSendBuffer(pkt, PKT_S_DIE); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

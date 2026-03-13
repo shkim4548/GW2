@@ -1,9 +1,10 @@
 #include "pch.h"
+#include "Room.h"
 #include "Player.h"
 
 Player::Player()
 {
-
+    _objectType = Protocol::ObjectType::OBJECT_TYPE_PLAYER;
 }
 
 Player::~Player()
@@ -71,4 +72,17 @@ void Player::UpdateController(float deltaTime)
         _isMoving = false;
         _movement.speed = 0.f;
     }
+}
+
+void Player::OnDead()
+{
+    // TODO : 플레이어에게 보상 지급
+    shared_ptr<Room> room = _room.lock();
+    if (room == nullptr)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::OnDead] room is nullptr\n");
+        return;
+    }
+
+    room->DoAsync(&Room::HandleRemoveObject, _objectId);
 }

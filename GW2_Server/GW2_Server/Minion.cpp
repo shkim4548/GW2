@@ -17,6 +17,7 @@ Minion::Minion()
 	// Stat 초기화
 	_statInfo.set_hp(100);
 	_statInfo.set_max_hp(100);
+	_statInfo.set_attack(10);
 }
 
 Minion::~Minion()
@@ -88,7 +89,7 @@ void Minion::UpdateController(float deltaTime)
 		UpdateChaseTarget(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_ATTACK:
-		cout << "MinionState::MINION_ATTACK" << endl;
+		//cout << "MinionState::MINION_ATTACK" << endl;
 		UpdateAttack(deltaTime);
 		break;
 	case Protocol::MinionState::MINION_DEAD:
@@ -205,7 +206,7 @@ void Minion::UpdateIdle(float deltaTime)
 	{
 		if (_currentWaypointIndex < static_cast<int32>(route->waypoints.size()))
 		{
-			GConsoleLogger->WriteStdOut(Color::WHITE, L"IDLE TO MINION_LINE_TRACE\n");
+			//GConsoleLogger->WriteStdOut(Color::WHITE, L"IDLE TO MINION_LINE_TRACE\n");
 			_minionState = Protocol::MinionState::MINION_LINE_TRACE;
 			return;
 		}
@@ -411,7 +412,9 @@ void Minion::UpdateAttack(float deltaTime)
 
 	_attackCooldown = _attackInterval;
 	shared_ptr<Room> room = _room.lock();
+	shared_ptr<Minion> self = dynamic_pointer_cast<Minion>(shared_from_this());
 	//room->HandleMinionAttack(currentTarget);
+	room->DoAsync(&Room::HandleMinionAttack, self, currentTarget);
 }
 
 bool Minion::RequestFindTarget()
@@ -536,4 +539,17 @@ void Minion::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 weak_ptr<Navigation::LaneRoute> Minion::GetLaneRoute() const
 {
 	return _route;
+}
+
+void Minion::OnDead()
+{
+	// TODO : 플레이어에게 보상 지급
+	shared_ptr<Room> room = _room.lock();
+	if (room == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::OnDead] room is nullptr\n");
+		return;
+	}
+
+	room->DoAsync(&Room::HandleRemoveObject, _objectId);
 }

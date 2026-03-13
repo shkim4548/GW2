@@ -136,8 +136,3 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 
 	return true;
 }
-
-bool Handle_C_ATTACK(PacketSessionRef& session, Protocol::C_ATTACK& pkt)
-{
-	return false;
-}

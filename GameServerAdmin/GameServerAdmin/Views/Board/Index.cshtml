@@ -1,73 +1,57 @@
 ﻿@model IEnumerable<GameServerAdmin.Models.Posts.PublicUi.PublicPostListItemViewModel>
 
 @{
-    ViewData["Title"] = "게시판";
+    ViewData["Title"] = "자유게시판";
     Layout = "_Layout";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">게시판</h2>
-    @if (User?.Identity?.IsAuthenticated == true)
-    {
-        <!-- 로그인 상태: 바로 글쓰기 -->
-        <a asp-controller="Board"
-           asp-action="Create"
-           class="btn btn-primary">
-            새 글 작성
-        </a>
-    }
-    else
-    {
-        <!-- 비로그인 상태: 로그인으로 유도 -->
-        <a asp-controller="Account"
-           asp-action="Login"
-           class="btn btn-outline-primary">
-            로그인 후 글 작성
-        </a>
-    }
-</div>
+<div class="board-wrap">
+    <div class="board-header">
+        <h6>자유게시판</h6>
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Board" asp-action="Create" class="btn btn-primary btn-sm">글쓰기</a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-sm">로그인 후 글쓰기</a>
+        }
+    </div>
 
-<div class="card">
-    <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 80px;">번호</th>
-                    <th>제목</th>
-                    <th style="width: 140px;">작성자</th>
-                    <th style="width: 160px;">작성일</th>
-                    <th style="width: 80px;" class="text-end">조회수</th>
-                </tr>
-            </thead>
-            <tbody>
+    <table class="board-table">
+        <thead>
+            <tr>
+                <th class="td-num">번호</th>
+                <th style="padding-left:12px;">제목</th>
+                <th class="td-author">작성자</th>
+                <th class="td-date">날짜</th>
+                <th class="td-view">조회</th>
+            </tr>
+        </thead>
+        <tbody>
             @if (Model != null && Model.Any())
             {
                 foreach (var post in Model)
                 {
                     <tr>
-                        <td>@post.PostId</td> <!-- 실제 필드명에 맞게 수정 -->
-                        <td>
-                            <a asp-controller="Board"
-                               asp-action="Detail"
-                               asp-route-id="@post.PostId">
+                        <td class="td-num">@post.PostId</td>
+                        <td style="padding-left:12px;">
+                            <a asp-controller="Board" asp-action="Detail" asp-route-id="@post.PostId">
                                 @post.Title
                             </a>
                         </td>
-                        <td>@post.AuthorName</td> <!-- 실제 속성명에 맞게 -->
-                        <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td class="text-end">@post.ViewCount</td>
+                        <td class="td-author">@post.AuthorName</td>
+                        <td class="td-date">@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="td-view">@post.ViewCount</td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
-                        등록된 게시글이 없습니다.
-                    </td>
+                    <td colspan="5" class="text-center py-5 text-muted">등록된 게시글이 없습니다.</td>
                 </tr>
             }
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
 </div>
