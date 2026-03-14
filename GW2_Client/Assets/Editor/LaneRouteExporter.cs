@@ -10,6 +10,12 @@ public class LaneRouteExporter : EditorWindow
     [Header("Output")]
     private string fileName = "laneRoutes.json";
 
+    // EditorWindow 필드 추가
+    public Transform topLaneRoot;   // 씬에서 드래그
+    public Transform botLaneRoot;   // 씬에서 드래그
+    public int topLaneId = 1;
+    public int botLaneId = 3;
+
     [MenuItem("Tools/Lane/Lane Route Exporter (JSON)")]
     public static void ShowWindow()
     {
@@ -28,65 +34,96 @@ public class LaneRouteExporter : EditorWindow
         fileName = EditorGUILayout.TextField("File Name", fileName);
 
         EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Lane Roots", EditorStyles.boldLabel);
+        topLaneRoot = (Transform)EditorGUILayout.ObjectField("Top Lane Root", topLaneRoot, typeof(Transform), true);
+        topLaneId = EditorGUILayout.IntField("Top Lane Id", topLaneId);
+
 
         if (GUILayout.Button("Preview (Console)"))
         {
+            Debug.Log("Preview clicked");
             Preview();
         }
+        EditorGUILayout.Space();
 
+        botLaneRoot = (Transform)EditorGUILayout.ObjectField("Bot Lane Root", botLaneRoot, typeof(Transform), true);
+        botLaneId = EditorGUILayout.IntField("Bot Lane Id", botLaneId);
         if (GUILayout.Button("Export laneRoutes.json"))
         {
+            Debug.Log("Export clicked");
             Export();
         }
     }
-
     private LaneRouteFile Collect()
     {
-        LaneRouteRoot[] roots = FindObjectsOfType<LaneRouteRoot>();
+        LaneRouteFile file = new LaneRouteFile();
 
-        if (roots.Length == 0)
+        CollectFromRoot(file, topLaneRoot, topLaneId);
+        CollectFromRoot(file, botLaneRoot, botLaneId);
+
+        if (file.lanes.Count == 0)
         {
-            Debug.LogWarning("[LaneRouteExporter] LaneRouteRoot 컴포넌트가 씬에 없습니다.");
+            Debug.LogWarning("[LaneRouteExporter] 수집된 레인이 없습니다.");
             return null;
         }
 
-        LaneRouteFile file = new LaneRouteFile();
-
-        foreach (LaneRouteRoot root in roots)
-        {
-            LaneWaypoint[] wps = root.GetComponentsInChildren<LaneWaypoint>(false);
-
-            if (wps.Length == 0)
-            {
-                Debug.LogWarning($"[LaneRouteExporter] '{root.name}' (laneId={root.laneId}) 에 LaneWaypoint가 없습니다. 건너뜁니다.");
-                continue;
-            }
-
-            // order 기준 정렬
-            List<LaneWaypoint> sorted = new List<LaneWaypoint>(wps);
-            sorted.Sort((a, b) => a.order.CompareTo(b.order));
-
-            LaneRouteData data = new LaneRouteData();
-            data.laneId = root.laneId;
-
-            foreach (LaneWaypoint wp in sorted)
-            {
-                data.waypoints.Add(Vector3Serializable.FromVector3(wp.transform.position, root.exportY));
-            }
-
-            file.lanes.Add(data);
-        }
-
-        // laneId 오름차순 정렬
         file.lanes.Sort((a, b) => a.laneId.CompareTo(b.laneId));
-
         return file;
     }
+
+    private void CollectFromRoot(LaneRouteFile file, Transform root, int laneId)
+    {
+        if (root == null)
+        {
+            Debug.LogWarning($"[LaneRouteExporter] laneId={laneId} root가 비어있습니다.");
+            return;
+        }
+
+        List<Transform> children = new List<Transform>();
+        foreach (Transform child in root)
+            children.Add(child);
+
+        // 이름 뒤 숫자 기준 정렬 (WP_0, WP_1, WP_2 ...)
+        children.Sort((a, b) =>
+        {
+            int numA = ExtractTrailingNumber(a.name);
+            int numB = ExtractTrailingNumber(b.name);
+            return numA.CompareTo(numB);
+        });
+
+        LaneRouteData data = new LaneRouteData();
+        data.laneId = laneId;
+
+        foreach (Transform child in children)
+        {
+            data.waypoints.Add(new Vector3Serializable
+            {
+                x = child.position.x,
+                y = 0f,
+                z = child.position.z
+            });
+        }
+
+        file.lanes.Add(data);
+    }
+
+    private int ExtractTrailingNumber(string name)
+    {
+        int i = name.Length - 1;
+        while (i >= 0 && char.IsDigit(name[i])) i--;
+        string numStr = name.Substring(i + 1);
+        return int.TryParse(numStr, out int n) ? n : 0;
+    }
+
 
     private void Preview()
     {
         LaneRouteFile file = Collect();
-        if (file == null) return;
+        if (file == null)
+        {
+            Debug.Log("File is nullptr");
+            return;
+        }
 
         foreach (LaneRouteData lane in file.lanes)
         {

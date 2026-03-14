@@ -55,7 +55,7 @@ public class MyPlayerController : PlayerController
 
     public override void UpdateMoving()
     {
-        base.UpdateMoving();
+        //base.UpdateMoving();
         // 추적 중이면 매 프레임 타겟 거리 갱신
         if (_chaseToAttack && _target != null)
         {
