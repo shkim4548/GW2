@@ -201,7 +201,7 @@ void Minion::UpdateIdle(float deltaTime)
 	}
 
 	// 남은 waypoint가 있을 때만 LINE_TRACE로 전환, 모두 완료했으면 IDLE 유지
-	shared_ptr<Navigation::LaneRoute> route = _route.lock();
+	shared_ptr<Navigation::LaneRoute> route = _route;
 	if (route != nullptr)
 	{
 		if (_currentWaypointIndex < static_cast<int32>(route->waypoints.size()))
@@ -247,7 +247,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	}
 
 	// 2) LaneRoute ��ȿ�� üũ
-	shared_ptr<Navigation::LaneRoute> route = _route.lock();
+	shared_ptr<Navigation::LaneRoute> route = _route;
 	if (route == nullptr || route->waypoints.empty())
 	{
 		_minionState = Protocol::MinionState::MINION_IDLE;
@@ -473,7 +473,7 @@ bool Minion::ShouldChaseTargetNow(shared_ptr<Object> target)
 	GameMath::Vector3 targetPos = target->GetPosVector();
 
 	// ���� ��������Ʈ
-	shared_ptr<Navigation::LaneRoute> route = _route.lock();
+	shared_ptr<Navigation::LaneRoute> route = _route;
 	if (route == nullptr)
 	{
 		// ��Ʈ �Ҹ� Ȥ�� ���� ������
@@ -538,7 +538,7 @@ void Minion::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 
 weak_ptr<Navigation::LaneRoute> Minion::GetLaneRoute() const
 {
-	return _route;
+	return weak_ptr<Navigation::LaneRoute>(_route);
 }
 
 void Minion::OnDead()

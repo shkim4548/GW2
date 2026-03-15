@@ -129,6 +129,18 @@ public class PacketHandler
         GameObject target = objectService.FindById((int)skillPkt.TargetId);
         GameObject attacker = objectService.FindById((int)skillPkt.AttackerId);
 
+        if(attacker == null)
+        {
+            return;
+        }
+
+        TurretController tc = attacker.GetComponent<TurretController>();
+        if (tc != null)
+        {
+            tc.OnAttack((int)skillPkt.TargetId);
+            return;
+        }
+
         if (attacker != null)
         {
             BaseController attackerBc = attacker.GetComponent<BaseController>();
@@ -141,8 +153,8 @@ public class PacketHandler
             BaseController targetBc = target.GetComponent<BaseController>();
             if (targetBc != null)
             {
-                // HP 갱신 (proto에 remaining_hp 추가 시)
-                // targetBc.SetHp(skillPkt.RemainingHp);
+                //HP 갱신(proto에 remaining_hp 추가 시)
+                targetBc.SetHp(skillPkt.CurrentHp, skillPkt.MaxHp);
             }
         }
     }
@@ -301,5 +313,10 @@ public class PacketHandler
 
         // 오브젝트 제거 또는 사망 애니메이션 처리
         objectService.Remove(diePkt.TargetId);
+    }
+
+    internal static void S_START_GAMEHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
     }
 }

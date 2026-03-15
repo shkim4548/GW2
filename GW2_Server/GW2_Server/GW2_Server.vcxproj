@@ -192,6 +192,7 @@
     <ClCompile Include="Minion.cpp" />
     <ClCompile Include="NavigationSystem.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
+    <ClCompile Include="Nexus.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectUtils.cpp" />
     <ClCompile Include="pch.cpp">
@@ -229,6 +230,7 @@
     <ClInclude Include="Minion.h" />
     <ClInclude Include="NavigationSystem.h" />
     <ClInclude Include="NavmeshLoader.h" />
+    <ClInclude Include="Nexus.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectUtils.h" />
     <ClInclude Include="pch.h" />
@@ -241,11 +243,11 @@
     <ClInclude Include="Turret.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Common\Protobuf\bin\Enum.proto" />
     <None Include="..\Common\Protobuf\bin\GenPackets.bat" />
-    <None Include="..\Common\Protobuf\bin\Protocol.proto" />
-    <None Include="..\Common\Protobuf\bin\Struct.proto" />
+    <None Include="..\Tools\PacketGenerator\Enum.proto" />
     <None Include="..\Tools\PacketGenerator\MakeExe.bat" />
+    <None Include="..\Tools\PacketGenerator\Protocol.proto" />
+    <None Include="..\Tools\PacketGenerator\Struct.proto" />
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>

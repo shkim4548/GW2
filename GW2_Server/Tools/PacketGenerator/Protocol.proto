@@ -37,14 +37,14 @@ message S_ENTER_GAME
 	ObjectInfo player = 2;
 }
 
-message S_SPAWN
+message C_START_GAME
 {
-	ObjectInfo objects = 1;
+	// 차후 선택창에서 4명 차면 시작시키기, 지금은 테스트니까 enter시 그냥 시작시킴
 }
 
-message C_SPAWN
+message S_START_GAME
 {
-	ObjectInfo objects = 1;
+
 }
 
 message C_MOVE
@@ -96,6 +96,8 @@ message S_SKILL
 	int32 skill_id = 1;
 	int64 target_id = 2;
 	int64 attacker_id = 3;
+	float current_hp = 4;
+	float max_hp = 5;
 }
 
 message C_ENTER_LOBBY

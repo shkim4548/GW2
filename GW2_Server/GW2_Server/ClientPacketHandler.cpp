@@ -57,10 +57,9 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 	return false;
 }
 
-bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt)
+bool Handle_C_START_GAME(PacketSessionRef& session, Protocol::C_START_GAME& pkt)
 {
-
-	return true;
+	return false;
 }
 
 bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt)

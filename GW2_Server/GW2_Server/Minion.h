@@ -68,7 +68,7 @@ private:
 	// CRITICAL SECTION! RETURNED BY ROOM THREAD! CRITICAL!
 	vector<weak_ptr<Object>> _targets;
 	weak_ptr<Object> _bestTarget;
-	weak_ptr<Navigation::LaneRoute> _route;
+	shared_ptr<Navigation::LaneRoute> _route;
 
 	GameMath::Vector3 _lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 	float _repathCoolDown = 0.0f;

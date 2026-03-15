@@ -313,16 +313,36 @@ void Room::UpdateRoom(float deltaTime)
 	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
 	{
-		while (_minionSpawnAccumulate >= _minionSpawnCoolDown)
+		// 웨이브 시작 체크 (스폰 중이 아닐 때만)
+		if (!_isSpawningWave)
 		{
-			_minionSpawnAccumulate -= _minionSpawnCoolDown;
+			_minionSpawnAccumulate += deltaTime;
+			if (_minionSpawnAccumulate >= _minionSpawnCoolDown)
+			{
+				_minionSpawnAccumulate -= _minionSpawnCoolDown;
+				_isSpawningWave = true;
+				_waveSpawnCount = 0;
+				_waveSpawnAccumulate = 0.0f;
+			}
+		}
 
-			// TEMP : For TEST, left base location hard coding
-			GameMath::Vector3 tempPos;
-			tempPos._x = -54;
-			tempPos._y = 0;
-			tempPos._z = 105;
-			SpawnMinion(1, Protocol::CAMP_CYBORG);
+		// 웨이브 진행: 0.3초마다 Top + Bot 1쌍 스폰
+		if (_isSpawningWave)
+		{
+			_waveSpawnAccumulate += deltaTime;
+			while (_waveSpawnAccumulate >= WAVE_SPAWN_INTERVAL
+				&& _waveSpawnCount < WAVE_MINION_COUNT)
+			{
+				_waveSpawnAccumulate -= WAVE_SPAWN_INTERVAL;
+				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_CYBORG);
+				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_CYBORG);
+				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_HUMAN);
+				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_HUMAN);
+				_waveSpawnCount++;
+			}
+
+			if (_waveSpawnCount >= WAVE_MINION_COUNT)
+				_isSpawningWave = false;
 		}
 	}
 
@@ -365,11 +385,26 @@ void Room::UpdateRoom(float deltaTime)
 shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 {
 	// route 확보
-	shared_ptr<Navigation::LaneRoute> route = GetLaneRoute(laneId).lock();
-	if (route == nullptr || route->waypoints.empty())
+	shared_ptr<Navigation::LaneRoute> baseRoute = GetLaneRoute(laneId).lock();
+	if (baseRoute == nullptr || baseRoute->waypoints.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::SpawnMinion] LaneRoute missing. laneId=%d\n", laneId);
 		return nullptr;
+	}
+
+	// [CHANGED] 우측 진영은 waypoints 역방향 사용
+	shared_ptr<Navigation::LaneRoute> route;
+	if (team == Protocol::CAMP_HUMAN)
+	{
+		route = make_shared<Navigation::LaneRoute>();
+		route->laneId = baseRoute->laneId;
+		route->waypoints = vector<GameMath::Vector3>(
+			baseRoute->waypoints.rbegin(),
+			baseRoute->waypoints.rend());
+	}
+	else
+	{
+		route = baseRoute;
 	}
 
 	// 스폰 위치 초기화
@@ -565,7 +600,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		const GameMath::Vector3& targetPos = route->waypoints[wpIndex];
 		GameMath::Vector3 tTargetPos = targetPos;
 		const uint8 targetLane = navSystem->GetLaneId(grid, tTargetPos);
-		if (targetLane == 0 || targetLane != minionLaneId)
+		if (targetLane != 0 && targetLane != minionLaneId)
 		{
 			GConsoleLogger->WriteStdErr(Color::YELLOW,
 				L"[Room::HandleMinionMove] targetLane invalid. objId=%d wp=%d allowLane=%d targetLane=%d target=(%.2f,%.2f)\n",
@@ -584,7 +619,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	// --- A* PathFinding ---
 	// [CHANGED] 기존: 항상 minionLaneId 필터 사용
 	// [CHANGED] 변경: isOffLane이면 laneId=0 (필터 없음) 으로 중앙 구간 통과 허용
-	uint8 pathLaneFilter = isOffLane ? 0 : minionLaneId;
+	uint8 pathLaneFilter = (isOffLane || grid.At(tx, tz).laneId == 0) ? 0 : minionLaneId;
 
 	vector<Navigation::GridCell*> gridPath;
 	GConsoleLogger->WriteStdOut(
@@ -847,6 +882,17 @@ void Room::HandleRemoveObject(int32 id)
 	_objects.erase(id);
 }
 
+void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
+{
+	Protocol::S_SKILL skillPkt;
+	skillPkt.set_skill_id(1);
+	skillPkt.set_attacker_id(attckerId);
+	skillPkt.set_target_id(targetId);
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(skillPkt);
+	Broadcast(sendBuffer);
+}
+
 void Room::BroadcastMoving(const ObjectRef& obj)
 {
 	// Moving Start
@@ -1093,4 +1139,8 @@ vector<GameMath::Vector3> Room::SmoothPath(const vector<GameMath::Vector3>& path
 		anchor = reach;
 	}
 	return smoothed;
+}
+
+void Room::StartGame()
+{
 }

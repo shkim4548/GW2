@@ -51,7 +51,7 @@ public class ServerSession : PacketSession
 
 	public override void OnRecvPacket(ArraySegment<byte> buffer)
 	{
-        Debug.Log("OnRecvPacket");
+        //Debug.Log("OnRecvPacket");
         PacketManager.Instance.OnRecvPacket(this, buffer);
 	}
 

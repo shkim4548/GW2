@@ -225,11 +225,6 @@ public class MyPlayerController : PlayerController
         }
     }
 
-    protected override void MakeSendPacket(float delay)
-    {
-        //movePacket.Info.Yaw = this.transform.rotation;
-    }
-
     // 추측항법
     // 위치 정정
     private void CorrectPosition()

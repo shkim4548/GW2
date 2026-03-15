@@ -26,6 +26,8 @@ public:
 	string GetRoomName() { return _roomName; }
 	void SetIsRunning(bool isRunning) { _isRunning = isRunning; }
 
+	unordered_map<int32, ObjectRef> GetRoomObjects() { return _objects; }
+
 	weak_ptr<Player> GetPlayerById(int32 id) { return weak_ptr<Player>(_players[id]); }
 
 public:
@@ -48,6 +50,7 @@ public:
 	void HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> target);
 	void HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
 	void HandleRemoveObject(int32 id);
+	void HandleTurretAttack(int32 attckerId, int32 targetId);
 
 	// Players
 	bool HandleEnterPlayer(PlayerRef player);
@@ -65,7 +68,7 @@ private:
 	void SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route);
 	// static
 	static vector<GameMath::Vector3> SmoothPath(const vector<GameMath::Vector3>& path, const Navigation::WalkableGrid& grid, shared_ptr<Navigation::NavigationSystem> navSystem, uint8 laneId);
-
+	void StartGame();
 
 private:
 	unordered_map<int32, ObjectRef> _objects;
@@ -85,6 +88,16 @@ private:
 	// === minion cool time ===
 	float _minionSpawnCoolDown = 5.0f;
 	float _minionSpawnAccumulate = 0.0f;
+
+	// === minion spawn ===
+	static constexpr int32 WAVE_MINION_COUNT = 5;    // 레인당 마리 수
+	static constexpr float WAVE_SPAWN_INTERVAL = 0.3f; // 쌍 사이 간격
+	static constexpr int32 MINION_LANE_TOP = 1;
+	static constexpr int32 MINION_LANE_BOT = 3;
+
+	bool  _isSpawningWave = false;
+	int32 _waveSpawnCount = 0;
+	float _waveSpawnAccumulate = 0.0f;
 };
 
 //extern shared_ptr<Room> GRoom;

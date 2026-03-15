@@ -50,6 +50,11 @@ public class BaseController : MonoBehaviour
         }
     }
 
+    protected UI_HpBar _hpBar;
+
+    protected float _hp = 100.0f;
+    protected float _maxHp = 100.0f;
+
     public virtual MoveState State
     {
         get { return PosInfo.State; }
@@ -90,7 +95,9 @@ public class BaseController : MonoBehaviour
 
         //_animator.SetLayerWeight(_baseLayer, 1f);
         //_animator.SetLayerWeight(_lowerLayer, 1f);
-
+        _hpBar = GetComponentInChildren<UI_HpBar>();
+        if (_hpBar != null)
+            _hpBar.SetHp(_hp, _maxHp);
     }
 
     public virtual void UpdateIdle() { }
@@ -134,13 +141,18 @@ public class BaseController : MonoBehaviour
         }
     }
 
-    protected virtual void MakeSendPacket(float delay)
-    {
-    }
-
     protected int GetClientTime()
     {
         // ms단위로 전달
         return (int)(Time.realtimeSinceStartup * 1000);
+    }
+
+    public void SetHp(float current, float max)
+    {
+        _hp = current;
+        _maxHp = max;
+
+        if (_hpBar != null)
+            _hpBar.SetHp(_hp, _maxHp);
     }
 }

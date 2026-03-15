@@ -11,8 +11,8 @@ enum : uint16
 	PKT_C_ENTER_GAME = 1002,
 	PKT_C_LEAVE_GAME = 1003,
 	PKT_S_ENTER_GAME = 1004,
-	PKT_S_SPAWN = 1005,
-	PKT_C_SPAWN = 1006,
+	PKT_C_START_GAME = 1005,
+	PKT_S_START_GAME = 1006,
 	PKT_C_MOVE = 1007,
 	PKT_S_MOVE = 1008,
 	PKT_S_MOVE_END = 1009,
@@ -29,7 +29,7 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 	bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt);
 	bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt);
 	bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt);
-	bool Handle_C_SPAWN(PacketSessionRef& session, Protocol::C_SPAWN& pkt);
+	bool Handle_C_START_GAME(PacketSessionRef& session, Protocol::C_START_GAME& pkt);
 	bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt);
 	bool Handle_C_SKILL(PacketSessionRef& session, Protocol::C_SKILL& pkt);
 	bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt);
@@ -44,7 +44,7 @@ public:
 		GPacketHandler[PKT_C_LOGIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_LOGIN>(Handle_C_LOGIN, session, buffer, len); };
 		GPacketHandler[PKT_C_ENTER_GAME] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_GAME>(Handle_C_ENTER_GAME, session, buffer, len); };
 		GPacketHandler[PKT_C_LEAVE_GAME] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_LEAVE_GAME>(Handle_C_LEAVE_GAME, session, buffer, len); };
-		GPacketHandler[PKT_C_SPAWN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SPAWN>(Handle_C_SPAWN, session, buffer, len); };
+		GPacketHandler[PKT_C_START_GAME] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_START_GAME>(Handle_C_START_GAME, session, buffer, len); };
 		GPacketHandler[PKT_C_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_MOVE>(Handle_C_MOVE, session, buffer, len); };
 		GPacketHandler[PKT_C_SKILL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SKILL>(Handle_C_SKILL, session, buffer, len); };
 		GPacketHandler[PKT_C_ENTER_LOBBY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_LOBBY>(Handle_C_ENTER_LOBBY, session, buffer, len); };
@@ -57,7 +57,7 @@ public:
 	}
 	static SendBufferRef MakeSendBuffer(Protocol::S_LOGIN& pkt) { return MakeSendBuffer(pkt, PKT_S_LOGIN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_GAME); }
-	static SendBufferRef MakeSendBuffer(Protocol::S_SPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_SPAWN); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_START_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_START_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_END& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_END); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MINION_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MINION_MOVE); }

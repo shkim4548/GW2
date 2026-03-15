@@ -34,7 +34,7 @@ public class PacketManager
     {
         //_onRecv.Add((ushort)PacketId.PKT_S_LOGIN, MakePacket<S_LOGIN>);
         //_handler.Add((ushort)PacketId.PKT_S_LOGIN, PacketHandler.S_LOGINHandler);
-        {%- for pkt in parser.send_pkt %}
+        {%- for pkt in parser.recv_pkt %}
         _onRecv.Add((ushort)PacketId.PKT_{{pkt.name}}, MakePacket<{{pkt.name}}>);
         _handler.Add((ushort)PacketId.PKT_{{pkt.name}}, PacketHandler.{{pkt.name}}Handler);
         {%- endfor %}

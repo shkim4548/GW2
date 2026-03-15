@@ -16,11 +16,14 @@
     <Filter Include="Packet">
       <UniqueIdentifier>{bab86cfd-b75b-4a6a-92a1-ca5bcafafa5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object">
-      <UniqueIdentifier>{20db2729-9d78-4bf2-83e8-a17bb50edd03}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Packet\Protocol">
       <UniqueIdentifier>{603496b5-138a-4725-951a-b0a8ee8dfe85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameContents\Navigation">
+      <UniqueIdentifier>{fb469130-9d6d-4760-a53a-a7598f95a191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameContents\Object">
+      <UniqueIdentifier>{20db2729-9d78-4bf2-83e8-a17bb50edd03}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +53,7 @@
       <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Object</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectUtils.cpp">
       <Filter>Utils</Filter>
@@ -58,28 +61,33 @@
     <ClCompile Include="GameLogic.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
-    <ClCompile Include="NavmeshLoader.cpp">
-      <Filter>GameContents</Filter>
-    </ClCompile>
-    <ClCompile Include="NavigationSystem.cpp">
-      <Filter>GameContents</Filter>
-    </ClCompile>
     <ClCompile Include="Lobby.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>Object</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClCompile>
     <ClCompile Include="Minion.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="LaneRouteLoader.cpp">
-      <Filter>GameContents</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClCompile>
     <ClCompile Include="StatLoader.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="Turret.cpp">
+      <Filter>GameContents\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Nexus.cpp">
+      <Filter>GameContents\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="LaneRouteLoader.cpp">
+      <Filter>GameContents\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationSystem.cpp">
+      <Filter>GameContents\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="NavmeshLoader.cpp">
+      <Filter>GameContents\Navigation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -110,7 +118,7 @@
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Object</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectUtils.h">
       <Filter>Utils</Filter>
@@ -118,46 +126,51 @@
     <ClInclude Include="GameLogic.h">
       <Filter>GameContents</Filter>
     </ClInclude>
-    <ClInclude Include="NavmeshLoader.h">
-      <Filter>GameContents</Filter>
-    </ClInclude>
-    <ClInclude Include="NavigationSystem.h">
-      <Filter>GameContents</Filter>
-    </ClInclude>
     <ClInclude Include="Lobby.h">
       <Filter>GameContents</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>Object</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClInclude>
     <ClInclude Include="Minion.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="LaneRouteLoader.h">
-      <Filter>GameContents</Filter>
+      <Filter>GameContents\Object</Filter>
     </ClInclude>
     <ClInclude Include="StatLoader.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Turret.h" />
+    <ClInclude Include="Turret.h">
+      <Filter>GameContents\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Nexus.h">
+      <Filter>GameContents\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="LaneRouteLoader.h">
+      <Filter>GameContents\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationSystem.h">
+      <Filter>GameContents\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="NavmeshLoader.h">
+      <Filter>GameContents\Navigation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Common\Protobuf\bin\Enum.proto">
+    <None Include="..\Tools\PacketGenerator\MakeExe.bat">
       <Filter>Packet\Protocol</Filter>
     </None>
-    <None Include="..\Common\Protobuf\bin\Protocol.proto">
+    <None Include="cpp.hint" />
+    <None Include="..\Tools\PacketGenerator\Enum.proto">
       <Filter>Packet\Protocol</Filter>
     </None>
-    <None Include="..\Common\Protobuf\bin\Struct.proto">
+    <None Include="..\Tools\PacketGenerator\Protocol.proto">
+      <Filter>Packet\Protocol</Filter>
+    </None>
+    <None Include="..\Tools\PacketGenerator\Struct.proto">
       <Filter>Packet\Protocol</Filter>
     </None>
     <None Include="..\Common\Protobuf\bin\GenPackets.bat">
       <Filter>Packet\Protocol</Filter>
     </None>
-    <None Include="..\Tools\PacketGenerator\MakeExe.bat">
-      <Filter>Packet\Protocol</Filter>
-    </None>
-    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="GameDB.xml">
