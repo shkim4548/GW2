@@ -2,6 +2,7 @@
 #include "ObjectUtils.h"
 #include "Player.h"
 #include "Minion.h"
+#include "Turret.h"
 #include "GameSession.h"
 
 atomic<int32> ObjectUtils::s_idGenerator = 1;
@@ -27,4 +28,14 @@ MinionRef ObjectUtils::CreateMinion()
     minion->SetMinionId(newId);
 
     return minion;
+}
+
+TurretRef ObjectUtils::CreateTurret()
+{
+    const int64 newId = s_idGenerator.fetch_add(1);
+
+    TurretRef turret = MakeShared<Turret>();
+    turret->SetTurretId(newId);
+
+    return turret;
 }

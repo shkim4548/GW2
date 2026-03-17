@@ -148,10 +148,25 @@ namespace GameServerAdmin.Infrastructure.Persistence
 
                 await userManager.AddToRoleAsync(appUser, "User");
 
-                // 2) 도메인 User 생성
+                // 2) Account 도메인 엔티티 생성
+                var account = new GameServerAdmin.Domain.Accounts.Account
+                {
+                    LoginId = t.UserName,
+                    PasswordHash = string.Empty,
+                    CreatedAt = DateTime.UtcNow,
+                    IsBanned = false
+                };
+                db.Set<GameServerAdmin.Domain.Accounts.Account>().Add(account);
+                await db.SaveChangesAsync();
+
+                // AppUser에 AccountId 연결
+                appUser.AccountId = account.AccountId;
+                await userManager.UpdateAsync(appUser);
+
+                // 3) 도메인 User 생성
                 var domainUser = new User
                 {
-                    AccountId = appUser.Id,
+                    AccountId = account.AccountId,
                     Nickname = t.Nickname,
                     Level = t.Level,
                     Status = t.Status,
@@ -160,7 +175,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
                 db.Users.Add(domainUser);
                 await db.SaveChangesAsync();
 
-                // 3) 재화 지급
+                // 4) 재화 지급
                 var currencies = t.UserName switch
                 {
                     "testuser1" => new[]
@@ -186,6 +201,7 @@ namespace GameServerAdmin.Infrastructure.Persistence
                 await db.SaveChangesAsync();
             }
         }
+
         public static async Task SeedTestNoticesAsync(AppDbContext db)
         {
             if (await db.Notices.AnyAsync())

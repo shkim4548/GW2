@@ -1,0 +1,10 @@
+{
+  "cards":
+  [
+    {
+      "id" : 1,
+      "name" : "Card_AmuletOfSteel",
+      "damage" : 100
+    }
+  ]
+}

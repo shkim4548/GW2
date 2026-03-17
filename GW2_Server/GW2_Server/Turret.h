@@ -1,7 +1,7 @@
 #pragma once
 #include "Object.h"
 
-class Turret : Object
+class Turret : public Object
 {
 public:
 	void Init();
@@ -13,8 +13,10 @@ public:
 
 	// Setters
 	void SetTeamId(uint8 teamId) { _teamId = teamId; }
+	void SetTurretId(int32 turretId) { _objectId = turretId; }
 
 private:
+	virtual void UpdateController(float deltaTime) override;
 	void Update(float deltaTime);
 	bool IsValidTarget(shared_ptr<Object> target) const;
 	void FireCall(shared_ptr<Object> target);

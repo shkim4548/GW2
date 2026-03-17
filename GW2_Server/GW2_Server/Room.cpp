@@ -7,6 +7,7 @@
 #include "NavmeshLoader.h"
 #include "ClientPacketHandler.h"
 #include "Minion.h"
+#include "Turret.h"
 #include "ObjectUtils.h"
 #include "LaneRouteLoader.h"
 
@@ -61,6 +62,37 @@ bool Room::Enter(PlayerRef gameObject)
 	_isRunning = true;
 	GameMath::Vector3 spawnPos(72.5f, 0.0f, 0.0f);
 	gameObject->SetPosVector(spawnPos);
+	SendBufferRef sendBufferPlayer = ClientPacketHandler::MakeSendBuffer(enterPkt);
+	Broadcast(sendBufferPlayer);
+
+	// TODO : 테스트니까 여기가 StartGame으로 가정
+	// HUMAN
+	GameMath::Vector3 turretPos = GameMath::Vector3(-15, 0.5, -25.5);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-52.81, 0.5, -22.93);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-65.26, 2, -4.28);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-65.26, 2, 4.73);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-51.2, 0.5, 22.31);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-10.93, 0.5, 25.1);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+
+	// CYBORG
+	turretPos = GameMath::Vector3(11.69, 0.5, -25.51);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(47.1, 0.5, -22.6);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(64.2, 2, -4.5);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(64.2, 2, 4.5);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(50.9, 0.5, 22.1);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(13, 0.5, 25.3);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -443,6 +475,36 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	// Room에 등록한다
 	HandleSpawnMinion(minion);
 	return minion;
+}
+
+shared_ptr<Turret> Room::SpawnTurret(GameMath::Vector3 pos, Protocol::CampType team)
+{
+	shared_ptr<Turret> turret = make_shared<Turret>();
+	turret = ObjectUtils::CreateTurret();
+	int32 objectId = turret->GetObjectId();
+
+	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
+	posInfo->set_x(pos._x);
+	posInfo->set_y(pos._y);
+	posInfo->set_z(pos._z);
+	posInfo->set_yaw(0);
+	GameMath::Vector3 tPos = GameMath::Vector3(pos._x, pos._y, pos._z);
+	turret->SetPosInfo(*posInfo);
+
+	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
+	Protocol::S_ENTER_GAME enterPkt;
+
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enter turret\n");
+	objectInfo->set_object_type(Protocol::ObjectType::OBJECT_TYPE_TURRET);
+	objectInfo->set_object_id(turret->GetObjectId());
+	objectInfo->set_team_flag(team);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+	_objects.emplace(objectId, turret);
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
+	Broadcast(sendBuffer);
+	return turret;
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range)

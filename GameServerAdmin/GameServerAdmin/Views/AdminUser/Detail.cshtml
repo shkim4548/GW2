@@ -1,0 +1,135 @@
+﻿@model GameServerAdmin.Models.AdminGame.UserApi.AdminUserOverviewResponse
+@{
+    ViewData["Title"] = "유저 상세";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    string StatusLabel(GameServerAdmin.Domain.Users.UserStatus s) => s switch
+    {
+        GameServerAdmin.Domain.Users.UserStatus.Banned => "정지",
+        _ => "정상"
+    };
+
+    string StatusBadge(GameServerAdmin.Domain.Users.UserStatus s) => s switch
+    {
+        GameServerAdmin.Domain.Users.UserStatus.Banned => "bg-danger",
+        _ => "bg-success"
+    };
+
+    string CurrencyName(int type) => type switch
+    {
+        1 => "스태미나",
+        2 => "골드",
+        3 => "젬",
+        _ => $"타입{type}"
+    };
+}
+
+<div class="d-flex align-items-center gap-2 mb-3">
+    <a href="/admin/ui/users" class="btn btn-sm btn-outline-secondary">← 목록</a>
+    <h5 class="mb-0">유저 상세</h5>
+</div>
+
+{{/* 프로필 */}}
+<div class="admin-panel mb-3">
+    <div class="admin-panel-header">
+        <h6>기본 정보</h6>
+    </div>
+    <table class="table table-sm mb-0" style="font-size:0.9rem;">
+        <tbody>
+            <tr><th style="width:120px;">UserId</th><td>@Model.UserId</td></tr>
+            <tr><th>AccountId</th><td>@Model.AccountId</td></tr>
+            <tr><th>로그인 ID</th><td>@Model.LoginId</td></tr>
+            <tr><th>닉네임</th><td>@Model.Nickname</td></tr>
+            <tr><th>레벨</th><td>@Model.Level</td></tr>
+            <tr>
+                <th>상태</th>
+                <td><span class="badge @StatusBadge(Model.Status) fw-normal">@StatusLabel(Model.Status)</span></td>
+            </tr>
+            <tr><th>가입일</th><td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td></tr>
+            <tr><th>최근 로그인</th><td>@(Model.LastLoginAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td></tr>
+        </tbody>
+    </table>
+</div>
+
+{{/* 재화 */}}
+<div class="admin-panel mb-3">
+    <div class="admin-panel-header">
+        <h6>보유 재화</h6>
+    </div>
+    @if (!Model.Currencies.Any())
+    {
+        <div class="p-3 text-muted small text-center">재화 없음</div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr><th>종류</th><th>보유량</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Currencies)
+                {
+                    <tr>
+                        <td>@CurrencyName(c.CurrencyType)</td>
+                        <td>@c.Amount.ToString("N0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+{{/* 스테이지 클리어 */}}
+<div class="admin-panel mb-3">
+    <div class="admin-panel-header">
+        <h6>스테이지 클리어</h6>
+    </div>
+    @if (!Model.StageClears.Any())
+    {
+        <div class="p-3 text-muted small text-center">클리어 기록 없음</div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr><th>스테이지</th><th>클리어 횟수</th><th>마지막 클리어</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.StageClears)
+                {
+                    <tr>
+                        <td>@s.StageName</td>
+                        <td>@s.ClearCount</td>
+                        <td class="text-muted">@(s.LastClearedAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+{{/* 관리 액션 */}}
+<div class="admin-panel">
+    <div class="admin-panel-header">
+        <h6>관리 액션</h6>
+    </div>
+    <div class="p-3 d-flex gap-2">
+        @if (Model.Status == GameServerAdmin.Domain.Users.UserStatus.Banned)
+        {
+            <form method="post" action="/admin/ui/users/@Model.UserId/unban">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-success">정지 해제</button>
+            </form>
+        }
+        else
+        {
+            <form method="post" action="/admin/ui/users/@Model.UserId/ban">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-danger"
+                        onclick="return confirm('@Model.Nickname 유저를 정지하시겠습니까?')">
+                    정지 처리
+                </button>
+            </form>
+        }
+    </div>
+</div>

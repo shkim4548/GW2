@@ -7,6 +7,7 @@
 namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGrid; struct LaneRoute; }
 namespace GameMath { struct Vector3; }
 class Minion;
+class Turret;
 
 class Room : public JobQueue
 {
@@ -39,6 +40,7 @@ public:
 	// 로비에서 호출해야함
 	void UpdateRoom(float deltaTime);
 	shared_ptr<Minion> SpawnMinion(int32 laneId, Protocol::CampType team);
+	shared_ptr<Turret> SpawnTurret(GameMath::Vector3 pos, Protocol::CampType team);
 
 	// Lane Controller
 	void InitLaneRouteBin();

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_CardPanel : UI_Scene
+public class UI_StatusBar : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

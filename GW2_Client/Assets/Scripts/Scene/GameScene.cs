@@ -21,6 +21,9 @@ public class GameScene : BaseScene
         enterGamePkt.PlayerIndex = 1;
         enterGamePkt.RoomId = 0;
         network.Send(enterGamePkt);
+
+        IUIService uiService = Bootstrapper.Instance.UIService;
+        uiService.ShowSceneUI<UI_GameScene>();
     }
 
     public override void Clear()

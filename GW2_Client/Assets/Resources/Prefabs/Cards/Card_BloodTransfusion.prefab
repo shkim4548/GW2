@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -108,7 +107,6 @@ RectTransform:
   m_Children:
   - {fileID: 7602408686387437579}
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -184,7 +182,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686117142777}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -319,7 +316,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -395,7 +391,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -449,7 +444,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7602408686691091419}
-  - component: {fileID: 3242757235803897565}
   m_Layer: 0
   m_Name: Card_BloodTransfusion
   m_TagString: Untagged
@@ -477,35 +471,12 @@ RectTransform:
   - {fileID: 7602408686117142777}
   - {fileID: 1699880071826851468}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3242757235803897565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7602408686691091418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b5e04dea4aabe8438f6f2f45daaa4d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cost: 0
-  _cardBuyCost: 0
-  _CastingTime: 0
-  _effectTime: 0
-  _IsResurrection: 0
-  _rangeType: 0
-  _rangeScale: 0
-  _rangeRange: 0
-  _rangeAngle: 0
-  _effectObject: {fileID: 0}
 --- !u!1 &7602408687089209899
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +508,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -672,7 +642,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7602408686691091419}
-  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -781,6 +750,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 7602408686691091419}
     m_Modifications:
     - target: {fileID: 2135304969555033179, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
@@ -793,6 +763,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2135488900349256335, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135488900349256335, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
+      propertyPath: m_SortingLayer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2262223200183041509, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
@@ -883,7 +857,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9013327272187797118, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e6cab8c8132dc4095dd074a51941bc, type: 3}
 --- !u!224 &2769848743499918240 stripped
 RectTransform:

@@ -102,8 +102,8 @@ public class PacketHandler
 
             mc.SetServerRefPos(serverPos, movePkt.ServerTime);
 
-            Debug.Log($"[S_MOVEHandler] Minion {targetId} " +
-                      $"serverRefPos=({serverPos.x:F2},{serverPos.z:F2}) t={movePkt.ServerTime}");
+            //Debug.Log($"[S_MOVEHandler] Minion {targetId} " +
+            //          $"serverRefPos=({serverPos.x:F2},{serverPos.z:F2}) t={movePkt.ServerTime}");
             return; // ← 여기서 반드시 return — navPath 이동에 일절 간섭하지 않음
         }
 
@@ -117,8 +117,8 @@ public class PacketHandler
         bc.LastServerTime = movePkt.ServerTime;
         bc._isMoving = true;
         bc.State = movePkt.ServerPosInfo.State;
-        Debug.Log($"[S_MOVEHandler] Player {targetId} " +
-                  $"serverPos=({pos.X:F2},{pos.Y:F2},{pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
+        //Debug.Log($"[S_MOVEHandler] Player {targetId} " +
+        //          $"serverPos=({pos.X:F2},{pos.Y:F2},{pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -289,9 +289,9 @@ public class PacketHandler
             return;
         }
 
-        Debug.Log($"[S_MINION_MOVEHandler] objectId={targetId} navPath.Count={navPath.Count}" +
-                  $" first=({navPath[0].x:F2},{navPath[0].z:F2})" +
-                  $" last=({navPath[navPath.Count - 1].x:F2},{navPath[navPath.Count - 1].z:F2})");
+        //Debug.Log($"[S_MINION_MOVEHandler] objectId={targetId} navPath.Count={navPath.Count}" +
+        //          $" first=({navPath[0].x:F2},{navPath[0].z:F2})" +
+        //          $" last=({navPath[navPath.Count - 1].x:F2},{navPath[navPath.Count - 1].z:F2})");
 
         // MinionController에 경로 전달 → 내부에서 Update마다 따라 이동
         mc.SetMoveSpeed(minionMovePkt.Speed);

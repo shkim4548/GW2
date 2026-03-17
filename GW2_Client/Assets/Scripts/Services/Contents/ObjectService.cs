@@ -93,6 +93,22 @@ public class ObjectService : IObjectService
             // TODO : Adding RoomId
             _objects.Add(objectId, go);
         }
+        else if(objectType == ObjectType.Turret)
+        {
+            Debug.Log($"[ObjectService] object type turret");
+            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+            go = _resourceService.Instantiate("Turret/Tower");
+            if(go == null)
+            {
+                Debug.LogError($"Turret is nullptr");
+                return;
+            }
+
+            TurretController tc = go.GetComponent<TurretController>();
+            tc.transform.position = initPos;
+            tc.Id = objectId;
+            _objects.Add(objectId, go);
+        }
         else
         {
             Debug.LogError($"[ObjectService] Adding Type is invalid!");

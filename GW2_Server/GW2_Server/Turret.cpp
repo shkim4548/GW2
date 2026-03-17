@@ -14,6 +14,11 @@ Turret::~Turret()
 {
 }
 
+void Turret::UpdateController(float deltaTime)
+{
+	Update(deltaTime);
+}
+
 void Turret::Update(float deltaTime)
 {
 	// 타이머 갱신
