@@ -32,6 +32,7 @@ public:
 	// === LaneRoute Handler === 
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute() const;
+	void ClearChaseTarget();
 
 protected:
 	virtual void OnDead() override;
@@ -74,4 +75,7 @@ private:
 	float _repathCoolDown = 0.0f;
 	float _findTargetCoolDown = 0.0f;
 	bool _pathPending = false;  // DoAsync 요청 후 RequestMove 완료 전까지 중복 요청 방지
+
+	float _noChaseTimer = 0.0f;
+	static constexpr float NO_CHASE_DURATION = 3.0f;
 };

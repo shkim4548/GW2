@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_HpBar : UI_Base
+public class WUI_HpBar : UI_Base
 {
     enum Images
     {

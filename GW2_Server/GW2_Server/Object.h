@@ -62,6 +62,14 @@ public:
 
 	// STAT HELPER
 	bool ApplyDamage(uint64 dmg);
+	uint64_t GetHp()    const { return _statInfo.hp(); }
+	uint64_t GetMaxHp() const { return _statInfo.max_hp(); }
+	void SetHp(uint64_t hp) {
+		_statInfo.set_hp(hp);
+	}
+	void SetMaxHp(uint64_t hp) {
+		_statInfo.set_max_hp(hp);
+	}
 
 	// Debug
 	int32 GetRoomId() { return _roomId; }

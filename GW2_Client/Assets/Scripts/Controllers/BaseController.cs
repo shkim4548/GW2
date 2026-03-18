@@ -50,7 +50,7 @@ public class BaseController : MonoBehaviour
         }
     }
 
-    protected UI_HpBar _hpBar;
+    protected WUI_HpBar _hpBar;
 
     protected float _hp = 100.0f;
     protected float _maxHp = 100.0f;
@@ -95,7 +95,7 @@ public class BaseController : MonoBehaviour
 
         //_animator.SetLayerWeight(_baseLayer, 1f);
         //_animator.SetLayerWeight(_lowerLayer, 1f);
-        _hpBar = GetComponentInChildren<UI_HpBar>();
+        _hpBar = GetComponentInChildren<WUI_HpBar>();
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);
     }

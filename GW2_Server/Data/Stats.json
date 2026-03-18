@@ -16,7 +16,7 @@
       "attack_damage": 30,
       "attack_range": 3.0,
       "attack_interval": 0.8,
-      "move_speed": 10.0
+      "move_speed": 12.0
     }
   ]
 }

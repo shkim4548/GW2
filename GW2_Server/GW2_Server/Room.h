@@ -93,9 +93,11 @@ private:
 
 	// === minion spawn ===
 	static constexpr int32 WAVE_MINION_COUNT = 5;    // 레인당 마리 수
-	static constexpr float WAVE_SPAWN_INTERVAL = 0.3f; // 쌍 사이 간격
+	static constexpr float WAVE_SPAWN_INTERVAL = 5.0f; // 쌍 사이 간격
 	static constexpr int32 MINION_LANE_TOP = 1;
 	static constexpr int32 MINION_LANE_BOT = 3;
+	static constexpr int32 MAX_MINION_COUNT = 50;
+	deque<int32> _minionSpawnOrder;                 // ← 추가 (FIFO 삭제용)
 
 	bool  _isSpawningWave = false;
 	int32 _waveSpawnCount = 0;

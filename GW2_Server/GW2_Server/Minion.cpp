@@ -3,6 +3,7 @@
 #include "Room.h"
 #include "NavigationSystem.h"
 #include "Lobby.h"
+#include "StatLoader.h"
 
 Minion::Minion()
 {
@@ -18,6 +19,8 @@ Minion::Minion()
 	_statInfo.set_hp(100);
 	_statInfo.set_max_hp(100);
 	_statInfo.set_attack(10);
+
+
 }
 
 Minion::~Minion()
@@ -28,6 +31,14 @@ void Minion::InitMinion()
 {
 	weak_ptr<Room> room = GLobby->GetRoomById(_roomId);
 	_room = room.lock();
+
+	UnitStat stat = GLobby->GetUnitStat("minion");
+	_statInfo.set_hp(stat.hp);
+	_statInfo.set_max_hp(stat.maxHp);
+	_attackRange = stat.attackRange;
+	_attackInterval = stat.attackInterval;
+	_moveSpeed = stat.moveSpeed;
+	_detectionRange = stat.detectionRange;
 }
 
 void Minion::SetMinionTarget(vector<weak_ptr<Object>>& targets)
@@ -235,16 +246,27 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	}
 
 	// 2) Chase ��ȯ üũ
-	shared_ptr<Object> target = FindBestTarget(_targets).lock();
-	if (target != nullptr)
+	_noChaseTimer -= deltaTime;
+	if (_noChaseTimer <= 0.0f)
 	{
-		if (ShouldChaseTargetNow(target))
+		shared_ptr<Object> bestTarget = FindBestTarget(_targets).lock();
+		if (bestTarget != nullptr)
 		{
-			_currentTarget = target;
+			_currentTarget = bestTarget;
 			_minionState = Protocol::MinionState::MINION_CHASE_TARGET;
 			return;
 		}
 	}
+	//shared_ptr<Object> target = FindBestTarget(_targets).lock();
+	//if (target != nullptr)
+	//{
+	//	if (ShouldChaseTargetNow(target))
+	//	{
+	//		_currentTarget = target;
+	//		_minionState = Protocol::MinionState::MINION_CHASE_TARGET;
+	//		return;
+	//	}
+	//}
 
 	// 2) LaneRoute ��ȿ�� üũ
 	shared_ptr<Navigation::LaneRoute> route = _route;
@@ -539,6 +561,13 @@ void Minion::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 weak_ptr<Navigation::LaneRoute> Minion::GetLaneRoute() const
 {
 	return weak_ptr<Navigation::LaneRoute>(_route);
+}
+
+void Minion::ClearChaseTarget()
+{
+	_currentTarget.reset();
+	_minionState = Protocol::MinionState::MINION_LINE_TRACE;
+	_noChaseTimer = NO_CHASE_DURATION;  // 3초간 재탐지 차단
 }
 
 void Minion::OnDead()

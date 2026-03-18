@@ -8,6 +8,7 @@
 
 class Room;
 class Player;
+struct UnitStat;
 namespace Navigation { class NavigationSystem; class WalkableGrid; struct LaneRoute; }
 
 class Lobby : public JobQueue
@@ -21,11 +22,15 @@ public:
 	void OnClientEnter(PlayerRef player);
 	void OnClientLeave(int32 playerId);
 
+	// Getters
 	unordered_map<int32, RoomRef> GetRoomList();
 	weak_ptr<Room> GetRoomById(int32 roomId);
 	weak_ptr<Navigation::NavigationSystem> GetNavigationSystem() { return _navigationSystem; }
 	weak_ptr<Navigation::WalkableGrid> GetWalkableGrid() { return _walkableGrid; }
 	unordered_map<int32, PlayerRef> GetLobbyPlayers() { return _lobbyPlayers; }
+	UnitStat GetUnitStat(const string& type);
+
+
 	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);
 	void EnterRoom(int32 roomId, int64 playerId);
@@ -57,6 +62,10 @@ private:
 	// 타이밍
 	bool _isRunning = false;
 	chrono::steady_clock::time_point _lastUpdateTime;
+
+	// stat 초기 데이터
+	unordered_map<string, UnitStat> _unitStats;
+	unique_ptr<class StatLoader> _statLoader;
 };
 
 extern shared_ptr<Lobby> GLobby;

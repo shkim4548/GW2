@@ -7,6 +7,7 @@
 #include "NavmeshLoader.h"
 #include "LaneRouteLoader.h"
 #include "NavigationSystem.h"
+#include "StatLoader.h"
 
 LobbyRef GLobby = make_shared<Lobby>();	//모든 클라를 여기에 접속시켜서 확인한다.
 
@@ -17,6 +18,7 @@ Lobby::Lobby()
 	_walkableGrid = MakeShared<Navigation::WalkableGrid>();
     _navmeshLoader = make_unique<NavmeshLoader>();
     _navRouteLoader = make_unique<LaneRouteLoader>();
+    _statLoader = make_unique<StatLoader>();
 	//cout << "Lobby Construct" << endl;
 }
 
@@ -103,6 +105,14 @@ void Lobby::LobbyInit()
     _navigationSystem->DebugCheckLaneRouteCoverage(*_walkableGrid, _route, *_navigationSystem);
     shared_ptr<Room> room = MakeRoom("TestRoom");
     room->DoAsync(&Room::RoomInit, _route);
+
+    bool okStats = _statLoader->LoadUnitStatsFromJson(
+        "../Data/Stats.json", _unitStats);
+    if (!okStats)
+    {
+        GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] UnitStats load failed\n");
+        return;
+    }
 
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 }
@@ -241,4 +251,12 @@ void Lobby::LobbyUpdate(float deltaTime)
         // 실제 룸 삭제
         //DeletedRoom();
     }
+}
+
+UnitStat Lobby::GetUnitStat(const string& type)
+{
+    auto it = _unitStats.find(type);
+    if (it != _unitStats.end()) return it->second;
+    GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] UnitStat not found\n");
+    return UnitStat{};
 }

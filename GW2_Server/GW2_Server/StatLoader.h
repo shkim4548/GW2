@@ -10,9 +10,15 @@ struct UnitStat
 	float detectionRange = 0.0f;
 };
 
+struct CardStat
+{
+
+};
+
 class StatLoader
 {
 public:
 	bool LoadUnitStatsFromJson(const string& path, unordered_map<string, UnitStat>& OUT outStats);
+	bool LoadCardStatsFromJson(const string& path, unordered_map<string, UnitStat>& OUT outStats);
 };
 

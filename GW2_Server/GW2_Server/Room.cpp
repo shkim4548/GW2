@@ -348,7 +348,6 @@ void Room::UpdateRoom(float deltaTime)
 		// 웨이브 시작 체크 (스폰 중이 아닐 때만)
 		if (!_isSpawningWave)
 		{
-			_minionSpawnAccumulate += deltaTime;
 			if (_minionSpawnAccumulate >= _minionSpawnCoolDown)
 			{
 				_minionSpawnAccumulate -= _minionSpawnCoolDown;
@@ -362,10 +361,21 @@ void Room::UpdateRoom(float deltaTime)
 		if (_isSpawningWave)
 		{
 			_waveSpawnAccumulate += deltaTime;
-			while (_waveSpawnAccumulate >= WAVE_SPAWN_INTERVAL
-				&& _waveSpawnCount < WAVE_MINION_COUNT)
+			while (_waveSpawnAccumulate >= WAVE_SPAWN_INTERVAL 	&& _waveSpawnCount < WAVE_MINION_COUNT)
 			{
 				_waveSpawnAccumulate -= WAVE_SPAWN_INTERVAL;
+				// 최대 미니언 수 초과 시 오래된 것부터 제거
+				while (_minionSpawnOrder.size() + 4 > MAX_MINION_COUNT
+					&& !_minionSpawnOrder.empty())
+				{
+					int32 oldId = _minionSpawnOrder.front();
+					_minionSpawnOrder.pop_front();
+					_objects.erase(oldId);
+
+					Protocol::S_DIE removePkt;
+					removePkt.set_target_id(oldId);
+					Broadcast(ClientPacketHandler::MakeSendBuffer(removePkt));
+				}
 				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_CYBORG);
 				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_CYBORG);
 				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_HUMAN);
@@ -876,16 +886,34 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 	GameMath::Vector3 clampedDest = dest;
 	if (!navSystem->WorldToGrid(grid, clampedDest._x, clampedDest._z, tx, tz))
 	{
+		// 그리드 범위로 클램프 후 재시도
+		float minX = grid.origin._x + grid.cellSize;
+		float maxX = grid.origin._x + (grid.width - 1) * grid.cellSize;
+		float minZ = grid.origin._z + grid.cellSize;
+		float maxZ = grid.origin._z + (grid.height - 1) * grid.cellSize;
+
+		clampedDest._x = max(minX, min(dest._x, maxX));
+		clampedDest._z = max(minZ, min(dest._z, maxZ));
+
+		if (!navSystem->WorldToGrid(grid, clampedDest._x, clampedDest._z, tx, tz))
+		{
+			// 클램프 후에도 실패 → 타겟 포기, 레인으로 복귀
+			minion->ClearChaseTarget();
+			return;
+		}
+		// 클램프된 좌표로 경로 탐색 진행
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleChaseMove] WorldToGrid(dest) fail\n");
-		return;
+		//return;
 	}
 
 	// A* 알고리즘 -> laneId = 0으로 레인 필터를 해제한다 -> Chase는 Lane 경계를 넘을 수 있다.
 	vector<Navigation::GridCell*> gridPath;
+	//bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
 	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
 	if (ok == false || gridPath.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleChaseMove] FindPath failed\n");
+		minion->ClearChaseTarget();  // ← 추가
 		return;
 	}
 
