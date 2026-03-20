@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7270583443632337835}
   - component: {fileID: 3820182779893414488}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mini Map Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 3717776056411654113}
   - component: {fileID: 1893969178774904882}
   - component: {fileID: 7418293568230052467}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBarHealEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 1471135628371726785}
   - component: {fileID: 4829122529344943359}
   - component: {fileID: 7643947620277939639}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 4684541836378773443}
   - component: {fileID: 2206754561746384740}
   - component: {fileID: 5249377389077287498}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBarHitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 4614935526289674870}
   - component: {fileID: 6599437309087335794}
   - component: {fileID: 2915749892315324064}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tower
   m_TagString: OBJECT
   m_Icon: {fileID: 0}
@@ -526,6 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b39ec7bb67d54f4f83952cb1d09ee36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackEffect: {fileID: 3157630080386567311, guid: 1dc27df19dd145047973896b72e74654, type: 3}
   _sendPacketDelay: 0.2
   _isMoving: 0
   _positionSmoothTime: 0.1
@@ -533,7 +534,7 @@ MonoBehaviour:
   _rotationSpeed: 1
   _campType: 0
   _firePoint: {fileID: 1109992534373133435}
-  _projectilePrefab: {fileID: 0}
+  _projectilePrefab: {fileID: 2960363882983770703, guid: 1dc27df19dd145047973896b72e74654, type: 3}
   _deathEffect: {fileID: 0}
 --- !u!1 &7222044309613438612
 GameObject:
@@ -546,7 +547,7 @@ GameObject:
   - component: {fileID: 6710032717672189317}
   - component: {fileID: 5957246908628864374}
   - component: {fileID: 8055942677256800902}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -619,7 +620,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1109992534373133435}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BulletPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +654,7 @@ GameObject:
   - component: {fileID: 4478480185710645323}
   - component: {fileID: 4051214676714411400}
   - component: {fileID: 3038013966084023340}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -754,13 +755,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4314027475032120923}
     m_Modifications:
+    - target: {fileID: 1011640705928306, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1027116103833860, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
       propertyPath: m_Name
       value: EnergyExplosion
       objectReference: {fileID: 0}
     - target: {fileID: 1027116103833860, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1027116103833860, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1346803758279220, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4062948772286286, guid: 6fb67c529e0173c47857b2a860bde40c, type: 3}
       propertyPath: m_RootOrder
@@ -847,6 +860,10 @@ PrefabInstance:
     - target: {fileID: 1973788630167254, guid: 537d80fe3ea3e444bba8f996c41bb85c, type: 3}
       propertyPath: m_Name
       value: SM_Veh_Beacon_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1973788630167254, guid: 537d80fe3ea3e444bba8f996c41bb85c, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4027670958804834, guid: 537d80fe3ea3e444bba8f996c41bb85c, type: 3}
       propertyPath: m_RootOrder

@@ -27,12 +27,18 @@ Minion::~Minion()
 {
 }
 
-void Minion::InitMinion()
+void Minion::InitMinion(shared_ptr<Room> room)
 {
-	weak_ptr<Room> room = GLobby->GetRoomById(_roomId);
-	_room = room.lock();
+	_room = room;
+	//_room = room;
 
 	UnitStat stat = GLobby->GetUnitStat("minion");
+	GConsoleLogger->WriteStdOut(Color::GREEN,
+		L"[InitMinion] hp=%llu atk=%.1f range=%.1f interval=%.1f speed=%.1f detect=%.1f\n",
+		stat.hp, (float)stat.attackDamage,
+		stat.attackRange, stat.attackInterval,
+		stat.moveSpeed, stat.detectionRange);
+
 	_statInfo.set_hp(stat.hp);
 	_statInfo.set_max_hp(stat.maxHp);
 	_attackRange = stat.attackRange;
@@ -573,7 +579,11 @@ void Minion::ClearChaseTarget()
 void Minion::OnDead()
 {
 	// TODO : 플레이어에게 보상 지급
+	// 여기서 nullptr
 	shared_ptr<Room> room = _room.lock();
+	if (room == nullptr)
+		room = GLobby->GetRoomById(_roomId).lock();  // fallback
+
 	if (room == nullptr)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::OnDead] room is nullptr\n");

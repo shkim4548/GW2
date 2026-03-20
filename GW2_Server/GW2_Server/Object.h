@@ -64,12 +64,8 @@ public:
 	bool ApplyDamage(uint64 dmg);
 	uint64_t GetHp()    const { return _statInfo.hp(); }
 	uint64_t GetMaxHp() const { return _statInfo.max_hp(); }
-	void SetHp(uint64_t hp) {
-		_statInfo.set_hp(hp);
-	}
-	void SetMaxHp(uint64_t hp) {
-		_statInfo.set_max_hp(hp);
-	}
+	void SetHp(uint64_t hp) { _statInfo.set_hp(hp); }
+	void SetMaxHp(uint64_t hp) { _statInfo.set_max_hp(hp); }
 
 	// Debug
 	int32 GetRoomId() { return _roomId; }
@@ -105,5 +101,6 @@ private:
 	// === 이동상태 이상 탐지 === 
 	GameMath::Vector3 _lastCheckPos;
 	bool _hasLastCheckPos = false;
+	bool _isDead = false;
 };
 

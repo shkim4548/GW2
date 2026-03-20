@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Room.h"
 #include "Turret.h"
+#include "StatLoader.h"
+#include "Lobby.h"
 
 Turret::Turret()
 {
@@ -12,6 +14,27 @@ Turret::Turret()
 
 Turret::~Turret()
 {
+}
+
+void Turret::InitTurret(shared_ptr<Room> room, Protocol::CampType team)
+{
+	_room = room;
+	if (_room.lock() == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"Turret Room is nullptr\n");
+	}
+	_teamId = static_cast<uint8>(team);
+	_campType = team;
+
+	UnitStat stat = GLobby->GetUnitStat("turret");
+	if (stat.hp > 0)
+	{
+		_statInfo.set_hp(stat.hp);
+		_statInfo.set_max_hp(stat.maxHp);
+		_statInfo.set_attack(stat.attackDamage);
+		_attackInterval = stat.attackInterval;
+		_attackRangeSq = stat.attackRange * stat.attackRange;
+	}
 }
 
 void Turret::UpdateController(float deltaTime)
@@ -79,10 +102,17 @@ bool Turret::IsValidTarget(shared_ptr<Object> target) const
 	{
 		return false;
 	}
+
+	// ÆÀ Ã¼Å©: °°Àº ÆÀÀÌ¸é ¹«È¿ Å¸°Ù
+	if (target->GetTeamFlag() == _campType)
+	{
+		return false;
+	}
+
 	const GameMath::Vector3& tThisPos = GetPosVector();
 	const GameMath::Vector3& tTargetPos = target->GetPosVector();
 	float distSq = GetDistanceSq(tThisPos, tTargetPos);
-	return distSq <= ATTACK_RANGE_SQ;
+	return distSq <= _attackRangeSq;
 }
 
 void Turret::FireCall(shared_ptr<Object> target)
@@ -129,6 +159,11 @@ weak_ptr<Object> Turret::AcquireTarget()
 		}
 
 		if (IsValidTarget(obj) == false)
+		{
+			continue;
+		}
+
+		if (obj->GetTeamFlag() == _campType)
 		{
 			continue;
 		}

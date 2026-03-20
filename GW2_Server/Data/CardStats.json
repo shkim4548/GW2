@@ -1,10 +1,32 @@
 {
-  "cards":
-  [
+  "cards": [
     {
-      "id" : 1,
-      "name" : "Card_AmuletOfSteel",
-      "damage" : 100
+      "skill_id": "police_first",
+      "skill_type": 2,
+      "damage": 80,
+      "damage_coeff": 0.5,
+      "range": 8.0,
+      "aoe_radius": 0.0,
+      "cooldown": 5.0,
+      "cast_time": 0.3,
+      "duration": 0.0,
+      "projectile_speed": 20.0,
+      "slow_amount": 0.0,
+      "knockback_force": 0.0
+    },
+    {
+      "skill_id": "monk_second",
+      "skill_type": 3,
+      "damage": 40,
+      "damage_coeff": 0.3,
+      "range": 4.0,
+      "aoe_radius": 3.0,
+      "cooldown": 8.0,
+      "cast_time": 0.5,
+      "duration": 3.0,
+      "projectile_speed": 0.0,
+      "slow_amount": 0.3,
+      "knockback_force": 0.0
     }
   ]
 }

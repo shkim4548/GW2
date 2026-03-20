@@ -13,6 +13,7 @@ public class PlayerController : CreatureController
     public override void Init()
     {
         base.Init();
+
     }
 
     public override void UpdateIdle()

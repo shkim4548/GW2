@@ -272,16 +272,19 @@ public class MyPlayerController : PlayerController
 
     private void TryAttackTarget()
     {
-        if (_target == null) 
-            return;
+        if (_target == null) return;
         BaseController targetBc = _target.GetComponent<BaseController>();
-        if (targetBc == null) 
-            return;
+        if (targetBc == null) return;
 
+        // 1. 이펙트 즉시 재생 (서버 응답 기다리지 않음)
+        Vector3 targetPos = _target.transform.position;
+        PlayAttackEffect(targetPos);
+
+        // 2. 서버로 패킷 전송
         SendAttackPacket(targetBc.Id);
         _target = null;
-        Debug.Log("TryAttackTarget Test Log");
     }
+
 
     private void SendAttackPacket(int targetId)
     {

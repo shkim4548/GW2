@@ -20,5 +20,8 @@ public class UI_StatusBox : UI_Base
     public override void Init()
     {
         _statInfo = new Google.Protobuf.Struct.StatInfo();
+
     }
+
+
 }

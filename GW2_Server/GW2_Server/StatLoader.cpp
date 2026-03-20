@@ -47,7 +47,6 @@ bool StatLoader::LoadUnitStatsFromJson(const string& path, unordered_map<string,
         outStats[type] = stat;
         for (unordered_map<string, UnitStat>::iterator iter = outStats.begin(); iter != outStats.end(); ++iter)
         {
-            cout << iter->first << ' ' << iter->second.maxHp << endl;
             cout << iter->first << ' ' << iter->second.hp << endl;
             cout << iter->first << ' ' << iter->second.moveSpeed << endl;
             cout << iter->first << ' ' << iter->second.detectionRange << endl;

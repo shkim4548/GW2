@@ -22,6 +22,8 @@ enum : uint16
 	PKT_C_ENTER_LOBBY = 1013,
 	PKT_S_ENTER_LOBBY = 1014,
 	PKT_S_DIE = 1015,
+	PKT_S_HP_CHANGE = 1016,
+	PKT_S_END_GAME = 1017,
 };
 
 // Custom Handlers
@@ -64,6 +66,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_SKILL& pkt) { return MakeSendBuffer(pkt, PKT_S_SKILL); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_LOBBY& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_LOBBY); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_DIE& pkt) { return MakeSendBuffer(pkt, PKT_S_DIE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_HP_CHANGE& pkt) { return MakeSendBuffer(pkt, PKT_S_HP_CHANGE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_END_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_END_GAME); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

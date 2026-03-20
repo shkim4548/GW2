@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
+    // === Attack Particle ===
+    [SerializeField] private ParticleSystem _attackEffect;
+
+    // === Service Dependency Injection ===
     protected IInputService _inputService;
     protected INetworkService _networkService;
 
@@ -96,6 +100,7 @@ public class BaseController : MonoBehaviour
         //_animator.SetLayerWeight(_baseLayer, 1f);
         //_animator.SetLayerWeight(_lowerLayer, 1f);
         _hpBar = GetComponentInChildren<WUI_HpBar>();
+        Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);
     }
@@ -154,5 +159,44 @@ public class BaseController : MonoBehaviour
 
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);
+    }
+
+    private IEnumerator MoveEffectToTarget(Vector3 targetPos)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = Vector3.one * 0.3f;
+        Destroy(sphere.GetComponent<Collider>());
+
+        Vector3 startPos = transform.position + Vector3.up;
+        sphere.transform.position = startPos;
+        targetPos += Vector3.up;
+
+        float duration = 0.25f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (sphere == null) yield break;
+            elapsed += Time.deltaTime;
+            sphere.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / duration);
+            yield return null;
+        }
+
+        if (sphere != null) Destroy(sphere);
+    }
+
+    // 내가 공격
+    public void PlayAttackEffect(Vector3 targetPos)
+    {
+        StartCoroutine(MoveEffectToTarget(targetPos));
+    }
+
+    // 상대가 공격
+    public void PlayAttackEffect(GameObject target)
+    {
+        if (target == null)
+            return;
+
+        PlayAttackEffect(target.transform.position);
     }
 }

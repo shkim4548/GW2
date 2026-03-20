@@ -126,14 +126,12 @@ public class PacketHandler
         S_SKILL skillPkt = message as S_SKILL;
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
-        GameObject target = objectService.FindById((int)skillPkt.TargetId);
         GameObject attacker = objectService.FindById((int)skillPkt.AttackerId);
+        GameObject target = objectService.FindById((int)skillPkt.TargetId);
 
-        if(attacker == null)
-        {
-            return;
-        }
+        if (attacker == null) return;
 
+        // 터렛 공격
         TurretController tc = attacker.GetComponent<TurretController>();
         if (tc != null)
         {
@@ -141,23 +139,22 @@ public class PacketHandler
             return;
         }
 
-        if (attacker != null)
-        {
-            BaseController attackerBc = attacker.GetComponent<BaseController>();
-            if (attackerBc != null)
-                attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
-        }
+        // attacker State 변경 (애니메이션용)
+        BaseController attackerBc = attacker.GetComponent<BaseController>();
+        if (attackerBc == null) return;
 
-        if (target != null)
-        {
-            BaseController targetBc = target.GetComponent<BaseController>();
-            if (targetBc != null)
-            {
-                //HP 갱신(proto에 remaining_hp 추가 시)
-                targetBc.SetHp(skillPkt.CurrentHp, skillPkt.MaxHp);
-            }
-        }
+        attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
+
+        // 내 플레이어가 공격한 경우 → 이펙트 이미 재생했으므로 스킵
+        if (objectService.MyPlayer != null &&
+            objectService.MyPlayer.Id == (int)skillPkt.AttackerId)
+            return;
+
+        // 상대 플레이어/미니언이 공격한 경우 → 이펙트 재생
+        // target이 이미 삭제됐을 수 있으므로 null 허용
+        attackerBc.PlayAttackEffect(target);
     }
+
 
     public static void S_SPAWNHandler(PacketSession session, IMessage message)
     {
@@ -308,14 +305,39 @@ public class PacketHandler
         S_DIE diePkt = message as S_DIE;
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
-        GameObject go = objectService.FindById(diePkt.TargetId);
-        if (go == null) return;
+        // 내 플레이어가 죽은 경우 — 제거하지 않고 사망 상태만 처리
+        if (objectService.MyPlayer != null && objectService.MyPlayer.Id == diePkt.TargetId)
+        {
+            objectService.MyPlayer.State = Google.Protobuf.Enum.MoveState.Die;
+            Debug.Log("S_DIE MyPlayer");
+            // TODO: 리스폰 처리
+            return;
+        }
 
-        // 오브젝트 제거 또는 사망 애니메이션 처리
+        GameObject go = objectService.FindById(diePkt.TargetId);
+        if (go == null) 
+            return;
+
         objectService.Remove(diePkt.TargetId);
     }
 
     internal static void S_START_GAMEHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_HP_CHANGEHandler(PacketSession session, IMessage message)
+    {
+        S_HP_CHANGE pkt = message as S_HP_CHANGE;
+        Debug.Log($"[S_HP_CHANGE] targetId={pkt.TargetId} hp={pkt.CurrentHp}/{pkt.MaxHp}");
+
+        GameObject go = Bootstrapper.Instance.ObjectService.FindById(pkt.TargetId);
+        if (go == null) 
+            return;
+        go.GetComponent<BaseController>()?.SetHp(pkt.CurrentHp, pkt.MaxHp);
+    }
+
+    internal static void S_END_GAMEHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();
     }

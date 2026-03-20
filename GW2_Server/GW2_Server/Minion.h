@@ -11,7 +11,7 @@ class Minion : public Object
 public:
 	Minion();
 	virtual ~Minion();
-	void InitMinion();
+	void InitMinion(shared_ptr<Room> room);
 	void SetMinionId(int32 id) { _objectId = id; }
 	int32 GetMinionId() { return _objectId; }
 	uint8 GetLaneId() { return _laneId; }

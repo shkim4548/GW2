@@ -147,45 +147,39 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 
 bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 {
-	if (attacker == nullptr)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] attacker is nullptr\n");
-		return false;
-	}
+	if (attacker == nullptr) return false;
 
 	auto targetIter = _objects.find(skillPkt.target_id());
-	if (targetIter == _objects.end())
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] target not found\n");
-		return false;
-	}
+	if (targetIter == _objects.end()) return false;
 
 	shared_ptr<Object> target = targetIter->second;
 
-	// 팀체크
+	// 1. 팀 체크
 	if (attacker->GetTeamFlag() == target->GetTeamFlag())
-	{
 		return false;
-	}
 
-	// 거리 체크
-	// TODO : 하드코딩, 3.0f
-	const float attackRange = 3.0f;
+	// 2. 이미 죽은 대상 체크
+	if (target->IsDead())
+		return false;
+
+	// 3. 거리 체크
+	const float attackRange = 15.0f;
 	GameMath::Vector3 attackerPos = attacker->GetPosVector();
 	GameMath::Vector3 targetPos = target->GetPosVector();
 	float dist = GameMath::Vector3::GetDistTanceXZ(attackerPos, targetPos);
 	if (dist > attackRange)
 	{
-		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleSkill] out of range dist=%.2f\n", dist);
+		GConsoleLogger->WriteStdErr(Color::YELLOW,
+			L"[Room::HandleSkill] out of range dist=%.2f\n", dist);
 		return false;
 	}
 
-	// SkillType 분기
 	switch (skillPkt.skill_id())
 	{
 	case Protocol::SkillType::SKILL_ID_ATTACK:
 	{
-		const uint64_t damage = 10; // 임시 고정값
+		// 4. 데미지 적용
+		const uint64_t damage = 10;
 		bool died = target->ApplyDamage(damage);
 
 		GConsoleLogger->WriteStdOut(Color::GREEN,
@@ -193,24 +187,32 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			attacker->GetObjectId(), target->GetObjectId(),
 			damage, target->GetHp(), died ? 1 : 0);
 
-		// TODO: died == true 시 사망 처리
-
-		// S_SKILL 브로드캐스트
+		// 5. S_SKILL 브로드캐스트 (이펙트용)
 		Protocol::S_SKILL resPkt;
 		resPkt.set_skill_id(skillPkt.skill_id());
 		resPkt.set_attacker_id(attacker->GetObjectId());
 		resPkt.set_target_id(skillPkt.target_id());
+		Broadcast(ClientPacketHandler::MakeSendBuffer(resPkt));
 
-		SendBufferRef buf = ClientPacketHandler::MakeSendBuffer(resPkt);
-		Broadcast(buf);
+		// 6. S_HP_CHANGE 브로드캐스트 (데미지 적용 후)
+		Protocol::S_HP_CHANGE hpPkt;
+		hpPkt.set_target_id(skillPkt.target_id());
+		hpPkt.set_current_hp(target->GetHp());
+		hpPkt.set_max_hp(target->GetMaxHp());
+		Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
+		// 7. 사망 처리
+		if (died)
+			HandleRemoveObject(target->GetObjectId());
+
 		break;
 	}
 	default:
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleSkill] unknown skill_id\n");
 		break;
 	}
 	return true;
 }
+
 
 void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 {
@@ -284,7 +286,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterMinion\n");
 	objectInfo->set_object_type(Protocol::OBJECT_TYPE_MINION);
 	objectInfo->set_object_id(objectId);
-	objectInfo->set_team_flag(Protocol::CampType::CAMP_CYBORG);
+	objectInfo->set_team_flag(minion->GetTeamFlag());
 	posInfo->set_x(minion->GetPosInfo().x());
 	posInfo->set_y(minion->GetPosInfo().y());
 	posInfo->set_z(minion->GetPosInfo().z());
@@ -376,10 +378,10 @@ void Room::UpdateRoom(float deltaTime)
 					removePkt.set_target_id(oldId);
 					Broadcast(ClientPacketHandler::MakeSendBuffer(removePkt));
 				}
-				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_CYBORG);
-				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_CYBORG);
 				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_HUMAN);
 				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_HUMAN);
+				SpawnMinion(MINION_LANE_TOP, Protocol::CAMP_CYBORG);
+				SpawnMinion(MINION_LANE_BOT, Protocol::CAMP_CYBORG);
 				_waveSpawnCount++;
 			}
 
@@ -436,7 +438,7 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 
 	// [CHANGED] 우측 진영은 waypoints 역방향 사용
 	shared_ptr<Navigation::LaneRoute> route;
-	if (team == Protocol::CAMP_HUMAN)
+	if (team == Protocol::CAMP_CYBORG)
 	{
 		route = make_shared<Navigation::LaneRoute>();
 		route->laneId = baseRoute->laneId;
@@ -479,7 +481,9 @@ shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 	minion->SetPosInfo(posInfo);
 	minion->SetRoomId(this->GetRoomId());
 	minion->SetMinionTeam(team);
-	minion->InitMinion();
+
+	shared_ptr<Room> room = static_pointer_cast<Room>(shared_from_this());
+	minion->InitMinion(room);
 
 	//GConsoleLogger->WriteStdOut(Color::GREEN, L"SpawnMinion\n");
 	// Room에 등록한다
@@ -511,6 +515,8 @@ shared_ptr<Turret> Room::SpawnTurret(GameMath::Vector3 pos, Protocol::CampType t
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
 	_objects.emplace(objectId, turret);
+	shared_ptr<Room> roomSelf = static_pointer_cast<Room>(shared_from_this());
+	turret->InitTurret(roomSelf, team);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -851,7 +857,8 @@ void Room::HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> ta
 	// 사망 처리
 	if (died)
 	{
-		target->OnDead();  // → Minion::OnDead() or Player::OnDead()
+		HandleRemoveObject(target->GetObjectId());
+
 	}
 }
 
@@ -909,7 +916,7 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 	// A* 알고리즘 -> laneId = 0으로 레인 필터를 해제한다 -> Chase는 Lane 경계를 넘을 수 있다.
 	vector<Navigation::GridCell*> gridPath;
 	//bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
-	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, laneId);
+	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, 0);
 	if (ok == false || gridPath.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleChaseMove] FindPath failed\n");
@@ -958,18 +965,18 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 
 void Room::HandleRemoveObject(int32 id)
 {
-	ObjectRef target = _objects.find(id)->second;
-	if (target == nullptr)
+	auto it = _objects.find(id);
+	if (it == _objects.end())
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleRemoveObject] remove target is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleRemoveObject] id not found: %d\n", id);
 		return;
 	}
 
 	Protocol::S_DIE diePkt;
 	diePkt.set_target_id(id);
-	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(diePkt);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(diePkt));  // ← Broadcast 누락도 수정
 
-	_objects.erase(id);
+	_objects.erase(it);
 }
 
 void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
@@ -981,6 +988,17 @@ void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(skillPkt);
 	Broadcast(sendBuffer);
+
+	// S_HP_CHANGE 브로드캐스트 (HP바 갱신용)
+	auto it = _objects.find(targetId);
+	if (it == _objects.end()) return;
+
+	shared_ptr<Object> target = it->second;
+	Protocol::S_HP_CHANGE hpPkt;
+	hpPkt.set_target_id(targetId);
+	hpPkt.set_current_hp(target->GetHp());
+	hpPkt.set_max_hp(target->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 }
 
 void Room::BroadcastMoving(const ObjectRef& obj)

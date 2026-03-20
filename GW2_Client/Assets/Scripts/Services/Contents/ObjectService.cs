@@ -74,6 +74,7 @@ public class ObjectService : IObjectService
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.transform.position = initPos;
                 pc.Id = objectId;
+                pc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
                 // TODO : Adding RoomId
                 _objects.Add(objectId, go);
             }
@@ -90,6 +91,7 @@ public class ObjectService : IObjectService
             MinionController mc = go.GetComponent<MinionController>();
             mc.transform.position = initPos;
             mc.Id = objectId;
+            mc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             // TODO : Adding RoomId
             _objects.Add(objectId, go);
         }
@@ -107,6 +109,7 @@ public class ObjectService : IObjectService
             TurretController tc = go.GetComponent<TurretController>();
             tc.transform.position = initPos;
             tc.Id = objectId;
+            tc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             _objects.Add(objectId, go);
         }
         else

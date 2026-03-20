@@ -7,6 +7,7 @@ public:
 	void Init();
 	Turret();
 	virtual ~Turret();
+	void InitTurret(shared_ptr<Room> room, Protocol::CampType team);
 
 	// Getters
 	uint8 GetTeamId() const { return _teamId; }
@@ -36,7 +37,8 @@ private:
 	float _attackInterval = 1.2f;
 	float _attackCoolDown = 0.1f;
 	static constexpr float AGGRO_DURATION = 6.0f;   // 어그로 유지 시간(초)
-	static constexpr float ATTACK_RANGE_SQ = 64.0f;  // 8.0f * 8.0f
+	//static constexpr float ATTACK_RANGE_SQ = 64.0f;  // 8.0f * 8.0f
+	float _attackRangeSq = 64.0f;
 
 	uint8 _teamId = 0;
 };

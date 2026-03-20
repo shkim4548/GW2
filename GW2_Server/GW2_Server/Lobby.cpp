@@ -103,16 +103,16 @@ void Lobby::LobbyInit()
         return;
     }
     _navigationSystem->DebugCheckLaneRouteCoverage(*_walkableGrid, _route, *_navigationSystem);
-    shared_ptr<Room> room = MakeRoom("TestRoom");
-    room->DoAsync(&Room::RoomInit, _route);
 
-    bool okStats = _statLoader->LoadUnitStatsFromJson(
-        "../Data/Stats.json", _unitStats);
+    bool okStats = _statLoader->LoadUnitStatsFromJson("../Data/Stats.json", _unitStats);
     if (!okStats)
     {
         GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] UnitStats load failed\n");
         return;
     }
+    shared_ptr<Room> room = MakeRoom("TestRoom");
+    room->DoAsync(&Room::RoomInit, _route);
+
 
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 }
@@ -145,7 +145,10 @@ unordered_map<int32, RoomRef> Lobby::GetRoomList()
 
 weak_ptr<Room> Lobby::GetRoomById(int32 roomId)
 {
-	return _rooms[roomId];
+    auto it = _rooms.find(roomId);
+    if (it == _rooms.end())
+        return weak_ptr<Room>();
+    return it->second;
 }
 
 RoomRef Lobby::MakeRoom(string roomName)
