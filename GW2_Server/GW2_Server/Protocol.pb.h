@@ -49,7 +49,7 @@ struct TableStruct_Protocol_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[18]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[19]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -105,6 +105,9 @@ extern S_MOVEDefaultTypeInternal _S_MOVE_default_instance_;
 class S_MOVE_END;
 struct S_MOVE_ENDDefaultTypeInternal;
 extern S_MOVE_ENDDefaultTypeInternal _S_MOVE_END_default_instance_;
+class S_RESPAWN;
+struct S_RESPAWNDefaultTypeInternal;
+extern S_RESPAWNDefaultTypeInternal _S_RESPAWN_default_instance_;
 class S_SKILL;
 struct S_SKILLDefaultTypeInternal;
 extern S_SKILLDefaultTypeInternal _S_SKILL_default_instance_;
@@ -129,6 +132,7 @@ template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(A
 template<> ::Protocol::S_MINION_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MINION_MOVE>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
 template<> ::Protocol::S_MOVE_END* Arena::CreateMaybeMessage<::Protocol::S_MOVE_END>(Arena*);
+template<> ::Protocol::S_RESPAWN* Arena::CreateMaybeMessage<::Protocol::S_RESPAWN>(Arena*);
 template<> ::Protocol::S_SKILL* Arena::CreateMaybeMessage<::Protocol::S_SKILL>(Arena*);
 template<> ::Protocol::S_START_GAME* Arena::CreateMaybeMessage<::Protocol::S_START_GAME>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -3107,6 +3111,207 @@ class S_END_GAME final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class S_RESPAWN final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_RESPAWN) */ {
+ public:
+  inline S_RESPAWN() : S_RESPAWN(nullptr) {}
+  ~S_RESPAWN() override;
+  explicit constexpr S_RESPAWN(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_RESPAWN(const S_RESPAWN& from);
+  S_RESPAWN(S_RESPAWN&& from) noexcept
+    : S_RESPAWN() {
+    *this = ::std::move(from);
+  }
+
+  inline S_RESPAWN& operator=(const S_RESPAWN& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_RESPAWN& operator=(S_RESPAWN&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_RESPAWN& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_RESPAWN* internal_default_instance() {
+    return reinterpret_cast<const S_RESPAWN*>(
+               &_S_RESPAWN_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(S_RESPAWN& a, S_RESPAWN& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_RESPAWN* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_RESPAWN* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_RESPAWN* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_RESPAWN>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_RESPAWN& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const S_RESPAWN& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_RESPAWN* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_RESPAWN";
+  }
+  protected:
+  explicit S_RESPAWN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPlayerIdFieldNumber = 1,
+    kXFieldNumber = 2,
+    kYFieldNumber = 3,
+    kZFieldNumber = 4,
+    kCurrentHpFieldNumber = 5,
+    kMaxHpFieldNumber = 6,
+  };
+  // int32 player_id = 1;
+  void clear_player_id();
+  int32_t player_id() const;
+  void set_player_id(int32_t value);
+  private:
+  int32_t _internal_player_id() const;
+  void _internal_set_player_id(int32_t value);
+  public:
+
+  // float x = 2;
+  void clear_x();
+  float x() const;
+  void set_x(float value);
+  private:
+  float _internal_x() const;
+  void _internal_set_x(float value);
+  public:
+
+  // float y = 3;
+  void clear_y();
+  float y() const;
+  void set_y(float value);
+  private:
+  float _internal_y() const;
+  void _internal_set_y(float value);
+  public:
+
+  // float z = 4;
+  void clear_z();
+  float z() const;
+  void set_z(float value);
+  private:
+  float _internal_z() const;
+  void _internal_set_z(float value);
+  public:
+
+  // int64 current_hp = 5;
+  void clear_current_hp();
+  int64_t current_hp() const;
+  void set_current_hp(int64_t value);
+  private:
+  int64_t _internal_current_hp() const;
+  void _internal_set_current_hp(int64_t value);
+  public:
+
+  // int64 max_hp = 6;
+  void clear_max_hp();
+  int64_t max_hp() const;
+  void set_max_hp(int64_t value);
+  private:
+  int64_t _internal_max_hp() const;
+  void _internal_set_max_hp(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_RESPAWN)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int32_t player_id_;
+  float x_;
+  float y_;
+  float z_;
+  int64_t current_hp_;
+  int64_t max_hp_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -4587,9 +4792,135 @@ inline void S_HP_CHANGE::set_max_hp(int64_t value) {
 
 // S_END_GAME
 
+// -------------------------------------------------------------------
+
+// S_RESPAWN
+
+// int32 player_id = 1;
+inline void S_RESPAWN::clear_player_id() {
+  player_id_ = 0;
+}
+inline int32_t S_RESPAWN::_internal_player_id() const {
+  return player_id_;
+}
+inline int32_t S_RESPAWN::player_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.player_id)
+  return _internal_player_id();
+}
+inline void S_RESPAWN::_internal_set_player_id(int32_t value) {
+  
+  player_id_ = value;
+}
+inline void S_RESPAWN::set_player_id(int32_t value) {
+  _internal_set_player_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.player_id)
+}
+
+// float x = 2;
+inline void S_RESPAWN::clear_x() {
+  x_ = 0;
+}
+inline float S_RESPAWN::_internal_x() const {
+  return x_;
+}
+inline float S_RESPAWN::x() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.x)
+  return _internal_x();
+}
+inline void S_RESPAWN::_internal_set_x(float value) {
+  
+  x_ = value;
+}
+inline void S_RESPAWN::set_x(float value) {
+  _internal_set_x(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.x)
+}
+
+// float y = 3;
+inline void S_RESPAWN::clear_y() {
+  y_ = 0;
+}
+inline float S_RESPAWN::_internal_y() const {
+  return y_;
+}
+inline float S_RESPAWN::y() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.y)
+  return _internal_y();
+}
+inline void S_RESPAWN::_internal_set_y(float value) {
+  
+  y_ = value;
+}
+inline void S_RESPAWN::set_y(float value) {
+  _internal_set_y(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.y)
+}
+
+// float z = 4;
+inline void S_RESPAWN::clear_z() {
+  z_ = 0;
+}
+inline float S_RESPAWN::_internal_z() const {
+  return z_;
+}
+inline float S_RESPAWN::z() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.z)
+  return _internal_z();
+}
+inline void S_RESPAWN::_internal_set_z(float value) {
+  
+  z_ = value;
+}
+inline void S_RESPAWN::set_z(float value) {
+  _internal_set_z(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.z)
+}
+
+// int64 current_hp = 5;
+inline void S_RESPAWN::clear_current_hp() {
+  current_hp_ = int64_t{0};
+}
+inline int64_t S_RESPAWN::_internal_current_hp() const {
+  return current_hp_;
+}
+inline int64_t S_RESPAWN::current_hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.current_hp)
+  return _internal_current_hp();
+}
+inline void S_RESPAWN::_internal_set_current_hp(int64_t value) {
+  
+  current_hp_ = value;
+}
+inline void S_RESPAWN::set_current_hp(int64_t value) {
+  _internal_set_current_hp(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.current_hp)
+}
+
+// int64 max_hp = 6;
+inline void S_RESPAWN::clear_max_hp() {
+  max_hp_ = int64_t{0};
+}
+inline int64_t S_RESPAWN::_internal_max_hp() const {
+  return max_hp_;
+}
+inline int64_t S_RESPAWN::max_hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_RESPAWN.max_hp)
+  return _internal_max_hp();
+}
+inline void S_RESPAWN::_internal_set_max_hp(int64_t value) {
+  
+  max_hp_ = value;
+}
+inline void S_RESPAWN::set_max_hp(int64_t value) {
+  _internal_set_max_hp(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_RESPAWN.max_hp)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

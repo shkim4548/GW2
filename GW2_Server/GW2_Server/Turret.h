@@ -42,4 +42,3 @@ private:
 
 	uint8 _teamId = 0;
 };
-

@@ -7,7 +7,7 @@ public:
 	Player();
 	virtual ~Player();
 
-	void InitPlayer();
+	void InitPlayer(shared_ptr<Room> room);
 
 	void SetPlayerId(int32 id) { _objectId = id; }
 	void SetSession(GameSessionRef session) { _session = session; }

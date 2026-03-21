@@ -1,6 +1,7 @@
 using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Struct;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,8 @@ public class MyPlayerController : PlayerController
     private bool _needsCorrection = false;
 
     public int RoomId { get; set; }
+
+    public Action<float, float> OnHpChanged;
 
     public override void Init()
     {
@@ -144,8 +147,20 @@ public class MyPlayerController : PlayerController
         base.UpdateSkill();
     }
 
+    public override void UpdateDead()
+    {
+        base.UpdateDead();
+        _chaseToAttack = false;
+        _target = null;
+        StopMovement();
+    }
+
     public void OnMouseEvent(Define.MouseEvent evt)
     {
+        if (State == MoveState.Die) 
+            return;
+
+
         if (evt != Define.MouseEvent.Click)
             return;
 
@@ -331,5 +346,11 @@ public class MyPlayerController : PlayerController
 
         _networkService.Send(movePacket);
         Debug.Log($"movePkt destPos, startPos: {nowPosition}, {this.transform.position}");
+    }
+
+    public override void SetHp(float current, float max)
+    {
+        base.SetHp(current, max);
+        OnHpChanged?.Invoke(current, max);
     }
 }

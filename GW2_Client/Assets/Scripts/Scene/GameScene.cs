@@ -8,6 +8,8 @@ public class GameScene : BaseScene
     [Inject]
     IResourceService _resourceService;
 
+    private UI_StatusBar _statusBar;
+
     protected override void Init()
     {
         base.Init();
@@ -29,5 +31,11 @@ public class GameScene : BaseScene
     public override void Clear()
     {
 
+    }
+
+    public void UpdateHpBar(float current, float max)
+    {
+        if (_statusBar != null)
+            _statusBar.SetHp(current, max);
     }
 }

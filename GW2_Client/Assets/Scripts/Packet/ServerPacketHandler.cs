@@ -26,6 +26,7 @@ public enum PacketId : ushort
         PKT_S_DIE = 1015,
         PKT_S_HP_CHANGE = 1016,
         PKT_S_END_GAME = 1017,
+        PKT_S_RESPAWN = 1018,
 }
 
 public class PacketManager
@@ -71,6 +72,8 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_HP_CHANGE, PacketHandler.S_HP_CHANGEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_END_GAME, MakePacket<S_END_GAME>);
         _handler.Add((ushort)PacketId.PKT_S_END_GAME, PacketHandler.S_END_GAMEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_RESPAWN, MakePacket<S_RESPAWN>);
+        _handler.Add((ushort)PacketId.PKT_S_RESPAWN, PacketHandler.S_RESPAWNHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

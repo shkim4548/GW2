@@ -10,6 +10,12 @@ Object::~Object()
 {
 }
 
+void Object::FullHeal()
+{
+	_statInfo.set_hp(_statInfo.max_hp());
+	_isDead = false;
+}
+
 bool Object::IsDead()
 {
 	return _isDead;

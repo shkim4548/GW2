@@ -12,7 +12,7 @@
     },
     {
       "type": "player",
-      "hp": 1000000000000,
+      "hp": 1000,
       "max_hp": 1000000000000,
       "attack_damage": 30,
       "attack_range": 3.0,

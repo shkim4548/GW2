@@ -1,18 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class UI_Pickup : MonoBehaviour
+public class UI_Pickup : UI_Scene
 {
-    // Start is called before the first frame update
-    void Start()
+    enum Characters
     {
-        
+        Police,
+        Monk,
+        FireFighter,
+        LightSabre,
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Init()
     {
-        
+        base.Init();
+    }
+
+    public void HandlePoliceSelect(PointerEventData data)
+    {
+
+    }
+
+    public void HandleMonkSelect(PointerEventData data)
+    {
+
+    }
+
+    public void HandleFireFighter(PointerEventData data)
+    {
+
+    }
+
+    public void HandleLightSabre(PointerEventData data)
+    {
+
     }
 }

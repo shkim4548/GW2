@@ -55,6 +55,7 @@ public class BaseController : MonoBehaviour
     }
 
     protected WUI_HpBar _hpBar;
+    protected UI_StatusBar _statusBar;
 
     protected float _hp = 100.0f;
     protected float _maxHp = 100.0f;
@@ -152,7 +153,7 @@ public class BaseController : MonoBehaviour
         return (int)(Time.realtimeSinceStartup * 1000);
     }
 
-    public void SetHp(float current, float max)
+    public virtual void SetHp(float current, float max)
     {
         _hp = current;
         _maxHp = max;
@@ -198,5 +199,10 @@ public class BaseController : MonoBehaviour
             return;
 
         PlayAttackEffect(target.transform.position);
+    }
+
+    public virtual void UpdateHp(long current, long max)
+    {
+
     }
 }

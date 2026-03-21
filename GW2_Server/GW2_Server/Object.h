@@ -20,6 +20,8 @@ public:
 	Protocol::ObjectType GetObjectType() const { return _objectType; }
 	Protocol::CampType GetTeamFlag() const { return _campType; }
 	float GetHp() { return _statInfo.hp(); }
+	bool GetIsDead() { return _isDead; }
+	void FullHeal();
 	// TODO : 사망 여부 체크 로직 필요
 	bool IsDead();
 
@@ -29,6 +31,7 @@ public:
 	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
+	void SetIsDead(bool isDead) { _isDead = isDead; }
 
 	// Navigation
 	void SetPath(const NavPath& path);

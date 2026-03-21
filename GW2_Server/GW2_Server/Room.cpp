@@ -57,7 +57,9 @@ bool Room::Enter(PlayerRef gameObject)
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
 	_players.emplace(objectId, gameObject);
-	
+	shared_ptr<Room> roomSelf = static_pointer_cast<Room>(shared_from_this());
+	gameObject->InitPlayer(roomSelf);
+
 	// TODO : 나중에 시작 플래그 패킷으로 받는걸로 바꿔야함
 	_isRunning = true;
 	GameMath::Vector3 spawnPos(72.5f, 0.0f, 0.0f);
@@ -423,6 +425,18 @@ void Room::UpdateRoom(float deltaTime)
 			BroadcastMovingEnd(obj);
 
 		obj->PostUpdate();
+	}
+
+	// UpdateRoom 내부
+	for (auto it = _respawnTimers.begin(); it != _respawnTimers.end(); )
+	{
+		it->second -= deltaTime;
+		if (it->second <= 0.0f)
+		{
+			HandleRespawnPlayer(it->first);
+			it = _respawnTimers.erase(it);
+		}
+		else ++it;
 	}
 }
 
@@ -854,11 +868,17 @@ void Room::HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> ta
 	skillPkt.set_target_id(target->GetObjectId());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
 
+	// S_HP_CHANGE 브로드캐스트 추가
+	Protocol::S_HP_CHANGE hpPkt;
+	hpPkt.set_target_id(target->GetObjectId());
+	hpPkt.set_current_hp(target->GetHp());
+	hpPkt.set_max_hp(target->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
 	// 사망 처리
 	if (died)
 	{
 		HandleRemoveObject(target->GetObjectId());
-
 	}
 }
 
@@ -972,9 +992,19 @@ void Room::HandleRemoveObject(int32 id)
 		return;
 	}
 
+	shared_ptr<Object> obj = it->second;
+
 	Protocol::S_DIE diePkt;
 	diePkt.set_target_id(id);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(diePkt));  // ← Broadcast 누락도 수정
+
+	// 플레이어 → 리스폰 타이머 (제거 안 함)
+	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_PLAYER)
+	{
+		obj->SetIsDead(true);
+		_respawnTimers[id] = 5.0f; // 5초
+		return;
+	}
 
 	_objects.erase(it);
 }
@@ -999,6 +1029,31 @@ void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
 	hpPkt.set_current_hp(target->GetHp());
 	hpPkt.set_max_hp(target->GetMaxHp());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+}
+
+void Room::HandleRespawnPlayer(int32 playerId)
+{
+	auto it = _objects.find(playerId);
+	if (it == _objects.end()) return;
+
+	shared_ptr<Object> player = it->second;
+	player->FullHeal();
+
+	// 팀별 스폰 위치
+	GameMath::Vector3 spawnPos =
+		(player->GetTeamFlag() == static_cast<uint8>(Protocol::CAMP_HUMAN))
+		? GameMath::Vector3{ -60.0f, 0.0f, 0.0f }
+	: GameMath::Vector3{ 60.0f, 0.0f, 0.0f };
+	player->SetPosVector(spawnPos);
+
+	Protocol::S_RESPAWN pkt;
+	pkt.set_player_id(playerId);
+	pkt.set_x(spawnPos._x);
+	pkt.set_y(0.0f);
+	pkt.set_z(spawnPos._z);
+	pkt.set_current_hp(player->GetHp());
+	pkt.set_max_hp(player->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
 }
 
 void Room::BroadcastMoving(const ObjectRef& obj)

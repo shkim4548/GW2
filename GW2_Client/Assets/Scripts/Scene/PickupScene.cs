@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickupScene : MonoBehaviour
+public class PickupScene : BaseScene
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Clear()
     {
-        
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void Init()
     {
-        
+        IUIService uiService = Bootstrapper.Instance.UIService;
+        uiService.ShowSceneUI<UI_Pickup>();
     }
 }

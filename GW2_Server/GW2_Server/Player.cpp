@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Room.h"
 #include "Player.h"
+#include "StatLoader.h"
+#include "Lobby.h"
 
 Player::Player()
 {
@@ -12,9 +14,28 @@ Player::~Player()
 
 }
 
-void Player::InitPlayer()
+void Player::InitPlayer(shared_ptr<Room> room)
 {
+    _room = room;
 
+    UnitStat stat = GLobby->GetUnitStat("player");
+    if (stat.hp > 0)
+    {
+        _statInfo.set_hp(stat.hp);
+        _statInfo.set_max_hp(stat.maxHp);
+        _statInfo.set_attack(stat.attackDamage);
+    }
+    else
+    {
+        // fallback
+        _statInfo.set_hp(1000);
+        _statInfo.set_max_hp(1000);
+        _statInfo.set_attack(30);
+    }
+
+    GConsoleLogger->WriteStdOut(Color::GREEN,
+        L"[InitPlayer] hp=%llu atk=%llu\n",
+        _statInfo.hp(), _statInfo.attack());
 }
 
 void Player::UpdateController(float deltaTime)

@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Struct;
 using ServerCore;
@@ -340,5 +341,21 @@ public class PacketHandler
     internal static void S_END_GAMEHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();
+    }
+
+    internal static void S_RESPAWNHandler(PacketSession session, IMessage message)
+    {
+        S_RESPAWN pkt = message as S_RESPAWN;
+
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
+
+        GameObject go = objectService.FindById(pkt.PlayerId);
+        if (go == null) return;
+
+        BaseController bc = go.GetComponent<BaseController>();
+        Vector3 pos = new Vector3(pkt.X, pkt.Y, pkt.Z);
+        bc.transform.position = pos;
+        bc.SetHp(pkt.CurrentHp, pkt.MaxHp);
+        bc.State = MoveState.Idle;
     }
 }

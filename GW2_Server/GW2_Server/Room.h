@@ -45,6 +45,7 @@ public:
 	// Lane Controller
 	void InitLaneRouteBin();
 	void InitLaneRouteJson();
+
 public:
 	// Object called
 	void CollectEnemiesInRange(shared_ptr<Object> requester, float range);
@@ -58,6 +59,7 @@ public:
 	bool HandleEnterPlayer(PlayerRef player);
 	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
 	void HandleAttack(int32 attackerId, int32 targetId, Protocol::SkillType commandId);
+	void HandleRespawnPlayer(int32 playerId);
 
 private:
 	// internal
@@ -102,6 +104,8 @@ private:
 	bool  _isSpawningWave = false;
 	int32 _waveSpawnCount = 0;
 	float _waveSpawnAccumulate = 0.0f;
+
+	unordered_map<int32, float> _respawnTimers; // playerId → 남은 시간(초)
 };
 
 //extern shared_ptr<Room> GRoom;
