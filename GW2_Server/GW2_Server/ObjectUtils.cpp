@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Minion.h"
 #include "Turret.h"
+#include "Nexus.h"
 #include "GameSession.h"
 
 atomic<int32> ObjectUtils::s_idGenerator = 1;
@@ -38,4 +39,12 @@ TurretRef ObjectUtils::CreateTurret()
     turret->SetTurretId(newId);
 
     return turret;
+}
+
+NexusRef ObjectUtils::CreateNexus()
+{
+    const int64 newId = s_idGenerator.fetch_add(1);
+    NexusRef nexus = MakeShared<Nexus>();
+    nexus->SetNexusId(newId);
+    return nexus;
 }

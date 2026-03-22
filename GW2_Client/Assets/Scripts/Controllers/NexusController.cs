@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.PostProcessing;
 using UnityEngine;
 
-public class NexusController : MonoBehaviour
+public class NexusController : BaseController
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Init()
     {
-        
+        base.Init();
+        //_objectType = Google.Protobuf.Enum.ObjectType.Nexus;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void UpdateDead()
     {
-        
+        base.UpdateDead();
     }
 }

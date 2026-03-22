@@ -29,7 +29,7 @@ public class MyPlayerController : PlayerController
 
     public int RoomId { get; set; }
 
-    public Action<float, float> OnHpChanged;
+    public static Action<float, float> OnHpChanged;
 
     public override void Init()
     {

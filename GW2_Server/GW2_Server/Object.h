@@ -32,6 +32,7 @@ public:
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
 	void SetRoomId(int32 roomId) { _roomId = roomId; }
 	void SetIsDead(bool isDead) { _isDead = isDead; }
+	void SetCampType(Protocol::CampType camp) { _campType = camp; }
 
 	// Navigation
 	void SetPath(const NavPath& path);

@@ -8,6 +8,7 @@
 #include "ClientPacketHandler.h"
 #include "Minion.h"
 #include "Turret.h"
+#include "Nexus.h"
 #include "ObjectUtils.h"
 #include "LaneRouteLoader.h"
 
@@ -28,78 +29,75 @@ Room::~Room()
 
 bool Room::Enter(PlayerRef gameObject)
 {
-	if (gameObject == nullptr)
-	{
-		return false;
-	}
-
-	//GConsoleLogger->WriteStdOut(Color::YELLOW, L"[EnterGameHandler] player Enter Game Room\n");
+	if (gameObject == nullptr) return false;
 
 	int32 objectId = gameObject->GetObjectId();
-	_objects.emplace(objectId, gameObject);
-	GConsoleLogger->WriteStdOut(
-		Color::GREEN,
-		L"[Room::SpawnMinion] objId=%d pos=(%.2f,%.2f)\n",
-		gameObject->GetObjectId(),
-		gameObject->GetPosVector()._x,
-		gameObject->GetPosVector()._z);
-	Protocol::S_ENTER_GAME enterPkt;
-	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
-	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 
-	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::Enter] enterPlayer\n");
-	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
-	objectInfo->set_object_id(objectId);
-	posInfo->set_x(72.5);
-	posInfo->set_y(0);
-	posInfo->set_z(0);
-	posInfo->set_yaw(0);
-	objectInfo->set_allocated_pos_info(posInfo);
-	enterPkt.set_allocated_player(objectInfo);
+	// 1. 팀 자동 배정 (입장 순서 기준)
+	Protocol::CampType assignedTeam =
+		(_players.size() % 2 == 0) ? Protocol::CAMP_HUMAN : Protocol::CAMP_CYBORG;
+	gameObject->SetCampType(assignedTeam);
+
+	// 2. 스폰 위치 팀별 설정
+	GameMath::Vector3 spawnPos =
+		(assignedTeam == Protocol::CAMP_HUMAN)
+		? GameMath::Vector3(72.5f, 0.0f, 0.0f)
+		: GameMath::Vector3(-72.5f, 0.0f, 0.0f);
+	gameObject->SetPosVector(spawnPos);
+
+	// 3. Room 등록 및 초기화
+	_objects.emplace(objectId, gameObject);
 	_players.emplace(objectId, gameObject);
 	shared_ptr<Room> roomSelf = static_pointer_cast<Room>(shared_from_this());
 	gameObject->InitPlayer(roomSelf);
-
-	// TODO : 나중에 시작 플래그 패킷으로 받는걸로 바꿔야함
 	_isRunning = true;
-	GameMath::Vector3 spawnPos(72.5f, 0.0f, 0.0f);
-	gameObject->SetPosVector(spawnPos);
-	SendBufferRef sendBufferPlayer = ClientPacketHandler::MakeSendBuffer(enterPkt);
-	Broadcast(sendBufferPlayer);
 
-	// TODO : 테스트니까 여기가 StartGame으로 가정
-	// HUMAN
-	GameMath::Vector3 turretPos = GameMath::Vector3(-15, 0.5, -25.5);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-52.81, 0.5, -22.93);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-65.26, 2, -4.28);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-65.26, 2, 4.73);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-51.2, 0.5, 22.31);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-10.93, 0.5, 25.1);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	// 4. 신규 플레이어에게 기존 오브젝트 동기화
+	SyncObjectsToPlayer(gameObject);
 
-	// CYBORG
-	turretPos = GameMath::Vector3(11.69, 0.5, -25.51);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(47.1, 0.5, -22.6);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(64.2, 2, -4.5);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(64.2, 2, 4.5);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(50.9, 0.5, 22.1);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(13, 0.5, 25.3);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	// 5. 신규 플레이어 정보를 기존 플레이어들에게 브로드캐스트
+	Protocol::S_ENTER_GAME enterPkt;
+	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
+	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+	objectInfo->set_object_id(objectId);
+	objectInfo->set_team_flag(assignedTeam);
+	posInfo->set_x(spawnPos._x);
+	posInfo->set_y(spawnPos._y);
+	posInfo->set_z(spawnPos._z);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
 
-	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
-	Broadcast(sendBuffer);
+	// 6. 최초 입장 시 터렛/넥서스 스폰
+	if (!_gameStarted)
+	{
+		_gameStarted = true;
+
+		// HUMAN 터렛
+		SpawnTurret(GameMath::Vector3(-15, 0.5, -25.5), Protocol::CAMP_HUMAN);
+		SpawnTurret(GameMath::Vector3(-52.81, 0.5, -22.93), Protocol::CAMP_HUMAN);
+		SpawnTurret(GameMath::Vector3(-65.26, 2, -4.28), Protocol::CAMP_HUMAN);
+		SpawnTurret(GameMath::Vector3(-65.26, 2, 4.73), Protocol::CAMP_HUMAN);
+		SpawnTurret(GameMath::Vector3(-51.2, 0.5, 22.31), Protocol::CAMP_HUMAN);
+		SpawnTurret(GameMath::Vector3(-10.93, 0.5, 25.1), Protocol::CAMP_HUMAN);
+
+		// CYBORG 터렛
+		SpawnTurret(GameMath::Vector3(11.69, 0.5, -25.51), Protocol::CAMP_CYBORG);
+		SpawnTurret(GameMath::Vector3(47.1, 0.5, -22.6), Protocol::CAMP_CYBORG);
+		SpawnTurret(GameMath::Vector3(64.2, 2, -4.5), Protocol::CAMP_CYBORG);
+		SpawnTurret(GameMath::Vector3(64.2, 2, 4.5), Protocol::CAMP_CYBORG);
+		SpawnTurret(GameMath::Vector3(50.9, 0.5, 22.1), Protocol::CAMP_CYBORG);
+		SpawnTurret(GameMath::Vector3(13, 0.5, 25.3), Protocol::CAMP_CYBORG);
+
+		// 넥서스
+		SpawnNexus(GameMath::Vector3(-62.0f, 0.0f, 0.0f), Protocol::CAMP_HUMAN);
+		SpawnNexus(GameMath::Vector3(62.0f, 0.0f, 0.0f), Protocol::CAMP_CYBORG);
+	}
+
 	return true;
 }
+
 
 void Room::Leave(int32 playerId)
 {
@@ -140,6 +138,43 @@ void Room::RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> rout
 		GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Room::RoomInit] laneId=%d, waypoints=%d\n",
 			laneId, static_cast<int32>(route->waypoints.size()));
 	}
+
+	// 넥서스 위치는 씬의 HumanNexus/CyborgNexus 위치에 맞게 조정 필요
+	SpawnNexus(GameMath::Vector3{ -62.0f, 0.0f, 0.0f }, Protocol::CAMP_HUMAN);
+	SpawnNexus(GameMath::Vector3{ 62.0f, 0.0f, 0.0f }, Protocol::CAMP_CYBORG);
+
+	// TODO : 테스트니까 여기가 StartGame으로 가정
+	// HUMAN
+	Protocol::S_ENTER_GAME enterPkt;
+	GameMath::Vector3 turretPos = GameMath::Vector3(-15, 0.5, -25.5);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-52.81, 0.5, -22.93);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-65.26, 2, -4.28);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-65.26, 2, 4.73);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-51.2, 0.5, 22.31);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+	turretPos = GameMath::Vector3(-10.93, 0.5, 25.1);
+	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
+
+	// CYBORG
+	turretPos = GameMath::Vector3(11.69, 0.5, -25.51);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(47.1, 0.5, -22.6);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(64.2, 2, -4.5);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(64.2, 2, 4.5);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(50.9, 0.5, 22.1);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+	turretPos = GameMath::Vector3(13, 0.5, 25.3);
+	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
+
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
+	Broadcast(sendBuffer);
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)
@@ -535,6 +570,32 @@ shared_ptr<Turret> Room::SpawnTurret(GameMath::Vector3 pos, Protocol::CampType t
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
 	return turret;
+}
+
+shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType team)
+{
+	NexusRef nexus = ObjectUtils::CreateNexus();
+	int32 objectId = nexus->GetObjectId();
+
+	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
+	posInfo->set_x(pos._x);
+	posInfo->set_y(pos._y);
+	posInfo->set_z(pos._z);
+	nexus->SetPosInfo(*posInfo);
+
+	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
+	Protocol::S_ENTER_GAME enterPkt;
+	objectInfo->set_object_type(Protocol::OBJECT_TYPE_NEXUS);
+	objectInfo->set_object_id(objectId);
+	objectInfo->set_team_flag(team);
+	objectInfo->set_allocated_pos_info(posInfo);
+	enterPkt.set_allocated_player(objectInfo);
+
+	_objects.emplace(objectId, nexus);
+	nexus->InitNexus(static_pointer_cast<Room>(shared_from_this()), team);
+
+	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
+	return nexus;
 }
 
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range)
@@ -1031,6 +1092,14 @@ void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
 	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 }
 
+void Room::HandleNexusDead(Protocol::CampType deadTeam)
+{
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Room::HandleNexusDead] Game over\n");
+
+	Protocol::S_END_GAME endPkt;
+	Broadcast(ClientPacketHandler::MakeSendBuffer(endPkt));
+}
+
 void Room::HandleRespawnPlayer(int32 playerId)
 {
 	auto it = _objects.find(playerId);
@@ -1306,4 +1375,38 @@ vector<GameMath::Vector3> Room::SmoothPath(const vector<GameMath::Vector3>& path
 
 void Room::StartGame()
 {
+}
+
+void Room::SyncObjectsToPlayer(PlayerRef newPlayer)
+{
+	auto session = newPlayer->GetSession().lock();
+	if (session == nullptr) return;
+
+	for (auto& [id, obj] : _objects)
+	{
+		if (id == newPlayer->GetObjectId()) continue;
+
+		// 1. 오브젝트 스폰 정보
+		Protocol::S_ENTER_GAME syncPkt;
+		Protocol::ObjectInfo* info = new Protocol::ObjectInfo();
+		Protocol::PosInfo* pos = new Protocol::PosInfo();
+
+		GameMath::Vector3 objPos = obj->GetPosVector();
+		pos->set_x(objPos._x);
+		pos->set_y(objPos._y);
+		pos->set_z(objPos._z);
+		info->set_object_type(obj->GetObjectType());
+		info->set_object_id(id);
+		info->set_team_flag(obj->GetTeamFlag());
+		info->set_allocated_pos_info(pos);
+		syncPkt.set_allocated_player(info);
+		session->Send(ClientPacketHandler::MakeSendBuffer(syncPkt));
+
+		// 2. 현재 HP 동기화
+		Protocol::S_HP_CHANGE hpPkt;
+		hpPkt.set_target_id(id);
+		hpPkt.set_current_hp(obj->GetHp());
+		hpPkt.set_max_hp(obj->GetMaxHp());
+		session->Send(ClientPacketHandler::MakeSendBuffer(hpPkt));
+	}
 }

@@ -56,14 +56,13 @@ bool StatLoader::LoadUnitStatsFromJson(const string& path, unordered_map<string,
     return !outStats.empty();
 }
 
-bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<string, UnitStat>& outStats)
+bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<int32, CardStat>& OUT outStats)
 {
     outStats.clear();
     ifstream ifs(path);
-
     if (!ifs.is_open())
     {
-        GConsoleLogger->WriteStdErr(Color::RED, L"[StatLoader] Failed to open%s\n", path.c_str());
+        GConsoleLogger->WriteStdErr(Color::RED, L"[StatLoader] Failed to open %s\n", path.c_str());
         return false;
     }
 
@@ -77,30 +76,29 @@ bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<string,
         return false;
     }
 
-    if (!root.contains("units") || !root["units"].is_array())
+    if (!root.contains("cards") || !root["cards"].is_array())
     {
-        GConsoleLogger->WriteStdErr(Color::RED, L"[StatLoader] 'units' array not found\n");
+        GConsoleLogger->WriteStdErr(Color::RED, L"[StatLoader] 'cards' array not found\n");
         return false;
     }
 
-    for (const auto& u : root["units"])
+    for (const auto& c : root["cards"])
     {
-        if (!u.contains("type") || !u["type"].is_string())
-            continue;
+        if (!c.contains("id")) continue;
 
-        string type = u["type"].get<string>();
+        CardStat stat;
+        stat.id = c["id"].get<int32_t>();
+        if (c.contains("damage"))         stat.damage = c["damage"].get<uint32_t>();
+        if (c.contains("range"))          stat.range = c["range"].get<float>();
+        if (c.contains("cooldown"))       stat.cooldown = c["cooldown"].get<float>();
+        if (c.contains("aoe_radius"))     stat.aoeRadius = c["aoe_radius"].get<float>();
+        if (c.contains("slow_amount"))    stat.slowAmount = c["slow_amount"].get<float>();
+        if (c.contains("knockback"))      stat.knockbackForce = c["knockback"].get<float>();
 
-       /* CardStat stat;
-        if (u.contains("hp"))               stat.hp = u["hp"].get<uint64_t>();
-        if (u.contains("max_hp"))           stat.maxHp = u["max_hp"].get<uint64_t>();
-        if (u.contains("attack_damage"))    stat.attackDamage = u["attack_damage"].get<uint32_t>();
-        if (u.contains("attack_range"))     stat.attackRange = u["attack_range"].get<float>();
-        if (u.contains("attack_interval"))  stat.attackInterval = u["attack_interval"].get<float>();
-        if (u.contains("move_speed"))       stat.moveSpeed = u["move_speed"].get<float>();
-        if (u.contains("detection_range"))  stat.detectionRange = u["detection_range"].get<float>();
-
-        outStats[type] = stat;
-        GConsoleLogger->WriteStdErr(Color::GREEN, L"[StatLoader] Loaded type=%S hp=%llu atk=%u range=%.1f\n", type.c_str(), stat.hp, stat.attackDamage, stat.attackRange);*/
+        outStats[stat.id] = stat;
+        GConsoleLogger->WriteStdOut(Color::GREEN,
+            L"[StatLoader] Card id=%d dmg=%u range=%.1f cd=%.1f\n",
+            stat.id, stat.damage, stat.range, stat.cooldown);
     }
     return !outStats.empty();
 }

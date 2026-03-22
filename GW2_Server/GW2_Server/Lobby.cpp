@@ -263,3 +263,12 @@ UnitStat Lobby::GetUnitStat(const string& type)
     GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] UnitStat not found\n");
     return UnitStat{};
 }
+
+CardStat Lobby::GetCardStat(int32 cardId)
+{
+    auto it = _cardStats.find(cardId);
+    if (it != _cardStats.end()) 
+        return it->second;
+    GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] CardStat not found id=%d\n", cardId);
+    return CardStat{};
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include "JobQueue.h"
+#include "StatLoader.h"
 
 /*----------
 	Lobby
@@ -28,8 +29,10 @@ public:
 	weak_ptr<Navigation::NavigationSystem> GetNavigationSystem() { return _navigationSystem; }
 	weak_ptr<Navigation::WalkableGrid> GetWalkableGrid() { return _walkableGrid; }
 	unordered_map<int32, PlayerRef> GetLobbyPlayers() { return _lobbyPlayers; }
-	UnitStat GetUnitStat(const string& type);
 
+	// Json Stats
+	UnitStat GetUnitStat(const string& type);
+	CardStat GetCardStat(int32 cardId);
 
 	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);
@@ -65,6 +68,7 @@ private:
 
 	// stat 초기 데이터
 	unordered_map<string, UnitStat> _unitStats;
+	unordered_map<int32, CardStat> _cardStats;
 	unique_ptr<class StatLoader> _statLoader;
 };
 

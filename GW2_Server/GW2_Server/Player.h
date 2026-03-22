@@ -34,5 +34,9 @@ private:
 	vector<GameMath::Vector3> path;
 	int32 currentPathIndex;
 	bool _isMoving = false;
+
+public:
+	vector<int32> _deck;
+	vector<int32> _hand;
 };
 

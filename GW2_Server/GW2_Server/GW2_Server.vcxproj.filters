@@ -88,7 +88,7 @@
     <ClCompile Include="NavmeshLoader.cpp">
       <Filter>GameContents\Navigation</Filter>
     </ClCompile>
-    <ClCompile Include="Card.cpp">
+    <ClCompile Include="CardManager.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,7 +156,7 @@
     <ClInclude Include="NavmeshLoader.h">
       <Filter>GameContents\Navigation</Filter>
     </ClInclude>
-    <ClInclude Include="Card.h">
+    <ClInclude Include="CardManager.h">
       <Filter>GameContents</Filter>
     </ClInclude>
   </ItemGroup>

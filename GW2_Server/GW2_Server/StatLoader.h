@@ -14,6 +14,7 @@ struct CardStat
 {
 
     // === ½Äº° ===
+    int32       id;
     string      skillId;        // "police_first", "monk_second" µî
     //SkillType   skillType;      // SKILL_ID_FIRST / SECOND
 
@@ -43,6 +44,6 @@ class StatLoader
 {
 public:
 	bool LoadUnitStatsFromJson(const string& path, unordered_map<string, UnitStat>& OUT outStats);
-	bool LoadCardStatsFromJson(const string& path, unordered_map<string, UnitStat>& OUT outStats);
+    bool LoadCardStatsFromJson(const string& path, unordered_map<int32, CardStat>& OUT outStats);
 };
 

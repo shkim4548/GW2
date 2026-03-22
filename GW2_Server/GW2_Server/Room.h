@@ -41,6 +41,7 @@ public:
 	void UpdateRoom(float deltaTime);
 	shared_ptr<Minion> SpawnMinion(int32 laneId, Protocol::CampType team);
 	shared_ptr<Turret> SpawnTurret(GameMath::Vector3 pos, Protocol::CampType team);
+	shared_ptr<Nexus> SpawnNexus(GameMath::Vector3 pos, Protocol::CampType team);
 
 	// Lane Controller
 	void InitLaneRouteBin();
@@ -54,6 +55,7 @@ public:
 	void HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
 	void HandleRemoveObject(int32 id);
 	void HandleTurretAttack(int32 attckerId, int32 targetId);
+	void HandleNexusDead(Protocol::CampType deadTeam);
 
 	// Players
 	bool HandleEnterPlayer(PlayerRef player);
@@ -73,6 +75,7 @@ private:
 	// static
 	static vector<GameMath::Vector3> SmoothPath(const vector<GameMath::Vector3>& path, const Navigation::WalkableGrid& grid, shared_ptr<Navigation::NavigationSystem> navSystem, uint8 laneId);
 	void StartGame();
+	void SyncObjectsToPlayer(PlayerRef newPlayer);
 
 private:
 	unordered_map<int32, ObjectRef> _objects;
@@ -106,6 +109,9 @@ private:
 	float _waveSpawnAccumulate = 0.0f;
 
 	unordered_map<int32, float> _respawnTimers; // playerId → 남은 시간(초)
+
+	// Game Loop
+	bool _gameStarted = false;
 };
 
 //extern shared_ptr<Room> GRoom;

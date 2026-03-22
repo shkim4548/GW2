@@ -112,6 +112,22 @@ public class ObjectService : IObjectService
             tc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             _objects.Add(objectId, go);
         }
+        else if(objectType == ObjectType.Nexus)
+        {
+            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+            string prefabName = info.TeamFlag == (int)CampType.CampHuman
+                ? "Nexus/HumanNexus"
+                : "Nexus/CyborgNexus";
+
+            go = _resourceService.Instantiate(prefabName);
+            if (go == null) { Debug.LogError("[ObjectService] Nexus prefab not found"); return; }
+
+            NexusController nc = go.GetComponent<NexusController>();
+            nc.transform.position = initPos;
+            nc.Id = objectId;
+            nc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+            _objects.Add(objectId, go);
+        }
         else
         {
             Debug.LogError($"[ObjectService] Adding Type is invalid!");

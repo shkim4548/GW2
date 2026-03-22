@@ -340,7 +340,9 @@ public class PacketHandler
 
     internal static void S_END_GAMEHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        Debug.Log("[S_END_GAME] Game Over");
+    // TODO : 게임 종료 UI 표시
+    // Managers.UI.ShowPopupUI<UI_GameResult>();
     }
 
     internal static void S_RESPAWNHandler(PacketSession session, IMessage message)
