@@ -27,6 +27,8 @@ public enum PacketId : ushort
         PKT_S_HP_CHANGE = 1016,
         PKT_S_END_GAME = 1017,
         PKT_S_RESPAWN = 1018,
+        PKT_S_HAND_SYNC = 1019,
+        PKT_S_DRAW_CARD = 1020,
 }
 
 public class PacketManager
@@ -74,6 +76,10 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_END_GAME, PacketHandler.S_END_GAMEHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_RESPAWN, MakePacket<S_RESPAWN>);
         _handler.Add((ushort)PacketId.PKT_S_RESPAWN, PacketHandler.S_RESPAWNHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_HAND_SYNC, MakePacket<S_HAND_SYNC>);
+        _handler.Add((ushort)PacketId.PKT_S_HAND_SYNC, PacketHandler.S_HAND_SYNCHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_DRAW_CARD, MakePacket<S_DRAW_CARD>);
+        _handler.Add((ushort)PacketId.PKT_S_DRAW_CARD, PacketHandler.S_DRAW_CARDHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

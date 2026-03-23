@@ -36,6 +36,8 @@ void Player::InitPlayer(shared_ptr<Room> room)
     GConsoleLogger->WriteStdOut(Color::GREEN,
         L"[InitPlayer] hp=%llu atk=%llu\n",
         _statInfo.hp(), _statInfo.attack());
+
+    _cardManager.InitDeck(*this);
 }
 
 void Player::UpdateController(float deltaTime)

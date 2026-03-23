@@ -360,4 +360,19 @@ public class PacketHandler
         bc.SetHp(pkt.CurrentHp, pkt.MaxHp);
         bc.State = MoveState.Idle;
     }
+
+    internal static void S_HAND_SYNCHandler(PacketSession session, IMessage message)
+    {
+        S_HAND_SYNC pkt = message as S_HAND_SYNC;
+        List<int> cardIds = new List<int>(pkt.CardIds);
+        Debug.Log($"[S_HAND_SYNC] playerId={pkt.PlayerId} cards={string.Join(",", cardIds)}");
+        UI_CardPanel.OnHandSync?.Invoke(new List<int>(pkt.CardIds));
+    }
+
+    internal static void S_DRAW_CARDHandler(PacketSession session, IMessage message)
+    {
+        S_DRAW_CARD pkt = message as S_DRAW_CARD;
+        Debug.Log($"[S_DRAW_CARD] playerId={pkt.PlayerId} cardId={pkt.CardId}");
+        UI_CardPanel.OnDrawCard?.Invoke(pkt.CardId);
+    }
 }

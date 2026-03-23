@@ -21,6 +21,13 @@ void CardManager::InitDeck(Player& player)
 	}
 }
 
+void CardManager::ResetHand(Player& player)
+{
+	player._hand.clear();
+	for (int32 i = 0; i < MAX_HAND_SIZE; ++i)
+		DrawCard(player);
+}
+
 void CardManager::DrawCard(Player& player)
 {
 	if (player._deck.empty())
@@ -48,14 +55,46 @@ bool CardManager::UseCard(Player& player, int32 cardId)
 		return false;
 	}
 
+	player._hand.erase(it);
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[CardManager::UseCard] playerId=%d used cardId=%d\n",
+		player.GetObjectId(), cardId);
 
+	DrawCard(player);
+	return true;
 }
 
-void CardManager::HasCard(Player& player, int32 cardId)
+bool CardManager::HasCard(Player& player, int32 cardId)
 {
+	return find(player._hand.begin(), player._hand.end(), cardId) != player._hand.end();
+}
+
+bool CardManager::CanAddCard(Player& player)
+{
+	return true; // 덱 상한선 없음
+}
+
+bool CardManager::CanRemoveCard(Player& player)
+{
+	return static_cast<int32>(player._deck.size()) > MIN_DECK_SIZE;
+}
+
+void CardManager::AddCardToDeck(Player& player, int32 cardId)
+{
+	player._deck.push_back(cardId);
+}
+
+void CardManager::RemoveCardFromDeck(Player& player, int32 cardId)
+{
+	if (!CanRemoveCard(player)) 
+		return;
+	auto it = find(player._deck.begin(), player._deck.end(), cardId);
+	if (it != player._deck.end())
+		player._deck.erase(it);
 }
 
 int32 CardManager::PickRandomFromDeck(Player& player)
 {
-	return int32();
+	static mt19937 rng(random_device{}());
+	uniform_int_distribution<int32> dist(0, static_cast<int32>(player._deck.size()) - 1);
+	return player._deck[dist(rng)];
 }

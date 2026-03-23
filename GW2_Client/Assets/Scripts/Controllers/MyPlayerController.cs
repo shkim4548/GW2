@@ -29,7 +29,9 @@ public class MyPlayerController : PlayerController
 
     public int RoomId { get; set; }
 
+    // === UI Delegate ===
     public static Action<float, float> OnHpChanged;
+    public static Action<int> OnCardUsed;
 
     public override void Init()
     {
@@ -220,7 +222,7 @@ public class MyPlayerController : PlayerController
     {
         if (Input.GetKey(KeyCode.Q))
         {
-
+            //SendCardEvent
         }
         else if (Input.GetKey(KeyCode.W))
         {
@@ -353,4 +355,24 @@ public class MyPlayerController : PlayerController
         base.SetHp(current, max);
         OnHpChanged?.Invoke(current, max);
     }
+
+    private void SendCardEvent(int slotIndex)
+    {
+        int cardId = UI_CardPanel.GetCardIdAtSlot(slotIndex);
+        if (cardId < 0) return;
+
+        // ≈∏∞Ÿ ¿÷¿∏∏È ID, æ¯¿∏∏È 0 (≥Ì≈∏∞Ÿ)
+        int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
+
+        C_SKILL pkt = new C_SKILL();
+        pkt.RoomId = RoomId;
+        pkt.AttackerId = Id;
+        pkt.TargetId = targetId;   // 0 = ≥Ì≈∏∞Ÿ, 0 æ∆¥‘ = ≈∏∞Ÿ∆√
+        pkt.SkillId = (SkillType)cardId;
+        pkt.ClientTime = GetClientTime();
+        _networkService.Send(pkt);
+
+        OnCardUsed?.Invoke(slotIndex);
+    }
+
 }

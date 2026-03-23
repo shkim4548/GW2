@@ -52,6 +52,17 @@ bool Room::Enter(PlayerRef gameObject)
 	gameObject->InitPlayer(roomSelf);
 	_isRunning = true;
 
+	Protocol::S_HAND_SYNC handPkt;
+	handPkt.set_player_id(objectId);
+	for (int32 cardId : gameObject->_hand)
+	{
+		handPkt.add_card_ids(cardId);
+	}
+
+	auto session = gameObject->GetSession().lock();
+	if (session)
+		session->Send(ClientPacketHandler::MakeSendBuffer(handPkt));
+
 	// 4. 신규 플레이어에게 기존 오브젝트 동기화
 	SyncObjectsToPlayer(gameObject);
 
@@ -211,42 +222,86 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 		return false;
 	}
 
+	uint64_t damage = 0;
+	int32 skillId = static_cast<int32>(skillPkt.skill_id());
+
+	// 논타겟 임시 처리
+	if (skillPkt.target_id() == 0)
+	{
+		return true;
+	}
+
 	switch (skillPkt.skill_id())
 	{
 	case Protocol::SkillType::SKILL_ID_ATTACK:
 	{
-		// 4. 데미지 적용
-		const uint64_t damage = 10;
-		bool died = target->ApplyDamage(damage);
-
-		GConsoleLogger->WriteStdOut(Color::GREEN,
-			L"[Room::HandleSkill] attacker=%lld target=%d dmg=%llu hp=%llu died=%d\n",
-			attacker->GetObjectId(), target->GetObjectId(),
-			damage, target->GetHp(), died ? 1 : 0);
-
-		// 5. S_SKILL 브로드캐스트 (이펙트용)
-		Protocol::S_SKILL resPkt;
-		resPkt.set_skill_id(skillPkt.skill_id());
-		resPkt.set_attacker_id(attacker->GetObjectId());
-		resPkt.set_target_id(skillPkt.target_id());
-		Broadcast(ClientPacketHandler::MakeSendBuffer(resPkt));
-
-		// 6. S_HP_CHANGE 브로드캐스트 (데미지 적용 후)
-		Protocol::S_HP_CHANGE hpPkt;
-		hpPkt.set_target_id(skillPkt.target_id());
-		hpPkt.set_current_hp(target->GetHp());
-		hpPkt.set_max_hp(target->GetMaxHp());
-		Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
-
-		// 7. 사망 처리
-		if (died)
-			HandleRemoveObject(target->GetObjectId());
-
+		// 평타: StatInfo.attack() 사용
+		damage = attacker->GetStatInfo().attack();
+		if (damage == 0) damage = 10; // 폴백
 		break;
 	}
 	default:
+	{
+		// 카드 스킬 (ID 2~11)
+		auto player = dynamic_pointer_cast<Player>(attacker);
+		if (player == nullptr) return false;
+
+		// 손패 검증
+		if (!player->_cardManager.HasCard(*player, skillId))
+		{
+			GConsoleLogger->WriteStdErr(Color::YELLOW,
+				L"[Room::HandleSkill] card not in hand playerId=%d cardId=%d\n",
+				player->GetObjectId(), skillId);
+			return false;
+		}
+
+		// 카드 소모 + 즉시 드로우
+		player->_cardManager.UseCard(*player, skillId);
+
+		// S_DRAW_CARD 브로드캐스트 (새로 드로우된 카드)
+		if (!player->_hand.empty())
+		{
+			Protocol::S_DRAW_CARD drawPkt;
+			drawPkt.set_player_id(player->GetObjectId());
+			drawPkt.set_card_id(player->_hand.back());
+			auto session = player->GetSession().lock();
+			if (session)
+				session->Send(ClientPacketHandler::MakeSendBuffer(drawPkt));
+		}
+
+		// CardStat에서 데미지 조회
+		CardStat cardStat = GLobby->GetCardStat(skillId);
+		damage = cardStat.damage;
 		break;
 	}
+	}
+
+	// 4. 데미지 적용
+	bool died = target->ApplyDamage(damage);
+
+	GConsoleLogger->WriteStdOut(Color::GREEN,
+		L"[Room::HandleSkill] attacker=%lld target=%d skillId=%d dmg=%llu hp=%llu died=%d\n",
+		attacker->GetObjectId(), target->GetObjectId(),
+		skillId, damage, target->GetHp(), died ? 1 : 0);
+
+	// 5. S_SKILL 브로드캐스트
+	Protocol::S_SKILL resPkt;
+	resPkt.set_skill_id(skillPkt.skill_id());
+	resPkt.set_attacker_id(attacker->GetObjectId());
+	resPkt.set_target_id(skillPkt.target_id());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(resPkt));
+
+	// 6. S_HP_CHANGE 브로드캐스트
+	Protocol::S_HP_CHANGE hpPkt;
+	hpPkt.set_target_id(skillPkt.target_id());
+	hpPkt.set_current_hp(target->GetHp());
+	hpPkt.set_max_hp(target->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
+	// 7. 사망 처리
+	if (died)
+		HandleRemoveObject(target->GetObjectId());
+
 	return true;
 }
 

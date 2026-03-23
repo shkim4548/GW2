@@ -25,6 +25,8 @@ enum : uint16
 	PKT_S_HP_CHANGE = 1016,
 	PKT_S_END_GAME = 1017,
 	PKT_S_RESPAWN = 1018,
+	PKT_S_HAND_SYNC = 1019,
+	PKT_S_DRAW_CARD = 1020,
 };
 
 // Custom Handlers
@@ -70,6 +72,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_HP_CHANGE& pkt) { return MakeSendBuffer(pkt, PKT_S_HP_CHANGE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_END_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_END_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_RESPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_RESPAWN); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_HAND_SYNC& pkt) { return MakeSendBuffer(pkt, PKT_S_HAND_SYNC); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_DRAW_CARD& pkt) { return MakeSendBuffer(pkt, PKT_S_DRAW_CARD); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

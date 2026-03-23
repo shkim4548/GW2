@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Application.AdminGame;
 using GameServerAdmin.Application.Comments.Admin;
 using GameServerAdmin.Application.Comments.Public;
+using GameServerAdmin.Application.Game.Gacha;
 using GameServerAdmin.Application.Game.Inventory;
 using GameServerAdmin.Application.Game.Players;
 using GameServerAdmin.Application.Game.Stages;
@@ -206,6 +207,7 @@ namespace GameServerAdmin
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<IAdminGameUserService, AdminGameUserService>();
             builder.Services.AddScoped<IAdminAccountService, AdminAccountService>();
+            builder.Services.AddScoped<IGachaService, GachaService>();
 
             var app = builder.Build();
 

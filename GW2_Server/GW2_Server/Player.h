@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "CardManager.h"
 
 class Player : public Object
 {
@@ -38,5 +39,6 @@ private:
 public:
 	vector<int32> _deck;
 	vector<int32> _hand;
+	CardManager _cardManager;	// 순수 로직담당이므로, 포인터로 선언하지 않음 직업 특성이 필요해진다면 포인터로 변경해야함
 };
 

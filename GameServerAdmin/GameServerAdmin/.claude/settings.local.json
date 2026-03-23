@@ -3,7 +3,9 @@
     "allow": [
       "Bash(xargs ls)",
       "Bash(ls -la \"D:\\\\Dev\\\\unity\\\\GW2\\\\GameServerAdmin\\\\GameServerAdmin\\\\Controllers\\\\Backoffice\"\" 2>/dev/null | grep -E \"^-)",
-      "Bash(^d\" || echo \"Directory not found or empty \")"
+      "Bash(^d\" || echo \"Directory not found or empty \")",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet build:*)"
     ]
   }
 }

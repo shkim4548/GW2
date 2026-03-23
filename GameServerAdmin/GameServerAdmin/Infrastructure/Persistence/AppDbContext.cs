@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Domain.Accounts;
 using GameServerAdmin.Domain.Admins;
 using GameServerAdmin.Domain.Comments;
+using GameServerAdmin.Domain.Game.Gacha;
 using GameServerAdmin.Domain.Game.Inventory;
 using GameServerAdmin.Domain.Identity;
 using GameServerAdmin.Domain.Notices;
@@ -24,6 +25,14 @@ namespace GameServerAdmin.Infrastructure.Persistence
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<Notice> Notices => Set<Notice>();
         public DbSet<AdminCurrencyLog> AdminCurrencyLogs => Set<AdminCurrencyLog>();
+
+        public DbSet<GachaItem>            GachaItems            => Set<GachaItem>();
+        public DbSet<GachaPool>            GachaPools            => Set<GachaPool>();
+        public DbSet<GachaPoolItem>        GachaPoolItems        => Set<GachaPoolItem>();
+        public DbSet<PlayerGachaCurrency>  PlayerGachaCurrencies => Set<PlayerGachaCurrency>();
+        public DbSet<PlayerGachaPity>      PlayerGachaPities     => Set<PlayerGachaPity>();
+        public DbSet<PlayerGachaInventory> PlayerGachaInventories => Set<PlayerGachaInventory>();
+        public DbSet<GachaHistory>         GachaHistories        => Set<GachaHistory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,5 @@
 #pragma once
+#include <random>
 
 class Player;
 
@@ -15,9 +16,13 @@ public:
 	// 손패 관리
 	void DrawCard(Player& player);
 	bool UseCard(Player& player, int32 cardId);
-	void HasCard(Player& player, int32 cardId);
+	bool HasCard(Player& player, int32 cardId);
 
 	// 상점용
+	bool CanAddCard(Player& player);
+	bool CanRemoveCard(Player& player);
+	void AddCardToDeck(Player& player, int32 cardId);
+	void RemoveCardFromDeck(Player& player, int32 cardId);
 
 	// Getter
 
