@@ -33,6 +33,8 @@ public:
 	// Json Stats
 	UnitStat GetUnitStat(const string& type);
 	CardStat GetCardStat(int32 cardId);
+	const unordered_map<int32, CardStat>& GetCardStats() const { return _cardStats; }
+
 
 	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);

@@ -38,6 +38,7 @@ struct CardStat
     float       slowAmount;     // 이동속도 감소율 (0~1)
     float       knockbackForce; // 넉백 거리
 
+    uint32       price;
 };
 
 class StatLoader

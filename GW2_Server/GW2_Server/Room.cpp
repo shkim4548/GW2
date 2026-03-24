@@ -150,6 +150,7 @@ void Room::RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> rout
 			laneId, static_cast<int32>(route->waypoints.size()));
 	}
 
+
 	// 넥서스 위치는 씬의 HumanNexus/CyborgNexus 위치에 맞게 조정 필요
 	SpawnNexus(GameMath::Vector3{ -62.0f, 0.0f, 0.0f }, Protocol::CAMP_HUMAN);
 	SpawnNexus(GameMath::Vector3{ 62.0f, 0.0f, 0.0f }, Protocol::CAMP_CYBORG);
@@ -300,7 +301,14 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 
 	// 7. 사망 처리
 	if (died)
-		HandleRemoveObject(target->GetObjectId());
+	{
+		// 킬 골드: 공격자가 플레이어인 경우
+		auto attackerPlayer = dynamic_pointer_cast<Player>(attacker);
+		if (attackerPlayer)
+			GiveGold(attackerPlayer, 300);
+
+		HandleRemoveObject(target->GetObjectId(), attacker->GetObjectId());
+	}
 
 	return true;
 }
@@ -527,6 +535,19 @@ void Room::UpdateRoom(float deltaTime)
 			it = _respawnTimers.erase(it);
 		}
 		else ++it;
+	}
+
+	// 자동 골드 수입
+	_goldIncomeTimer += deltaTime;
+	if (_goldIncomeTimer >= GOLD_INCOME_INTERVAL)
+	{
+		_goldIncomeTimer = 0.0f;
+		for (auto& [id, obj] : _players)
+		{
+			auto player = dynamic_pointer_cast<Player>(obj);
+			if (player && !player->IsDead())
+				GiveGold(player, GOLD_INCOME_AMOUNT);
+		}
 	}
 }
 
@@ -994,7 +1015,11 @@ void Room::HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> ta
 	// 사망 처리
 	if (died)
 	{
-		HandleRemoveObject(target->GetObjectId());
+		auto attackerPlayer = dynamic_pointer_cast<Player>(attacker);
+		if (attackerPlayer)
+			GiveGold(attackerPlayer, 50);
+
+		HandleRemoveObject(target->GetObjectId(), attacker->GetObjectId());
 	}
 }
 
@@ -1099,26 +1124,44 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 	Broadcast(buf);
 }
 
-void Room::HandleRemoveObject(int32 id)
+void Room::HandleRemoveObject(int32 targetId, int32 attackerId)
 {
-	auto it = _objects.find(id);
+	auto it = _objects.find(targetId);
 	if (it == _objects.end())
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleRemoveObject] id not found: %d\n", id);
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleRemoveObject] id not found: %d\n", targetId);
 		return;
 	}
 
 	shared_ptr<Object> obj = it->second;
 
+	// KDA 처리
+	if (attackerId != -1)
+	{
+		auto attackerIt = _players.find(attackerId);
+		if (attackerIt != _players.end())
+		{
+			attackerIt->second->_kill++;
+		}
+
+		if (obj->GetObjectType() == Protocol::OBJECT_TYPE_PLAYER)
+		{
+			auto targetPlayerIt = _players.find(targetId);
+			if (targetPlayerIt != _players.end())
+				targetPlayerIt->second->_death++;
+		}
+	}
+
 	Protocol::S_DIE diePkt;
-	diePkt.set_target_id(id);
+	diePkt.set_target_id(targetId);
+	//diePkt.set_attacker_id(attackerId);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(diePkt));  // ← Broadcast 누락도 수정
 
 	// 플레이어 → 리스폰 타이머 (제거 안 함)
 	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_PLAYER)
 	{
 		obj->SetIsDead(true);
-		_respawnTimers[id] = 5.0f; // 5초
+		_respawnTimers[targetId] = 5.0f; // 5초
 		return;
 	}
 
@@ -1331,6 +1374,84 @@ void Room::InitLaneRouteJson()
 	}
 
 	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::InitLaneRoute] lane routes initialized. count=%d\n", static_cast<int32>(_laneRoute.size()));
+}
+
+void Room::GiveGold(PlayerRef player, int64 amount)
+{
+	player->_gold += amount;
+
+	Protocol::S_GOLD_UPDATE pkt;
+	pkt.set_gold(player->_gold);
+
+	SessionRef session = player->GetSession().lock();
+	if (session)
+		session->Send(ClientPacketHandler::MakeSendBuffer(pkt));
+}
+
+void Room::HandleBuyCard(PlayerRef player, int32 cardId)
+{
+	CardStat stat = GLobby->GetCardStat(cardId);
+	// 존재하지 않는 카드
+	if (stat.id == 0)
+	{
+		return;
+	}
+
+	Protocol::S_BUY_RESULT result;
+	result.set_card_id(cardId);
+
+	// 골드 부족
+	if (player->_gold < stat.price)
+	{
+		result.set_success(false);
+		result.set_gold(player->_gold);
+		SessionRef session = player->GetSession().lock();
+		if (session)
+		{
+			session->Send(ClientPacketHandler::MakeSendBuffer(result));
+		}
+		return;
+	}
+
+	// 구매 성공
+	player->_gold -= stat.price;
+	player->_cardManager.AddCardToDeck(*player, cardId);
+
+	result.set_success(true);
+	SessionRef session = player->GetSession().lock();
+	if (session) session->Send(ClientPacketHandler::MakeSendBuffer(result));
+
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::HandleBuyCard] playerId=%d cardId=%d gold=%lld\n",
+		player->GetObjectId(), cardId, player->_gold);
+}
+
+void Room::HandleRemoveCard(PlayerRef player, int32 cardId)
+{
+	Protocol::S_BUY_RESULT result;
+	result.set_card_id(cardId);
+
+	if (player->_cardManager.CanRemoveCard(*player) == false)
+	{
+		result.set_success(false);
+		result.set_gold(player->_gold);
+		SessionRef session = player->GetSession().lock();
+		if (session)
+		{
+			SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(result);
+			session->Send(sendBuffer);
+			return;
+		}
+	}
+
+	player->_cardManager.RemoveCardFromDeck(*player, cardId);
+	result.set_success(true);
+	result.set_gold(player->_gold);
+	SessionRef session = player->GetSession().lock();
+	if (session)
+	{
+		SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(result);
+		session->Send(sendBuffer);
+	}
 }
 
 weak_ptr<Navigation::LaneRoute> Room::GetLaneRoute(int32 laneId) const

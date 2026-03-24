@@ -47,13 +47,18 @@ public:
 	void InitLaneRouteBin();
 	void InitLaneRouteJson();
 
+	// 골드 관련
+	void GiveGold(PlayerRef player, int64 amount);
+	void HandleBuyCard(PlayerRef player, int32 cardId);
+	void HandleRemoveCard(PlayerRef player, int32 cardId);
+
 public:
 	// Object called
 	void CollectEnemiesInRange(shared_ptr<Object> requester, float range);
 	void HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex);
 	void HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> target);
 	void HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId);
-	void HandleRemoveObject(int32 id);
+	void HandleRemoveObject(int32 targetId, int32 attackerId);
 	void HandleTurretAttack(int32 attckerId, int32 targetId);
 	void HandleNexusDead(Protocol::CampType deadTeam);
 
@@ -109,6 +114,11 @@ private:
 	float _waveSpawnAccumulate = 0.0f;
 
 	unordered_map<int32, float> _respawnTimers; // playerId → 남은 시간(초)
+	
+	// === Gold ===
+	float _goldIncomeTimer = 0.0f;
+	static constexpr float GOLD_INCOME_INTERVAL = 1.0f;  // 1초마다
+	static constexpr int64 GOLD_INCOME_AMOUNT = 20;
 
 	// Game Loop
 	bool _gameStarted = false;

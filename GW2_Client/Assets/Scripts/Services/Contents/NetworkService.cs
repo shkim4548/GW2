@@ -13,12 +13,15 @@ public interface INetworkService
     public void Update();
     public void SetNetworkId(int id);
     public int GetNetworkId();
+    public void SetRoomId(int roomId);
+    public int GetRoomId();
 }
 
 public class NetworkService : INetworkService
 { 
     ServerSession _session = new ServerSession();
     int _networkId = -1;
+    int _roomId = -1;
 
     public void Send(IMessage packet)
     {
@@ -64,5 +67,15 @@ public class NetworkService : INetworkService
     public int GetNetworkId()
     {
         return _networkId;
+    }
+
+    public void SetRoomId(int id)
+    {
+        _roomId = id;
+    }
+
+    public int GetRoomId()
+    {
+        return _roomId;
     }
 }

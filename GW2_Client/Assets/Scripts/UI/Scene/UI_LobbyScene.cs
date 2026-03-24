@@ -18,8 +18,8 @@ public class UI_LobbyScene : UI_Scene
         base.Init();
         Bind<Button>(typeof(Buttons));
 
-        GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClick1vs1);
-        GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClick2vs2);
+        GetButton((int)Buttons.EnterMulti_1vs1).gameObject.BindEvent(OnClick1vs1);
+        GetButton((int)Buttons.EnterMulti_2vs2).gameObject.BindEvent(OnClick2vs2);
         GetButton((int)Buttons.EnterSingle).gameObject.BindEvent(OnClickSingle);
     }
 

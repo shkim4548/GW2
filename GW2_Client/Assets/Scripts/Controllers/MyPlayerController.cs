@@ -33,6 +33,7 @@ public class MyPlayerController : PlayerController
     public static Action<float, float> OnHpChanged;
     public static Action<int> OnCardUsed;
 
+    public CampType CampType { get; set; }
     public override void Init()
     {
         base.Init();

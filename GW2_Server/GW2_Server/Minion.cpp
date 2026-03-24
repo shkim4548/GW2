@@ -590,5 +590,5 @@ void Minion::OnDead()
 		return;
 	}
 
-	room->DoAsync(&Room::HandleRemoveObject, _objectId);
+	room->DoAsync(&Room::HandleRemoveObject, _objectId, -1);
 }

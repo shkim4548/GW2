@@ -36,7 +36,8 @@ void Player::InitPlayer(shared_ptr<Room> room)
     GConsoleLogger->WriteStdOut(Color::GREEN,
         L"[InitPlayer] hp=%llu atk=%llu\n",
         _statInfo.hp(), _statInfo.attack());
-
+    
+    _gold = 500;  // ÃÊ±â °ñµå
     _cardManager.InitDeck(*this);
 }
 
@@ -107,5 +108,5 @@ void Player::OnDead()
         return;
     }
 
-    room->DoAsync(&Room::HandleRemoveObject, _objectId);
+    room->DoAsync(&Room::HandleRemoveObject, _objectId, -1);
 }

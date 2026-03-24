@@ -77,4 +77,27 @@ namespace Data
             return new Vector3Serializable(v.x, exportY ? v.y : 0f, v.z);
         }
     }
+
+    [Serializable]
+    public struct CardInfo
+    {
+        public int id;
+        public string skill_id;
+        public int damage;
+        public int price;
+    }
+    [Serializable]
+    public class CardInfoList : ILoader<int, CardInfo>   // struct ¡æ class·Î º¯°æ
+    {
+        public List<CardInfo> cards;
+
+        public Dictionary<int, CardInfo> MakeDict()
+        {
+            Dictionary<int, CardInfo> dict = new Dictionary<int, CardInfo>();
+            foreach (CardInfo card in cards)
+                dict.Add(card.id, card);
+            return dict;
+        }
+    }
+
 }

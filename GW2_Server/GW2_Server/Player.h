@@ -40,5 +40,11 @@ public:
 	vector<int32> _deck;
 	vector<int32> _hand;
 	CardManager _cardManager;	// 순수 로직담당이므로, 포인터로 선언하지 않음 직업 특성이 필요해진다면 포인터로 변경해야함
+	int64         _gold = 0;       // 현재 골드
+	float         _goldTimer = 0.0f; // 자동 수입 타이머
+
+	int32 _kill = 0;
+	int32 _death = 0;
+	int32 _assist = 0;
 };
 

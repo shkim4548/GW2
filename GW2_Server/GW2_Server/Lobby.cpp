@@ -110,9 +110,11 @@ void Lobby::LobbyInit()
         GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby] UnitStats load failed\n");
         return;
     }
+    StatLoader statLoader;
+    statLoader.LoadCardStatsFromJson("../Data/CardStats.json", _cardStats);
+
     shared_ptr<Room> room = MakeRoom("TestRoom");
     room->DoAsync(&Room::RoomInit, _route);
-
 
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 }

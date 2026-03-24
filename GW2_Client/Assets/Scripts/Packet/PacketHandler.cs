@@ -306,21 +306,27 @@ public class PacketHandler
         S_DIE diePkt = message as S_DIE;
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
-        // 내 플레이어가 죽은 경우 — 제거하지 않고 사망 상태만 처리
+        // 내 플레이어가 죽은 경우
         if (objectService.MyPlayer != null && objectService.MyPlayer.Id == diePkt.TargetId)
         {
-            objectService.MyPlayer.State = Google.Protobuf.Enum.MoveState.Die;
-            Debug.Log("S_DIE MyPlayer");
-            // TODO: 리스폰 처리
+            objectService.MyPlayer.State = MoveState.Die;
+            // death 카운트 (서버가 이미 집계하므로 UI에만 반영)
+            // 단순히 +1: 서버 동기화 패킷 없으면 클라 자체 카운트
+            UI_KDA.OnKdaUpdate?.Invoke(0, 1, 0); // death +1 (delta 방식은 아래 참고)
             return;
         }
 
-        GameObject go = objectService.FindById(diePkt.TargetId);
-        if (go == null) 
-            return;
+        // 내 플레이어가 킬한 경우
+        if (objectService.MyPlayer != null && objectService.MyPlayer.Id == diePkt.AttackerId)
+        {
+            UI_KDA.OnKdaUpdate?.Invoke(1, 0, 0); // kill +1
+        }
 
+        GameObject go = objectService.FindById(diePkt.TargetId);
+        if (go == null) return;
         objectService.Remove(diePkt.TargetId);
     }
+
 
     internal static void S_START_GAMEHandler(PacketSession session, IMessage message)
     {
@@ -374,5 +380,15 @@ public class PacketHandler
         S_DRAW_CARD pkt = message as S_DRAW_CARD;
         Debug.Log($"[S_DRAW_CARD] playerId={pkt.PlayerId} cardId={pkt.CardId}");
         UI_CardPanel.OnDrawCard?.Invoke(pkt.CardId);
+    }
+
+    internal static void S_GOLD_UPDATEHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void S_BUY_RESULTHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
     }
 }

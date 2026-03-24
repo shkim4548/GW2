@@ -223,5 +223,5 @@ void Turret::OnDead()
 	shared_ptr<Room> room = _room.lock();
 	if (!room) return;
 
-	room->DoAsync(&Room::HandleRemoveObject, GetObjectId());
+	room->DoAsync(&Room::HandleRemoveObject, GetObjectId(), -1);
 }

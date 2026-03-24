@@ -49,7 +49,7 @@ struct TableStruct_Protocol_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[21]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[25]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -57,6 +57,9 @@ struct TableStruct_Protocol_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto;
 namespace Protocol {
+class C_BUY_CARD;
+struct C_BUY_CARDDefaultTypeInternal;
+extern C_BUY_CARDDefaultTypeInternal _C_BUY_CARD_default_instance_;
 class C_ENTER_GAME;
 struct C_ENTER_GAMEDefaultTypeInternal;
 extern C_ENTER_GAMEDefaultTypeInternal _C_ENTER_GAME_default_instance_;
@@ -72,12 +75,18 @@ extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 class C_MOVE;
 struct C_MOVEDefaultTypeInternal;
 extern C_MOVEDefaultTypeInternal _C_MOVE_default_instance_;
+class C_REMOVE_CARD;
+struct C_REMOVE_CARDDefaultTypeInternal;
+extern C_REMOVE_CARDDefaultTypeInternal _C_REMOVE_CARD_default_instance_;
 class C_SKILL;
 struct C_SKILLDefaultTypeInternal;
 extern C_SKILLDefaultTypeInternal _C_SKILL_default_instance_;
 class C_START_GAME;
 struct C_START_GAMEDefaultTypeInternal;
 extern C_START_GAMEDefaultTypeInternal _C_START_GAME_default_instance_;
+class S_BUY_RESULT;
+struct S_BUY_RESULTDefaultTypeInternal;
+extern S_BUY_RESULTDefaultTypeInternal _S_BUY_RESULT_default_instance_;
 class S_DIE;
 struct S_DIEDefaultTypeInternal;
 extern S_DIEDefaultTypeInternal _S_DIE_default_instance_;
@@ -93,6 +102,9 @@ extern S_ENTER_GAMEDefaultTypeInternal _S_ENTER_GAME_default_instance_;
 class S_ENTER_LOBBY;
 struct S_ENTER_LOBBYDefaultTypeInternal;
 extern S_ENTER_LOBBYDefaultTypeInternal _S_ENTER_LOBBY_default_instance_;
+class S_GOLD_UPDATE;
+struct S_GOLD_UPDATEDefaultTypeInternal;
+extern S_GOLD_UPDATEDefaultTypeInternal _S_GOLD_UPDATE_default_instance_;
 class S_HAND_SYNC;
 struct S_HAND_SYNCDefaultTypeInternal;
 extern S_HAND_SYNCDefaultTypeInternal _S_HAND_SYNC_default_instance_;
@@ -122,18 +134,22 @@ struct S_START_GAMEDefaultTypeInternal;
 extern S_START_GAMEDefaultTypeInternal _S_START_GAME_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::C_BUY_CARD* Arena::CreateMaybeMessage<::Protocol::C_BUY_CARD>(Arena*);
 template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENTER_GAME>(Arena*);
 template<> ::Protocol::C_ENTER_LOBBY* Arena::CreateMaybeMessage<::Protocol::C_ENTER_LOBBY>(Arena*);
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
+template<> ::Protocol::C_REMOVE_CARD* Arena::CreateMaybeMessage<::Protocol::C_REMOVE_CARD>(Arena*);
 template<> ::Protocol::C_SKILL* Arena::CreateMaybeMessage<::Protocol::C_SKILL>(Arena*);
 template<> ::Protocol::C_START_GAME* Arena::CreateMaybeMessage<::Protocol::C_START_GAME>(Arena*);
+template<> ::Protocol::S_BUY_RESULT* Arena::CreateMaybeMessage<::Protocol::S_BUY_RESULT>(Arena*);
 template<> ::Protocol::S_DIE* Arena::CreateMaybeMessage<::Protocol::S_DIE>(Arena*);
 template<> ::Protocol::S_DRAW_CARD* Arena::CreateMaybeMessage<::Protocol::S_DRAW_CARD>(Arena*);
 template<> ::Protocol::S_END_GAME* Arena::CreateMaybeMessage<::Protocol::S_END_GAME>(Arena*);
 template<> ::Protocol::S_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::S_ENTER_GAME>(Arena*);
 template<> ::Protocol::S_ENTER_LOBBY* Arena::CreateMaybeMessage<::Protocol::S_ENTER_LOBBY>(Arena*);
+template<> ::Protocol::S_GOLD_UPDATE* Arena::CreateMaybeMessage<::Protocol::S_GOLD_UPDATE>(Arena*);
 template<> ::Protocol::S_HAND_SYNC* Arena::CreateMaybeMessage<::Protocol::S_HAND_SYNC>(Arena*);
 template<> ::Protocol::S_HP_CHANGE* Arena::CreateMaybeMessage<::Protocol::S_HP_CHANGE>(Arena*);
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
@@ -2802,6 +2818,7 @@ class S_DIE final :
   enum : int {
     kRoomIdFieldNumber = 1,
     kTargetIdFieldNumber = 2,
+    kAttackerIdFieldNumber = 3,
   };
   // int32 room_id = 1;
   void clear_room_id();
@@ -2821,6 +2838,15 @@ class S_DIE final :
   void _internal_set_target_id(int32_t value);
   public:
 
+  // int32 attacker_id = 3;
+  void clear_attacker_id();
+  int32_t attacker_id() const;
+  void set_attacker_id(int32_t value);
+  private:
+  int32_t _internal_attacker_id() const;
+  void _internal_set_attacker_id(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_DIE)
  private:
   class _Internal;
@@ -2830,6 +2856,7 @@ class S_DIE final :
   typedef void DestructorSkippable_;
   int32_t room_id_;
   int32_t target_id_;
+  int32_t attacker_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -3645,6 +3672,634 @@ class S_DRAW_CARD final :
   typedef void DestructorSkippable_;
   int32_t player_id_;
   int32_t card_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_GOLD_UPDATE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_GOLD_UPDATE) */ {
+ public:
+  inline S_GOLD_UPDATE() : S_GOLD_UPDATE(nullptr) {}
+  ~S_GOLD_UPDATE() override;
+  explicit constexpr S_GOLD_UPDATE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_GOLD_UPDATE(const S_GOLD_UPDATE& from);
+  S_GOLD_UPDATE(S_GOLD_UPDATE&& from) noexcept
+    : S_GOLD_UPDATE() {
+    *this = ::std::move(from);
+  }
+
+  inline S_GOLD_UPDATE& operator=(const S_GOLD_UPDATE& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_GOLD_UPDATE& operator=(S_GOLD_UPDATE&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_GOLD_UPDATE& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_GOLD_UPDATE* internal_default_instance() {
+    return reinterpret_cast<const S_GOLD_UPDATE*>(
+               &_S_GOLD_UPDATE_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    21;
+
+  friend void swap(S_GOLD_UPDATE& a, S_GOLD_UPDATE& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_GOLD_UPDATE* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_GOLD_UPDATE* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_GOLD_UPDATE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_GOLD_UPDATE>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_GOLD_UPDATE& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const S_GOLD_UPDATE& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_GOLD_UPDATE* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_GOLD_UPDATE";
+  }
+  protected:
+  explicit S_GOLD_UPDATE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kGoldFieldNumber = 1,
+  };
+  // int64 gold = 1;
+  void clear_gold();
+  int64_t gold() const;
+  void set_gold(int64_t value);
+  private:
+  int64_t _internal_gold() const;
+  void _internal_set_gold(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_GOLD_UPDATE)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int64_t gold_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_BUY_CARD final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_BUY_CARD) */ {
+ public:
+  inline C_BUY_CARD() : C_BUY_CARD(nullptr) {}
+  ~C_BUY_CARD() override;
+  explicit constexpr C_BUY_CARD(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_BUY_CARD(const C_BUY_CARD& from);
+  C_BUY_CARD(C_BUY_CARD&& from) noexcept
+    : C_BUY_CARD() {
+    *this = ::std::move(from);
+  }
+
+  inline C_BUY_CARD& operator=(const C_BUY_CARD& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_BUY_CARD& operator=(C_BUY_CARD&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_BUY_CARD& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_BUY_CARD* internal_default_instance() {
+    return reinterpret_cast<const C_BUY_CARD*>(
+               &_C_BUY_CARD_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    22;
+
+  friend void swap(C_BUY_CARD& a, C_BUY_CARD& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_BUY_CARD* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_BUY_CARD* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_BUY_CARD* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_BUY_CARD>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_BUY_CARD& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const C_BUY_CARD& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_BUY_CARD* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_BUY_CARD";
+  }
+  protected:
+  explicit C_BUY_CARD(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRoomIdFieldNumber = 1,
+    kCardIdFieldNumber = 2,
+  };
+  // int32 room_id = 1;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
+  private:
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
+  public:
+
+  // int32 card_id = 2;
+  void clear_card_id();
+  int32_t card_id() const;
+  void set_card_id(int32_t value);
+  private:
+  int32_t _internal_card_id() const;
+  void _internal_set_card_id(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_BUY_CARD)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int32_t room_id_;
+  int32_t card_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_REMOVE_CARD final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_REMOVE_CARD) */ {
+ public:
+  inline C_REMOVE_CARD() : C_REMOVE_CARD(nullptr) {}
+  ~C_REMOVE_CARD() override;
+  explicit constexpr C_REMOVE_CARD(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_REMOVE_CARD(const C_REMOVE_CARD& from);
+  C_REMOVE_CARD(C_REMOVE_CARD&& from) noexcept
+    : C_REMOVE_CARD() {
+    *this = ::std::move(from);
+  }
+
+  inline C_REMOVE_CARD& operator=(const C_REMOVE_CARD& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_REMOVE_CARD& operator=(C_REMOVE_CARD&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_REMOVE_CARD& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_REMOVE_CARD* internal_default_instance() {
+    return reinterpret_cast<const C_REMOVE_CARD*>(
+               &_C_REMOVE_CARD_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    23;
+
+  friend void swap(C_REMOVE_CARD& a, C_REMOVE_CARD& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_REMOVE_CARD* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_REMOVE_CARD* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_REMOVE_CARD* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_REMOVE_CARD>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_REMOVE_CARD& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const C_REMOVE_CARD& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_REMOVE_CARD* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_REMOVE_CARD";
+  }
+  protected:
+  explicit C_REMOVE_CARD(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRoomIdFieldNumber = 1,
+    kCardIdFieldNumber = 2,
+  };
+  // int32 room_id = 1;
+  void clear_room_id();
+  int32_t room_id() const;
+  void set_room_id(int32_t value);
+  private:
+  int32_t _internal_room_id() const;
+  void _internal_set_room_id(int32_t value);
+  public:
+
+  // int32 card_id = 2;
+  void clear_card_id();
+  int32_t card_id() const;
+  void set_card_id(int32_t value);
+  private:
+  int32_t _internal_card_id() const;
+  void _internal_set_card_id(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_REMOVE_CARD)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int32_t room_id_;
+  int32_t card_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_BUY_RESULT final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_BUY_RESULT) */ {
+ public:
+  inline S_BUY_RESULT() : S_BUY_RESULT(nullptr) {}
+  ~S_BUY_RESULT() override;
+  explicit constexpr S_BUY_RESULT(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_BUY_RESULT(const S_BUY_RESULT& from);
+  S_BUY_RESULT(S_BUY_RESULT&& from) noexcept
+    : S_BUY_RESULT() {
+    *this = ::std::move(from);
+  }
+
+  inline S_BUY_RESULT& operator=(const S_BUY_RESULT& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_BUY_RESULT& operator=(S_BUY_RESULT&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_BUY_RESULT& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_BUY_RESULT* internal_default_instance() {
+    return reinterpret_cast<const S_BUY_RESULT*>(
+               &_S_BUY_RESULT_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    24;
+
+  friend void swap(S_BUY_RESULT& a, S_BUY_RESULT& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_BUY_RESULT* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_BUY_RESULT* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_BUY_RESULT* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_BUY_RESULT>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_BUY_RESULT& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const S_BUY_RESULT& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_BUY_RESULT* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_BUY_RESULT";
+  }
+  protected:
+  explicit S_BUY_RESULT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSuccessFieldNumber = 1,
+    kCardIdFieldNumber = 2,
+    kGoldFieldNumber = 3,
+  };
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // int32 card_id = 2;
+  void clear_card_id();
+  int32_t card_id() const;
+  void set_card_id(int32_t value);
+  private:
+  int32_t _internal_card_id() const;
+  void _internal_set_card_id(int32_t value);
+  public:
+
+  // int64 gold = 3;
+  void clear_gold();
+  int64_t gold() const;
+  void set_gold(int64_t value);
+  private:
+  int64_t _internal_gold() const;
+  void _internal_set_gold(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_BUY_RESULT)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  bool success_;
+  int32_t card_id_;
+  int64_t gold_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -5060,6 +5715,26 @@ inline void S_DIE::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_DIE.target_id)
 }
 
+// int32 attacker_id = 3;
+inline void S_DIE::clear_attacker_id() {
+  attacker_id_ = 0;
+}
+inline int32_t S_DIE::_internal_attacker_id() const {
+  return attacker_id_;
+}
+inline int32_t S_DIE::attacker_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_DIE.attacker_id)
+  return _internal_attacker_id();
+}
+inline void S_DIE::_internal_set_attacker_id(int32_t value) {
+  
+  attacker_id_ = value;
+}
+inline void S_DIE::set_attacker_id(int32_t value) {
+  _internal_set_attacker_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_DIE.attacker_id)
+}
+
 // -------------------------------------------------------------------
 
 // S_HP_CHANGE
@@ -5367,9 +6042,193 @@ inline void S_DRAW_CARD::set_card_id(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_DRAW_CARD.card_id)
 }
 
+// -------------------------------------------------------------------
+
+// S_GOLD_UPDATE
+
+// int64 gold = 1;
+inline void S_GOLD_UPDATE::clear_gold() {
+  gold_ = int64_t{0};
+}
+inline int64_t S_GOLD_UPDATE::_internal_gold() const {
+  return gold_;
+}
+inline int64_t S_GOLD_UPDATE::gold() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_GOLD_UPDATE.gold)
+  return _internal_gold();
+}
+inline void S_GOLD_UPDATE::_internal_set_gold(int64_t value) {
+  
+  gold_ = value;
+}
+inline void S_GOLD_UPDATE::set_gold(int64_t value) {
+  _internal_set_gold(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_GOLD_UPDATE.gold)
+}
+
+// -------------------------------------------------------------------
+
+// C_BUY_CARD
+
+// int32 room_id = 1;
+inline void C_BUY_CARD::clear_room_id() {
+  room_id_ = 0;
+}
+inline int32_t C_BUY_CARD::_internal_room_id() const {
+  return room_id_;
+}
+inline int32_t C_BUY_CARD::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_BUY_CARD.room_id)
+  return _internal_room_id();
+}
+inline void C_BUY_CARD::_internal_set_room_id(int32_t value) {
+  
+  room_id_ = value;
+}
+inline void C_BUY_CARD::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_BUY_CARD.room_id)
+}
+
+// int32 card_id = 2;
+inline void C_BUY_CARD::clear_card_id() {
+  card_id_ = 0;
+}
+inline int32_t C_BUY_CARD::_internal_card_id() const {
+  return card_id_;
+}
+inline int32_t C_BUY_CARD::card_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_BUY_CARD.card_id)
+  return _internal_card_id();
+}
+inline void C_BUY_CARD::_internal_set_card_id(int32_t value) {
+  
+  card_id_ = value;
+}
+inline void C_BUY_CARD::set_card_id(int32_t value) {
+  _internal_set_card_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_BUY_CARD.card_id)
+}
+
+// -------------------------------------------------------------------
+
+// C_REMOVE_CARD
+
+// int32 room_id = 1;
+inline void C_REMOVE_CARD::clear_room_id() {
+  room_id_ = 0;
+}
+inline int32_t C_REMOVE_CARD::_internal_room_id() const {
+  return room_id_;
+}
+inline int32_t C_REMOVE_CARD::room_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_REMOVE_CARD.room_id)
+  return _internal_room_id();
+}
+inline void C_REMOVE_CARD::_internal_set_room_id(int32_t value) {
+  
+  room_id_ = value;
+}
+inline void C_REMOVE_CARD::set_room_id(int32_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_REMOVE_CARD.room_id)
+}
+
+// int32 card_id = 2;
+inline void C_REMOVE_CARD::clear_card_id() {
+  card_id_ = 0;
+}
+inline int32_t C_REMOVE_CARD::_internal_card_id() const {
+  return card_id_;
+}
+inline int32_t C_REMOVE_CARD::card_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_REMOVE_CARD.card_id)
+  return _internal_card_id();
+}
+inline void C_REMOVE_CARD::_internal_set_card_id(int32_t value) {
+  
+  card_id_ = value;
+}
+inline void C_REMOVE_CARD::set_card_id(int32_t value) {
+  _internal_set_card_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_REMOVE_CARD.card_id)
+}
+
+// -------------------------------------------------------------------
+
+// S_BUY_RESULT
+
+// bool success = 1;
+inline void S_BUY_RESULT::clear_success() {
+  success_ = false;
+}
+inline bool S_BUY_RESULT::_internal_success() const {
+  return success_;
+}
+inline bool S_BUY_RESULT::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BUY_RESULT.success)
+  return _internal_success();
+}
+inline void S_BUY_RESULT::_internal_set_success(bool value) {
+  
+  success_ = value;
+}
+inline void S_BUY_RESULT::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BUY_RESULT.success)
+}
+
+// int32 card_id = 2;
+inline void S_BUY_RESULT::clear_card_id() {
+  card_id_ = 0;
+}
+inline int32_t S_BUY_RESULT::_internal_card_id() const {
+  return card_id_;
+}
+inline int32_t S_BUY_RESULT::card_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BUY_RESULT.card_id)
+  return _internal_card_id();
+}
+inline void S_BUY_RESULT::_internal_set_card_id(int32_t value) {
+  
+  card_id_ = value;
+}
+inline void S_BUY_RESULT::set_card_id(int32_t value) {
+  _internal_set_card_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BUY_RESULT.card_id)
+}
+
+// int64 gold = 3;
+inline void S_BUY_RESULT::clear_gold() {
+  gold_ = int64_t{0};
+}
+inline int64_t S_BUY_RESULT::_internal_gold() const {
+  return gold_;
+}
+inline int64_t S_BUY_RESULT::gold() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BUY_RESULT.gold)
+  return _internal_gold();
+}
+inline void S_BUY_RESULT::_internal_set_gold(int64_t value) {
+  
+  gold_ = value;
+}
+inline void S_BUY_RESULT::set_gold(int64_t value) {
+  _internal_set_gold(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BUY_RESULT.gold)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

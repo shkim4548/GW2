@@ -88,12 +88,12 @@ bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<int32, 
 
         CardStat stat;
         stat.id = c["id"].get<int32_t>();
-        if (c.contains("damage"))         stat.damage = c["damage"].get<uint32_t>();
-        if (c.contains("range"))          stat.range = c["range"].get<float>();
-        if (c.contains("cooldown"))       stat.cooldown = c["cooldown"].get<float>();
-        if (c.contains("aoe_radius"))     stat.aoeRadius = c["aoe_radius"].get<float>();
-        if (c.contains("slow_amount"))    stat.slowAmount = c["slow_amount"].get<float>();
-        if (c.contains("knockback"))      stat.knockbackForce = c["knockback"].get<float>();
+        if (c.contains("damage_coeff"))      stat.damageCoeff = c["damage_coeff"].get<float>();
+        if (c.contains("cast_time"))         stat.castTime = c["cast_time"].get<float>();
+        if (c.contains("duration"))          stat.duration = c["duration"].get<float>();
+        if (c.contains("projectile_speed"))  stat.projectileSpeed = c["projectile_speed"].get<float>();
+        if (c.contains("price"))             stat.price = c["price"].get<uint32_t>();
+        if (c.contains("skill_id"))          stat.skillId = c["skill_id"].get<string>();
 
         outStats[stat.id] = stat;
         GConsoleLogger->WriteStdOut(Color::GREEN,

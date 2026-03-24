@@ -135,3 +135,13 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 
 	return true;
 }
+
+bool Handle_C_BUY_CARD(PacketSessionRef& session, Protocol::C_BUY_CARD& pkt)
+{
+	return false;
+}
+
+bool Handle_C_REMOVE_CARD(PacketSessionRef& session, Protocol::C_REMOVE_CARD& pkt)
+{
+	return false;
+}

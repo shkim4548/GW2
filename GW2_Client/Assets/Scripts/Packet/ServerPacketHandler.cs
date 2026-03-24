@@ -29,6 +29,10 @@ public enum PacketId : ushort
         PKT_S_RESPAWN = 1018,
         PKT_S_HAND_SYNC = 1019,
         PKT_S_DRAW_CARD = 1020,
+        PKT_S_GOLD_UPDATE = 1021,
+        PKT_C_BUY_CARD = 1022,
+        PKT_C_REMOVE_CARD = 1023,
+        PKT_S_BUY_RESULT = 1024,
 }
 
 public class PacketManager
@@ -80,6 +84,10 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_HAND_SYNC, PacketHandler.S_HAND_SYNCHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_DRAW_CARD, MakePacket<S_DRAW_CARD>);
         _handler.Add((ushort)PacketId.PKT_S_DRAW_CARD, PacketHandler.S_DRAW_CARDHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_GOLD_UPDATE, MakePacket<S_GOLD_UPDATE>);
+        _handler.Add((ushort)PacketId.PKT_S_GOLD_UPDATE, PacketHandler.S_GOLD_UPDATEHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_BUY_RESULT, MakePacket<S_BUY_RESULT>);
+        _handler.Add((ushort)PacketId.PKT_S_BUY_RESULT, PacketHandler.S_BUY_RESULTHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
