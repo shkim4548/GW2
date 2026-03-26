@@ -8,6 +8,7 @@ public interface ILoader<Key, Value>
 
 public interface IDataService
 {
+    Dictionary<int, Data.CardInfo> CardDict { get; }
     void Init();
 }
 

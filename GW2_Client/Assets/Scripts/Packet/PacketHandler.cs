@@ -17,7 +17,7 @@ public class PacketHandler
         int roomId = (int)enterGamePkt.Player.RoomId;
 
         var objectService = Bootstrapper.Instance.ObjectService;
-        Debug.Log($"[PacketHandler] After ObjectService");
+        //Debug.Log($"[PacketHandler] After ObjectService");
         objectService.Add(enterGamePkt.Player, true);
 
         // ★ 스폰 후 서버 PosInfo를 transform.position에 즉시 반영
@@ -384,11 +384,21 @@ public class PacketHandler
 
     internal static void S_GOLD_UPDATEHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_GOLD_UPDATE pkt = message as S_GOLD_UPDATE;
+        Debug.Log($"[S_GOLD_UPDATE] gold={pkt.Gold}");
+        UI_Store.OnGoldUpdate?.Invoke(pkt.Gold);
     }
 
     internal static void S_BUY_RESULTHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_BUY_RESULT pkt = message as S_BUY_RESULT;
+        Debug.Log($"[S_BUY_RESULT] success={pkt.Success} cardId={pkt.CardId} gold={pkt.Gold}");
+        UI_Store.OnBuyResult?.Invoke(pkt.Success, pkt.CardId, pkt.Gold);
+    }
+
+    internal static void S_CHARACTER_SELECTEDHandler(PacketSession session, IMessage message)
+    {
+        S_CHARACTER_SELECTED pkt = message as S_CHARACTER_SELECTED;
+        UI_Select.OnCharSelected?.Invoke(pkt.PlayerId, pkt.PlayerType, pkt.IsCancel);
     }
 }

@@ -120,7 +120,11 @@ public class ObjectService : IObjectService
                 : "Nexus/CyborgNexus";
 
             go = _resourceService.Instantiate(prefabName);
-            if (go == null) { Debug.LogError("[ObjectService] Nexus prefab not found"); return; }
+            if (go == null) 
+            {
+                Debug.LogError("[ObjectService] Nexus prefab not found");
+                return; 
+            }
 
             NexusController nc = go.GetComponent<NexusController>();
             nc.transform.position = initPos;

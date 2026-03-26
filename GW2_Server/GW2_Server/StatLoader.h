@@ -1,14 +1,21 @@
 #pragma once
-struct UnitStat
+struct UnitStat 
 {
-	uint64 hp = 0;
-	uint64 maxHp = 0;
-	uint32 attackDamage = 0;
-	float attackRange = 0.0f;
-	float attackInterval = 1.0f;
-	float moveSpeed = 0.0f;
-	float detectionRange = 0.0f;
+    uint64 hp = 0;
+    uint64 maxHp = 0;
+    uint32 attackDamage = 0;
+    float attackRange = 0.0f;
+    float attackInterval = 1.0f;
+    float attackSpeed = 1.0f;    // 추가
+    float moveSpeed = 0.0f;
+    float detectionRange = 0.0f;
+    uint32 defense = 0;          // 추가
+    float healthRegen = 0.0f;    // 추가
+    float shield = 0.0f;         // 추가
+    float maxMana = 0.0f;        // 추가
+    float manaRegen = 0.0f;      // 추가
 };
+
 
 struct CardStat
 {

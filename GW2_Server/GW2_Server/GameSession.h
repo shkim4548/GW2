@@ -16,6 +16,9 @@ public:
 	virtual void OnRecvPacket(BYTE* buffer, int32 len) override;
 	virtual void OnSend(int32 len) override;
 
+	// Player Getter
+	shared_ptr<Player> GetPlayer() { return _currentPlayer; }
+
 public:
 	atomic<PlayerRef> _currentPlayer;
 	weak_ptr<class Room> _room;

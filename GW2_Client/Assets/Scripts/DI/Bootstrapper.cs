@@ -10,6 +10,7 @@ public class Bootstrapper : MonoBehaviour
     public ISceneService SceneService { get; private set; }
     public IObjectService ObjectService { get; private set; }
     public IInputService InputService { get; private set; }
+    public IDataService DataService { get; private set; }
 
     void Awake()
     {
@@ -36,8 +37,10 @@ public class Bootstrapper : MonoBehaviour
         SceneService = new SceneService();
         ObjectService = new ObjectService();
         InputService = new InputService();
+        DataService = new DataService();
 
         NetworkService.Init();
+        DataService.Init();                // Ãß°¡
     }
 
     void Update()

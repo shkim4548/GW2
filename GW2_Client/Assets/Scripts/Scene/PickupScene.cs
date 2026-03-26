@@ -11,7 +11,6 @@ public class PickupScene : BaseScene
 
     protected override void Init()
     {
-        IUIService uiService = Bootstrapper.Instance.UIService;
-        uiService.ShowSceneUI<UI_Pickup>();
+
     }
 }

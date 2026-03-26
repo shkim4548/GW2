@@ -117,6 +117,7 @@ public class UIService : IUIService
         if (sort)
         {
             canvas.sortingOrder = _order;
+            _order++;
         }
         else
         {

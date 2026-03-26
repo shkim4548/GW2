@@ -12,6 +12,11 @@ public:
 
 	void SetPlayerId(int32 id) { _objectId = id; }
 	void SetSession(GameSessionRef session) { _session = session; }
+
+	// Player 타입 지정
+	void SetPlayerType(Protocol::PlayerType type) { _playerType = type; }
+	Protocol::PlayerType GetPlayerType() const { return _playerType; }
+
 	int64 GetPlayerId() { return _objectId; }
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
@@ -35,6 +40,8 @@ private:
 	vector<GameMath::Vector3> path;
 	int32 currentPathIndex;
 	bool _isMoving = false;
+
+	Protocol::PlayerType _playerType = Protocol::PLAYER_TYPE_POLICE;
 
 public:
 	vector<int32> _deck;

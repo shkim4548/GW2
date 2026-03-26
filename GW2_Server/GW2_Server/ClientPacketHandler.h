@@ -31,6 +31,9 @@ enum : uint16
 	PKT_C_BUY_CARD = 1022,
 	PKT_C_REMOVE_CARD = 1023,
 	PKT_S_BUY_RESULT = 1024,
+	PKT_C_SELECT_CHARACTER = 1025,
+	PKT_S_CHARACTER_SELECTED = 1026,
+	PKT_C_CONFIRM_CHARACTER = 1027,
 };
 
 // Custom Handlers
@@ -44,6 +47,8 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 	bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pkt);
 	bool Handle_C_BUY_CARD(PacketSessionRef& session, Protocol::C_BUY_CARD& pkt);
 	bool Handle_C_REMOVE_CARD(PacketSessionRef& session, Protocol::C_REMOVE_CARD& pkt);
+	bool Handle_C_SELECT_CHARACTER(PacketSessionRef& session, Protocol::C_SELECT_CHARACTER& pkt);
+	bool Handle_C_CONFIRM_CHARACTER(PacketSessionRef& session, Protocol::C_CONFIRM_CHARACTER& pkt);
 
 class ClientPacketHandler
 {
@@ -61,6 +66,8 @@ public:
 		GPacketHandler[PKT_C_ENTER_LOBBY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_LOBBY>(Handle_C_ENTER_LOBBY, session, buffer, len); };
 		GPacketHandler[PKT_C_BUY_CARD] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BUY_CARD>(Handle_C_BUY_CARD, session, buffer, len); };
 		GPacketHandler[PKT_C_REMOVE_CARD] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_REMOVE_CARD>(Handle_C_REMOVE_CARD, session, buffer, len); };
+		GPacketHandler[PKT_C_SELECT_CHARACTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SELECT_CHARACTER>(Handle_C_SELECT_CHARACTER, session, buffer, len); };
+		GPacketHandler[PKT_C_CONFIRM_CHARACTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_CONFIRM_CHARACTER>(Handle_C_CONFIRM_CHARACTER, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -84,6 +91,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_DRAW_CARD& pkt) { return MakeSendBuffer(pkt, PKT_S_DRAW_CARD); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_GOLD_UPDATE& pkt) { return MakeSendBuffer(pkt, PKT_S_GOLD_UPDATE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BUY_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BUY_RESULT); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_CHARACTER_SELECTED& pkt) { return MakeSendBuffer(pkt, PKT_S_CHARACTER_SELECTED); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

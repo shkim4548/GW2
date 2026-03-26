@@ -138,10 +138,53 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 
 bool Handle_C_BUY_CARD(PacketSessionRef& session, Protocol::C_BUY_CARD& pkt)
 {
-	return false;
+	auto room = GLobby->GetRoomById(pkt.room_id()).lock();
+	if (!room) return false;
+
+	int32 playerId = static_pointer_cast<GameSession>(session)->GetPlayer()->GetPlayerId();
+	PlayerRef player = room->GetPlayerById(playerId).lock();
+	if (!player) return false;
+
+	room->DoAsync(&Room::HandleBuyCard, player, pkt.card_id());
+	return true;
 }
 
 bool Handle_C_REMOVE_CARD(PacketSessionRef& session, Protocol::C_REMOVE_CARD& pkt)
 {
-	return false;
+	auto room = GLobby->GetRoomById(pkt.room_id()).lock();
+	if (!room) return false;
+
+	int32 playerId = static_pointer_cast<GameSession>(session)->GetPlayer()->GetPlayerId();
+	PlayerRef player = room->GetPlayerById(playerId).lock();
+	if (!player) return false;
+
+	room->DoAsync(&Room::HandleRemoveCard, player, pkt.card_id());
+	return true;
+}
+
+bool Handle_C_SELECT_CHARACTER(PacketSessionRef& session, Protocol::C_SELECT_CHARACTER& pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
+	if (player == nullptr) return false;
+
+	shared_ptr<Room> room = GLobby->GetRoomById(pkt.room_id()).lock();
+	if (room == nullptr) return false;
+
+	room->DoAsync(&Room::HandleSelectCharacter, player, pkt.player_type());
+	return true;
+}
+
+bool Handle_C_CONFIRM_CHARACTER(PacketSessionRef& session, Protocol::C_CONFIRM_CHARACTER& pkt)
+{
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"Confirm Character\n");
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
+	if (player == nullptr) return false;
+
+	shared_ptr<Room> room = GLobby->GetRoomById(pkt.room_id()).lock();
+	if (room == nullptr) return false;
+
+	room->DoAsync(&Room::HandleConfirmCharacter, player, pkt.player_type());
+	return true;
 }

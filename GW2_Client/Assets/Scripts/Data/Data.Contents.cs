@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,12 +82,14 @@ namespace Data
     public struct CardInfo
     {
         public int id;
-        public string skill_id;
+        public string name;      // 추가 — 표시용 이름
+        public string skill_id;  // 스킬 연결 ID
         public int damage;
         public int price;
     }
+
     [Serializable]
-    public class CardInfoList : ILoader<int, CardInfo>   // struct �� class�� ����
+    public class CardInfoList : ILoader<int, CardInfo>   // struct → class로 변경
     {
         public List<CardInfo> cards;
 

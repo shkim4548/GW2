@@ -67,6 +67,8 @@ public:
 	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
 	void HandleAttack(int32 attackerId, int32 targetId, Protocol::SkillType commandId);
 	void HandleRespawnPlayer(int32 playerId);
+	void HandleSelectCharacter(PlayerRef player, Protocol::PlayerType type);
+	void HandleConfirmCharacter(PlayerRef player, Protocol::PlayerType type);
 
 private:
 	// internal
@@ -98,12 +100,12 @@ private:
 	int32 _laneIdCnt = 1;
 
 	// === minion cool time ===
-	float _minionSpawnCoolDown = 5.0f;
+	float _minionSpawnCoolDown = 30.0f;
 	float _minionSpawnAccumulate = 0.0f;
 
 	// === minion spawn ===
 	static constexpr int32 WAVE_MINION_COUNT = 5;    // 레인당 마리 수
-	static constexpr float WAVE_SPAWN_INTERVAL = 5.0f; // 쌍 사이 간격
+	static constexpr float WAVE_SPAWN_INTERVAL = 1.0f; // 쌍 사이 간격
 	static constexpr int32 MINION_LANE_TOP = 1;
 	static constexpr int32 MINION_LANE_BOT = 3;
 	static constexpr int32 MAX_MINION_COUNT = 50;
@@ -117,11 +119,13 @@ private:
 	
 	// === Gold ===
 	float _goldIncomeTimer = 0.0f;
-	static constexpr float GOLD_INCOME_INTERVAL = 1.0f;  // 1초마다
+	// staic_const_expr은 솔루션 자체를 완전히 다시 빌드해야한다
+	static constexpr float GOLD_INCOME_INTERVAL = 1.0f;
 	static constexpr int64 GOLD_INCOME_AMOUNT = 20;
 
 	// Game Loop
 	bool _gameStarted = false;
+	unordered_map<int32, int32> _pendingSelections; // playerType → playerId
 };
 
 //extern shared_ptr<Room> GRoom;

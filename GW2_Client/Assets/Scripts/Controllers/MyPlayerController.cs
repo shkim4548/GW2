@@ -33,6 +33,8 @@ public class MyPlayerController : PlayerController
     public static Action<float, float> OnHpChanged;
     public static Action<int> OnCardUsed;
 
+    private UI_Store _storeUI = null;
+
     public CampType CampType { get; set; }
     public override void Init()
     {
@@ -52,6 +54,9 @@ public class MyPlayerController : PlayerController
 
         Id = _networkService.GetNetworkId();
         _campType = Google.Protobuf.Enum.CampType.CampHuman;
+
+        IUIService uiService = Bootstrapper.Instance.UIService;
+        uiService.ShowSceneUI<UI_GameScene>();
     }
 
     public override void UpdateIdle()
@@ -221,21 +226,36 @@ public class MyPlayerController : PlayerController
     // 현재는 사용하지 않는다.
     public void OnKeyEvent()
     {
-        if (Input.GetKey(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             //SendCardEvent
         }
-        else if (Input.GetKey(KeyCode.W))
+        else if (Input.GetKeyDown(KeyCode.W))
         {
 
         }
-        else if(Input.GetKey(KeyCode.E))
+        else if(Input.GetKeyDown(KeyCode.E))
         {
 
         }
-        else if(Input.GetKey(KeyCode.R))
+        else if(Input.GetKeyDown(KeyCode.R))
         {
 
+        }
+        else if(Input.GetKeyDown(KeyCode.B))
+        {
+            //IUIService uiService = Bootstrapper.Instance.UIService;
+            //uiService.ShowPopupUI<UI_Store>();
+            if (_storeUI != null)
+            {
+                Debug.Log("Show Store UI");
+                Bootstrapper.Instance.UIService.ClosePopupUI(_storeUI);
+                _storeUI = null;
+            }
+            else
+            {
+                _storeUI = Bootstrapper.Instance.UIService.ShowPopupUI<UI_Store>();
+            }
         }
         else
         {

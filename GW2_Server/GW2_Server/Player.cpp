@@ -17,8 +17,18 @@ Player::~Player()
 void Player::InitPlayer(shared_ptr<Room> room)
 {
     _room = room;
+    string statKey;
 
-    UnitStat stat = GLobby->GetUnitStat("player");
+    switch (_playerType)
+    {
+    case Protocol::PLAYER_TYPE_POLICE:      statKey = "Police";      break;
+    case Protocol::PLAYER_TYPE_MONK:        statKey = "Monk";        break;
+    case Protocol::PLAYER_TYPE_LIGHTSABRE:  statKey = "Lightsabre";  break;
+    case Protocol::PLAYER_TYPE_FIREFIGHTER: statKey = "Firefighter"; break;
+    default:                                statKey = "Police";      break;
+    }
+
+    UnitStat stat = GLobby->GetUnitStat(statKey);
     if (stat.hp > 0)
     {
         _statInfo.set_hp(stat.hp);

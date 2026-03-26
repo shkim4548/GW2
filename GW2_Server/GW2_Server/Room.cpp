@@ -102,8 +102,8 @@ bool Room::Enter(PlayerRef gameObject)
 		SpawnTurret(GameMath::Vector3(13, 0.5, 25.3), Protocol::CAMP_CYBORG);
 
 		// 넥서스
-		SpawnNexus(GameMath::Vector3(-62.0f, 0.0f, 0.0f), Protocol::CAMP_HUMAN);
-		SpawnNexus(GameMath::Vector3(62.0f, 0.0f, 0.0f), Protocol::CAMP_CYBORG);
+		SpawnNexus(GameMath::Vector3(-70.5f, 2.3f, 0.0f), Protocol::CAMP_HUMAN);
+		SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
 	}
 
 	return true;
@@ -149,44 +149,6 @@ void Room::RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> rout
 		GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Room::RoomInit] laneId=%d, waypoints=%d\n",
 			laneId, static_cast<int32>(route->waypoints.size()));
 	}
-
-
-	// 넥서스 위치는 씬의 HumanNexus/CyborgNexus 위치에 맞게 조정 필요
-	SpawnNexus(GameMath::Vector3{ -62.0f, 0.0f, 0.0f }, Protocol::CAMP_HUMAN);
-	SpawnNexus(GameMath::Vector3{ 62.0f, 0.0f, 0.0f }, Protocol::CAMP_CYBORG);
-
-	// TODO : 테스트니까 여기가 StartGame으로 가정
-	// HUMAN
-	Protocol::S_ENTER_GAME enterPkt;
-	GameMath::Vector3 turretPos = GameMath::Vector3(-15, 0.5, -25.5);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-52.81, 0.5, -22.93);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-65.26, 2, -4.28);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-65.26, 2, 4.73);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-51.2, 0.5, 22.31);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-	turretPos = GameMath::Vector3(-10.93, 0.5, 25.1);
-	SpawnTurret(turretPos, Protocol::CAMP_HUMAN);
-
-	// CYBORG
-	turretPos = GameMath::Vector3(11.69, 0.5, -25.51);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(47.1, 0.5, -22.6);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(64.2, 2, -4.5);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(64.2, 2, 4.5);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(50.9, 0.5, 22.1);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-	turretPos = GameMath::Vector3(13, 0.5, 25.3);
-	SpawnTurret(turretPos, Protocol::CAMP_CYBORG);
-
-	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
-	Broadcast(sendBuffer);
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)
@@ -394,6 +356,7 @@ bool Room::HandleSpawnMinion(MinionRef minion)
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
 	_objects.emplace(objectId, minion);
+	_minionSpawnOrder.push_back(objectId);
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterPkt);
 	Broadcast(sendBuffer);
@@ -443,11 +406,10 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 
 void Room::UpdateRoom(float deltaTime)
 {
-	// 0. 미니언 스폰 (기존 로직 유지)
+	// 0. 미니언 스폰
 	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
 	{
-		// 웨이브 시작 체크 (스폰 중이 아닐 때만)
 		if (!_isSpawningWave)
 		{
 			if (_minionSpawnAccumulate >= _minionSpawnCoolDown)
@@ -459,14 +421,12 @@ void Room::UpdateRoom(float deltaTime)
 			}
 		}
 
-		// 웨이브 진행: 0.3초마다 Top + Bot 1쌍 스폰
 		if (_isSpawningWave)
 		{
 			_waveSpawnAccumulate += deltaTime;
-			while (_waveSpawnAccumulate >= WAVE_SPAWN_INTERVAL 	&& _waveSpawnCount < WAVE_MINION_COUNT)
+			if (_waveSpawnAccumulate >= WAVE_SPAWN_INTERVAL && _waveSpawnCount < WAVE_MINION_COUNT)
 			{
 				_waveSpawnAccumulate -= WAVE_SPAWN_INTERVAL;
-				// 최대 미니언 수 초과 시 오래된 것부터 제거
 				while (_minionSpawnOrder.size() + 4 > MAX_MINION_COUNT
 					&& !_minionSpawnOrder.empty())
 				{
@@ -496,7 +456,7 @@ void Room::UpdateRoom(float deltaTime)
 		if (obj == nullptr)
 			continue;
 
-		obj->UpdateController(deltaTime);  // Player/Minion 공통
+		obj->UpdateController(deltaTime);
 	}
 
 	// 2) Movement + Broadcast Phase
@@ -525,7 +485,7 @@ void Room::UpdateRoom(float deltaTime)
 		obj->PostUpdate();
 	}
 
-	// UpdateRoom 내부
+	// 3) 리스폰 타이머
 	for (auto it = _respawnTimers.begin(); it != _respawnTimers.end(); )
 	{
 		it->second -= deltaTime;
@@ -537,7 +497,7 @@ void Room::UpdateRoom(float deltaTime)
 		else ++it;
 	}
 
-	// 자동 골드 수입
+	// 4) 자동 골드 수입
 	_goldIncomeTimer += deltaTime;
 	if (_goldIncomeTimer >= GOLD_INCOME_INTERVAL)
 	{
@@ -550,6 +510,8 @@ void Room::UpdateRoom(float deltaTime)
 		}
 	}
 }
+
+
 
 shared_ptr<Minion> Room::SpawnMinion(int32 laneId, Protocol::CampType team)
 {
@@ -1252,6 +1214,49 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
 	Broadcast(sendBuffer);
 }
+
+void Room::HandleSelectCharacter(PlayerRef player, Protocol::PlayerType type)
+{
+	int32 playerId = player->GetObjectId();
+
+	// 이미 다른 플레이어가 선택한 캐릭터면 거절 (브로드캐스트 안 함)
+	for (auto& [selectedType, selectedPlayerId] : _pendingSelections)
+	{
+		if (selectedType == (int32)type && selectedPlayerId != playerId)
+			return;
+	}
+
+	// 이전 선택 취소 브로드캐스트
+	auto prevIt = _pendingSelections.find(playerId);
+	if (prevIt != _pendingSelections.end())
+	{
+		Protocol::S_CHARACTER_SELECTED cancelPkt;
+		cancelPkt.set_player_id(playerId);
+		cancelPkt.set_player_type((Protocol::PlayerType)prevIt->second);
+		cancelPkt.set_is_cancel(true);
+		Broadcast(ClientPacketHandler::MakeSendBuffer(cancelPkt));
+	}
+
+	// 새 선택 등록
+	_pendingSelections[playerId] = (int32)type;
+
+	// 선택 브로드캐스트
+	Protocol::S_CHARACTER_SELECTED pkt;
+	pkt.set_player_id(playerId);
+	pkt.set_player_type(type);
+	pkt.set_is_cancel(false);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
+}
+
+void Room::HandleConfirmCharacter(PlayerRef player, Protocol::PlayerType type)
+{
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleConfirmCharacter] Called\n");
+
+	player->SetPlayerType(type);
+	_pendingSelections.erase(player->GetObjectId());
+	Enter(player); // S_ENTER_GAME 전송
+}
+
 
 void Room::InitLaneRouteBin()
 {

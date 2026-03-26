@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UI_CardPanel : UI_Base
 {
@@ -9,16 +8,14 @@ public class UI_CardPanel : UI_Base
     public static Action<int> OnDrawCard;
 
     private static UI_CardPanel _instance;
-
     private List<int> _handCardIds = new List<int>();
 
-    enum Images { Q, W, E, R }
+    enum GameObjects { Q, W, E, R }
 
     public override void Init()
     {
         _instance = this;
-
-        Bind<Image>(typeof(Images));
+        Bind<GameObject>(typeof(GameObjects));
 
         OnHandSync -= HandleHandSync;
         OnHandSync += HandleHandSync;
@@ -58,29 +55,21 @@ public class UI_CardPanel : UI_Base
 
     private void RefreshUI()
     {
+        string[] keyLabels = { "Q", "W", "E", "R" };
+
         for (int i = 0; i < 4; i++)
         {
-            Image slot = GetImage(i);
-            if (slot == null) continue;
+            Transform slot = GetObject(i).transform;
 
-            if (i < _handCardIds.Count)
-            {
-                slot.enabled = true;
-                // 카드 ID별 색상 구분 (임시, 추후 스프라이트로 교체)
-                slot.color = GetCardColor(_handCardIds[i]);
-            }
-            else
-            {
-                slot.enabled = false;
-            }
+            foreach (Transform child in slot)
+                Destroy(child.gameObject);
+
+            if (i >= _handCardIds.Count) continue;
+
+            GameObject cardObj = Bootstrapper.Instance.ResourceService
+                .Instantiate("UI/SubItem/UI_CardSlot", slot);
+            cardObj.GetComponent<UI_CardSlot>().SetHandMode(_handCardIds[i], keyLabels[i]);
         }
-    }
-
-    private Color GetCardColor(int cardId)
-    {
-        // 임시: 카드 ID에 따라 색상 구분
-        float t = Mathf.InverseLerp(2, 11, cardId);
-        return Color.Lerp(Color.cyan, Color.red, t);
     }
 
     private void OnDestroy()

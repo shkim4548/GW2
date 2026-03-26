@@ -36,6 +36,7 @@ bool StatLoader::LoadUnitStatsFromJson(const string& path, unordered_map<string,
         string type = u["type"].get<string>();
 
         UnitStat stat;
+        // ── 기존 필드 ──────────────────────────────
         if (u.contains("hp"))               stat.hp = u["hp"].get<uint64_t>();
         if (u.contains("max_hp"))           stat.maxHp = u["max_hp"].get<uint64_t>();
         if (u.contains("attack_damage"))    stat.attackDamage = u["attack_damage"].get<uint32_t>();
@@ -43,6 +44,14 @@ bool StatLoader::LoadUnitStatsFromJson(const string& path, unordered_map<string,
         if (u.contains("attack_interval"))  stat.attackInterval = u["attack_interval"].get<float>();
         if (u.contains("move_speed"))       stat.moveSpeed = u["move_speed"].get<float>();
         if (u.contains("detection_range"))  stat.detectionRange = u["detection_range"].get<float>();
+
+        // ── 추가된 필드 ────────────────────────────
+        if (u.contains("attack_speed"))     stat.attackSpeed = u["attack_speed"].get<float>();
+        if (u.contains("defense"))          stat.defense = u["defense"].get<uint32_t>();
+        if (u.contains("health_regen"))     stat.healthRegen = u["health_regen"].get<float>();
+        if (u.contains("shield"))           stat.shield = u["shield"].get<float>();
+        if (u.contains("max_mana"))         stat.maxMana = u["max_mana"].get<float>();
+        if (u.contains("mana_regen"))       stat.manaRegen = u["mana_regen"].get<float>();
 
         outStats[type] = stat;
         for (unordered_map<string, UnitStat>::iterator iter = outStats.begin(); iter != outStats.end(); ++iter)

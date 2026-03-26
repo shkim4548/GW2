@@ -174,3 +174,22 @@ message S_BUY_RESULT
     int32 card_id  = 2;
     int64 gold     = 3;
 }
+
+message C_SELECT_CHARACTER
+{
+    int32 room_id = 1;
+    PlayerType player_type = 2;
+}
+
+message S_CHARACTER_SELECTED
+{
+    int32 player_id = 1;
+    PlayerType player_type = 2;
+    bool is_cancel = 3;   // 다른 캐릭터로 변경 시 이전 것 해제용
+}
+
+message C_CONFIRM_CHARACTER
+{
+    int32 room_id = 1;
+    PlayerType player_type = 2;
+}

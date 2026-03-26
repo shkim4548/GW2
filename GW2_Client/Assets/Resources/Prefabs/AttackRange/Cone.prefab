@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082597986663}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4566956082598280001}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!119 &4566956082607707495
 Projector:
@@ -50,7 +50,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: 1c2098f79a9cc9a4c95e3f920b4a3728, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7671
+    m_Bits: 247
 --- !u!1 &4566956082598033825
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,13 +76,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082598033825}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4566956082598280001}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!119 &4566956082607759535
 Projector:
@@ -102,7 +102,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: cdaae274ec0f8f644933402f7486957b, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7671
+    m_Bits: 247
 --- !u!114 &4566956082609318689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,13 +140,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082598045817}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.000000014901163, z: -0.41469327, w: 0.9099613}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4566956082598280001}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -43}
 --- !u!119 &4566956082607741393
 Projector:
@@ -166,7 +166,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: 7dc498cb0f03f8b49b46a48e9f86224a, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7671
+    m_Bits: 247
 --- !u!1 &4566956082598051285
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,13 +191,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082598051285}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.00000008940697, y: 0.000000014901161, z: 0.43051112, w: 0.90258527}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4566956082598280001}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
 --- !u!119 &4566956082607697707
 Projector:
@@ -217,7 +217,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: 38322027f63884249b99d6b7fb1abe46, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7671
+    m_Bits: 247
 --- !u!1 &4566956082598231449
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,13 +242,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082598231449}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4566956082598280001}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!119 &4566956082607740031
 Projector:
@@ -268,7 +268,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: 32a0c60323b6d5945afb56d2a3f3f3c7, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7671
+    m_Bits: 247
 --- !u!1 &4566956082598246005
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,6 +293,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4566956082598246005}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 4.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -304,7 +305,6 @@ Transform:
   - {fileID: 4566956082598360621}
   - {fileID: 4566956082598313703}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &4566956082609312707
 MonoBehaviour:
