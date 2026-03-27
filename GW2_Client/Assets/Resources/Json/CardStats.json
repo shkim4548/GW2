@@ -1,19 +1,32 @@
 {
-  "Cards": [
-    {
-      "id": 0,
-      "cardname" : "Shield",
-      "attack": 1.3,
-      "defense": 2.0,
-      "health": 3.0
-    },
+  "cards": [
     {
       "id": 1,
-      "cardname" : "Sword",
-      "attack": 4.0,
-      "defense": 5.0,
-      "health": 6.0
+      "name": "Shield",
+      "skill_id": "W",
+      "damage": 10,
+      "price": 100
+    },
+    {
+      "id": 2,
+      "name": "Sword",
+      "skill_id": "Q",
+      "damage": 40,
+      "price": 150
+    },
+    {
+      "id": 3,
+      "name": "Speed",
+      "skill_id": "E",
+      "damage": 0,
+      "price": 120
+    },
+    {
+      "id": 4,
+      "name": "Invincible",
+      "skill_id": "R",
+      "damage": 0,
+      "price": 300
     }
   ]
 }
-

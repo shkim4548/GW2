@@ -34,7 +34,7 @@ public class UI_LoginScene : UI_Scene
     {
         string text = Get<TMP_InputField>((int)UIInputFields.NicknameInput).GetComponent<TMP_InputField>().text;
 
-        Debug.Log(text);
+        //Debug.Log(text);
 
         C_LOGIN loginPkt = new C_LOGIN() { Nickname = text };
         //var networkService = DI.Container.Resolve<INetworkService>();

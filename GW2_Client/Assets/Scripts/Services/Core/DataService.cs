@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,10 @@ public class DataService : IDataService
     public void Init()
     {
         CardDict = LoadJson<Data.CardInfoList, int, Data.CardInfo>("Json/CardStats");
+        foreach(KeyValuePair<int, Data.CardInfo> card in CardDict)
+        {
+            Debug.Log($"{card.Key}, {card.Value.name}");
+        }
     }
 
     private Dictionary<Key, Value> LoadJson<Loader, Key, Value>(string path)
