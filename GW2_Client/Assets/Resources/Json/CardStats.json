@@ -9,7 +9,7 @@
     },
     {
       "id": 2,
-      "name": "Sword",
+      "name": "Armor",
       "skill_id": "Q",
       "damage": 40,
       "price": 150
@@ -23,7 +23,7 @@
     },
     {
       "id": 4,
-      "name": "Invincible",
+      "name": "InvincibleShield",
       "skill_id": "R",
       "damage": 0,
       "price": 300

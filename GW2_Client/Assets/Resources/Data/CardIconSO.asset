@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f513c80bd0c7dc4cbd0d9f8c523ef43, type: 3}
+  m_Name: CardIconSO
+  m_EditorClassIdentifier: 
+  entries:
+  - cardId: 1
+    icon: {fileID: 21300000, guid: a56490adc13b5b246b20b6e94bf5ec0e, type: 3}
+  - cardId: 2
+    icon: {fileID: 21300000, guid: e9c5c5c3482d8864080381cf0ca51447, type: 3}
+  - cardId: 3
+    icon: {fileID: 21300000, guid: 7f47cd982f2d9d948bc3be1dc9cb74f9, type: 3}
+  - cardId: 4
+    icon: {fileID: 21300000, guid: e3bf1e49b539c714ca586398d61648f3, type: 3}

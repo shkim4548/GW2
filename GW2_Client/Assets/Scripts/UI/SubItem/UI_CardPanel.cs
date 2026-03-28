@@ -68,7 +68,10 @@ public class UI_CardPanel : UI_Base
 
             GameObject cardObj = Bootstrapper.Instance.ResourceService
                 .Instantiate("UI/SubItem/UI_CardSlot", slot);
-            cardObj.GetComponent<UI_CardSlot>().SetHandMode(_handCardIds[i], keyLabels[i]);
+            UI_CardSlot cardSlot = cardObj.GetComponent<UI_CardSlot>();
+            cardSlot.Init();
+            cardSlot.SetHandMode(_handCardIds[i], keyLabels[i]);
+
         }
     }
 

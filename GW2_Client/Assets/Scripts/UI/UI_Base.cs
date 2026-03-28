@@ -4,12 +4,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public abstract class UI_Base : MonoBehaviour
 {
     protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
 
-    void Start()
+    void Awake()
     {
         Init();
     }
@@ -51,6 +52,7 @@ public abstract class UI_Base : MonoBehaviour
     protected Text GetText(int idx) { return Get<Text>(idx); }
     protected Button GetButton(int idx) { return Get<Button>(idx); }
     protected Image GetImage(int idx) { return Get<Image>(idx); }
+    protected TMP_Text GetTMP(int idx) { return Get<TMP_Text>(idx); }
 
     public static void BindEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {

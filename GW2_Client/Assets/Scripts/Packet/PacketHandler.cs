@@ -372,7 +372,12 @@ public class PacketHandler
         S_HAND_SYNC pkt = message as S_HAND_SYNC;
         List<int> cardIds = new List<int>(pkt.CardIds);
         Debug.Log($"[S_HAND_SYNC] playerId={pkt.PlayerId} cards={string.Join(",", cardIds)}");
-        UI_CardPanel.OnHandSync?.Invoke(new List<int>(pkt.CardIds));
+
+        // MyPlayerController에 저장 (UI가 아직 없어도 보존됨)
+        MyPlayerController.SetPendingHandSync(cardIds);
+
+        // UI가 이미 존재하면 즉시 반영 (재접속, 재진입 등)
+        UI_CardPanel.OnHandSync?.Invoke(cardIds);
     }
 
     internal static void S_DRAW_CARDHandler(PacketSession session, IMessage message)

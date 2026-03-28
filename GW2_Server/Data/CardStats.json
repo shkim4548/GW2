@@ -2,80 +2,31 @@
   "cards": [
     {
       "id": 1,
-      "name": "Health Potion",
-      "skill_id": "Card_HealthPotion",
-      "damage": 0,
+      "name": "Shield",
+      "skill_id": "W",
+      "damage": 10,
       "price": 100
     },
     {
       "id": 2,
+      "name": "Armor",
+      "skill_id": "Q",
+      "damage": 40,
+      "price": 150
+    },
+    {
+      "id": 3,
       "name": "Speed",
-      "skill_id": "Card_Speed",
+      "skill_id": "E",
       "damage": 0,
       "price": 120
     },
     {
-      "id": 3,
-      "name": "Crystal",
-      "skill_id": "Card_Crystal",
-      "damage": 0,
-      "price": 150
-    },
-    {
       "id": 4,
-      "name": "Enhancement",
-      "skill_id": "Card_Enhancement",
-      "damage": 30,
-      "price": 130
-    },
-    {
-      "id": 5,
-      "name": "Shield",
-      "skill_id": "Card_Shield",
+      "name": "InvincibleShield",
+      "skill_id": "R",
       "damage": 0,
-      "price": 150
-    },
-    {
-      "id": 6,
-      "name": "Armor",
-      "skill_id": "Card_Armor",
-      "damage": 0,
-      "price": 140
-    },
-    {
-      "id": 7,
-      "name": "Spear",
-      "skill_id": "Card_Spear",
-      "damage": 50,
-      "price": 160
-    },
-    {
-      "id": 8,
-      "name": "Cannon",
-      "skill_id": "Card_Cannon",
-      "damage": 80,
-      "price": 200
-    },
-    {
-      "id": 9,
-      "name": "Strike",
-      "skill_id": "Card_Strike",
-      "damage": 60,
-      "price": 180
-    },
-    {
-      "id": 10,
-      "name": "Ice Prison",
-      "skill_id": "Card_IcePrison",
-      "damage": 40,
-      "price": 170
-    },
-    {
-      "id": 11,
-      "name": "Teleport",
-      "skill_id": "Card_Teleport",
-      "damage": 0,
-      "price": 250
+      "price": 300
     }
   ]
 }

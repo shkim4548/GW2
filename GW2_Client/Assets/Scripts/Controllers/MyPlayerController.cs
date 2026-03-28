@@ -36,6 +36,16 @@ public class MyPlayerController : PlayerController
     private UI_Store _storeUI = null;
 
     public CampType CampType { get; set; }
+
+    // HandSync 버퍼 (UI 생성 전 패킷 도착 대비)
+    private static List<int> _pendingHandCardIds = new List<int>();
+
+    public static void SetPendingHandSync(List<int> cardIds)
+    {
+        _pendingHandCardIds = new List<int>(cardIds);
+    }
+
+
     public override void Init()
     {
         base.Init();
@@ -57,6 +67,9 @@ public class MyPlayerController : PlayerController
 
         IUIService uiService = Bootstrapper.Instance.UIService;
         uiService.ShowSceneUI<UI_GameScene>();
+
+        if (_pendingHandCardIds.Count > 0)
+            UI_CardPanel.OnHandSync?.Invoke(_pendingHandCardIds);
     }
 
     public override void UpdateIdle()
