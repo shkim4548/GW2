@@ -34,6 +34,8 @@ enum : uint16
 	PKT_C_SELECT_CHARACTER = 1025,
 	PKT_S_CHARACTER_SELECTED = 1026,
 	PKT_C_CONFIRM_CHARACTER = 1027,
+	PKT_S_BUFF_APPLIED = 1028,
+	PKT_S_STUN = 1029,
 };
 
 // Custom Handlers
@@ -92,6 +94,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_GOLD_UPDATE& pkt) { return MakeSendBuffer(pkt, PKT_S_GOLD_UPDATE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BUY_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BUY_RESULT); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_CHARACTER_SELECTED& pkt) { return MakeSendBuffer(pkt, PKT_S_CHARACTER_SELECTED); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_BUFF_APPLIED& pkt) { return MakeSendBuffer(pkt, PKT_S_BUFF_APPLIED); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_STUN& pkt) { return MakeSendBuffer(pkt, PKT_S_STUN); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

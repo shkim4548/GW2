@@ -3,6 +3,7 @@ using Google.Protobuf.Struct;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public interface IObjectService
 {
@@ -56,6 +57,14 @@ public class ObjectService : IObjectService
                 }
                 //go.transform.position = initPos;
                 MyPlayer = go.GetComponent<MyPlayerController>();
+                // Navmesh Agent로 인한 초기화 실패 문제 해결
+                NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
+                if (agent != null)
+                    agent.enabled = false;
+                go.transform.position = initPos;
+                if (agent != null)
+                    agent.enabled = true;
+
                 MyPlayer.transform.position = initPos;
                 MyPlayer.Id = objectId;
                 MyPlayer.RoomId = (int)roomId;
@@ -82,7 +91,16 @@ public class ObjectService : IObjectService
         else if (objectType == ObjectType.Minion)
         {
             Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-            go = _resourceService.Instantiate("Minion/TestMinion");
+            //go = _resourceService.Instantiate("Minion/TestMinion");
+            if(info.TeamFlag == (int)Google.Protobuf.Enum.CampType.CampHuman)
+            {
+                go = _resourceService.Instantiate("Minion/HumanRangeMinion");
+            }
+            else
+            {
+                go = _resourceService.Instantiate("Minion/CyborgRangeMinion");
+
+            }
             if (go == null)
             {
                 Debug.Log("resource service instantiate failed");
@@ -115,10 +133,12 @@ public class ObjectService : IObjectService
         else if(objectType == ObjectType.Nexus)
         {
             Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-            string prefabName = info.TeamFlag == (int)CampType.CampHuman
-                ? "Nexus/HumanNexus"
-                : "Nexus/CyborgNexus";
+            //string prefabName = info.TeamFlag == (int)CampType.CampHuman
+            //    ? "Nexus/HumanNexus"
+            //    : "Nexus/CyborgNexus";
+            Debug.Log($"[ObjectService] Nexus Add objectId={objectId} team={info.TeamFlag} pos={initPos}");
 
+            string prefabName = "Nexus/Nexus";
             go = _resourceService.Instantiate(prefabName);
             if (go == null) 
             {

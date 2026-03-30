@@ -34,16 +34,28 @@ bool Room::Enter(PlayerRef gameObject)
 	int32 objectId = gameObject->GetObjectId();
 
 	// 1. 팀 자동 배정 (입장 순서 기준)
-	Protocol::CampType assignedTeam =
-		(_players.size() % 2 == 0) ? Protocol::CAMP_HUMAN : Protocol::CAMP_CYBORG;
-	gameObject->SetCampType(assignedTeam);
-
+	Protocol::CampType assignedTeam;
+	switch (gameObject->GetPlayerType())
+	{
+	case Protocol::PLAYER_TYPE_POLICE:
+	case Protocol::PLAYER_TYPE_FIREFIGHTER:
+		assignedTeam = Protocol::CAMP_HUMAN;
+		break;
+	case Protocol::PLAYER_TYPE_MONK:
+	case Protocol::PLAYER_TYPE_LIGHTSABRE:
+		assignedTeam = Protocol::CAMP_CYBORG;
+		break;
+	default:
+		assignedTeam = Protocol::CAMP_HUMAN;
+		break;
+	}
 	// 2. 스폰 위치 팀별 설정
 	GameMath::Vector3 spawnPos =
 		(assignedTeam == Protocol::CAMP_HUMAN)
-		? GameMath::Vector3(72.5f, 0.0f, 0.0f)
-		: GameMath::Vector3(-72.5f, 0.0f, 0.0f);
+		? GameMath::Vector3(-60.0f, 0.0f, 0.0f)
+		: GameMath::Vector3(60.0f, 0.0f, 0.0f);
 	gameObject->SetPosVector(spawnPos);
+	gameObject->SetCampType(assignedTeam);
 
 	// 3. Room 등록 및 초기화
 	_objects.emplace(objectId, gameObject);
@@ -158,7 +170,173 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 
 bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 {
-	if (attacker == nullptr) return false;
+	if (attacker == nullptr) 
+		return false;
+
+	int32 skillId = static_cast<int32>(skillPkt.command_id());
+
+	// 논타겟 카드 (target_id=0): object lookup 전에 처리
+	if (skillPkt.target_id() == 0)
+	{
+		if (skillId == 1)
+			return false;
+
+		auto player = dynamic_pointer_cast<Player>(attacker);
+		if (player == nullptr) return false;
+		if (!player->_cardManager.HasCard(*player, skillId)) return false;
+
+		player->_cardManager.UseCard(*player, skillId);
+		if (!player->_hand.empty())
+		{
+			Protocol::S_DRAW_CARD drawPkt;
+			drawPkt.set_player_id(player->GetObjectId());
+			drawPkt.set_card_id(player->_hand.back());
+			auto session = player->GetSession().lock();
+			if (session)
+				session->Send(ClientPacketHandler::MakeSendBuffer(drawPkt));
+		}
+
+		// Heal 카드 처리
+		CardStat cardStat = GLobby->GetCardStat(skillId);
+		if (cardStat.heal > 0)
+		{
+			uint64 healed = attacker->Heal(cardStat.heal);
+
+			Protocol::S_HP_CHANGE hpPkt;
+			hpPkt.set_target_id(attacker->GetObjectId());
+			hpPkt.set_current_hp(attacker->GetHp());
+			hpPkt.set_max_hp(attacker->GetMaxHp());
+			Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+		}
+		// 버프 처리
+		if (cardStat.buffType != 0 && cardStat.buffValue > 0.0f)
+		{
+			auto player = dynamic_pointer_cast<Player>(attacker);
+			if (player)
+			{
+				switch (cardStat.buffType)
+				{
+				case 1: // BUFF_ATTACK
+					player->_attackMult = cardStat.buffValue;
+					player->_attackBuffTimer = cardStat.duration;
+					break;
+				case 2: // BUFF_DEFENSE
+					player->_defenseReduct = cardStat.buffValue;
+					player->_defenseBuffTimer = cardStat.duration;
+					break;
+				case 3: // BUFF_SPEED
+					player->_speedMult = cardStat.buffValue;
+					player->_speedBuffTimer = cardStat.duration;
+					break;
+				}
+
+				Protocol::S_BUFF_APPLIED buffPkt;
+				buffPkt.set_target_id(player->GetObjectId());
+				buffPkt.set_buff_type(static_cast<Protocol::BuffType>(cardStat.buffType));
+				buffPkt.set_value(cardStat.buffValue);
+				buffPkt.set_duration(cardStat.duration);
+				auto session = player->GetSession().lock();
+				if (session)
+					session->Send(ClientPacketHandler::MakeSendBuffer(buffPkt));
+			}
+		}
+
+		// AOE 데미지 처리
+		if (cardStat.aoeRadius > 0.0f && cardStat.damage > 0)
+		{
+			vector<shared_ptr<Object>> hits;
+
+			if (cardStat.aoeType == 1)  // 원형
+			{
+				// 클라이언트가 보낸 pos_x/pos_z가 원의 중심
+				GameMath::Vector3 center(skillPkt.pos_x(), 0.f, skillPkt.pos_z());
+
+				for (auto& [id, obj] : _objects)
+				{
+					if (obj == nullptr || obj->IsDead()) continue;
+					if (obj->GetTeamFlag() == attacker->GetTeamFlag()) continue;
+
+					float dist = GameMath::Vector3::GetDistTanceXZ(center, obj->GetPosVector());
+					if (dist <= cardStat.aoeRadius)
+						hits.push_back(obj);
+				}
+			}
+			else if (cardStat.aoeType == 2)  // 원뿔형
+			{
+				// 시전자 위치 기준, dir이 중심 방향
+				GameMath::Vector3 attackerPos = attacker->GetPosVector();
+				GameMath::Vector3 dir(skillPkt.dir_x(), 0.f, skillPkt.dir_z());
+
+				// dir이 영벡터이면 폴백: attacker의 바라보는 방향 사용
+				if (dir.Length() < 0.001f)
+					dir = GameMath::Vector3::YawToDirectionVector(attacker->GetYaw());
+
+				dir = dir.Normalized();
+				float halfAngleRad = (cardStat.angle * 0.5f) * (3.14159265f / 180.f);
+				float cosHalf = cosf(halfAngleRad);
+
+				for (auto& [id, obj] : _objects)
+				{
+					if (obj == nullptr || obj->IsDead()) continue;
+					if (obj->GetTeamFlag() == attacker->GetTeamFlag()) continue;
+
+					GameMath::Vector3 toTarget = obj->GetPosVector() - attackerPos;
+					float dist = toTarget.Length();
+					if (dist > cardStat.aoeRadius) continue;        // 사거리 초과
+					if (dist < 0.001f) continue;                    // 정확히 겹친 경우 제외
+
+					float dot = dir.Dot(toTarget.Normalized());     // cos(시전자→타겟 각도)
+					if (dot >= cosHalf)                             // 반각 이내
+						hits.push_back(obj);
+				}
+			}
+
+			// 타겟별 데미지 적용
+			for (auto& target : hits)
+			{
+				bool died = target->ApplyDamage(cardStat.damage);
+
+				Protocol::S_HP_CHANGE hpPkt;
+				hpPkt.set_target_id(target->GetObjectId());
+				hpPkt.set_current_hp(target->GetHp());
+				hpPkt.set_max_hp(target->GetMaxHp());
+				Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
+				if (died)
+					HandleRemoveObject(target);  // 기존 사망 처리 함수 재사용
+			}
+
+			return true;
+		}
+
+
+		// Mobility 카드: 목적지로 즉시 이동
+		if (cardStat.buffType == 0 && cardStat.damage == 0 && cardStat.heal == 0)
+		{
+			GameMath::Vector3 dest;
+			dest._x = skillPkt.pos_x();
+			dest._z = skillPkt.pos_z();
+			dest._y = 0.0f;
+
+			player->_path.clear();
+			player->_pathIndex = 0;
+			player->SetPosVector(dest);
+			player->SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
+
+			// 위치 브로드캐스트
+			Protocol::S_MOVE_END movePkt;
+			movePkt.set_object_id(player->GetObjectId());
+			Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
+			pos->set_x(dest._x);
+			pos->set_y(dest._y);
+			pos->set_z(dest._z);
+			Broadcast(ClientPacketHandler::MakeSendBuffer(movePkt));
+			return true;
+		}
+
+
+		return true;
+	}
 
 	auto targetIter = _objects.find(skillPkt.target_id());
 	if (targetIter == _objects.end()) return false;
@@ -186,7 +364,7 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 	}
 
 	uint64_t damage = 0;
-	int32 skillId = static_cast<int32>(skillPkt.skill_id());
+	//int32 skillId = static_cast<int32>(skillPkt.skill_id());
 
 	// 논타겟 임시 처리
 	if (skillPkt.target_id() == 0)
@@ -194,22 +372,21 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 		return true;
 	}
 
-	switch (skillPkt.skill_id())
+	switch (skillPkt.command_id())
 	{
-	case Protocol::SkillType::SKILL_ID_ATTACK:
+	case 1:
 	{
 		// 평타: StatInfo.attack() 사용
 		damage = attacker->GetStatInfo().attack();
 		if (damage == 0) damage = 10; // 폴백
 		break;
 	}
+
 	default:
 	{
-		// 카드 스킬 (ID 2~11)
 		auto player = dynamic_pointer_cast<Player>(attacker);
 		if (player == nullptr) return false;
 
-		// 손패 검증
 		if (!player->_cardManager.HasCard(*player, skillId))
 		{
 			GConsoleLogger->WriteStdErr(Color::YELLOW,
@@ -218,10 +395,9 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			return false;
 		}
 
-		// 카드 소모 + 즉시 드로우
+		// 카드 소모 + 드로우
 		player->_cardManager.UseCard(*player, skillId);
 
-		// S_DRAW_CARD 브로드캐스트 (새로 드로우된 카드)
 		if (!player->_hand.empty())
 		{
 			Protocol::S_DRAW_CARD drawPkt;
@@ -232,15 +408,45 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 				session->Send(ClientPacketHandler::MakeSendBuffer(drawPkt));
 		}
 
-		// CardStat에서 데미지 조회
+		// 논타겟 카드 (힐, 버프 등): 소모/드로우만 하고 데미지 없이 종료
+		if (skillPkt.target_id() == 0)
+			return true;
+
 		CardStat cardStat = GLobby->GetCardStat(skillId);
 		damage = cardStat.damage;
 		break;
 	}
+
 	}
+
+	// 공격 배율 적용
+	auto attackerPlayer = dynamic_pointer_cast<Player>(attacker);
+	if (attackerPlayer && attackerPlayer->_attackMult > 1.0f)
+		damage = static_cast<uint64>(damage * attackerPlayer->_attackMult);
+
+	// 방어 버프 적용
+	auto targetPlayer = dynamic_pointer_cast<Player>(target);
+	if (targetPlayer && targetPlayer->_defenseReduct > 0.0f)
+		damage = static_cast<uint64>(damage * (1.0f - targetPlayer->_defenseReduct));
 
 	// 4. 데미지 적용
 	bool died = target->ApplyDamage(damage);
+
+	// Stun 적용 (포탑/넥서스 제외)
+	if (skillId != 1)
+	{
+		CardStat cardStat = GLobby->GetCardStat(skillId);
+		if (cardStat.duration > 0.0f && !target->IsTurret() && !target->IsNexus())
+		{
+			target->_isStunned = true;
+			target->_stunTimer = cardStat.duration;
+
+			Protocol::S_STUN stunPkt;
+			stunPkt.set_target_id(target->GetObjectId());
+			stunPkt.set_duration(cardStat.duration);
+			Broadcast(ClientPacketHandler::MakeSendBuffer(stunPkt));
+		}
+	}
 
 	GConsoleLogger->WriteStdOut(Color::GREEN,
 		L"[Room::HandleSkill] attacker=%lld target=%d skillId=%d dmg=%llu hp=%llu died=%d\n",
@@ -249,7 +455,7 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 
 	// 5. S_SKILL 브로드캐스트
 	Protocol::S_SKILL resPkt;
-	resPkt.set_skill_id(skillPkt.skill_id());
+	resPkt.set_skill_id(skillPkt.command_id());
 	resPkt.set_attacker_id(attacker->GetObjectId());
 	resPkt.set_target_id(skillPkt.target_id());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(resPkt));
@@ -614,7 +820,9 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 {
 	NexusRef nexus = ObjectUtils::CreateNexus();
 	int32 objectId = nexus->GetObjectId();
-
+	GConsoleLogger->WriteStdOut(Color::YELLOW,
+		L"[SpawnNexus] objectId=%d team=%d pos=(%.2f,%.2f,%.2f)\n",
+		objectId, (int)team, pos._x, pos._y, pos._z);
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 	posInfo->set_x(pos._x);
 	posInfo->set_y(pos._y);
@@ -633,6 +841,9 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 	nexus->InitNexus(static_pointer_cast<Room>(shared_from_this()), team);
 
 	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
+
+	GConsoleLogger->WriteStdOut(Color::YELLOW,
+		L"[SpawnNexus] Broadcast done objectId=%d\n", objectId);
 	return nexus;
 }
 

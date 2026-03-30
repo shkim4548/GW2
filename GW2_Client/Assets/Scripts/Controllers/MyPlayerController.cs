@@ -1,4 +1,4 @@
-using Google.Protobuf.Enum;
+ï»¿using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Struct;
 using System;
@@ -34,10 +34,10 @@ public class MyPlayerController : PlayerController
     public static Action<int> OnCardUsed;
 
     private UI_Store _storeUI = null;
-
+    private int _pendingSkillSlot = -1; // -1 = ìŠ¤í‚¬ ëŒ€ê¸° ì—†ìŒ
     public CampType CampType { get; set; }
 
-    // HandSync ¹öÆÛ (UI »ı¼º Àü ÆĞÅ¶ µµÂø ´ëºñ)
+    // HandSync ë²„í¼ (UI ìƒì„± ì „ íŒ¨í‚· ë„ì°© ëŒ€ë¹„)
     private static List<int> _pendingHandCardIds = new List<int>();
 
     public static void SetPendingHandSync(List<int> cardIds)
@@ -49,7 +49,7 @@ public class MyPlayerController : PlayerController
     public override void Init()
     {
         base.Init();
-        // CameraController ¹ÙÀÎµù
+        // CameraController ë°”ì¸ë”©
         FindObjectOfType<CameraController>().SetPlayer(this);
 
         _navAgent = GetComponent<NavMeshAgent>();
@@ -80,7 +80,7 @@ public class MyPlayerController : PlayerController
     public override void UpdateMoving()
     {
         //base.UpdateMoving();
-        // ÃßÀû ÁßÀÌ¸é ¸Å ÇÁ·¹ÀÓ Å¸°Ù °Å¸® °»½Å
+        // ì¶”ì  ì¤‘ì´ë©´ ë§¤ í”„ë ˆì„ íƒ€ê²Ÿ ê±°ë¦¬ ê°±ì‹ 
         if (_chaseToAttack && _target != null)
         {
             _chaseCooldown -= Time.deltaTime;
@@ -105,7 +105,7 @@ public class MyPlayerController : PlayerController
         }
 
         //Debug.Log("UpdateMoving");
-        // º¸Á¤ ÇÊ¿ä¼ººÎÅÍ È®ÀÎ
+        // ë³´ì • í•„ìš”ì„±ë¶€í„° í™•ì¸
         if (_needsCorrection)
         {
             CorrectPosition();
@@ -126,7 +126,7 @@ public class MyPlayerController : PlayerController
         Vector3 direction = waypoint - transform.position;
         float distance = direction.magnitude;
 
-        // µµÂø ¿©ºÎ Ã¼Å©
+        // ë„ì°© ì—¬ë¶€ ì²´í¬
         if(distance < 0.001f)
         {
             transform.position = waypoint;
@@ -139,7 +139,7 @@ public class MyPlayerController : PlayerController
             return;
         }
 
-        // ½ÇÁ¦ ÀÌµ¿
+        // ì‹¤ì œ ì´ë™
         direction.Normalize();
         float moveDistance = _moveSpeed * Time.deltaTime;
 
@@ -154,13 +154,13 @@ public class MyPlayerController : PlayerController
             Debug.Log("Actual moving");
         }
 
-        // È¸Àü ¹İ¿µ
+        // íšŒì „ ë°˜ì˜
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
-        // »óÀ§ ÇÔ¼ö¿¡¼­ »óÅÂ º¯È­ ¹× ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+        // ìƒìœ„ í•¨ìˆ˜ì—ì„œ ìƒíƒœ ë³€í™” ë° ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
     }
 
     public override void UpdateSkill()
@@ -181,6 +181,26 @@ public class MyPlayerController : PlayerController
         if (State == MoveState.Die) 
             return;
 
+        // ì¢Œí´ë¦­ â€” ìŠ¤í‚¬ íƒ€ê²ŸíŒ…
+        if (evt == Define.MouseEvent.LeftClick)
+        {
+            if (_pendingSkillSlot >= 0)
+            {
+                Ray skillRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit skillHit;
+                if (Physics.Raycast(skillRay, out skillHit, 100.0f, LayerMask.GetMask("Road", "Objects")))
+                {
+                    SendCardEvent(_pendingSkillSlot, skillHit.point);
+                }
+                _pendingSkillSlot = -1;
+                State = MoveState.Idle;
+            }
+            else
+            {
+                // ê¸°ì¡´ ê³µê²© ë¡œì§ (Objects ë ˆì´ìºìŠ¤íŠ¸)
+            }
+            return;
+        }
 
         if (evt != Define.MouseEvent.Click)
             return;
@@ -188,11 +208,11 @@ public class MyPlayerController : PlayerController
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
         RaycastHit hit;
-        // CreatureController »ó¼Ó ¹Ş´Â ¹°°ÇÀÓÀ» È®ÀÎ½Ã ÀûÀÎÁö¸¦ ´Ù½ÃÇÑ¹ø ÆÇ´Ü.
+        // CreatureController ìƒì† ë°›ëŠ” ë¬¼ê±´ì„ì„ í™•ì¸ì‹œ ì ì¸ì§€ë¥¼ ë‹¤ì‹œí•œë²ˆ íŒë‹¨.
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
         {
             Debug.Log("Raycast Objects hit");
-            // Áø¿µÀÌ ´Ù¸£°í »ç°Å¸® ³»¿¡ ÀÖ´Ù¸é »óÅÂ¸¦ ÀüÀÌ½ÃÅ²´Ù.
+            // ì§„ì˜ì´ ë‹¤ë¥´ê³  ì‚¬ê±°ë¦¬ ë‚´ì— ìˆë‹¤ë©´ ìƒíƒœë¥¼ ì „ì´ì‹œí‚¨ë‹¤.
             if (hit.collider.gameObject.GetComponent<BaseController>()._campType != this._campType)
             {
                 // TEMP
@@ -201,13 +221,13 @@ public class MyPlayerController : PlayerController
                 Debug.Log($"TryAttackTarget before dist : {dist}, range : {_attackRange}");
                 if(dist <= _attackRange)
                 {
-                    // »ç°Å¸® ³»ºÎ¸é ¹Ù·Î °ø°İ
+                    // ì‚¬ê±°ë¦¬ ë‚´ë¶€ë©´ ë°”ë¡œ ê³µê²©
                     TryAttackTarget();
                     Debug.Log("TryAttackTarget");
                 }
                 else
                 {
-                    // »ç°Å¸® ¹ÛÀÌ´Ù.
+                    // ì‚¬ê±°ë¦¬ ë°–ì´ë‹¤.
                     _chaseToAttack = true;
                     _lastTargetPos = _target.transform.position;
                     _chaseCooldown = 0.0f;
@@ -222,38 +242,46 @@ public class MyPlayerController : PlayerController
         {
             _destPos = hit.point;
             _moveToDest = true;
-            _chaseToAttack = false;  // ÀÌµ¿ ¸í·É ½Ã ÃßÀû Ãë¼Ò
+            _chaseToAttack = false;  // ì´ë™ ëª…ë ¹ ì‹œ ì¶”ì  ì·¨ì†Œ
                                      //UpdateMoving();
             State = MoveState.Run;
-            // »óÅÂ º¯È­ È®ÀÎ
+            // ìƒíƒœ ë³€í™” í™•ì¸
             Debug.Log("Raycast Road");
             RequestMove(_destPos);
         }
-        // »ç°Å¸® ¹Û¿¡ ÀÖ´Ù¸é, ÃßÀû½ÃÅ²´Ù.
+        // ì‚¬ê±°ë¦¬ ë°–ì— ìˆë‹¤ë©´, ì¶”ì ì‹œí‚¨ë‹¤.
         else
         {
             Debug.Log("OnMouseEvent Else block");
         }
     }
 
-    // ÇöÀç´Â »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+    // í˜„ì¬ëŠ” ì‚¬ìš©í•˜ì§€ ì•ŠëŠ”ë‹¤.
     public void OnKeyEvent()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            //SendCardEvent
+            //SendCardEvent(0);
+            _pendingSkillSlot = 0; 
+            State = MoveState.Skill;
         }
         else if (Input.GetKeyDown(KeyCode.W))
         {
-
+            //SendCardEvent(1);
+            _pendingSkillSlot = 1; 
+            State = MoveState.Skill;
         }
         else if(Input.GetKeyDown(KeyCode.E))
         {
-
+            //SendCardEvent(2);
+            _pendingSkillSlot = 2; 
+            State = MoveState.Skill;
         }
         else if(Input.GetKeyDown(KeyCode.R))
         {
-
+            //SendCardEvent(3);
+            _pendingSkillSlot = 3; 
+            State = MoveState.Skill;
         }
         else if(Input.GetKeyDown(KeyCode.B))
         {
@@ -276,8 +304,8 @@ public class MyPlayerController : PlayerController
         }
     }
 
-    // ÃßÃøÇ×¹ı
-    // À§Ä¡ Á¤Á¤
+    // ì¶”ì¸¡í•­ë²•
+    // ìœ„ì¹˜ ì •ì •
     private void CorrectPosition()
     {
         Vector3 serverPosVector = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
@@ -289,7 +317,7 @@ public class MyPlayerController : PlayerController
             return;
         }
 
-        // º¸Á¤Ã³¸®
+        // ë³´ì •ì²˜ë¦¬
         transform.position = Vector3.Lerp(transform.position, serverPosVector, _correctionSpeed * Time.deltaTime);
     }
 
@@ -298,7 +326,7 @@ public class MyPlayerController : PlayerController
         Vector3 targetPosition = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
         // targetPosition = destination;
 
-        // Å¬¶óÀÌ¾ğÆ®¿¡¼­ navmesh·Î °æ·Î¸¦ ¹Ì¸® ¿¹ÃøÇÑ´Ù.
+        // í´ë¼ì´ì–¸íŠ¸ì—ì„œ navmeshë¡œ ê²½ë¡œë¥¼ ë¯¸ë¦¬ ì˜ˆì¸¡í•œë‹¤.
         UnityEngine.AI.NavMeshPath navPath = new UnityEngine.AI.NavMeshPath();
         if (UnityEngine.AI.NavMesh.CalculatePath(transform.position, destination, UnityEngine.AI.NavMesh.AllAreas, navPath))
         {
@@ -327,11 +355,11 @@ public class MyPlayerController : PlayerController
         BaseController targetBc = _target.GetComponent<BaseController>();
         if (targetBc == null) return;
 
-        // 1. ÀÌÆåÆ® Áï½Ã Àç»ı (¼­¹ö ÀÀ´ä ±â´Ù¸®Áö ¾ÊÀ½)
+        // 1. ì´í™íŠ¸ ì¦‰ì‹œ ì¬ìƒ (ì„œë²„ ì‘ë‹µ ê¸°ë‹¤ë¦¬ì§€ ì•ŠìŒ)
         Vector3 targetPos = _target.transform.position;
         PlayAttackEffect(targetPos);
 
-        // 2. ¼­¹ö·Î ÆĞÅ¶ Àü¼Û
+        // 2. ì„œë²„ë¡œ íŒ¨í‚· ì „ì†¡
         SendAttackPacket(targetBc.Id);
         _target = null;
     }
@@ -343,7 +371,7 @@ public class MyPlayerController : PlayerController
         attackPkt.RoomId = RoomId;
         attackPkt.AttackerId = Id;
         attackPkt.TargetId = targetId;
-        attackPkt.SkillId = SkillType.SkillIdAttack;
+        attackPkt.CommandId = 1;
         attackPkt.ClientTime = GetClientTime();
         _networkService.Send(attackPkt);
         Debug.Log($"[MyPlayer] SendAttackPacket targetId={targetId}");
@@ -352,9 +380,9 @@ public class MyPlayerController : PlayerController
 
     public void RequestMove(Vector3 worldPosition)
     {
-        // Áï½Ã ÀÌµ¿ ½ÃÀÛ
+        // ì¦‰ì‹œ ì´ë™ ì‹œì‘
         StartMovePrediction(worldPosition);
-        // ¼­¹ö¿¡ Àü¼Û
+        // ì„œë²„ì— ì „ì†¡
         SendMovePacket(worldPosition);
     }
 
@@ -390,23 +418,27 @@ public class MyPlayerController : PlayerController
         OnHpChanged?.Invoke(current, max);
     }
 
-    private void SendCardEvent(int slotIndex)
+    private void SendCardEvent(int slotIndex, Vector3 worldPos)
     {
         int cardId = UI_CardPanel.GetCardIdAtSlot(slotIndex);
-        if (cardId < 0) return;
+        if (cardId < 0) 
+            return;
 
-        // Å¸°Ù ÀÖÀ¸¸é ID, ¾øÀ¸¸é 0 (³íÅ¸°Ù)
+        // íƒ€ê²Ÿ ìˆìœ¼ë©´ ID, ì—†ìœ¼ë©´ 0 (ë…¼íƒ€ê²Ÿ)
         int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
 
         C_SKILL pkt = new C_SKILL();
         pkt.RoomId = RoomId;
         pkt.AttackerId = Id;
-        pkt.TargetId = targetId;   // 0 = ³íÅ¸°Ù, 0 ¾Æ´Ô = Å¸°ÙÆÃ
-        pkt.SkillId = (SkillType)cardId;
+        pkt.TargetId = targetId;   // 0 = ë…¼íƒ€ê²Ÿ, 0 ì•„ë‹˜ = íƒ€ê²ŸíŒ…
+        pkt.CommandId = cardId;
         pkt.ClientTime = GetClientTime();
+        pkt.PosX = worldPos.x;
+        pkt.PosZ = worldPos.z;
         _networkService.Send(pkt);
 
         OnCardUsed?.Invoke(slotIndex);
     }
 
+   
 }

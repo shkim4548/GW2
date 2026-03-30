@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.AssetImporters;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PacketHandler
 {
@@ -17,10 +18,9 @@ public class PacketHandler
         int roomId = (int)enterGamePkt.Player.RoomId;
 
         var objectService = Bootstrapper.Instance.ObjectService;
-        //Debug.Log($"[PacketHandler] After ObjectService");
+        Debug.Log($"[S_ENTER_GAME] objectId={enterGamePkt.Player.ObjectId} type={enterGamePkt.Player.ObjectType}");
         objectService.Add(enterGamePkt.Player, true);
 
-        // ★ 스폰 후 서버 PosInfo를 transform.position에 즉시 반영
         //   objectService.Add()가 Prefab 기본 위치로 생성하므로 명시적으로 세팅
         int objectId = enterGamePkt.Player.ObjectId;
         GameObject go = objectService.FindById(objectId);
@@ -28,7 +28,11 @@ public class PacketHandler
         {
             PosInfo spawnPos = enterGamePkt.Player.PosInfo;
             Vector3 worldPos = new Vector3(spawnPos.X, spawnPos.Y, spawnPos.Z);
-            go.transform.position = worldPos;
+            //go.transform.position = worldPos;
+
+            NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
+            if (agent != null) agent.Warp(worldPos);
+            else go.transform.position = worldPos;
 
             // BaseController PosInfo도 동기화
             BaseController bc = go.GetComponent<BaseController>();
@@ -362,7 +366,12 @@ public class PacketHandler
 
         BaseController bc = go.GetComponent<BaseController>();
         Vector3 pos = new Vector3(pkt.X, pkt.Y, pkt.Z);
-        bc.transform.position = pos;
+        //bc.transform.position = pos;
+
+        NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
+        if (agent != null) agent.Warp(pos);
+        else bc.transform.position = pos;
+
         bc.SetHp(pkt.CurrentHp, pkt.MaxHp);
         bc.State = MoveState.Idle;
     }
@@ -405,5 +414,35 @@ public class PacketHandler
     {
         S_CHARACTER_SELECTED pkt = message as S_CHARACTER_SELECTED;
         UI_Select.OnCharSelected?.Invoke(pkt.PlayerId, pkt.PlayerType, pkt.IsCancel);
+    }
+
+    internal static void S_BUFF_APPLIEDHandler(PacketSession session, IMessage message)
+    {
+        S_BUFF_APPLIED pkt = message as S_BUFF_APPLIED;
+        Debug.Log($"[S_BUFF_APPLIED] target={pkt.TargetId} type={pkt.BuffType} value={pkt.Value} duration={pkt.Duration}");
+
+        // 속도 버프는 MyPlayerController에 적용
+        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffSpeed)
+        {
+            IObjectService objectService = Bootstrapper.Instance.ObjectService;
+            GameObject go = objectService.FindById(pkt.TargetId);
+            if (go != null)
+                go.GetComponent<BaseController>()?.ApplySpeedBuff(pkt.Value, pkt.Duration);
+        }
+
+        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffAttackSpeed)
+        {
+            IObjectService objectService = Bootstrapper.Instance.ObjectService;
+            GameObject go = objectService.FindById(pkt.TargetId);
+            go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
+        }
+    }
+
+    internal static void S_STUNHandler(PacketSession session, IMessage message)
+    {
+        S_STUN pkt = message as S_STUN;
+        GameObject go = Bootstrapper.Instance.ObjectService.FindById(pkt.TargetId);
+        if (go == null) return;
+        go.GetComponent<BaseController>()?.ApplyStun(pkt.Duration);
     }
 }

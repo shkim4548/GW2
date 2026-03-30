@@ -10957,6 +10957,7 @@ GameObject:
   - component: {fileID: 9148914318986443897}
   - component: {fileID: 9148914318986443898}
   - component: {fileID: -7624080335904981929}
+  - component: {fileID: 4978266628627084586}
   m_Layer: 6
   m_Name: HumanRangeMinion
   m_TagString: OBJECT
@@ -11085,6 +11086,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &4978266628627084586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9148914318986443889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d5d4769e3d8b7d45ae1aee37547ecde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attackEffect: {fileID: 0}
+  _sendPacketDelay: 0.2
+  _isMoving: 0
+  _positionSmoothTime: 0.1
+  _moveSpeed: 100
+  _rotationSpeed: 1
+  _campType: 0
+  _arriveEpsilon: 0.05
+  _snapDistance: 5
 --- !u!1 &9148914318989915565
 GameObject:
   m_ObjectHideFlags: 0

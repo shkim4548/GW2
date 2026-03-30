@@ -2,14 +2,14 @@
   "units": [
     {
       "type": "minion",
-      "hp": 100,
-      "max_hp": 100,
+      "hp": 300,
+      "max_hp": 300,
       "attack_damage": 10,
       "attack_speed": 1.0,
-      "attack_range": 3.0,
+      "attack_range": 6.0,
       "attack_interval": 5.0,
-      "move_speed": 6.0,
-      "detection_range": 5.0,
+      "move_speed": 4.0,
+      "detection_range": 10.0,
       "defense": 0,
       "health_regen": 0.0,
       "shield": 0.0,
@@ -22,7 +22,7 @@
       "max_hp": 3000,
       "attack_damage": 150,
       "attack_speed": 1.0,
-      "attack_range": 8.0,
+      "attack_range": 6.0,
       "attack_interval": 1.2,
       "move_speed": 0.0,
       "detection_range": 8.0,
@@ -112,5 +112,38 @@
       "max_mana": 3.0,
       "mana_regen": 0.35
     }
-  ]
+  ],
+  "cards": [
+  { "id": 101, "skill_id": "AmuletOfSteel",        "damage": 0,   "damage_coeff": 0.0, "range": 10.0, "cooldown": 8.0,  "price": 150, "buff_type": 2, "buff_value": 0.30, "duration": 8.0},
+  { "id": 102, "skill_id": "Armor",                "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 10.0, "price": 100, "buff_type": 2, "buff_value": 0.35, "duration": 10.0 },
+  { "id": 103, "skill_id": "BloodCoin",            "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 6.0,  "price": 80  },
+  { "id": 104, "skill_id": "BloodTransfusion",     "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 12.0, "price": 120, "heal": 150 },
+  { "id": 105, "skill_id": "Cannon",               "damage": 120, "damage_coeff": 0.5, "range": 15.0, "cooldown": 8.0,  "price": 200 },
+  { "id": 106, "skill_id": "Charge",               "damage": 0,   "damage_coeff": 0.0, "range": 8.0,  "cooldown": 10.0, "price": 120 },
+  { "id": 107, "skill_id": "CrisisAversion",       "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 15.0, "price": 200, "buff_type": 2, "buff_value": 0.5, "duration": 15.0 },
+  { "id": 108, "skill_id": "DeadlySpeed",          "damage": 0,   "damage_coeff": 0.0, "range": 8.0,  "cooldown": 10.0, "price": 150, "buff_type": 3, "buff_value": 2.0, "duration": 8.0 },
+  { "id": 109, "skill_id": "EnergyAmplification",  "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 12.0, "price": 180, "buff_type": 1, "buff_value": 1.5, "duration": 12.0},
+  { "id": 110, "skill_id": "FatalAttack",          "damage": 100, "damage_coeff": 0.8, "range": 12.0, "cooldown": 10.0, "price": 160 },
+  { "id": 111, "skill_id": "Grenade",              "damage": 80,  "damage_coeff": 0.3, "range": 15.0, "cooldown": 6.0,  "price": 120 },
+  { "id": 112, "skill_id": "HackingGrenade",       "damage": 50,  "damage_coeff": 0.2, "range": 12.0, "cooldown": 8.0,  "price": 130, "duration": 2.0 },
+  { "id": 113, "skill_id": "HealthKit",            "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 10.0, "price": 100, "heal": 100 },
+  { "id": 114, "skill_id": "IceJail",              "damage": 0,   "damage_coeff": 0.0, "range": 10.0, "cooldown": 12.0, "price": 150, "duration": 3.0 },
+  { "id": 115, "skill_id": "Infection",            "damage": 30,  "damage_coeff": 0.1, "range": 8.0,  "cooldown": 8.0,  "price": 110 },
+  { "id": 116, "skill_id": "InvincibleShield",     "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 20.0, "price": 300, "buff_type": 2, "buff_value": 0.70, "duration": 20.0 },
+  { "id": 117, "skill_id": "InvincibleWeapon",     "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 18.0, "price": 250, "buff_type": 1, "buff_value": 1.8, "duration": 15.0 },
+  { "id": 118, "skill_id": "Lava",                 "damage": 90,  "damage_coeff": 0.4, "range": 10.0, "cooldown": 8.0,  "price": 160 },
+  { "id": 119, "skill_id": "MissileBomb",          "damage": 130, "damage_coeff": 0.6, "range": 20.0, "cooldown": 12.0, "price": 200 },
+  { "id": 120, "skill_id": "Potion",               "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 8.0,  "price": 100, "heal": 80 },
+  { "id": 121, "skill_id": "Purify",               "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 10.0, "price": 150 },
+  { "id": 122, "skill_id": "Resurrection",         "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 30.0, "price": 350, "heal": 300 },
+  { "id": 123, "skill_id": "Shield",               "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 10.0, "price": 100, "buff_type": 2, "buff_value": 0.30, "duration": 10.0 },
+  { "id": 124, "skill_id": "ShiningCrystal",       "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 12.0, "price": 180, "buff_type": 1, "buff_value": 1.3, "duration": 8.0 },
+  { "id": 125, "skill_id": "Spear",                "damage": 60,  "damage_coeff": 0.3, "range": 12.0, "cooldown": 6.0,  "price": 120 },
+  { "id": 126, "skill_id": "Speed",                "damage": 0,   "damage_coeff": 0.0, "range": 8.0,  "cooldown": 10.0, "price": 120, "buff_type": 3, "buff_value": 1.5, "duration": 10.0 },
+  { "id": 127, "skill_id": "Strengthen",           "damage": 0,   "damage_coeff": 0.0, "range": 0.0,  "cooldown": 10.0, "price": 150, "buff_type": 1, "buff_value": 1.4, "duration": 10.0 },
+  { "id": 128, "skill_id": "Teleporting",          "damage": 0,   "damage_coeff": 0.0, "range": 8.0,  "cooldown": 12.0, "price": 180, "buff_type": 3, "buff_value": 2.0, "duration": 6.0 },
+  { "id": 129, "skill_id": "WindBlade",            "damage": 70,  "damage_coeff": 0.3, "range": 12.0, "cooldown": 7.0,  "price": 140, "buff_type": 3, "buff_value": 2.0, "duration": 10.0 },
+  { "id": 130, "skill_id": "WingsOfTheBattlefield","damage": 0,   "damage_coeff": 0.0, "range": 8.0,  "cooldown": 14.0, "price": 200, "buff_type": 4, "buff_value": 0.5, "duration": 8.0 }
+]
+
 }

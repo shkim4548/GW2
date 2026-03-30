@@ -53,6 +53,52 @@ void Player::InitPlayer(shared_ptr<Room> room)
 
 void Player::UpdateController(float deltaTime)
 {
+    // --- 스턴 타이머 ---
+    if (_stunTimer > 0.0f)
+    {
+        _stunTimer -= deltaTime;
+        if (_stunTimer <= 0.0f)
+            _isStunned = false;
+        return; // 이동/공격 전부 차단
+    }
+
+    // ── 버프 타이머 ──
+    if (_attackBuffTimer > 0.0f) 
+    {
+        _attackBuffTimer -= deltaTime;
+        if (_attackBuffTimer <= 0.0f) 
+        {
+            _attackMult = 1.0f; _attackBuffTimer = 0.0f;
+        }
+    }
+
+    if (_defenseBuffTimer > 0.0f) 
+    {
+        _defenseBuffTimer -= deltaTime;
+        if (_defenseBuffTimer <= 0.0f) 
+        {
+            _defenseReduct = 0.0f; _defenseBuffTimer = 0.0f;
+        }
+    }
+
+    if (_speedBuffTimer > 0.0f) 
+    {
+        _speedBuffTimer -= deltaTime;
+        if (_speedBuffTimer <= 0.0f) 
+        {
+            _speedMult = 1.0f; _speedBuffTimer = 0.0f;
+        }
+    }
+
+    if (_attackSpeedBuffTimer > 0.0f)
+    {
+        _attackSpeedBuffTimer -= deltaTime;
+        if (_attackSpeedBuffTimer <= 0.0f)
+        {
+            _attackSpeedMult = 1.0f; _attackSpeedBuffTimer = 0.0f;
+        }
+    }
+
     if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
     {
         _movement.speed = 0.f;
@@ -68,7 +114,7 @@ void Player::UpdateController(float deltaTime)
     }
 
     const float kArriveEpsilon = 1e-4f;
-    float remainMoveDist = _moveSpeed * deltaTime;
+    float remainMoveDist = _moveSpeed * _speedMult * deltaTime;
 
     while (remainMoveDist > 0.0f && _pathIndex < static_cast<int32>(_path.size()))
     {

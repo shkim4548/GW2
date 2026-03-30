@@ -16,6 +16,15 @@ void Object::FullHeal()
 	_isDead = false;
 }
 
+uint64 Object::Heal(uint64 amount)
+{
+	uint64 maxHp = GetMaxHp();
+	uint64 currentHp = GetHp();
+	uint64 newHp = min(currentHp + amount, maxHp);
+	SetHp(newHp);
+	return newHp - currentHp; // 실제 회복량 반환
+}
+
 bool Object::IsDead()
 {
 	return _isDead;
@@ -170,6 +179,7 @@ bool Object::ValidateMovement(float deltaTime)
 bool Object::ApplyDamage(uint64 dmg)
 {
 	uint64 cur = _statInfo.hp();
+
 	uint64 after = (dmg >= cur) ? 0 : cur - dmg;
 	_statInfo.set_hp(after);
 

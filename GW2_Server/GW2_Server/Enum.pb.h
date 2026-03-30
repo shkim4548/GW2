@@ -169,33 +169,6 @@ inline bool MinionState_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MinionState>(
     MinionState_descriptor(), name, value);
 }
-enum SkillType : int {
-  SKILL_ID_NONE = 0,
-  SKILL_ID_ATTACK = 1,
-  SKILL_ID_FIRST = 2,
-  SKILL_ID_SECOND = 3,
-  SkillType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  SkillType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
-};
-bool SkillType_IsValid(int value);
-constexpr SkillType SkillType_MIN = SKILL_ID_NONE;
-constexpr SkillType SkillType_MAX = SKILL_ID_SECOND;
-constexpr int SkillType_ARRAYSIZE = SkillType_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SkillType_descriptor();
-template<typename T>
-inline const std::string& SkillType_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, SkillType>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function SkillType_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    SkillType_descriptor(), enum_t_value);
-}
-inline bool SkillType_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SkillType* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SkillType>(
-    SkillType_descriptor(), name, value);
-}
 enum CampType : int {
   CAMP_NONE = 0,
   CAMP_HUMAN = 1,
@@ -274,6 +247,34 @@ inline bool CellLinks_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CellLinks>(
     CellLinks_descriptor(), name, value);
 }
+enum BuffType : int {
+  BUFF_NONE = 0,
+  BUFF_ATTACK = 1,
+  BUFF_DEFENSE = 2,
+  BUFF_SPEED = 3,
+  BUFF_ATTACK_SPEED = 4,
+  BuffType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BuffType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BuffType_IsValid(int value);
+constexpr BuffType BuffType_MIN = BUFF_NONE;
+constexpr BuffType BuffType_MAX = BUFF_ATTACK_SPEED;
+constexpr int BuffType_ARRAYSIZE = BuffType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BuffType_descriptor();
+template<typename T>
+inline const std::string& BuffType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BuffType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BuffType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BuffType_descriptor(), enum_t_value);
+}
+inline bool BuffType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BuffType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BuffType>(
+    BuffType_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -316,11 +317,6 @@ template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MinionState>() {
   return ::Protocol::MinionState_descriptor();
 }
-template <> struct is_proto_enum< ::Protocol::SkillType> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::SkillType>() {
-  return ::Protocol::SkillType_descriptor();
-}
 template <> struct is_proto_enum< ::Protocol::CampType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CampType>() {
@@ -335,6 +331,11 @@ template <> struct is_proto_enum< ::Protocol::CellLinks> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CellLinks>() {
   return ::Protocol::CellLinks_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BuffType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BuffType>() {
+  return ::Protocol::BuffType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

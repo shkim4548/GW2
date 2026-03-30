@@ -13,11 +13,63 @@ MonoBehaviour:
   m_Name: CardIconSO
   m_EditorClassIdentifier: 
   entries:
-  - cardId: 1
-    icon: {fileID: 21300000, guid: a56490adc13b5b246b20b6e94bf5ec0e, type: 3}
-  - cardId: 2
+  - cardId: 101
+    icon: {fileID: 21300000, guid: f41ca0cac99d004408f62a024ca00c1d, type: 3}
+  - cardId: 102
     icon: {fileID: 21300000, guid: e9c5c5c3482d8864080381cf0ca51447, type: 3}
-  - cardId: 3
-    icon: {fileID: 21300000, guid: 7f47cd982f2d9d948bc3be1dc9cb74f9, type: 3}
-  - cardId: 4
+  - cardId: 103
+    icon: {fileID: 21300000, guid: 43b8ec8733151ab44b44f3e56dbc21b2, type: 3}
+  - cardId: 104
+    icon: {fileID: 21300000, guid: 6309278699b13564188b0a9257aebed1, type: 3}
+  - cardId: 105
+    icon: {fileID: 21300000, guid: a01da49650212ab41ab467238f99603b, type: 3}
+  - cardId: 106
+    icon: {fileID: 21300000, guid: adf1d3b08d1ab454fbab2d4219f89a09, type: 3}
+  - cardId: 107
+    icon: {fileID: 21300000, guid: 60db77759d297ce4bb91e51bf50071a8, type: 3}
+  - cardId: 108
+    icon: {fileID: 21300000, guid: be341dff3a6772149b37b783e122106d, type: 3}
+  - cardId: 109
+    icon: {fileID: 21300000, guid: c987ad1bac9f08f4c82dbafe4b156ae9, type: 3}
+  - cardId: 110
+    icon: {fileID: 21300000, guid: eefc2180831516942ac814f110221c91, type: 3}
+  - cardId: 111
+    icon: {fileID: 21300000, guid: 0213d66731d78a14283234c37ab02705, type: 3}
+  - cardId: 112
+    icon: {fileID: 21300000, guid: f18063fedcfb2004fb7612250f887ced, type: 3}
+  - cardId: 113
+    icon: {fileID: 21300000, guid: acc40fde8c9a3fb44913b066bdc3739a, type: 3}
+  - cardId: 114
+    icon: {fileID: 21300000, guid: e9da5c3bf92dc894a8a0fe09bc0f33e4, type: 3}
+  - cardId: 115
+    icon: {fileID: 21300000, guid: 5b4b829cc87c2544199807163a542867, type: 3}
+  - cardId: 116
     icon: {fileID: 21300000, guid: e3bf1e49b539c714ca586398d61648f3, type: 3}
+  - cardId: 117
+    icon: {fileID: 21300000, guid: 9796b76519d157940bb1eef430077318, type: 3}
+  - cardId: 118
+    icon: {fileID: 21300000, guid: 3e6e1bed7a9677a4882173a7bc9a20ba, type: 3}
+  - cardId: 119
+    icon: {fileID: 21300000, guid: c85571c5854c47c459dafee6e8456e74, type: 3}
+  - cardId: 120
+    icon: {fileID: 21300000, guid: 09f4799039589f54087a85c6451ef169, type: 3}
+  - cardId: 121
+    icon: {fileID: 21300000, guid: f3482eee9e6338548b583896f1468168, type: 3}
+  - cardId: 122
+    icon: {fileID: 21300000, guid: 94598a8105a63c1439e7b45e48e22c99, type: 3}
+  - cardId: 123
+    icon: {fileID: 21300000, guid: a56490adc13b5b246b20b6e94bf5ec0e, type: 3}
+  - cardId: 124
+    icon: {fileID: 21300000, guid: dc37c9329d01d904b9eecfda0f12a0ad, type: 3}
+  - cardId: 125
+    icon: {fileID: 21300000, guid: e4c0992d6de279c4badefdb8cea83ff5, type: 3}
+  - cardId: 126
+    icon: {fileID: 21300000, guid: 7f47cd982f2d9d948bc3be1dc9cb74f9, type: 3}
+  - cardId: 127
+    icon: {fileID: 21300000, guid: 9b7bdf239e557fb4780b655588e68a05, type: 3}
+  - cardId: 128
+    icon: {fileID: 21300000, guid: 2e1d04a797b5c944eabca08dbdb0b9c3, type: 3}
+  - cardId: 129
+    icon: {fileID: 21300000, guid: 500d61315e051404b984409935cde8e8, type: 3}
+  - cardId: 130
+    icon: {fileID: 21300000, guid: febc45cbce6f8ed4ea6cba4808bfa921, type: 3}

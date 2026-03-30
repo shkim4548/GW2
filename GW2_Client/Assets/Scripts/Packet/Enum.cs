@@ -36,17 +36,17 @@ namespace Google.Protobuf.Enum {
             "X1NLSUxMEAQSEgoOTU9WRV9TVEFURV9ESUUQBSpyCgtNaW5pb25TdGF0ZRIP",
             "CgtNSU5JT05fSURMRRAAEhUKEU1JTklPTl9MSU5FX1RSQUNFEAESFwoTTUlO",
             "SU9OX0NIQVNFX1RBUkdFVBACEhEKDU1JTklPTl9BVFRBQ0sQAxIPCgtNSU5J",
-            "T05fREVBRBAEKlwKCVNraWxsVHlwZRIRCg1TS0lMTF9JRF9OT05FEAASEwoP",
-            "U0tJTExfSURfQVRUQUNLEAESEgoOU0tJTExfSURfRklSU1QQAhITCg9TS0lM",
-            "TF9JRF9TRUNPTkQQAypNCghDYW1wVHlwZRINCglDQU1QX05PTkUQABIOCgpD",
-            "QU1QX0hVTUFOEAESDwoLQ0FNUF9DWUJPUkcQAhIRCg1DQU1QX05FVVRVUkFM",
-            "EAMqHgoJQ2VsbEZsYWdzEhEKDUNFTExfV0FMS0FCTEUQACpJCglDZWxsTGlu",
-            "a3MSDgoKTElOS19OT1JUSBAAEg0KCUxJTktfRUFTVBABEg4KCkxJTktfU09V",
-            "VEgQAhINCglMSU5LX1dFU1QQA0IXqgIUR29vZ2xlLlByb3RvYnVmLkVudW1i",
-            "BnByb3RvMw=="));
+            "T05fREVBRBAEKk0KCENhbXBUeXBlEg0KCUNBTVBfTk9ORRAAEg4KCkNBTVBf",
+            "SFVNQU4QARIPCgtDQU1QX0NZQk9SRxACEhEKDUNBTVBfTkVVVFVSQUwQAyoe",
+            "CglDZWxsRmxhZ3MSEQoNQ0VMTF9XQUxLQUJMRRAAKkkKCUNlbGxMaW5rcxIO",
+            "CgpMSU5LX05PUlRIEAASDQoJTElOS19FQVNUEAESDgoKTElOS19TT1VUSBAC",
+            "Eg0KCUxJTktfV0VTVBADKmMKCEJ1ZmZUeXBlEg0KCUJVRkZfTk9ORRAAEg8K",
+            "C0JVRkZfQVRUQUNLEAESEAoMQlVGRl9ERUZFTlNFEAISDgoKQlVGRl9TUEVF",
+            "RBADEhUKEUJVRkZfQVRUQUNLX1NQRUVEEARCF6oCFEdvb2dsZS5Qcm90b2J1",
+            "Zi5FbnVtYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.ObjectType), typeof(global::Google.Protobuf.Enum.PlayerType), typeof(global::Google.Protobuf.Enum.MoveState), typeof(global::Google.Protobuf.Enum.MinionState), typeof(global::Google.Protobuf.Enum.SkillType), typeof(global::Google.Protobuf.Enum.CampType), typeof(global::Google.Protobuf.Enum.CellFlags), typeof(global::Google.Protobuf.Enum.CellLinks), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Enum.ObjectType), typeof(global::Google.Protobuf.Enum.PlayerType), typeof(global::Google.Protobuf.Enum.MoveState), typeof(global::Google.Protobuf.Enum.MinionState), typeof(global::Google.Protobuf.Enum.CampType), typeof(global::Google.Protobuf.Enum.CellFlags), typeof(global::Google.Protobuf.Enum.CellLinks), typeof(global::Google.Protobuf.Enum.BuffType), }, null, null));
     }
     #endregion
 
@@ -85,13 +85,6 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("MINION_DEAD")] MinionDead = 4,
   }
 
-  public enum SkillType {
-    [pbr::OriginalName("SKILL_ID_NONE")] SkillIdNone = 0,
-    [pbr::OriginalName("SKILL_ID_ATTACK")] SkillIdAttack = 1,
-    [pbr::OriginalName("SKILL_ID_FIRST")] SkillIdFirst = 2,
-    [pbr::OriginalName("SKILL_ID_SECOND")] SkillIdSecond = 3,
-  }
-
   public enum CampType {
     [pbr::OriginalName("CAMP_NONE")] CampNone = 0,
     [pbr::OriginalName("CAMP_HUMAN")] CampHuman = 1,
@@ -108,6 +101,14 @@ namespace Google.Protobuf.Enum {
     [pbr::OriginalName("LINK_EAST")] LinkEast = 1,
     [pbr::OriginalName("LINK_SOUTH")] LinkSouth = 2,
     [pbr::OriginalName("LINK_WEST")] LinkWest = 3,
+  }
+
+  public enum BuffType {
+    [pbr::OriginalName("BUFF_NONE")] BuffNone = 0,
+    [pbr::OriginalName("BUFF_ATTACK")] BuffAttack = 1,
+    [pbr::OriginalName("BUFF_DEFENSE")] BuffDefense = 2,
+    [pbr::OriginalName("BUFF_SPEED")] BuffSpeed = 3,
+    [pbr::OriginalName("BUFF_ATTACK_SPEED")] BuffAttackSpeed = 4,
   }
 
   #endregion

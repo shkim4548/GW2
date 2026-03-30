@@ -91,6 +91,15 @@ weak_ptr<Object> Minion::FindBestTarget(vector<weak_ptr<Object>> targets)
 
 void Minion::UpdateController(float deltaTime)
 {
+	// 스턴 상태 확인
+	if (_stunTimer > 0.0f)
+	{
+		_stunTimer -= deltaTime;
+		if (_stunTimer <= 0.0f)
+			_isStunned = false;
+		return; // 이동/공격 전부 차단
+	}
+
 	switch (_minionState)
 	{
 	case Protocol::MinionState::MINION_IDLE:
@@ -248,7 +257,7 @@ void Minion::UpdateLaneTrace(float deltaTime)
 	if (_findTargetCoolDown <= 0.0f)
 	{
 		RequestFindTarget();
-		_findTargetCoolDown = 0.5f;
+		_findTargetCoolDown = 0.1f;
 	}
 
 	// 2) Chase ��ȯ üũ
@@ -427,8 +436,9 @@ void Minion::UpdateAttack(float deltaTime)
 
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(minionSelfPos, targetPos);
 
-	// 1. Ÿ���� ��Ÿ� ������ ������ �ٽ� chase�� ��ȯ
-	if (distToTarget > _attackRange)
+	// 변경 후 (20% 여유)
+	if (distToTarget > _attackRange * 1.2f)
+	//if (distToTarget > _attackRange)
 	{
 		_minionState = Protocol::MinionState::MINION_CHASE_TARGET;
 		return;
@@ -474,19 +484,19 @@ int32 Minion::GetTargetPriority(shared_ptr<Object> obj)
 	Protocol::ObjectType type = obj->GetObjectType();
 	if (type == Protocol::ObjectType::OBJECT_TYPE_MINION)
 	{
-		return 1;
+		return 3;
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_TURRET)
 	{
-		return 2;
+		return 3;
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_PLAYER)
 	{
-		return 3;
+		return 2;
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_NEXUS)
 	{
-		return 4;
+		return 1;
 	}
 	else
 	{

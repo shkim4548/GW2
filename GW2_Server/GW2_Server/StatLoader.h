@@ -32,6 +32,8 @@ struct CardStat
     // === 사거리/범위 ===
     float       range;          // 최대 사거리
     float       aoeRadius;      // 범위 공격 반경 (0이면 단일 대상)
+    int32       aoeType;        // 추가: 0=단일, 1=원형, 2=원뿔
+    float       angle;          // 추가: 원뿔 반각 기준 전체 각도 (예: 60.0 = 좌우 각 30도)
 
     // === 타이밍 ===
     float       cooldown;       // 쿨타임 (초)
@@ -44,6 +46,14 @@ struct CardStat
     // === 효과 ===
     float       slowAmount;     // 이동속도 감소율 (0~1)
     float       knockbackForce; // 넉백 거리
+
+    // === 회복 ===
+    uint32      heal;
+
+    // === 버프 ===
+    int32       buffType;     // BuffType enum 값 (0=없음, 1=공격, 2=방어, 3=속도)
+    float       buffValue;    // 배율 (attack: +배율, defense: 감소율, speed: 배속)
+
 
     uint32       price;
 };

@@ -52,9 +52,16 @@ public class NetworkService : INetworkService
         List<PacketMessage> list = PacketQueue.Instance.PopAll();
         foreach (PacketMessage packet in list)
         {
-            Action<PacketSession, IMessage> handler = PacketManager.Instance.GetPacketHandler(packet.Id);
-            if (handler != null)
-                handler.Invoke(_session, packet.Message);
+            try
+            {
+                Action<PacketSession, IMessage> handler = PacketManager.Instance.GetPacketHandler(packet.Id);
+                if (handler != null)
+                    handler.Invoke(_session, packet.Message);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetworkService] Packet error id={packet.Id}: {e}");
+            }
         }
         //Debug.Log("Network Service Update");
     }

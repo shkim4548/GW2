@@ -20,8 +20,10 @@ public:
 	Protocol::ObjectType GetObjectType() const { return _objectType; }
 	Protocol::CampType GetTeamFlag() const { return _campType; }
 	float GetHp() { return _statInfo.hp(); }
+	float GetYaw() { return _pos.yaw(); }
 	bool GetIsDead() { return _isDead; }
 	void FullHeal();
+	uint64 Heal(uint64 amount);
 	// TODO : 사망 여부 체크 로직 필요
 	bool IsDead();
 
@@ -81,6 +83,8 @@ public:
 	NavPath _path;
 	size_t  _pathIndex = 0;
 
+	bool  _isStunned = false;
+	float _stunTimer = 0.0f;
 protected:
 	int32 _objectId = 0;
 	Protocol::PosInfo _pos;
@@ -101,10 +105,13 @@ protected:
 	static constexpr float MOVE_BROADCAST_INTERVAL = 0.1f;
 	bool _forceBroadcastMove = false;  // ★ 추가
 
+
 private:
 	// === 이동상태 이상 탐지 === 
 	GameMath::Vector3 _lastCheckPos;
 	bool _hasLastCheckPos = false;
 	bool _isDead = false;
+
+
 };
 

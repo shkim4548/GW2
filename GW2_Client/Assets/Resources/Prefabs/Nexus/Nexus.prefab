@@ -308,6 +308,7 @@ GameObject:
   - component: {fileID: 3487415417060689713}
   - component: {fileID: 3357798881417274069}
   - component: {fileID: 7274980269396201827}
+  - component: {fileID: 8523392399420397041}
   m_Layer: 6
   m_Name: Nexus
   m_TagString: OBJECT
@@ -492,6 +493,25 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8523392399420397041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3487415417060689714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e5cf2ac934ba7a47be357c3525d4aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attackEffect: {fileID: 0}
+  _sendPacketDelay: 0.2
+  _isMoving: 0
+  _positionSmoothTime: 0.1
+  _moveSpeed: 100
+  _rotationSpeed: 1
+  _campType: 0
 --- !u!1 &7673948987564259589
 GameObject:
   m_ObjectHideFlags: 0

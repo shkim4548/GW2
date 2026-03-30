@@ -43,6 +43,7 @@ private:
 
 	Protocol::PlayerType _playerType = Protocol::PLAYER_TYPE_POLICE;
 
+
 public:
 	vector<int32> _deck;
 	vector<int32> _hand;
@@ -53,5 +54,15 @@ public:
 	int32 _kill = 0;
 	int32 _death = 0;
 	int32 _assist = 0;
+
+	// 버프 상태
+	float _attackMult = 1.0f;
+	float _attackBuffTimer = 0.0f;
+	float _defenseReduct = 0.0f;  // 데미지 감소율 (0~1)
+	float _defenseBuffTimer = 0.0f;
+	float _speedMult = 1.0f;
+	float _speedBuffTimer = 0.0f;
+	float _attackSpeedMult = 1.0f;
+	float _attackSpeedBuffTimer = 0.0f;
 };
 

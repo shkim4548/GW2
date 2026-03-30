@@ -103,6 +103,16 @@ bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<int32, 
         if (c.contains("projectile_speed"))  stat.projectileSpeed = c["projectile_speed"].get<float>();
         if (c.contains("price"))             stat.price = c["price"].get<uint32_t>();
         if (c.contains("skill_id"))          stat.skillId = c["skill_id"].get<string>();
+        if (c.contains("damage"))           stat.damage = c["damage"].get<uint32_t>();
+        if (c.contains("range"))            stat.range = c["range"].get<float>();
+        if (c.contains("cooldown"))         stat.cooldown = c["cooldown"].get<float>();
+        if (c.contains("heal"))             stat.heal = c["heal"].get<uint32_t>();
+        if (c.contains("buff_type"))  stat.buffType = c["buff_type"].get<int32_t>();
+        if (c.contains("buff_value")) stat.buffValue = c["buff_value"].get<float>();
+        if (c.contains("aoe_radius")) stat.aoeRadius = c["aoe_radius"].get<float>();
+        if (c.contains("aoe_type"))   stat.aoeType = c["aoe_type"].get<int32_t>();
+        if (c.contains("angle"))      stat.angle = c["angle"].get<float>();
+
 
         outStats[stat.id] = stat;
         GConsoleLogger->WriteStdOut(Color::GREEN,

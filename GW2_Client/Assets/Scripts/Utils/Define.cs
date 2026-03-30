@@ -88,6 +88,7 @@ public class Define
     {
         Press,
         Click,
+        LeftClick,
         Drag,
     }
 

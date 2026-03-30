@@ -83,11 +83,16 @@ message S_MINION_MOVE
 
 message C_SKILL
 {
-	SkillType skill_id = 1;
+	//SkillType skill_id = 1;
+	int32 command_id = 1;
 	int32 target_id = 2;
 	int32 attacker_id = 3;
 	int32 room_id = 4;
 	int32 client_time = 5;
+	float     pos_x     = 6;
+    float     pos_z     = 7;
+	float dir_x = 8;   // 추가: 스킬 방향 (고깔형 필요)
+    float dir_z = 9;   // 추가
 }
 
 message S_SKILL
@@ -97,6 +102,11 @@ message S_SKILL
 	int64 attacker_id = 3;
 	float current_hp = 4;
 	float max_hp = 5;
+	float pos_x = 3;            // 추가: 이펙트 위치
+    float pos_z = 4;            // 추가
+    float dir_x = 5;            // 추가: 이펙트 방향
+    float dir_z = 6;            // 추가
+    repeated int64 hit_target_ids = 7;  // 추가: 피격 대상 목록
 }
 
 message C_ENTER_LOBBY
@@ -185,11 +195,25 @@ message S_CHARACTER_SELECTED
 {
     int32 player_id = 1;
     PlayerType player_type = 2;
-    bool is_cancel = 3;   // 다른 캐릭터로 변경 시 이전 것 해제용
+    bool is_cancel = 3;   
 }
 
 message C_CONFIRM_CHARACTER
 {
     int32 room_id = 1;
     PlayerType player_type = 2;
+}
+
+message S_BUFF_APPLIED
+{
+    int32     target_id  = 1;
+    BuffType  buff_type  = 2;
+    float     value      = 3;   
+    float     duration   = 4;   
+}
+
+message S_STUN 
+{
+    int32 target_id = 1;
+    float duration  = 2;
 }

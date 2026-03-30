@@ -1,4 +1,4 @@
-using Google.Protobuf.Enum;
+ï»¿using Google.Protobuf.Enum;
 using Google.Protobuf.Protocol;
 using Google.Protobuf.Struct;
 using System;
@@ -34,7 +34,7 @@ public class BaseController : MonoBehaviour
 
     PosInfo _posInfo = new PosInfo();
 
-    // Áø¿µ ±¸ºĞ¿ë enum
+    // ì§„ì˜ êµ¬ë¶„ìš© enum
     public CampType _campType = new CampType();
 
     public PosInfo PosInfo
@@ -49,7 +49,7 @@ public class BaseController : MonoBehaviour
             _posInfo.Y = value.Y;
             _posInfo.Z = value.Z;
 
-            // State setter¸¦ ÅëÇØ UpdateAnimation()±îÁö È£Ãâ
+            // State setterë¥¼ í†µí•´ UpdateAnimation()ê¹Œì§€ í˜¸ì¶œ
             State = value.State;
         }
     }
@@ -86,7 +86,7 @@ public class BaseController : MonoBehaviour
     public void Update()
     {
         _inputService.OnUpdate();
-        // »óÅÂ¸Ó½Å °ü¸®
+        // ìƒíƒœë¨¸ì‹  ê´€ë¦¬
         UpdateAnimation();
     }
 
@@ -118,7 +118,7 @@ public class BaseController : MonoBehaviour
             //return;
         }
 
-        // ProtobufÀÇ EnumÀ» »ç¿ë
+        // Protobufì˜ Enumì„ ì‚¬ìš©
         // node, fadeTime, layerIndex
         //Debug.Log($"State in UpdateAnimation {State}");
         switch (State)
@@ -149,7 +149,7 @@ public class BaseController : MonoBehaviour
 
     protected int GetClientTime()
     {
-        // ms´ÜÀ§·Î Àü´Ş
+        // msë‹¨ìœ„ë¡œ ì „ë‹¬
         return (int)(Time.realtimeSinceStartup * 1000);
     }
 
@@ -186,13 +186,13 @@ public class BaseController : MonoBehaviour
         if (sphere != null) Destroy(sphere);
     }
 
-    // ³»°¡ °ø°İ
+    // ë‚´ê°€ ê³µê²©
     public void PlayAttackEffect(Vector3 targetPos)
     {
         StartCoroutine(MoveEffectToTarget(targetPos));
     }
 
-    // »ó´ë°¡ °ø°İ
+    // ìƒëŒ€ê°€ ê³µê²©
     public void PlayAttackEffect(GameObject target)
     {
         if (target == null)
@@ -205,4 +205,42 @@ public class BaseController : MonoBehaviour
     {
 
     }
+
+    public void ApplySpeedBuff(float multiplier, float duration)
+    {
+        _moveSpeed *= multiplier;
+        StartCoroutine(RevertSpeedAfter(duration, multiplier));
+    }
+
+    private IEnumerator RevertSpeedAfter(float duration, float multiplier)
+    {
+        yield return new WaitForSeconds(duration);
+        _moveSpeed /= multiplier;
+    }
+
+    public void ApplyStun(float duration)
+    {
+        State = MoveState.Idle; // ì´ë™ ì¤‘ì§€
+        StartCoroutine(StunCoroutine(duration));
+    }
+
+
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        // ìŠ¤í„´ í•´ì œ â€” ì„œë²„ê°€ ë‹¤ìŒ ì´ë™ íŒ¨í‚· ë³´ë‚¼ ë•Œ ìì—°íˆ ë³µêµ¬ë¨
+    }
+
+    public void ApplyAttackSpeedBuff(float multiplier, float duration)
+    {
+        StartCoroutine(RevertAttackSpeedAfter(duration, multiplier));
+    }
+
+    private IEnumerator RevertAttackSpeedAfter(float duration, float multiplier)
+    {
+        yield return new WaitForSeconds(duration);
+        // ê³µê²© ì¿¨íƒ€ì„ ë¡œì§ êµ¬í˜„ ì‹œ ì—¬ê¸°ì„œ ë³µì›
+    }
+
 }

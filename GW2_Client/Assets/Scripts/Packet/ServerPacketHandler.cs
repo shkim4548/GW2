@@ -36,6 +36,8 @@ public enum PacketId : ushort
         PKT_C_SELECT_CHARACTER = 1025,
         PKT_S_CHARACTER_SELECTED = 1026,
         PKT_C_CONFIRM_CHARACTER = 1027,
+        PKT_S_BUFF_APPLIED = 1028,
+        PKT_S_STUN = 1029,
 }
 
 public class PacketManager
@@ -93,6 +95,10 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_BUY_RESULT, PacketHandler.S_BUY_RESULTHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_CHARACTER_SELECTED, MakePacket<S_CHARACTER_SELECTED>);
         _handler.Add((ushort)PacketId.PKT_S_CHARACTER_SELECTED, PacketHandler.S_CHARACTER_SELECTEDHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_BUFF_APPLIED, MakePacket<S_BUFF_APPLIED>);
+        _handler.Add((ushort)PacketId.PKT_S_BUFF_APPLIED, PacketHandler.S_BUFF_APPLIEDHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_STUN, MakePacket<S_STUN>);
+        _handler.Add((ushort)PacketId.PKT_S_STUN, PacketHandler.S_STUNHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

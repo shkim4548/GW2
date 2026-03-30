@@ -77,5 +77,5 @@ private:
 	bool _pathPending = false;  // DoAsync 요청 후 RequestMove 완료 전까지 중복 요청 방지
 
 	float _noChaseTimer = 0.0f;
-	static constexpr float NO_CHASE_DURATION = 3.0f;
+	static constexpr float NO_CHASE_DURATION = 1.0f;
 };

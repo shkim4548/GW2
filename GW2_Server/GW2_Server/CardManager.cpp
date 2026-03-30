@@ -12,13 +12,26 @@ CardManager::~CardManager()
 
 void CardManager::InitDeck(Player& player)
 {
-	player._deck = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+	// 30개 풀에서 12개 랜덤 선택
+	static const vector<int32> ALL_CARD_IDS = {
+		101,102,103,104,105,106,107,108,109,110,
+		111,112,113,114,115,116,117,118,119,120,
+		121,122,123,124,125,126,127,128,129,130
+	};
+
+	static mt19937 rng(random_device{}());
+
+	vector<int32> pool = ALL_CARD_IDS;
+	shuffle(pool.begin(), pool.end(), rng);
+
+	player._deck.clear();
 	player._hand.clear();
 
+	for (int32 i = 0; i < 12; ++i)
+		player._deck.push_back(pool[i]);
+
 	for (int32 i = 0; i < MAX_HAND_SIZE; ++i)
-	{
 		DrawCard(player);
-	}
 }
 
 void CardManager::ResetHand(Player& player)

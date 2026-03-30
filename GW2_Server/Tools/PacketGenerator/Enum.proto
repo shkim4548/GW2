@@ -40,14 +40,6 @@ enum MinionState
 	MINION_DEAD = 4;
 }
 
-enum SkillType
-{
-	SKILL_ID_NONE = 0;
-	SKILL_ID_ATTACK = 1;
-	SKILL_ID_FIRST = 2;
-	SKILL_ID_SECOND = 3;
-}
-
 enum CampType
 {
 	CAMP_NONE = 0;
@@ -67,4 +59,13 @@ enum CellLinks
     LINK_EAST  = 1;
     LINK_SOUTH = 2;
     LINK_WEST  = 3;
+}
+
+enum BuffType
+{
+	BUFF_NONE = 0;
+	BUFF_ATTACK = 1;
+	BUFF_DEFENSE = 2;
+	BUFF_SPEED = 3;
+	BUFF_ATTACK_SPEED = 4;
 }

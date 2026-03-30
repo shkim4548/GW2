@@ -35,6 +35,9 @@ public class InputService : IInputService
                     MouseAction.Invoke(Define.MouseEvent.Click);
                 _pressed = false;
             }
+
+            if (Input.GetMouseButtonDown(0))
+                MouseAction.Invoke(Define.MouseEvent.LeftClick);
         }
     }
 }

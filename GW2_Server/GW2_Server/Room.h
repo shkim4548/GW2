@@ -65,7 +65,7 @@ public:
 	// Players
 	bool HandleEnterPlayer(PlayerRef player);
 	bool HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt);
-	void HandleAttack(int32 attackerId, int32 targetId, Protocol::SkillType commandId);
+	void HandleAttack(int32 attackerId, int32 targetId, int32 commandId);
 	void HandleRespawnPlayer(int32 playerId);
 	void HandleSelectCharacter(PlayerRef player, Protocol::PlayerType type);
 	void HandleConfirmCharacter(PlayerRef player, Protocol::PlayerType type);
