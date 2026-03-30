@@ -648,6 +648,7 @@ class StatInfo final :
     kMaxHpFieldNumber = 2,
     kAttackFieldNumber = 3,
     kSpeedFieldNumber = 4,
+    kAttackRangeFieldNumber = 5,
   };
   // uint64 hp = 1;
   void clear_hp();
@@ -685,6 +686,15 @@ class StatInfo final :
   void _internal_set_speed(uint64_t value);
   public:
 
+  // float attack_range = 5;
+  void clear_attack_range();
+  float attack_range() const;
+  void set_attack_range(float value);
+  private:
+  float _internal_attack_range() const;
+  void _internal_set_attack_range(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.StatInfo)
  private:
   class _Internal;
@@ -696,6 +706,7 @@ class StatInfo final :
   uint64_t max_hp_;
   uint64_t attack_;
   uint64_t speed_;
+  float attack_range_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Struct_2eproto;
 };
@@ -1703,6 +1714,26 @@ inline void StatInfo::_internal_set_speed(uint64_t value) {
 inline void StatInfo::set_speed(uint64_t value) {
   _internal_set_speed(value);
   // @@protoc_insertion_point(field_set:Protocol.StatInfo.speed)
+}
+
+// float attack_range = 5;
+inline void StatInfo::clear_attack_range() {
+  attack_range_ = 0;
+}
+inline float StatInfo::_internal_attack_range() const {
+  return attack_range_;
+}
+inline float StatInfo::attack_range() const {
+  // @@protoc_insertion_point(field_get:Protocol.StatInfo.attack_range)
+  return _internal_attack_range();
+}
+inline void StatInfo::_internal_set_attack_range(float value) {
+  
+  attack_range_ = value;
+}
+inline void StatInfo::set_attack_range(float value) {
+  _internal_set_attack_range(value);
+  // @@protoc_insertion_point(field_set:Protocol.StatInfo.attack_range)
 }
 
 // -------------------------------------------------------------------

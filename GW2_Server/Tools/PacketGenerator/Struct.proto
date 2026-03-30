@@ -33,6 +33,7 @@ message StatInfo
 	uint64 max_hp = 2;
 	uint64 attack = 3;
 	uint64 speed = 4;
+	float attack_range = 5;
 }
 
 message Vector3Info

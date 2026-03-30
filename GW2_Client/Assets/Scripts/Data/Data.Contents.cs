@@ -46,6 +46,16 @@ namespace Data
         public int z;
     }
 
+    [System.Serializable]
+    public class SkillEffectEntry
+    {
+        public int skillId;
+        public GameObject effectPrefab;    // 시전 이펙트 (시전자 위치)
+        public GameObject hitEffectPrefab; // 피격 이펙트 (타겟 위치, null 가능)
+        public float duration = 2.0f;
+    }
+
+
     /*--------------------------------
         Minion Line data for server
      ---------------------------------*/
@@ -102,4 +112,9 @@ namespace Data
         }
     }
 
+    [CreateAssetMenu(fileName = "SkillEffectData", menuName = "GW2/SkillEffectData")]
+    public class SkillEffectData : ScriptableObject
+    {
+        public SkillEffectEntry[] entries;
+    }
 }

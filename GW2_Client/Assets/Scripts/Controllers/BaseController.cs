@@ -243,4 +243,12 @@ public class BaseController : MonoBehaviour
         // 공격 쿨타임 로직 구현 시 여기서 복원
     }
 
+    // 카드 스킬 이펙트
+    public void PlaySkillEffect(int skillId, Vector3 pos, Vector3 dir)
+    {
+        if (EffectService.Instance == null)
+            return;
+
+        EffectService.Instance.SpawnEffect(skillId, pos, dir);
+    }
 }

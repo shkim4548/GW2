@@ -59,7 +59,8 @@ constexpr StatInfo::StatInfo(
   : hp_(uint64_t{0u})
   , max_hp_(uint64_t{0u})
   , attack_(uint64_t{0u})
-  , speed_(uint64_t{0u}){}
+  , speed_(uint64_t{0u})
+  , attack_range_(0){}
 struct StatInfoDefaultTypeInternal {
   constexpr StatInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -149,6 +150,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::StatInfo, max_hp_),
   PROTOBUF_FIELD_OFFSET(::Protocol::StatInfo, attack_),
   PROTOBUF_FIELD_OFFSET(::Protocol::StatInfo, speed_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::StatInfo, attack_range_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::Vector3Info, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -178,9 +180,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, -1, sizeof(::Protocol::PosInfo)},
   { 12, -1, -1, sizeof(::Protocol::ObjectInfo)},
   { 25, -1, -1, sizeof(::Protocol::StatInfo)},
-  { 35, -1, -1, sizeof(::Protocol::Vector3Info)},
-  { 44, -1, -1, sizeof(::Protocol::RoomInfo)},
-  { 52, -1, -1, sizeof(::Protocol::SkillInfo)},
+  { 36, -1, -1, sizeof(::Protocol::Vector3Info)},
+  { 45, -1, -1, sizeof(::Protocol::RoomInfo)},
+  { 53, -1, -1, sizeof(::Protocol::SkillInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -201,20 +203,21 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   ")\n\013object_type\030\003 \001(\0162\024.Protocol.ObjectTy"
   "pe\022\014\n\004name\030\004 \001(\t\022#\n\010pos_info\030\005 \001(\0132\021.Pro"
   "tocol.PosInfo\022%\n\tstat_info\030\006 \001(\0132\022.Proto"
-  "col.StatInfo\022\021\n\tteam_flag\030\007 \001(\005\"E\n\010StatI"
+  "col.StatInfo\022\021\n\tteam_flag\030\007 \001(\005\"[\n\010StatI"
   "nfo\022\n\n\002hp\030\001 \001(\004\022\016\n\006max_hp\030\002 \001(\004\022\016\n\006attac"
-  "k\030\003 \001(\004\022\r\n\005speed\030\004 \001(\004\".\n\013Vector3Info\022\t\n"
-  "\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\",\n\010RoomIn"
-  "fo\022\016\n\006roomId\030\001 \001(\005\022\020\n\010rommName\030\002 \001(\t\"\033\n\t"
-  "SkillInfo\022\016\n\006damage\030\001 \001(\002B\031\252\002\026Google.Pro"
-  "tobuf.Structb\006proto3"
+  "k\030\003 \001(\004\022\r\n\005speed\030\004 \001(\004\022\024\n\014attack_range\030\005"
+  " \001(\002\".\n\013Vector3Info\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001("
+  "\002\022\t\n\001z\030\003 \001(\002\",\n\010RoomInfo\022\016\n\006roomId\030\001 \001(\005"
+  "\022\020\n\010rommName\030\002 \001(\t\"\033\n\tSkillInfo\022\016\n\006damag"
+  "e\030\001 \001(\002B\031\252\002\026Google.Protobuf.Structb\006prot"
+  "o3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Struct_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto = {
-  false, false, 580, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
+  false, false, 602, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
   &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 6,
   schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
   file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto, file_level_service_descriptors_Struct_2eproto,
@@ -989,16 +992,16 @@ StatInfo::StatInfo(const StatInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&hp_, &from.hp_,
-    static_cast<size_t>(reinterpret_cast<char*>(&speed_) -
-    reinterpret_cast<char*>(&hp_)) + sizeof(speed_));
+    static_cast<size_t>(reinterpret_cast<char*>(&attack_range_) -
+    reinterpret_cast<char*>(&hp_)) + sizeof(attack_range_));
   // @@protoc_insertion_point(copy_constructor:Protocol.StatInfo)
 }
 
 inline void StatInfo::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&hp_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&speed_) -
-    reinterpret_cast<char*>(&hp_)) + sizeof(speed_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&attack_range_) -
+    reinterpret_cast<char*>(&hp_)) + sizeof(attack_range_));
 }
 
 StatInfo::~StatInfo() {
@@ -1029,8 +1032,8 @@ void StatInfo::Clear() {
   (void) cached_has_bits;
 
   ::memset(&hp_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&speed_) -
-      reinterpret_cast<char*>(&hp_)) + sizeof(speed_));
+      reinterpret_cast<char*>(&attack_range_) -
+      reinterpret_cast<char*>(&hp_)) + sizeof(attack_range_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1069,6 +1072,14 @@ const char* StatInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
           speed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float attack_range = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 45)) {
+          attack_range_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -1125,6 +1136,16 @@ uint8_t* StatInfo::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_speed(), target);
   }
 
+  // float attack_range = 5;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_attack_range = this->_internal_attack_range();
+  uint32_t raw_attack_range;
+  memcpy(&raw_attack_range, &tmp_attack_range, sizeof(tmp_attack_range));
+  if (raw_attack_range != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_attack_range(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1161,6 +1182,15 @@ size_t StatInfo::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_speed());
   }
 
+  // float attack_range = 5;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_attack_range = this->_internal_attack_range();
+  uint32_t raw_attack_range;
+  memcpy(&raw_attack_range, &tmp_attack_range, sizeof(tmp_attack_range));
+  if (raw_attack_range != 0) {
+    total_size += 1 + 4;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -1195,6 +1225,13 @@ void StatInfo::MergeFrom(const StatInfo& from) {
   if (from._internal_speed() != 0) {
     _internal_set_speed(from._internal_speed());
   }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_attack_range = from._internal_attack_range();
+  uint32_t raw_attack_range;
+  memcpy(&raw_attack_range, &tmp_attack_range, sizeof(tmp_attack_range));
+  if (raw_attack_range != 0) {
+    _internal_set_attack_range(from._internal_attack_range());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1213,8 +1250,8 @@ void StatInfo::InternalSwap(StatInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(StatInfo, speed_)
-      + sizeof(StatInfo::speed_)
+      PROTOBUF_FIELD_OFFSET(StatInfo, attack_range_)
+      + sizeof(StatInfo::attack_range_)
       - PROTOBUF_FIELD_OFFSET(StatInfo, hp_)>(
           reinterpret_cast<char*>(&hp_),
           reinterpret_cast<char*>(&other->hp_));

@@ -138,26 +138,34 @@ public class PacketHandler
 
         // 터렛 공격
         TurretController tc = attacker.GetComponent<TurretController>();
-        if (tc != null)
-        {
-            tc.OnAttack((int)skillPkt.TargetId);
-            return;
-        }
+        if (tc != null) { tc.OnAttack((int)skillPkt.TargetId); return; }
 
-        // attacker State 변경 (애니메이션용)
         BaseController attackerBc = attacker.GetComponent<BaseController>();
         if (attackerBc == null) return;
 
         attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
 
-        // 내 플레이어가 공격한 경우 → 이펙트 이미 재생했으므로 스킵
+        // 내 플레이어가 공격한 경우 → 로컬에서 이미 재생했으므로 스킵
         if (objectService.MyPlayer != null &&
             objectService.MyPlayer.Id == (int)skillPkt.AttackerId)
             return;
 
-        // 상대 플레이어/미니언이 공격한 경우 → 이펙트 재생
-        // target이 이미 삭제됐을 수 있으므로 null 허용
-        attackerBc.PlayAttackEffect(target);
+        int skillId = skillPkt.SkillId;
+        Vector3 effectPos = attacker.transform.position;
+        Vector3 dir = (target != null)
+            ? (target.transform.position - effectPos).normalized
+            : attacker.transform.forward;
+
+        if (skillId == 1)
+        {
+            // 평타: 기존 이펙트 재생
+            attackerBc.PlayAttackEffect(target);
+        }
+        else
+        {
+            // 카드 스킬: EffectManager 통해 재생
+            attackerBc.PlaySkillEffect(skillId, effectPos, dir);
+        }
     }
 
 

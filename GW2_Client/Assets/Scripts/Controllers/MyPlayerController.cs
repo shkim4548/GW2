@@ -67,6 +67,10 @@ public class MyPlayerController : PlayerController
 
         IUIService uiService = Bootstrapper.Instance.UIService;
         uiService.ShowSceneUI<UI_GameScene>();
+        
+        _navAgent = GetComponent<NavMeshAgent>();
+        if (_navAgent != null)
+            _navAgent.updateRotation = false;  // 추가: 수동 회전 제어 사용
 
         if (_pendingHandCardIds.Count > 0)
             UI_CardPanel.OnHandSync?.Invoke(_pendingHandCardIds);
@@ -158,7 +162,7 @@ public class MyPlayerController : PlayerController
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 15f * Time.deltaTime);
         }
         // 상위 함수에서 상태 변화 및 애니메이션 재생
     }
@@ -435,6 +439,9 @@ public class MyPlayerController : PlayerController
         pkt.ClientTime = GetClientTime();
         pkt.PosX = worldPos.x;
         pkt.PosZ = worldPos.z;
+        Vector3 forward = transform.forward;
+        pkt.DirX = forward.x;
+        pkt.DirZ = forward.z;
         _networkService.Send(pkt);
 
         OnCardUsed?.Invoke(slotIndex);

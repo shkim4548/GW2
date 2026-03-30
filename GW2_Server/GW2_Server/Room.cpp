@@ -245,32 +245,28 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 		if (cardStat.aoeRadius > 0.0f && cardStat.damage > 0)
 		{
 			vector<shared_ptr<Object>> hits;
+			GameMath::Vector3 attackerPos = attacker->GetPosVector();
 
 			if (cardStat.aoeType == 1)  // 원형
 			{
-				// 클라이언트가 보낸 pos_x/pos_z가 원의 중심
 				GameMath::Vector3 center(skillPkt.pos_x(), 0.f, skillPkt.pos_z());
-
 				for (auto& [id, obj] : _objects)
 				{
-					if (obj == nullptr || obj->IsDead()) continue;
-					if (obj->GetTeamFlag() == attacker->GetTeamFlag()) continue;
-
-					float dist = GameMath::Vector3::GetDistTanceXZ(center, obj->GetPosVector());
+					if (obj == nullptr || obj->IsDead()) 
+						continue;
+					if (obj->GetTeamFlag() == attacker->GetTeamFlag()) 
+						continue;
+					GameMath::Vector3 nowVector = obj->GetPosVector();
+					float dist = GameMath::Vector3::GetDistTanceXZ(center, nowVector);
 					if (dist <= cardStat.aoeRadius)
 						hits.push_back(obj);
 				}
 			}
 			else if (cardStat.aoeType == 2)  // 원뿔형
 			{
-				// 시전자 위치 기준, dir이 중심 방향
-				GameMath::Vector3 attackerPos = attacker->GetPosVector();
 				GameMath::Vector3 dir(skillPkt.dir_x(), 0.f, skillPkt.dir_z());
-
-				// dir이 영벡터이면 폴백: attacker의 바라보는 방향 사용
 				if (dir.Length() < 0.001f)
-					dir = GameMath::Vector3::YawToDirectionVector(attacker->GetYaw());
-
+					return false;
 				dir = dir.Normalized();
 				float halfAngleRad = (cardStat.angle * 0.5f) * (3.14159265f / 180.f);
 				float cosHalf = cosf(halfAngleRad);
@@ -279,35 +275,28 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 				{
 					if (obj == nullptr || obj->IsDead()) continue;
 					if (obj->GetTeamFlag() == attacker->GetTeamFlag()) continue;
-
 					GameMath::Vector3 toTarget = obj->GetPosVector() - attackerPos;
 					float dist = toTarget.Length();
-					if (dist > cardStat.aoeRadius) continue;        // 사거리 초과
-					if (dist < 0.001f) continue;                    // 정확히 겹친 경우 제외
-
-					float dot = dir.Dot(toTarget.Normalized());     // cos(시전자→타겟 각도)
-					if (dot >= cosHalf)                             // 반각 이내
+					if (dist > cardStat.aoeRadius || dist < 0.001f) continue;
+					float dot = dir.Dot(toTarget.Normalized());
+					if (dot >= cosHalf)
 						hits.push_back(obj);
 				}
 			}
 
-			// 타겟별 데미지 적용
 			for (auto& target : hits)
 			{
-				bool died = target->ApplyDamage(cardStat.damage);
+				target->ApplyDamage(cardStat.damage);
 
 				Protocol::S_HP_CHANGE hpPkt;
 				hpPkt.set_target_id(target->GetObjectId());
 				hpPkt.set_current_hp(target->GetHp());
 				hpPkt.set_max_hp(target->GetMaxHp());
 				Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
-
-				if (died)
-					HandleRemoveObject(target);  // 기존 사망 처리 함수 재사용
 			}
-
-			return true;
 		}
+
+		//return true;  // ← 기존 return true
 
 
 		// Mobility 카드: 목적지로 즉시 이동
@@ -333,8 +322,6 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			Broadcast(ClientPacketHandler::MakeSendBuffer(movePkt));
 			return true;
 		}
-
-
 		return true;
 	}
 
@@ -352,7 +339,10 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 		return false;
 
 	// 3. 거리 체크
-	const float attackRange = 15.0f;
+	CardStat cardStat = (skillId == 1) ? CardStat{} : GLobby->GetCardStat(skillId);
+	const float attackRange = (skillId == 1)
+		? attacker->GetStatInfo().attack_range()   // 평타: 캐릭터 사거리
+		: cardStat.range;                          // 카드: CardStat.range
 	GameMath::Vector3 attackerPos = attacker->GetPosVector();
 	GameMath::Vector3 targetPos = target->GetPosVector();
 	float dist = GameMath::Vector3::GetDistTanceXZ(attackerPos, targetPos);
@@ -413,7 +403,8 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			return true;
 
 		CardStat cardStat = GLobby->GetCardStat(skillId);
-		damage = cardStat.damage;
+		uint64 baseAtk = attacker->GetStatInfo().attack();
+		damage = cardStat.damage + static_cast<uint64>(cardStat.damageCoeff * baseAtk);
 		break;
 	}
 

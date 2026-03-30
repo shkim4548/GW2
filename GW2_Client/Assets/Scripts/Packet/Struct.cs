@@ -31,18 +31,19 @@ namespace Google.Protobuf.Struct {
             "KAUSDwoHcm9vbV9pZBgCIAEoBRIpCgtvYmplY3RfdHlwZRgDIAEoDjIULlBy",
             "b3RvY29sLk9iamVjdFR5cGUSDAoEbmFtZRgEIAEoCRIjCghwb3NfaW5mbxgF",
             "IAEoCzIRLlByb3RvY29sLlBvc0luZm8SJQoJc3RhdF9pbmZvGAYgASgLMhIu",
-            "UHJvdG9jb2wuU3RhdEluZm8SEQoJdGVhbV9mbGFnGAcgASgFIkUKCFN0YXRJ",
+            "UHJvdG9jb2wuU3RhdEluZm8SEQoJdGVhbV9mbGFnGAcgASgFIlsKCFN0YXRJ",
             "bmZvEgoKAmhwGAEgASgEEg4KBm1heF9ocBgCIAEoBBIOCgZhdHRhY2sYAyAB",
-            "KAQSDQoFc3BlZWQYBCABKAQiLgoLVmVjdG9yM0luZm8SCQoBeBgBIAEoAhIJ",
-            "CgF5GAIgASgCEgkKAXoYAyABKAIiLAoIUm9vbUluZm8SDgoGcm9vbUlkGAEg",
-            "ASgFEhAKCHJvbW1OYW1lGAIgASgJIhsKCVNraWxsSW5mbxIOCgZkYW1hZ2UY",
-            "ASABKAJCGaoCFkdvb2dsZS5Qcm90b2J1Zi5TdHJ1Y3RiBnByb3RvMw=="));
+            "KAQSDQoFc3BlZWQYBCABKAQSFAoMYXR0YWNrX3JhbmdlGAUgASgCIi4KC1Zl",
+            "Y3RvcjNJbmZvEgkKAXgYASABKAISCQoBeRgCIAEoAhIJCgF6GAMgASgCIiwK",
+            "CFJvb21JbmZvEg4KBnJvb21JZBgBIAEoBRIQCghyb21tTmFtZRgCIAEoCSIb",
+            "CglTa2lsbEluZm8SDgoGZGFtYWdlGAEgASgCQhmqAhZHb29nbGUuUHJvdG9i",
+            "dWYuU3RydWN0YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Enum.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.PosInfo), global::Google.Protobuf.Struct.PosInfo.Parser, new[]{ "ObjectId", "X", "Y", "Z", "Yaw", "State" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.ObjectInfo), global::Google.Protobuf.Struct.ObjectInfo.Parser, new[]{ "ObjectId", "RoomId", "ObjectType", "Name", "PosInfo", "StatInfo", "TeamFlag" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.StatInfo), global::Google.Protobuf.Struct.StatInfo.Parser, new[]{ "Hp", "MaxHp", "Attack", "Speed", "AttackRange" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.Vector3Info), global::Google.Protobuf.Struct.Vector3Info.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.RoomInfo), global::Google.Protobuf.Struct.RoomInfo.Parser, new[]{ "RoomId", "RommName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Struct.SkillInfo), global::Google.Protobuf.Struct.SkillInfo.Parser, new[]{ "Damage" }, null, null, null, null)
@@ -896,6 +897,7 @@ namespace Google.Protobuf.Struct {
       maxHp_ = other.maxHp_;
       attack_ = other.attack_;
       speed_ = other.speed_;
+      attackRange_ = other.attackRange_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -953,6 +955,18 @@ namespace Google.Protobuf.Struct {
       }
     }
 
+    /// <summary>Field number for the "attack_range" field.</summary>
+    public const int AttackRangeFieldNumber = 5;
+    private float attackRange_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AttackRange {
+      get { return attackRange_; }
+      set {
+        attackRange_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -972,6 +986,7 @@ namespace Google.Protobuf.Struct {
       if (MaxHp != other.MaxHp) return false;
       if (Attack != other.Attack) return false;
       if (Speed != other.Speed) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AttackRange, other.AttackRange)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -983,6 +998,7 @@ namespace Google.Protobuf.Struct {
       if (MaxHp != 0UL) hash ^= MaxHp.GetHashCode();
       if (Attack != 0UL) hash ^= Attack.GetHashCode();
       if (Speed != 0UL) hash ^= Speed.GetHashCode();
+      if (AttackRange != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AttackRange);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1017,6 +1033,10 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(32);
         output.WriteUInt64(Speed);
       }
+      if (AttackRange != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(AttackRange);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1043,6 +1063,10 @@ namespace Google.Protobuf.Struct {
         output.WriteRawTag(32);
         output.WriteUInt64(Speed);
       }
+      if (AttackRange != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(AttackRange);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1064,6 +1088,9 @@ namespace Google.Protobuf.Struct {
       }
       if (Speed != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Speed);
+      }
+      if (AttackRange != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1088,6 +1115,9 @@ namespace Google.Protobuf.Struct {
       }
       if (other.Speed != 0UL) {
         Speed = other.Speed;
+      }
+      if (other.AttackRange != 0F) {
+        AttackRange = other.AttackRange;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1120,6 +1150,10 @@ namespace Google.Protobuf.Struct {
             Speed = input.ReadUInt64();
             break;
           }
+          case 45: {
+            AttackRange = input.ReadFloat();
+            break;
+          }
         }
       }
     #endif
@@ -1149,6 +1183,10 @@ namespace Google.Protobuf.Struct {
           }
           case 32: {
             Speed = input.ReadUInt64();
+            break;
+          }
+          case 45: {
+            AttackRange = input.ReadFloat();
             break;
           }
         }

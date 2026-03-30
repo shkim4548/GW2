@@ -65,7 +65,6 @@ public class ObjectService : IObjectService
                 if (agent != null)
                     agent.enabled = true;
 
-                MyPlayer.transform.position = initPos;
                 MyPlayer.Id = objectId;
                 MyPlayer.RoomId = (int)roomId;
 
