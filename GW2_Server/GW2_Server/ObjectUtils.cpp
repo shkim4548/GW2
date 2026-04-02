@@ -4,6 +4,7 @@
 #include "Minion.h"
 #include "Turret.h"
 #include "Nexus.h"
+#include "Baron.h"
 #include "GameSession.h"
 
 atomic<int32> ObjectUtils::s_idGenerator = 1;
@@ -47,4 +48,12 @@ NexusRef ObjectUtils::CreateNexus()
     NexusRef nexus = MakeShared<Nexus>();
     nexus->SetNexusId(newId);
     return nexus;
+}
+
+BaronRef ObjectUtils::CreateBaron()
+{
+    const int64 newId = s_idGenerator.fetch_add(1);
+    BaronRef baron = MakeShared<Baron>();
+    baron->SetBaronId(newId);
+    return baron;
 }

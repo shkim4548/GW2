@@ -271,4 +271,5 @@ public class MinionController : BaseController
         }
         return nearest;
     }
+    private void Attack() { }  // 애니메이션 이벤트 수신용
 }

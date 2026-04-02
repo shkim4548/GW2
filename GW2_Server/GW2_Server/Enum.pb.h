@@ -62,12 +62,13 @@ enum ObjectType : int {
   OBJECT_TYPE_MINION = 2,
   OBJECT_TYPE_TURRET = 3,
   OBJECT_TYPE_NEXUS = 4,
+  OBJECT_TYPE_BARON = 5,
   ObjectType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   ObjectType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool ObjectType_IsValid(int value);
 constexpr ObjectType ObjectType_MIN = OBJECT_TYPE_NONE;
-constexpr ObjectType ObjectType_MAX = OBJECT_TYPE_NEXUS;
+constexpr ObjectType ObjectType_MAX = OBJECT_TYPE_BARON;
 constexpr int ObjectType_ARRAYSIZE = ObjectType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ObjectType_descriptor();
@@ -168,6 +169,33 @@ inline bool MinionState_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, MinionState* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MinionState>(
     MinionState_descriptor(), name, value);
+}
+enum BaronState : int {
+  BARON_IDLE = 0,
+  BARON_PATROL = 1,
+  BARON_COMBAT = 2,
+  BARON_DEAD = 3,
+  BaronState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BaronState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BaronState_IsValid(int value);
+constexpr BaronState BaronState_MIN = BARON_IDLE;
+constexpr BaronState BaronState_MAX = BARON_DEAD;
+constexpr int BaronState_ARRAYSIZE = BaronState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BaronState_descriptor();
+template<typename T>
+inline const std::string& BaronState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BaronState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BaronState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BaronState_descriptor(), enum_t_value);
+}
+inline bool BaronState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BaronState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BaronState>(
+    BaronState_descriptor(), name, value);
 }
 enum CampType : int {
   CAMP_NONE = 0,
@@ -316,6 +344,11 @@ template <> struct is_proto_enum< ::Protocol::MinionState> : ::std::true_type {}
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MinionState>() {
   return ::Protocol::MinionState_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BaronState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BaronState>() {
+  return ::Protocol::BaronState_descriptor();
 }
 template <> struct is_proto_enum< ::Protocol::CampType> : ::std::true_type {};
 template <>

@@ -10,6 +10,7 @@ enum ObjectType
 	OBJECT_TYPE_MINION = 2;
 	OBJECT_TYPE_TURRET = 3;
 	OBJECT_TYPE_NEXUS = 4;
+	OBJECT_TYPE_BARON = 5;
 }
 
 enum PlayerType
@@ -38,6 +39,14 @@ enum MinionState
 	MINION_CHASE_TARGET = 2;
 	MINION_ATTACK = 3;
 	MINION_DEAD = 4;
+}
+
+enum BaronState
+{
+	BARON_IDLE = 0;
+	BARON_PATROL = 1;
+	BARON_COMBAT = 2;
+	BARON_DEAD = 3;
 }
 
 enum CampType

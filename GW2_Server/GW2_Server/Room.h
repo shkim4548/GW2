@@ -8,6 +8,7 @@ namespace Navigation { class NavigationSystem; struct GridCell; class WalkableGr
 namespace GameMath { struct Vector3; }
 class Minion;
 class Turret;
+class Baron;
 
 class Room : public JobQueue
 {
@@ -42,6 +43,7 @@ public:
 	shared_ptr<Minion> SpawnMinion(int32 laneId, Protocol::CampType team);
 	shared_ptr<Turret> SpawnTurret(GameMath::Vector3 pos, Protocol::CampType team);
 	shared_ptr<Nexus> SpawnNexus(GameMath::Vector3 pos, Protocol::CampType team);
+	shared_ptr<Baron> SpawnBaron();
 
 	// Lane Controller
 	void InitLaneRouteBin();
@@ -61,6 +63,11 @@ public:
 	void HandleRemoveObject(int32 targetId, int32 attackerId);
 	void HandleTurretAttack(int32 attckerId, int32 targetId);
 	void HandleNexusDead(Protocol::CampType deadTeam);
+
+	void HandleBaronChase(shared_ptr<Baron> baron, GameMath::Vector3 dest, float speed, float deltaTime);
+	void HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId);
+	void HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType);
+	void GiveCardReward(Protocol::CampType camp, int32 cardId);
 
 	// Players
 	bool HandleEnterPlayer(PlayerRef player);
@@ -87,6 +94,7 @@ private:
 private:
 	unordered_map<int32, ObjectRef> _objects;
 	unordered_map<int32, PlayerRef> _players;
+	shared_ptr<Baron> _baron;
 	int32 _roomId;
 	string _roomName;
 

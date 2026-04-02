@@ -9,6 +9,7 @@
 #include "Minion.h"
 #include "Turret.h"
 #include "Nexus.h"
+#include "Baron.h"
 #include "ObjectUtils.h"
 #include "LaneRouteLoader.h"
 
@@ -874,6 +875,38 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 	return nexus;
 }
 
+shared_ptr<Baron> Room::SpawnBaron()
+{
+	GameMath::Vector3 spawnPos(0.0f, 0.5f, 0.0f);
+
+	shared_ptr<Baron> baron = ObjectUtils::CreateBaron();
+	baron->SetRoomId(GetRoomId());
+
+	Protocol::PosInfo posInfo;
+	posInfo.set_x(spawnPos._x);
+	posInfo.set_y(spawnPos._y);
+	posInfo.set_z(spawnPos._z);
+	baron->SetPosInfo(posInfo);
+
+	shared_ptr<Room> room = static_pointer_cast<Room>(shared_from_this());
+	baron->InitBaron(room, spawnPos);
+	_baron = baron;
+
+	// 클라이언트에 스폰 패킷 전송 (기존과 동일)
+	Protocol::ObjectInfo* info = new Protocol::ObjectInfo();
+	Protocol::PosInfo* pos = new Protocol::PosInfo();
+	Protocol::S_ENTER_GAME pkt;
+	info->set_object_type(Protocol::OBJECT_TYPE_BARON);
+	info->set_object_id(baron->GetBaronId());
+	info->set_team_flag(Protocol::CAMP_NEUTURAL);
+	pos->set_x(spawnPos._x); pos->set_y(spawnPos._y); pos->set_z(spawnPos._z);
+	info->set_allocated_pos_info(pos);
+	pkt.set_allocated_player(info);
+	_objects.emplace(baron->GetBaronId(), baron);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
+	return baron;
+}
+
 void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range)
 {
 	vector<weak_ptr<Object>> rets;
@@ -1395,6 +1428,23 @@ void Room::HandleNexusDead(Protocol::CampType deadTeam)
 
 	Protocol::S_END_GAME endPkt;
 	Broadcast(ClientPacketHandler::MakeSendBuffer(endPkt));
+}
+
+void Room::HandleBaronChase(shared_ptr<Baron> baron, GameMath::Vector3 dest, float speed, float deltaTime)
+{
+
+}
+
+void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
+{
+}
+
+void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
+{
+}
+
+void Room::GiveCardReward(Protocol::CampType camp, int32 cardId)
+{
 }
 
 void Room::HandleRespawnPlayer(int32 playerId)

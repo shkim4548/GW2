@@ -177,6 +177,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Baron.cpp" />
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="Enum.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -221,6 +222,7 @@
     <ClCompile Include="Turret.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Baron.h" />
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="Enum.pb.h" />
     <ClInclude Include="GameLogic.h" />

@@ -53,6 +53,9 @@ public class UI_StatusBar : UI_Base
 
         // 노란바는 현재값 유지 후 대기 시작
         _delayTimer = DELAY_BEFORE_SHRINK;
+        
+        GetTMP((int)Texts.NowHPText).text = Mathf.RoundToInt(current).ToString();
+        GetTMP((int)Texts.MaxHPText).text = Mathf.RoundToInt(max).ToString();
     }
 
     public void Update()
