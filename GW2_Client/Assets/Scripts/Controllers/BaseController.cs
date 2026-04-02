@@ -94,12 +94,7 @@ public class BaseController : MonoBehaviour
     public virtual void Init()
     {
 
-        //_animator = GetComponent<Animator>();
-        //_baseLayer = _animator.GetLayerIndex("BaseLayer");
-        //_lowerLayer = _animator.GetLayerIndex("LowerLayer");
-
-        //_animator.SetLayerWeight(_baseLayer, 1f);
-        //_animator.SetLayerWeight(_lowerLayer, 1f);
+        _animator = GetComponent<Animator>();
         _hpBar = GetComponentInChildren<WUI_HpBar>();
         Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
@@ -114,7 +109,7 @@ public class BaseController : MonoBehaviour
     {
         if (_animator == null)
         {
-            Debug.Log("Animator is null");
+            Debug.LogError("Animator is null");
             //return;
         }
 
@@ -124,17 +119,16 @@ public class BaseController : MonoBehaviour
         switch (State)
         {
             case MoveState.Die:
+                SetDeadAnim();       // ← 추가
                 UpdateDead();
                 break;
             case MoveState.Idle:
                 Debug.Log("Idle");
-                //_animator.CrossFade("Idle", 0.1f, _baseLayer);
-                //_animator.CrossFade("Idle", 0.1f, _lowerLayer);
+                SetMoveAnim(false);  // ← 추가
                 UpdateIdle();
                 break;
             case MoveState.Run:
-                //_animator.CrossFade("Moving", 0.1f, _baseLayer);
-                //_animator.CrossFade("Moving", 0.1f, _lowerLayer);
+                SetMoveAnim(true);   // ← 추가
                 UpdateMoving();
                 break;
             case MoveState.Skill:
@@ -145,6 +139,18 @@ public class BaseController : MonoBehaviour
                 //_animator.CrossFade("Idle", 0.1f, _lowerLayer);
                 break;
         }
+    }
+
+    public IEnumerator ResetAttackAnim(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SetAttackAnim(false);
+    }
+
+    public IEnumerator ResetSkillAnim(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SetSkillAnim(false);
     }
 
     protected int GetClientTime()
@@ -224,8 +230,6 @@ public class BaseController : MonoBehaviour
         StartCoroutine(StunCoroutine(duration));
     }
 
-
-
     private IEnumerator StunCoroutine(float duration)
     {
         yield return new WaitForSeconds(duration);
@@ -244,11 +248,36 @@ public class BaseController : MonoBehaviour
     }
 
     // 카드 스킬 이펙트
-    public void PlaySkillEffect(int skillId, Vector3 pos, Vector3 dir)
+    public void PlaySkillEffect(int skillId, Vector3 attackerPos, Vector3 worldPos, Vector3 dir)
     {
-        if (EffectService.Instance == null)
+        if (EffectService.Instance == null) 
             return;
-
-        EffectService.Instance.SpawnEffect(skillId, pos, dir);
+        EffectService.Instance.SpawnEffect(skillId, attackerPos, worldPos, dir);
     }
+
+    // 이동 상태 반영 — UpdateMoving/UpdateIdle에서 호출
+    protected void SetMoveAnim(bool isMoving)
+    {
+        _animator?.SetBool("IsMoving", isMoving);
+    }
+
+    // 공격 시작/종료
+    public void SetAttackAnim(bool on)
+    {
+        _animator?.SetBool("IsAttack", on);
+    }
+
+    // 스킬 시작/종료 (미니언은 파라미터 없으므로 자동 무시)
+    public void SetSkillAnim(bool on)
+    {
+        _animator?.SetBool("IsSkill", on);
+    }
+
+    // 사망
+    public void SetDeadAnim()
+    {
+        _animator?.SetBool("IsDead", true);
+    }
+
+
 }

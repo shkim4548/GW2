@@ -182,8 +182,11 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			return false;
 
 		auto player = dynamic_pointer_cast<Player>(attacker);
-		if (player == nullptr) return false;
-		if (!player->_cardManager.HasCard(*player, skillId)) return false;
+		if (player == nullptr) 
+			return false;
+
+		if (!player->_cardManager.HasCard(*player, skillId)) 
+			return false;
 
 		player->_cardManager.UseCard(*player, skillId);
 		if (!player->_hand.empty())
@@ -228,6 +231,10 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 					player->_speedMult = cardStat.buffValue;
 					player->_speedBuffTimer = cardStat.duration;
 					break;
+				case 4: // BUFF_ATTACK_SPEED
+					player->_attackSpeedMult = cardStat.buffValue;
+					player->_attackSpeedBuffTimer = cardStat.duration;
+					break;
 				}
 
 				Protocol::S_BUFF_APPLIED buffPkt;
@@ -240,6 +247,12 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 					session->Send(ClientPacketHandler::MakeSendBuffer(buffPkt));
 			}
 		}
+
+		// if (cardStat.aoeRadius > 0.0f && cardStat.damage > 0) 바로 위에 추가
+		GConsoleLogger->WriteStdOut(Color::YELLOW,
+			L"[HandleSkill] non-target skillId=%d radius=%.2f dmg=%d heal=%d buffType=%d\n",
+			skillId, cardStat.aoeRadius, cardStat.damage, cardStat.heal, cardStat.buffType);
+
 
 		// AOE 데미지 처리
 		if (cardStat.aoeRadius > 0.0f && cardStat.damage > 0)
@@ -296,8 +309,18 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			}
 		}
 
-		//return true;  // ← 기존 return true
-
+		// S_SKILL 브로드캐스트 (이펙트용) — Mobility 분기 전에 추가
+		{
+			Protocol::S_SKILL skillResPkt;
+			skillResPkt.set_skill_id(skillPkt.command_id());
+			skillResPkt.set_attacker_id(attacker->GetObjectId());
+			skillResPkt.set_target_id(0);
+			skillResPkt.set_pos_x(skillPkt.pos_x());
+			skillResPkt.set_pos_z(skillPkt.pos_z());
+			skillResPkt.set_dir_x(skillPkt.dir_x());
+			skillResPkt.set_dir_z(skillPkt.dir_z());
+			Broadcast(ClientPacketHandler::MakeSendBuffer(skillResPkt));
+		}
 
 		// Mobility 카드: 목적지로 즉시 이동
 		if (cardStat.buffType == 0 && cardStat.damage == 0 && cardStat.heal == 0)
@@ -323,6 +346,19 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 			return true;
 		}
 		return true;
+	}
+
+	// 기본 공격(CommandId=1) 쿨다운 검증
+	if (skillId == 1)
+	{
+		auto player = dynamic_pointer_cast<Player>(attacker);
+		if (player)
+		{
+			if (player->_attackCooldown > 0.0f)
+				return false;
+			float interval = player->_attackInterval / player->_attackSpeedMult;
+			player->_attackCooldown = interval;
+		}
 	}
 
 	auto targetIter = _objects.find(skillPkt.target_id());
@@ -1115,8 +1151,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	// [CHANGED] 변경: pathLaneFilter 사용 (off-lane이면 0, 정상이면 minionLaneId)
 	size_t beforeSize = navPath.size();
 	navPath = SmoothPath(navPath, grid, navSystem, pathLaneFilter); // [CHANGED]
-	GConsoleLogger->WriteStdOut(Color::GREEN, L"[SmoothPath] %zu → %zu nodes\n",
-		beforeSize, navPath.size());
+	//GConsoleLogger->WriteStdOut(Color::GREEN, L"[SmoothPath] %zu → %zu nodes\n", beforeSize, navPath.size());
 
 	// --- 미니언에 이동 경로 전달 ---
 	minion->RequestMove(navPath);
@@ -1164,7 +1199,7 @@ void Room::HandleMinionAttack(shared_ptr<Minion> attacker, shared_ptr<Object> ta
 
 	// S_SKILL 브로드캐스트 (클라이언트에 피격 알림)
 	Protocol::S_SKILL skillPkt;
-	skillPkt.set_skill_id(0);  // 0 = 기본공격
+	skillPkt.set_skill_id(1);  // 0 = 기본공격
 	skillPkt.set_attacker_id(attacker->GetObjectId());
 	skillPkt.set_target_id(target->GetObjectId());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
@@ -1265,7 +1300,7 @@ void Room::HandleChaseMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, fl
 	// Path Smoothing
 	size_t before = navPath.size();
 	navPath = SmoothPath(navPath, grid, navSystem, 0);	// 레인과 무관하게 스무딩한다
-	GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::HandleChaseMove] SmoothPath %zu -> %zu\n", before, navPath.size());
+	//GConsoleLogger->WriteStdOut(Color::GREEN, L"[Room::HandleChaseMove] SmoothPath %zu -> %zu\n", before, navPath.size());
 
 	// 미니언에 경로 전달
 	minion->RequestMove(navPath);

@@ -58,15 +58,20 @@ public class ObjectService : IObjectService
                 //go.transform.position = initPos;
                 MyPlayer = go.GetComponent<MyPlayerController>();
                 // Navmesh Agent로 인한 초기화 실패 문제 해결
+
                 NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
                 if (agent != null)
                     agent.enabled = false;
+
                 go.transform.position = initPos;
                 if (agent != null)
                     agent.enabled = true;
 
                 MyPlayer.Id = objectId;
                 MyPlayer.RoomId = (int)roomId;
+                MyPlayer._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+                MyPlayer.CampType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+                MyPlayerController.OnStatInfoUpdate?.Invoke(info.StatInfo);
 
                 _objects.Add(objectId, go);
             }

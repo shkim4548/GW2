@@ -20,42 +20,31 @@ struct UnitStat
 struct CardStat
 {
 
-    // === 식별 ===
-    int32       id;
-    string      skillId;        // "police_first", "monk_second" 등
-    //SkillType   skillType;      // SKILL_ID_FIRST / SECOND
+    int32       id = 0;
+    string      skillId = "";
 
-    // === 데미지 ===
-    uint32      damage;         // 기본 데미지
-    float       damageCoeff;    // 공격력 배율 (damage + atk * coeff)
+    uint32      damage = 0;
+    float       damageCoeff = 0.0f;
 
-    // === 사거리/범위 ===
-    float       range;          // 최대 사거리
-    float       aoeRadius;      // 범위 공격 반경 (0이면 단일 대상)
-    int32       aoeType;        // 추가: 0=단일, 1=원형, 2=원뿔
-    float       angle;          // 추가: 원뿔 반각 기준 전체 각도 (예: 60.0 = 좌우 각 30도)
+    float       range = 0.0f;
+    float       aoeRadius = 0.0f;
+    int32       aoeType = 0;
+    float       angle = 0.0f;
 
-    // === 타이밍 ===
-    float       cooldown;       // 쿨타임 (초)
-    float       castTime;       // 시전 시간 (즉발=0)
-    float       duration;       // 지속 효과 시간 (0이면 즉발 소멸)
+    float       cooldown = 0.0f;
+    float       castTime = 0.0f;
+    float       duration = 0.0f;
 
-    // === 투사체 ===
-    float       projectileSpeed;  // 히트스캔=0, 투사체>0
+    float       projectileSpeed = 0.0f;
+    float       slowAmount = 0.0f;
+    float       knockbackForce = 0.0f;
 
-    // === 효과 ===
-    float       slowAmount;     // 이동속도 감소율 (0~1)
-    float       knockbackForce; // 넉백 거리
+    uint32      heal = 0;
+    int32       buffType = 0;
+    float       buffValue = 0.0f;
 
-    // === 회복 ===
-    uint32      heal;
+    uint32      price = 0;
 
-    // === 버프 ===
-    int32       buffType;     // BuffType enum 값 (0=없음, 1=공격, 2=방어, 3=속도)
-    float       buffValue;    // 배율 (attack: +배율, defense: 감소율, speed: 배속)
-
-
-    uint32       price;
 };
 
 class StatLoader

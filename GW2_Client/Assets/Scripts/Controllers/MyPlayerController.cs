@@ -19,10 +19,13 @@ public class MyPlayerController : PlayerController
     GameObject _target;
     NavMeshAgent _navAgent;
 
-    private float _attackRange = 15.0f;
+    private float _attackRange = 5.0f;
     private bool _chaseToAttack = false;
     private float _chaseCooldown = 0.0f;
     private Vector3 _lastTargetPos;
+    private float _attackInterval = 1.0f;
+    private float _attackCooldown = 0.0f;
+    private float _attackSpeedMult = 1.0f;
 
     private int _clientMoveStartTime;
     private bool _needsCorrection = false;
@@ -39,6 +42,9 @@ public class MyPlayerController : PlayerController
 
     // HandSync 버퍼 (UI 생성 전 패킷 도착 대비)
     private static List<int> _pendingHandCardIds = new List<int>();
+
+    public static Action<Google.Protobuf.Struct.StatInfo> OnStatInfoUpdate;
+    public static Action<float> OnAttackSpeedBuffed;
 
     public static void SetPendingHandSync(List<int> cardIds)
     {
@@ -63,7 +69,7 @@ public class MyPlayerController : PlayerController
         _inputService.KeyAction += OnKeyEvent;
 
         Id = _networkService.GetNetworkId();
-        _campType = Google.Protobuf.Enum.CampType.CampHuman;
+        //_campType = Google.Protobuf.Enum.CampType.CampHuman;
 
         IUIService uiService = Bootstrapper.Instance.UIService;
         uiService.ShowSceneUI<UI_GameScene>();
@@ -78,12 +84,18 @@ public class MyPlayerController : PlayerController
 
     public override void UpdateIdle()
     {
+        if (_attackCooldown > 0f)
+            _attackCooldown -= Time.deltaTime;
+
         base.UpdateIdle();
     }
 
     public override void UpdateMoving()
     {
         //base.UpdateMoving();
+        if (_attackCooldown > 0f)
+            _attackCooldown -= Time.deltaTime;
+
         // 추적 중이면 매 프레임 타겟 거리 갱신
         if (_chaseToAttack && _target != null)
         {
@@ -355,16 +367,27 @@ public class MyPlayerController : PlayerController
 
     private void TryAttackTarget()
     {
-        if (_target == null) return;
+        if (_target == null) 
+            return;
+
+        if (_attackCooldown > 0f) 
+            return;
+
         BaseController targetBc = _target.GetComponent<BaseController>();
-        if (targetBc == null) return;
+        if (targetBc == null) 
+            return;
 
         // 1. 이펙트 즉시 재생 (서버 응답 기다리지 않음)
         Vector3 targetPos = _target.transform.position;
+
         PlayAttackEffect(targetPos);
+
+        SetAttackAnim(true);                        // 
+        StartCoroutine(ResetAttackAnim(1.0f));      // 클립 길이에 맞게 조정
 
         // 2. 서버로 패킷 전송
         SendAttackPacket(targetBc.Id);
+        _attackCooldown = _attackInterval / _attackSpeedMult;
         _target = null;
     }
 
@@ -428,6 +451,9 @@ public class MyPlayerController : PlayerController
         if (cardId < 0) 
             return;
 
+        SetSkillAnim(true);                         //
+        StartCoroutine(ResetSkillAnim(1.5f));       // (클립 길이에 맞게 조정)
+
         // 타겟 있으면 ID, 없으면 0 (논타겟)
         int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
 
@@ -444,8 +470,24 @@ public class MyPlayerController : PlayerController
         pkt.DirZ = forward.z;
         _networkService.Send(pkt);
 
+        // 수정 후
+        Vector3 toClick = (worldPos - transform.position);
+        toClick.y = 0f;
+        Vector3 dir = toClick.sqrMagnitude > 0.001f ? toClick.normalized : transform.forward;
+        PlaySkillEffect(cardId, transform.position, worldPos, dir);
+
         OnCardUsed?.Invoke(slotIndex);
     }
 
-   
+    public void ApplyAttackSpeedBuff(float multiplier, float duration)
+    {
+        _attackSpeedMult = multiplier;
+        StartCoroutine(RevertAttackSpeedAfter(duration));
+    }
+
+    private IEnumerator RevertAttackSpeedAfter(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        _attackSpeedMult = 1.0f;
+    }
 }

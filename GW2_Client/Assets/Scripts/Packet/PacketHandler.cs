@@ -160,11 +160,19 @@ public class PacketHandler
         {
             // 평타: 기존 이펙트 재생
             attackerBc.PlayAttackEffect(target);
+            attackerBc.SetAttackAnim(true);                                  
+            attackerBc.StartCoroutine(attackerBc.ResetAttackAnim(1.0f));    
         }
         else
         {
             // 카드 스킬: EffectManager 통해 재생
-            attackerBc.PlaySkillEffect(skillId, effectPos, dir);
+            Vector3 worldPos = (target != null)
+                ? target.transform.position
+                : new Vector3(skillPkt.PosX, 0f, skillPkt.PosZ);   // AOE는 패킷의 pos 사용
+
+            attackerBc.PlaySkillEffect(skillId, effectPos, worldPos, dir);
+            attackerBc.SetSkillAnim(true);                                   
+            attackerBc.StartCoroutine(attackerBc.ResetSkillAnim(1.5f));     
         }
     }
 
@@ -444,6 +452,18 @@ public class PacketHandler
             GameObject go = objectService.FindById(pkt.TargetId);
             go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
         }
+
+        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffAttackSpeed)
+        {
+            IObjectService objectService = Bootstrapper.Instance.ObjectService;
+            GameObject go = objectService.FindById(pkt.TargetId);
+            go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
+
+            // MyPlayer라면 UI 갱신
+            if (objectService.MyPlayer != null && objectService.MyPlayer.Id == (int)pkt.TargetId)
+                MyPlayerController.OnAttackSpeedBuffed?.Invoke(pkt.Value);
+        }
+
     }
 
     internal static void S_STUNHandler(PacketSession session, IMessage message)

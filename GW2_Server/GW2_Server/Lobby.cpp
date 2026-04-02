@@ -111,7 +111,7 @@ void Lobby::LobbyInit()
         return;
     }
     StatLoader statLoader;
-    statLoader.LoadCardStatsFromJson("../Data/CardStats.json", _cardStats);
+    statLoader.LoadCardStatsFromJson("../Data/Stats.json", _cardStats);
 
     shared_ptr<Room> room = MakeRoom("TestRoom");
     room->DoAsync(&Room::RoomInit, _route);

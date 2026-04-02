@@ -34,6 +34,8 @@ void Player::InitPlayer(shared_ptr<Room> room)
         _statInfo.set_hp(stat.hp);
         _statInfo.set_max_hp(stat.maxHp);
         _statInfo.set_attack(stat.attackDamage);
+        _statInfo.set_attack_range(stat.attackRange);
+        _attackInterval = stat.attackInterval;
     }
     else
     {
@@ -41,6 +43,7 @@ void Player::InitPlayer(shared_ptr<Room> room)
         _statInfo.set_hp(1000);
         _statInfo.set_max_hp(1000);
         _statInfo.set_attack(30);
+        _statInfo.set_attack_range(15.0f);
     }
 
     GConsoleLogger->WriteStdOut(Color::GREEN,
@@ -98,6 +101,9 @@ void Player::UpdateController(float deltaTime)
             _attackSpeedMult = 1.0f; _attackSpeedBuffTimer = 0.0f;
         }
     }
+
+    if (_attackCooldown > 0.0f)
+        _attackCooldown -= deltaTime;
 
     if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
     {

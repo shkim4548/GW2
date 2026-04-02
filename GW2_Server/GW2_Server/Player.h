@@ -64,5 +64,8 @@ public:
 	float _speedBuffTimer = 0.0f;
 	float _attackSpeedMult = 1.0f;
 	float _attackSpeedBuffTimer = 0.0f;
+
+	float _attackInterval = 1.0f;   // JSON에서 로드
+	float _attackCooldown = 0.0f;   // 현재 남은 쿨다운
 };
 

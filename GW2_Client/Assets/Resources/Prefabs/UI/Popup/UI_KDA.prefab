@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2486190983860879016}
   - component: {fileID: 3425716034878956022}
   - component: {fileID: 5132450984269065611}
+  - component: {fileID: 1621089811597994938}
   m_Layer: 0
   m_Name: UI_KDA
   m_TagString: Untagged
@@ -91,6 +92,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 8
+--- !u!114 &1621089811597994938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2521648307855821780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bddcc8ff85908904d920b099b2bd6ed7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2604062009300500471
 GameObject:
   m_ObjectHideFlags: 0

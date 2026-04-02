@@ -2868,7 +2868,7 @@ GameObject:
   - component: {fileID: 9184764275074929513}
   - component: {fileID: 5475762503388177928}
   m_Layer: 0
-  m_Name: Dathnum
+  m_Name: Deathnum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

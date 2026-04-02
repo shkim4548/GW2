@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_KDA : UI_Base
 {
     public static Action<int, int, int> OnKdaUpdate; // kill, death, assist
 
-    enum Texts { Kill_txt, Death_txt, Assist_txt }
+    enum Texts { Killnum, Deathnum, Timenum }
 
     private int _kill = 0;
     private int _death = 0;
@@ -14,7 +15,8 @@ public class UI_KDA : UI_Base
 
     public override void Init()
     {
-        Bind<Text>(typeof(Texts));
+        Bind<TMP_Text>(typeof(Texts));   // Text ¡æ TMP_Text
+
 
         OnKdaUpdate -= HandleKdaUpdate;
         OnKdaUpdate += HandleKdaUpdate;
@@ -32,9 +34,9 @@ public class UI_KDA : UI_Base
 
     private void Refresh()
     {
-        GetText((int)Texts.Kill_txt).text = _kill.ToString();
-        GetText((int)Texts.Death_txt).text = _death.ToString();
-        GetText((int)Texts.Assist_txt).text = _assist.ToString();
+        GetTMP((int)Texts.Killnum).text = _kill.ToString();
+        GetTMP((int)Texts.Deathnum).text = _death.ToString();
+        GetTMP((int)Texts.Timenum).text = _assist.ToString();
     }
 
     private void OnDestroy()

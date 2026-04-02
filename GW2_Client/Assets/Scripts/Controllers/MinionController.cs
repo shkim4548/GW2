@@ -48,13 +48,18 @@ public class MinionController : BaseController
 
     public override void UpdateIdle()
     {
+        SetMoveAnim(false);
         base.UpdateIdle();
     }
 
     public override void UpdateMoving()
     {
         if (!_hasPath || _navPath.Count == 0)
+        {
+            SetMoveAnim(false);
             return;
+        }
+        SetMoveAnim(true);       // ← 추가
 
         // 경로 끝에 도달했으면 정지
         if (_navIndex >= _navPath.Count)
@@ -224,6 +229,7 @@ public class MinionController : BaseController
         _hasPath = false;
         _isMoving = false;
         _hasServerRef = false;
+        SetMoveAnim(false);
 
         // 마지막 waypoint에 도착함
         if (_navPath.Count > 0)
