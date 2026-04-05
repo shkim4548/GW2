@@ -32,8 +32,8 @@ public class EffectService : MonoBehaviour
 
         Vector3 spawnPos = entry.spawnType switch
         {
-            EffectSpawnType.ClickPoint => worldPos,
-            _ => attackerPos,   // Self, Projectile 모두 시전자 위치
+            EffectSpawnType.ClickPoint => worldPos,   // 클릭 위치
+            _ => attackerPos,                          // Projectile/Self → 플레이어 위치
         };
 
         // 바닥 평행 회전 (Y축 고정, XZ 평면으로 flatten)

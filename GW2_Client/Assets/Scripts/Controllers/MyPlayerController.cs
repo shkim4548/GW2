@@ -15,6 +15,7 @@ public class MyPlayerController : PlayerController
 
     Vector3 _destPos;
     bool _moveToDest = false;
+    private bool _pendingSkillIsTarget = false;
 
     GameObject _target;
     NavMeshAgent _navAgent;
@@ -51,6 +52,7 @@ public class MyPlayerController : PlayerController
         _pendingHandCardIds = new List<int>(cardIds);
     }
 
+    public static List<int> GetPendingHandCardIds() => _pendingHandCardIds;
 
     public override void Init()
     {
@@ -86,6 +88,23 @@ public class MyPlayerController : PlayerController
     {
         if (_attackCooldown > 0f)
             _attackCooldown -= Time.deltaTime;
+
+        // 타겟이 있고 쿨다운 끝나면 재공격 시도
+        if (_target != null && _attackCooldown <= 0f)
+        {
+            float dist = Vector3.Distance(transform.position, _target.transform.position);
+            if (dist <= _attackRange)
+            {
+                TryAttackTarget();
+            }
+            else
+            {
+                // 타겟이 이동했으면 다시 추적
+                _chaseToAttack = true;
+                State = MoveState.Run;
+                RequestMove(_target.transform.position);
+            }
+        }
 
         base.UpdateIdle();
     }
@@ -197,33 +216,49 @@ public class MyPlayerController : PlayerController
         if (State == MoveState.Die) 
             return;
 
-        // 좌클릭 — 스킬 타겟팅
+        // 좌클릭시 스킬 대기
         if (evt == Define.MouseEvent.LeftClick)
         {
-            if (_pendingSkillSlot >= 0)
+            if (_pendingSkillSlot >= 0 && !_pendingSkillIsTarget)
             {
                 Ray skillRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit skillHit;
-                if (Physics.Raycast(skillRay, out skillHit, 100.0f, LayerMask.GetMask("Road", "Objects")))
-                {
+                if (Physics.Raycast(skillRay, out skillHit, 100.0f,
+                        LayerMask.GetMask("Road", "Objects")))
                     SendCardEvent(_pendingSkillSlot, skillHit.point);
-                }
+
                 _pendingSkillSlot = -1;
+                _pendingSkillIsTarget = false;
                 State = MoveState.Idle;
-            }
-            else
-            {
-                // 기존 공격 로직 (Objects 레이캐스트)
             }
             return;
         }
-
         if (evt != Define.MouseEvent.Click)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
         RaycastHit hit;
+
+        // target_type == 2 우선 처리
+        if (_pendingSkillSlot >= 0 && _pendingSkillIsTarget)
+        {
+            if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
+            {
+                BaseController bc = hit.collider.gameObject.GetComponent<BaseController>();
+                if (bc != null && bc._campType != _campType)
+                {
+                    _target = hit.collider.gameObject;
+                    int tId = bc.Id;
+                    SendCardEvent(_pendingSkillSlot, _target.transform.position, tId);
+                }
+            }
+            _pendingSkillSlot = -1;
+            _pendingSkillIsTarget = false;
+            State = MoveState.Idle;
+            return;
+        }
+
+        Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
         // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
         {
@@ -259,7 +294,7 @@ public class MyPlayerController : PlayerController
             _destPos = hit.point;
             _moveToDest = true;
             _chaseToAttack = false;  // 이동 명령 시 추적 취소
-                                     //UpdateMoving();
+            _target = null;
             State = MoveState.Run;
             // 상태 변화 확인
             Debug.Log("Raycast Road");
@@ -277,27 +312,19 @@ public class MyPlayerController : PlayerController
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            //SendCardEvent(0);
-            _pendingSkillSlot = 0; 
-            State = MoveState.Skill;
+            TryUseCardSlot(0);
         }
         else if (Input.GetKeyDown(KeyCode.W))
         {
-            //SendCardEvent(1);
-            _pendingSkillSlot = 1; 
-            State = MoveState.Skill;
+            TryUseCardSlot(1);
         }
         else if(Input.GetKeyDown(KeyCode.E))
         {
-            //SendCardEvent(2);
-            _pendingSkillSlot = 2; 
-            State = MoveState.Skill;
+            TryUseCardSlot(2);
         }
         else if(Input.GetKeyDown(KeyCode.R))
         {
-            //SendCardEvent(3);
-            _pendingSkillSlot = 3; 
-            State = MoveState.Skill;
+            TryUseCardSlot(3);
         }
         else if(Input.GetKeyDown(KeyCode.B))
         {
@@ -317,6 +344,36 @@ public class MyPlayerController : PlayerController
         else
         {
             //Debug.LogError($"OnKeyEvent : Invalid Key Event");
+        }
+    }
+
+    private void TryUseCardSlot(int slotIndex)
+    {
+        int cardId = UI_CardPanel.GetCardIdAtSlot(slotIndex);
+        if (cardId < 0)
+        {
+            Debug.LogError($"[MyPlayerController::TryUseCardSlot]invalid hand card, slotIndex : {slotIndex}, cardId : {cardId}");
+            return;
+        }
+
+        if (!Bootstrapper.Instance.DataService.CardDict.TryGetValue(cardId, out Data.CardInfo cardInfo))
+            return;
+
+        switch (cardInfo.target_type)
+        {
+            case 0: // self — 즉시 사용
+                SendCardEvent(slotIndex, transform.position);
+                break;
+            case 1: // point — 좌클릭 지점 대기
+                _pendingSkillSlot = slotIndex;
+                _pendingSkillIsTarget = false;
+                State = MoveState.Skill;
+                break;
+            case 2: // target — 우클릭 대상 대기
+                _pendingSkillSlot = slotIndex;
+                _pendingSkillIsTarget = true;
+                State = MoveState.Skill;
+                break;
         }
     }
 
@@ -350,11 +407,11 @@ public class MyPlayerController : PlayerController
             _pathIndex = 0;
             _isMoving = true;
 
-            Debug.Log($"[MyPlayer] Prediction path : {_path.Count} waypoints");
-            for(int i = 0; i < _path.Count; ++i)
-            {
-                Debug.Log($"Path Index {i} : {_path[i]}");
-            }
+            //Debug.Log($"[MyPlayer] Prediction path : {_path.Count} waypoints");
+            //for(int i = 0; i < _path.Count; ++i)
+            //{
+            //    Debug.Log($"Path Index {i} : {_path[i]}");
+            //}
         }
     }
 
@@ -363,13 +420,16 @@ public class MyPlayerController : PlayerController
         _isMoving = false;
         _path.Clear();
         _pathIndex = 0;
+
+        if (_navAgent != null)
+            _navAgent.ResetPath();
+        State = MoveState.Idle;
     }
 
     private void TryAttackTarget()
     {
         if (_target == null) 
             return;
-
         if (_attackCooldown > 0f) 
             return;
 
@@ -377,18 +437,16 @@ public class MyPlayerController : PlayerController
         if (targetBc == null) 
             return;
 
-        // 1. 이펙트 즉시 재생 (서버 응답 기다리지 않음)
         Vector3 targetPos = _target.transform.position;
-
         PlayAttackEffect(targetPos);
 
-        SetAttackAnim(true);                        // 
-        StartCoroutine(ResetAttackAnim(1.0f));      // 클립 길이에 맞게 조정
+        // 기존 코루틴 중단 후 재시작 (중복 방지)
+        StopCoroutine("ResetAttackAnim");
+        SetAttackAnim(true);
+        StartCoroutine(ResetAttackAnim(_attackInterval));  // 1.0f 고정 → _attackInterval로 변경
 
-        // 2. 서버로 패킷 전송
         SendAttackPacket(targetBc.Id);
         _attackCooldown = _attackInterval / _attackSpeedMult;
-        _target = null;
     }
 
 
@@ -445,7 +503,7 @@ public class MyPlayerController : PlayerController
         OnHpChanged?.Invoke(current, max);
     }
 
-    private void SendCardEvent(int slotIndex, Vector3 worldPos)
+    private void SendCardEvent(int slotIndex, Vector3 worldPos, int targetId = 0)
     {
         int cardId = UI_CardPanel.GetCardIdAtSlot(slotIndex);
         if (cardId < 0) 
@@ -455,7 +513,7 @@ public class MyPlayerController : PlayerController
         StartCoroutine(ResetSkillAnim(1.5f));       // (클립 길이에 맞게 조정)
 
         // 타겟 있으면 ID, 없으면 0 (논타겟)
-        int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
+        //int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
 
         C_SKILL pkt = new C_SKILL();
         pkt.RoomId = RoomId;

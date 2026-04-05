@@ -110,7 +110,7 @@ public class BaseController : MonoBehaviour
         if (_animator == null)
         {
             Debug.LogError("Animator is null");
-            //return;
+            return;
         }
 
         // Protobuf의 Enum을 사용
@@ -123,7 +123,6 @@ public class BaseController : MonoBehaviour
                 UpdateDead();
                 break;
             case MoveState.Idle:
-                Debug.Log("Idle");
                 SetMoveAnim(false);  // ← 추가
                 UpdateIdle();
                 break;
@@ -133,6 +132,7 @@ public class BaseController : MonoBehaviour
                 break;
             case MoveState.Skill:
                 //_animator.CrossFade("SKILL", 0.1f);
+                UpdateSkill();
                 break;
             case MoveState.None:
                 //_animator.CrossFade("Idle", 0.1f, _baseLayer);
@@ -145,6 +145,8 @@ public class BaseController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         SetAttackAnim(false);
+        if (State == MoveState.Skill)
+            State = MoveState.Idle;   // ← 공격 애니메이션 끝나면 Idle 복귀
     }
 
     public IEnumerator ResetSkillAnim(float delay)

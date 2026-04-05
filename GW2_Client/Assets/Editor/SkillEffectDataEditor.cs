@@ -9,7 +9,7 @@ using UnityEngine;
 public class SkillEffectDataEditor : Editor
 {
     private const string EFFECT_PATH = "Assets/Resources/Prefabs/Particle";
-    private const string CARD_STATS_PATH = "Assets/Resources/Json/CardStats.json";
+    private const string CARD_STATS_PATH = "Assets/Resources/Json/Stats.json";
 
     public override void OnInspectorGUI()
     {

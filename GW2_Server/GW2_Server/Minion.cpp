@@ -371,7 +371,9 @@ void Minion::UpdateChaseTarget(float deltaTime)
 	shared_ptr<Object> currentTarget = _currentTarget.lock();
 	if (currentTarget == nullptr || currentTarget->IsDead())
 	{
+		_currentTarget.reset();
 		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
+		_noChaseTimer = NO_CHASE_DURATION_DEAD;  
 		return;
 	}
 
@@ -393,6 +395,7 @@ void Minion::UpdateChaseTarget(float deltaTime)
 	{
 		_currentTarget.reset();
 		_minionState = Protocol::MinionState::MINION_LINE_TRACE;
+		_noChaseTimer = NO_CHASE_DURATION_LEASH;  // = 1.5f → 재탐지 유예
 		return;
 	}
 
@@ -583,7 +586,7 @@ void Minion::ClearChaseTarget()
 {
 	_currentTarget.reset();
 	_minionState = Protocol::MinionState::MINION_LINE_TRACE;
-	_noChaseTimer = NO_CHASE_DURATION;  // 3초간 재탐지 차단
+	_noChaseTimer = NO_CHASE_DURATION_LEASH;  // 3초간 재탐지 차단
 }
 
 void Minion::OnDead()

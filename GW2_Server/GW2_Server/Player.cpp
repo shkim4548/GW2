@@ -160,6 +160,10 @@ void Player::UpdateController(float deltaTime)
     }
 }
 
+void Player::AddCardToDeck(int32 cardId)
+{
+}
+
 void Player::OnDead()
 {
     // TODO : 플레이어에게 보상 지급

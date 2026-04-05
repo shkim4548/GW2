@@ -44,53 +44,40 @@ public class ObjectService : IObjectService
         }
         else if (objectType == ObjectType.Player)
         {
+            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+            _resourceService = Bootstrapper.Instance.ResourceService;
+
+            string prefabPath = GetPlayerPrefabPath(info.Name, myPlayer);
+            go = _resourceService.Instantiate(prefabPath);
+            if (go == null)
+            {
+                Debug.LogError($"[ObjectService] Player prefab not found: {prefabPath}");
+                return;
+            }
+
             if (myPlayer)
             {
-                Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-                // TODO : 캐릭터 타입 받아서 바꾸는 것으로 전환한다.
-                //_resourceService = DI.Container.Resolve<IResourceService>();
-                _resourceService = Bootstrapper.Instance.ResourceService;
-                go = _resourceService.Instantiate("Player/Police");
-                if(go == null)
-                {
-                    Debug.LogError("resourceService instantiate failed");
-                }
-                //go.transform.position = initPos;
-                MyPlayer = go.GetComponent<MyPlayerController>();
-                // Navmesh Agent로 인한 초기화 실패 문제 해결
-
                 NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
-                if (agent != null)
-                    agent.enabled = false;
-
+                if (agent != null) agent.enabled = false;
                 go.transform.position = initPos;
-                if (agent != null)
-                    agent.enabled = true;
+                if (agent != null) agent.enabled = true;
 
+                MyPlayer = go.GetComponent<MyPlayerController>();
                 MyPlayer.Id = objectId;
                 MyPlayer.RoomId = (int)roomId;
-                MyPlayer._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
-                MyPlayer.CampType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+                MyPlayer._campType = (CampType)info.TeamFlag;
+                MyPlayer.CampType = (CampType)info.TeamFlag;
                 MyPlayerController.OnStatInfoUpdate?.Invoke(info.StatInfo);
-
-                _objects.Add(objectId, go);
             }
             else
             {
-                Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
-                go = _resourceService.Instantiate("player/FireFighter");
-                if( go == null )
-                {
-                    Debug.Log("resource service instantiate failed");
-                }
-
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.transform.position = initPos;
                 pc.Id = objectId;
-                pc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
-                // TODO : Adding RoomId
-                _objects.Add(objectId, go);
+                pc._campType = (CampType)info.TeamFlag;
             }
+
+            _objects.Add(objectId, go);
         }
         else if (objectType == ObjectType.Minion)
         {
@@ -156,6 +143,23 @@ public class ObjectService : IObjectService
             nc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             _objects.Add(objectId, go);
         }
+        else if (objectType == ObjectType.Baron)
+        {
+            Vector3 initPos = new Vector3(info.PosInfo.X, info.PosInfo.Y, info.PosInfo.Z);
+            go = _resourceService.Instantiate("Minion/NeutralMob");
+            if (go == null)
+            {
+                Debug.LogError("[ObjectService] Baron prefab not found");
+                return;
+            }
+
+            BaronController bc = go.GetComponent<BaronController>();
+            bc.transform.position = initPos;
+            bc.Id = objectId;
+            bc._campType = CampType.CampNeutural;
+            _objects.Add(objectId, go);
+        }
+
         else
         {
             Debug.LogError($"[ObjectService] Adding Type is invalid!");
@@ -165,7 +169,9 @@ public class ObjectService : IObjectService
     public void Remove(int id)
     {
         if (MyPlayer != null && MyPlayer.Id == id)
+        {
             return;
+        }
         if (_objects.ContainsKey(id) == false)
             return;
 
@@ -191,4 +197,19 @@ public class ObjectService : IObjectService
         _objects.Clear();
         MyPlayer = null;
     }
+    private string GetPlayerPrefabPath(string playerTypeName, bool isMyPlayer)
+    {
+        string prefix = isMyPlayer ? "My" : "";
+        switch (playerTypeName)
+        {
+            case "Police": return $"Player/{prefix}Police";
+            case "FireFighter": return $"Player/{prefix}FireFighter";
+            case "Monk": return $"Player/{prefix}Monk";
+            case "LightSabre": return $"Player/{prefix}LightSabre";
+            default:
+                Debug.LogWarning($"[ObjectService] Unknown player type: {playerTypeName}, defaulting to Police");
+                return $"Player/{prefix}Police";
+        }
+    }
+
 }

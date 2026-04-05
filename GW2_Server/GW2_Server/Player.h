@@ -18,11 +18,14 @@ public:
 	Protocol::PlayerType GetPlayerType() const { return _playerType; }
 
 	int64 GetPlayerId() { return _objectId; }
+	Protocol::CampType GetCampType() { return _campType; }
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
 	// Contents
 	void StartMove(const GameMath::Vector3& startPos, const GameMath::Vector3& targetPos, const vector<Navigation::GridCell*>& path, int32 clientTime);
 	virtual void UpdateController(float deltaTime) override;
+	void AddCardToDeck(int32 cardId);
+	vector<int32> GetHandCards() { return _hand; }
 
 protected:
 	virtual void OnDead() override;

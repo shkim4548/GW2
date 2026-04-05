@@ -112,7 +112,7 @@ bool StatLoader::LoadCardStatsFromJson(const string& path, unordered_map<int32, 
         if (c.contains("aoe_radius")) stat.aoeRadius = c["aoe_radius"].get<float>();
         if (c.contains("aoe_type"))   stat.aoeType = c["aoe_type"].get<int32_t>();
         if (c.contains("angle"))      stat.angle = c["angle"].get<float>();
-
+        if (c.contains("spawn_type")) stat.spawnType = c["spawn_type"].get<string>();
 
         outStats[stat.id] = stat;
         GConsoleLogger->WriteStdOut(Color::GREEN,

@@ -77,5 +77,6 @@ private:
 	bool _pathPending = false;  // DoAsync 요청 후 RequestMove 완료 전까지 중복 요청 방지
 
 	float _noChaseTimer = 0.0f;
-	static constexpr float NO_CHASE_DURATION = 0.2f;
+	static constexpr float NO_CHASE_DURATION_LEASH = 1.5f;   // leash 이탈 시 (진동 방지)
+	static constexpr float NO_CHASE_DURATION_DEAD = 0.0f;   // 타겟 사망 시 (포탑 즉시 탐지)
 };

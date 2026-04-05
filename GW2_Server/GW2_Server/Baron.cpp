@@ -24,6 +24,11 @@ void Baron::InitBaron(shared_ptr<Room> room, GameMath::Vector3 spawnPos)
 {
 	_room = room;
 	_spawnPos = spawnPos;
+	_destPos = spawnPos;
+
+	_pos.set_x(spawnPos._x);
+	_pos.set_y(spawnPos._y);
+	_pos.set_z(spawnPos._z);
 
 	UnitStat stat = GLobby->GetUnitStat("baron");
 	_statInfo.set_hp(stat.hp);
@@ -48,7 +53,20 @@ void Baron::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 
 void Baron::OnHit(int32 attackerId)
 {
-	_aggroTable[attackerId] = _aggroElapsed;
+	// 현재 시각을 기록 (더 최근 = 더 큰 값 = SelectTarget에서 우선 선택)
+		// 또는 단순히 카운트 방식으로 ++
+	_aggroTable[attackerId] += 1.0f;  // 피격 횟수 누적 방식
+
+	if (_baronState == Protocol::BaronState::BARON_IDLE)
+	{
+		shared_ptr<Object> target = SelectTarget();
+		if (target != nullptr)
+		{
+			_currentTarget = target;
+			_baronState = Protocol::BaronState::BARON_COMBAT;
+			_aggroElapsed = 0.0f;
+		}
+	}
 }
 
 void Baron::UpdateController(float deltaTime)
@@ -130,11 +148,22 @@ void Baron::UpdateMovement(float deltaTime)
 	}
 }
 
+void Baron::RequestMove(vector<GameMath::Vector3> path)
+{
+	_path = path;
+	_pathIndex = 0;
+	_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+}
+
+
 void Baron::UpdateIdle(float deltaTime)
 {
-	if (_route)
+	shared_ptr<Object> target = SelectTarget();
+	if (target != nullptr)
 	{
-		_baronState = Protocol::BaronState::BARON_PATROL;
+		_currentTarget = target;
+		_baronState = Protocol::BaronState::BARON_COMBAT;
+		_aggroElapsed = 0.0f;
 	}
 }
 
@@ -157,22 +186,21 @@ void Baron::UpdateIdle(float deltaTime)
 void Baron::UpdateCombat(float deltaTime)
 {
 	shared_ptr<Room> room = _room.lock();
-	if (room == nullptr)
-		return;
+	if (room == nullptr) return;
 
-	shared_ptr<Object> target = SelectTarget();
-
-	// 타겟 없음 -> no target timer 누적
-	if (target == nullptr)
+	// _currentTarget 유효성 확인 후 재탐색
+	shared_ptr<Object> target = _currentTarget.lock();
+	if (target == nullptr || target->IsDead())
 	{
-		_aggroElapsed += deltaTime;
-		if (_aggroElapsed >= NO_TARGET_RESET)
+		target = SelectTarget();
+		if (target == nullptr)
 		{
-			ResetBaron();
+			_aggroElapsed += deltaTime;
+			if (_aggroElapsed >= NO_TARGET_RESET) ResetBaron();
+			return;
 		}
-		return;
+		_currentTarget = target;
 	}
-
 	_aggroElapsed = 0.0f;
 
 	// 스킬 타이머 감소 -> 타겟이 있을 때만
@@ -269,7 +297,7 @@ shared_ptr<Object> Baron::SelectTarget()
 	{
 		auto it = objects.find(bestId);
 		if (it != objects.end())
-			return nullptr;
+			return it->second;
 	}
 
 	// detection range 내 가장 가까운 플레이어

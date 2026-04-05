@@ -30,7 +30,8 @@ Room::~Room()
 
 bool Room::Enter(PlayerRef gameObject)
 {
-	if (gameObject == nullptr) return false;
+	if (gameObject == nullptr) 
+		return false;
 
 	int32 objectId = gameObject->GetObjectId();
 
@@ -89,8 +90,30 @@ bool Room::Enter(PlayerRef gameObject)
 	posInfo->set_x(spawnPos._x);
 	posInfo->set_y(spawnPos._y);
 	posInfo->set_z(spawnPos._z);
+
+	switch (gameObject->GetPlayerType())
+	{
+	case Protocol::PLAYER_TYPE_POLICE:       
+		objectInfo->set_name("Police");
+		break;
+	case Protocol::PLAYER_TYPE_FIREFIGHTER:
+		objectInfo->set_name("FireFighter"); 
+		break;
+	case Protocol::PLAYER_TYPE_MONK:         
+		objectInfo->set_name("Monk");        
+		break;
+	case Protocol::PLAYER_TYPE_LIGHTSABRE:   
+		objectInfo->set_name("LightSabre");
+		break;
+	default:
+		objectInfo->set_name("Police");
+		break;
+	}
+	
 	objectInfo->set_allocated_pos_info(posInfo);
 	enterPkt.set_allocated_player(objectInfo);
+	//objectInfo->set_allocated_pos_info(posInfo);
+	//enterPkt.set_allocated_player(objectInfo);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
 
 	// 6. 최초 입장 시 터렛/넥서스 스폰
@@ -117,6 +140,9 @@ bool Room::Enter(PlayerRef gameObject)
 		// 넥서스
 		SpawnNexus(GameMath::Vector3(-70.5f, 2.3f, 0.0f), Protocol::CAMP_HUMAN);
 		SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
+
+		// 바론 구현
+		SpawnBaron();
 	}
 
 	return true;
@@ -382,13 +408,24 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 		: cardStat.range;                          // 카드: CardStat.range
 	GameMath::Vector3 attackerPos = attacker->GetPosVector();
 	GameMath::Vector3 targetPos = target->GetPosVector();
+	const float effectiveRange = (skillId == 1)
+		? attackRange + 2.0f    // ← 위치 동기화 오차 보정 (이동속도 12 × 50ms RTT ≈ 0.6 + 안전마진)
+		: attackRange;
+
 	float dist = GameMath::Vector3::GetDistTanceXZ(attackerPos, targetPos);
-	if (dist > attackRange)
+	if (dist > effectiveRange)
 	{
 		GConsoleLogger->WriteStdErr(Color::YELLOW,
-			L"[Room::HandleSkill] out of range dist=%.2f\n", dist);
+			L"[Room::HandleSkill] out of range dist=%.2f range=%.2f\n", dist, effectiveRange);
 		return false;
 	}
+
+	//if (dist > attackRange)
+	//{
+	//	GConsoleLogger->WriteStdErr(Color::YELLOW,
+	//		L"[Room::HandleSkill] out of range dist=%.2f\n", dist);
+	//	return false;
+	//}
 
 	uint64_t damage = 0;
 	//int32 skillId = static_cast<int32>(skillPkt.skill_id());
@@ -459,7 +496,11 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 
 	// 4. 데미지 적용
 	bool died = target->ApplyDamage(damage);
-
+	// 바론 데미지 적용
+	if (_baron != nullptr && target->GetObjectId() == _baron->GetObjectId())
+	{
+		_baron->OnHit(attacker->GetObjectId());
+	}
 	// Stun 적용 (포탑/넥서스 제외)
 	if (skillId != 1)
 	{
@@ -743,6 +784,25 @@ void Room::UpdateRoom(float deltaTime)
 				GiveGold(player, GOLD_INCOME_AMOUNT);
 		}
 	}
+	// Baron 업데이트
+	if (_baron != nullptr && !_baron->IsDead())
+	{
+		_baron->UpdateController(deltaTime);
+		_baron->UpdateMovement(deltaTime);
+
+		// 탐지 범위 내 플레이어 → OnHit(aggro 등록)
+		GameMath::Vector3 baronPos = _baron->GetPosVector();
+		for (auto& [id, player] : _players)
+		{
+			if (player->IsDead()) 
+				continue;
+
+			GameMath::Vector3 nowPlayerPos = player->GetPosVector();
+			float dist = GameMath::Vector3::GetDistTanceXZ(baronPos, nowPlayerPos);
+			if (dist <= _baron->GetDetectionRange())
+				_baron->OnHit(id);
+		}
+	}
 }
 
 
@@ -877,7 +937,7 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 
 shared_ptr<Baron> Room::SpawnBaron()
 {
-	GameMath::Vector3 spawnPos(0.0f, 0.5f, 0.0f);
+	GameMath::Vector3 spawnPos(0.0f, 2.3f, 0.0f);
 
 	shared_ptr<Baron> baron = ObjectUtils::CreateBaron();
 	baron->SetRoomId(GetRoomId());
@@ -980,7 +1040,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	}
 	// DEBUG
 	GameMath::Vector3 debugPos = minion->GetPosVector();
-	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] startworld = %.3f, %.3f\n", debugPos._x, debugPos._z);
+	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] startworld = %.3f, %.3f\n", debugPos._x, debugPos._z);
 
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
@@ -1023,9 +1083,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 
 	if (isOffLane)
 	{
-		GConsoleLogger->WriteStdOut(Color::YELLOW,
-			L"[Room::HandleMinionMove] startLane=0 (off-lane). objId=%d -> finding nearest WP\n",
-			minion->GetObjectId());
+		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[Room::HandleMinionMove] startLane=0 (off-lane). objId=%d -> finding nearest WP\n", minion->GetObjectId());
 
 		// [CHANGED] 가장 가까운 waypoint 탐색 (Euclidean distance)
 		float minDist = FLT_MAX;
@@ -1043,9 +1101,7 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 			}
 		}
 		resolvedTarget = route->waypoints[nearestIdx];
-		GConsoleLogger->WriteStdOut(Color::YELLOW,
-			L"[Room::HandleMinionMove] off-lane nearest WP[%d]=(%.2f,%.2f)\n",
-			nearestIdx, resolvedTarget._x, resolvedTarget._z);
+		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[Room::HandleMinionMove] off-lane nearest WP[%d]=(%.2f,%.2f)\n", nearestIdx, resolvedTarget._x, resolvedTarget._z);
 	}
 
 	int32 sx = 0, sz = 0, tx = 0, tz = 0;
@@ -1084,24 +1140,15 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 	uint8 pathLaneFilter = (isOffLane || grid.At(tx, tz).laneId == 0) ? 0 : minionLaneId;
 
 	vector<Navigation::GridCell*> gridPath;
-	GConsoleLogger->WriteStdOut(
-		Color::WHITE,
-		L"[Room::HandleMinionMove] sx : %d, sz : %d, tx : %d, tz : %d, laneFilter : %d\n",
-		sx, sz, tx, tz, pathLaneFilter);
+	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] sx : %d, sz : %d, tx : %d, tz : %d, laneFilter : %d\n", sx, sz, tx, tz, pathLaneFilter);
 
 	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, pathLaneFilter); // [CHANGED]
 
-	GConsoleLogger->WriteStdOut(
-		Color::WHITE,
-		L"[Room::HandleMinionMove] FindPath ok=%d gridPathSize=%d\n",
-		ok ? 1 : 0,
-		static_cast<int32>(gridPath.size()));
+	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] FindPath ok=%d gridPathSize=%d\n", ok ? 1 : 0, static_cast<int32>(gridPath.size()));
 
 	if (!ok || gridPath.empty())
 	{
-		GConsoleLogger->WriteStdErr(
-			Color::YELLOW,
-			L"[Room::HandleMinionMove] FindPath failed (lane filtered or no path)\n");
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed (lane filtered or no path)\n");
 		return;
 	}
 
@@ -1114,13 +1161,8 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		float wz0 = grid.origin._z + (first->z + 0.5f) * grid.cellSize;
 		float wx1 = grid.origin._x + (last->x + 0.5f) * grid.cellSize;
 		float wz1 = grid.origin._z + (last->z + 0.5f) * grid.cellSize;
-		GConsoleLogger->WriteStdOut(Color::YELLOW,
-			L"[DIAG] gridPath[0]=(%d,%d) world=(%.2f,%.2f)  gridPath[last]=(%d,%d) world=(%.2f,%.2f)\n",
-			first->x, first->z, wx0, wz0,
-			last->x, last->z, wx1, wz1);
-		GConsoleLogger->WriteStdOut(Color::YELLOW,
-			L"[DIAG] startPos=(%.2f,%.2f) destPos=(%.2f,%.2f) resolvedTarget=(%.2f,%.2f)\n", // [CHANGED] targetPos → resolvedTarget
-			startPos._x, startPos._z, dest._x, dest._z, resolvedTarget._x, resolvedTarget._z);
+		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[DIAG] gridPath[0]=(%d,%d) world=(%.2f,%.2f)  gridPath[last]=(%d,%d) world=(%.2f,%.2f)\n",			first->x, first->z, wx0, wz0,			last->x, last->z, wx1, wz1);
+		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[DIAG] startPos=(%.2f,%.2f) destPos=(%.2f,%.2f) resolvedTarget=(%.2f,%.2f)\n", startPos._x, startPos._z, dest._x, dest._z, resolvedTarget._x, resolvedTarget._z);
 	}
 
 	vector<GameMath::Vector3> navPath;
@@ -1160,17 +1202,11 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 #endif
 	}
 
-	GConsoleLogger->WriteStdOut(
-		Color::GREEN,
-		L"[Room::HandleMinionMove] navPath built. success=%d fail=%d\n",
-		successCount,
-		failCount);
+	//GConsoleLogger->WriteStdOut(Color::GREEN,	L"[Room::HandleMinionMove] navPath built. success=%d fail=%d\n",		successCount,		failCount);
 
 	if (navPath.empty())
 	{
-		GConsoleLogger->WriteStdErr(
-			Color::RED,
-			L"[Room::HandleMinionMove] navPath is empty AFTER conversion\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] navPath is empty AFTER conversion\n");
 		return;
 	}
 
@@ -1432,19 +1468,137 @@ void Room::HandleNexusDead(Protocol::CampType deadTeam)
 
 void Room::HandleBaronChase(shared_ptr<Baron> baron, GameMath::Vector3 dest, float speed, float deltaTime)
 {
+	if (baron == nullptr || baron->IsDead())
+		return;
 
+	// 단일 waypoint
+	vector<GameMath::Vector3> path = { dest };
+	baron->RequestMove(path);
+	baron->ClearPathPending();
+
+	// S_MINON_MOVE 브로드캐스트
+	Protocol::S_MINION_MOVE pkt;
+	pkt.set_object_id(baron->GetObjectId());
+
+	GameMath::Vector3 startPos = baron->GetPosVector();
+	Protocol::PosInfo* startInfo = pkt.mutable_start_pos();
+	startInfo->set_x(startPos._x);
+	startInfo->set_y(startPos._y);
+	startInfo->set_z(startPos._z);
+
+	Protocol::PosInfo* wp = pkt.add_nav_path();
+	wp->set_x(dest._x);
+	wp->set_y(dest._y);
+	wp->set_z(dest._z);
+
+	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
 }
 
 void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
 {
+	if (baron == nullptr || baron->IsDead())
+		return;
+
+	unordered_map<int32, ObjectRef>::iterator it = _objects.find(targetId);
+	if (it == _objects.end() || it->second->IsDead())
+		return;
+
+	shared_ptr<Object> target = it->second;
+
+	int32 damage = baron->GetStatInfo().attack();
+	//int32 defense = target->GetStatInfo().defense()
+	int32 final = max(1, damage);
+	int32 newHp = std::max(0, static_cast<int32>(target->GetStatInfo().hp() - final));
+
+	Protocol::StatInfo stat = target->GetStatInfo();
+	stat.set_hp(newHp);
+	target->SetHp(newHp);
+
+	Protocol::S_SKILL skillPkt;
+	skillPkt.set_attacker_id(baron->GetObjectId());
+	skillPkt.set_target_id(targetId);
+	skillPkt.set_skill_id(1);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
+
+	// 사망 처리
+	if (newHp <= 0)
+		HandleRemoveObject(targetId, baron->GetObjectId());
 }
 
 void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
 {
+	if (baron == nullptr || baron->IsDead())
+		return;
+
+	// skillType 1 : AOE 슬램, skillType 2 : 독장판
+	float aoeRange = (skillType == 1) ? 5.0f : 6.0f;
+	int32 aoeDamage = (skillType == 1) ? 120 : 150;
+	int32 commandId = (skillType == 1) ? 201 : 202;
+
+	GameMath::Vector3 baronPos = baron->GetPosVector();
+
+	// S_SKILL AOE 브로드 캐스트 이펙트용
+	Protocol::S_SKILL skillPkt;
+	skillPkt.set_attacker_id(baron->GetObjectId());
+	skillPkt.set_skill_id(commandId);
+	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
+
+	// 범위 내 플레이어 전원 데미지
+	for (auto& [id, obj] : _objects)
+	{
+		if (obj->GetObjectType() != Protocol::ObjectType::OBJECT_TYPE_PLAYER)
+		{
+			continue;
+		}
+	
+		if (obj->IsDead())
+		{
+			continue;
+		}
+
+		GameMath::Vector3 nowPos = obj->GetPosVector();
+		float dist = GameMath::Vector3::GetDistTanceXZ(baronPos, nowPos);
+		if (dist > aoeRange)
+			continue;
+
+		//int32 defense
+		int32 final = max(1, aoeDamage);
+		int32 newHp = max(0, static_cast<int32>(obj->GetStatInfo().hp() - final));
+
+		Protocol::StatInfo stat = obj->GetStatInfo();
+		stat.set_hp(newHp);
+		obj->SetHp(newHp);
+
+		Protocol::S_HP_CHANGE hpPkt;
+		hpPkt.set_target_id(id);
+		hpPkt.set_current_hp(newHp);
+		Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
+		if (newHp <= 0)
+			HandleRemoveObject(id, baron->GetObjectId());
+	}
 }
 
 void Room::GiveCardReward(Protocol::CampType camp, int32 cardId)
 {
+	for (auto& [id, player] : _players)
+	{
+		if (player->GetCampType() != camp)
+			continue;
+
+		player->AddCardToDeck(cardId);
+
+		Protocol::S_HAND_SYNC syncPkt;
+		for (int32 cid : player->GetHandCards())
+			syncPkt.add_card_ids(cid);
+
+		shared_ptr<Session> playerSession = player->GetSession().lock();
+		if (playerSession )
+		{
+			SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(syncPkt);
+			playerSession->Send(sendBuffer);
+		}
+	}
 }
 
 void Room::HandleRespawnPlayer(int32 playerId)

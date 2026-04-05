@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 5058040512685249450}
   - component: {fileID: 5058040512685249461}
   - component: {fileID: 5058040512685249460}
-  - component: {fileID: 1756184488423347145}
-  - component: {fileID: 8974518976157746783}
   - component: {fileID: 667504691426359087}
   m_Layer: 0
   m_Name: EffectSpecial_EnergyAmp
@@ -29,6 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5058040512685249462}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
@@ -36,7 +35,6 @@ Transform:
   m_Children:
   - {fileID: 3003914864727649285}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5058040512685249450
 MeshFilter:
@@ -105,50 +103,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &1756184488423347145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5058040512685249462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 0
-  ObservedComponents:
-  - {fileID: 0}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &8974518976157746783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5058040512685249462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8d9f59ea6f9cbb458376ae3def3f22c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _effectTime: 0
-  _damage: 0
-  _defence: 0
-  _speed: 0
-  _buff: 0
-  _debuff: 0
-  _IsResurrection: 0
-  player: {fileID: 0}
-  target: {fileID: 0}
 --- !u!82 &667504691426359087
 AudioSource:
   m_ObjectHideFlags: 0
@@ -250,6 +204,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5058040512685249451}
     m_Modifications:
     - target: {fileID: 1595313205893126, guid: 618a53c1e230d58438e92ac811489c49, type: 3}
@@ -353,6 +308,9 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 618a53c1e230d58438e92ac811489c49, type: 3}
 --- !u!4 &3003914864727649285 stripped
 Transform:

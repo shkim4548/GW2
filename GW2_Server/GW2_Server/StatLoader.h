@@ -42,6 +42,8 @@ struct CardStat
     uint32      heal = 0;
     int32       buffType = 0;
     float       buffValue = 0.0f;
+    string      spawnType = "Self";
+
 
     uint32      price = 0;
 

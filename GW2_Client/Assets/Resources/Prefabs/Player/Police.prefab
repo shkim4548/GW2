@@ -6034,7 +6034,7 @@ GameObject:
   - component: {fileID: 1959736477558852768}
   - component: {fileID: 1959736475956015900}
   - component: {fileID: 5173391103442544979}
-  - component: {fileID: 8712133111495519684}
+  - component: {fileID: -8830472167008255870}
   m_Layer: 0
   m_Name: Police
   m_TagString: PLAYER
@@ -6133,7 +6133,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &8712133111495519684
+--- !u!114 &-8830472167008255870
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6142,10 +6142,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1959736477568309668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32a8d0f967993c548a68f7f218cf11a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 99f4eb8d6ef677249ab6fc366b56ce24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackEffect: {fileID: 198501843610305074, guid: c611e2693125ca24b8c6886fe31ee28b, type: 3}
+  _attackEffect: {fileID: 0}
   _sendPacketDelay: 0.2
   _isMoving: 0
   _positionSmoothTime: 0.1

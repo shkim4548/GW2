@@ -16,6 +16,8 @@ public:
 	void SetBaronId(int32 id) { _objectId = id; }
 	int32 GetBaronId() { return _objectId; }
 	float GetMoveSpeed() { return _moveSpeed; }
+	float GetDetectionRange() { return _detectionRange; }
+
 
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
 	void ClearPathPending() { _pathPending = false; }
@@ -26,7 +28,7 @@ public:
 	virtual void UpdateController(float deltaTime) override;
 	virtual void UpdateMovement(float deltaTime) override;
 
-
+	void RequestMove(vector<GameMath::Vector3> path);
 protected:
 	virtual void OnDead() override;
 
@@ -78,6 +80,7 @@ private:
 	bool  _pathPending = false;
 
 	GameMath::Vector3 _spawnPos;
+	GameMath::Vector3 _destPos;
 
 	// 보상 카드 풀
 	static const vector<int32> REWARD_CARDS;

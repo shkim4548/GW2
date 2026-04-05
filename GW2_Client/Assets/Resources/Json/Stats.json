@@ -111,22 +111,6 @@
       "shield": 0.0,
       "max_mana": 3.0,
       "mana_regen": 0.35
-    },
-    {
-      "type": "baron",
-      "hp": 5000,
-      "max_hp": 5000,
-      "attack_damage": 200,
-      "attack_speed": 1.0,
-      "attack_range": 5.0,
-      "attack_interval": 2.0,
-      "move_speed": 6.0,
-      "detection_range": 15.0,
-      "defense": 20,
-      "health_regen": 5.0,
-      "shield": 0.0,
-      "max_mana": 0.0,
-      "mana_regen": 0.0
     }
   ],
   "cards": [
@@ -306,5 +290,4 @@
     "target_type": 0, "spawn_type": "Self"
   }
 ]
-
 }

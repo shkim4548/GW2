@@ -22,7 +22,7 @@ public class DataService : IDataService
 
     public void Init()
     {
-        CardDict = LoadJson<Data.CardInfoList, int, Data.CardInfo>("Json/CardStats");
+        CardDict = LoadJson<Data.CardInfoList, int, Data.CardInfo>("Json/Stats");
         CardIcons = Resources.Load<CardIconSO>("Data/CardIconSO");  // Ãß°¡
         CardIcons?.Init();
         foreach (KeyValuePair<int, Data.CardInfo> card in CardDict)

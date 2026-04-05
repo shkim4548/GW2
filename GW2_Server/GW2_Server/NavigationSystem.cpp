@@ -225,7 +225,7 @@ bool Navigation::NavigationSystem::RaycastWorld2D(const Ray2D& ray, float maxDis
 		traveled += STEP;
 	}
 
-	return false; // 충돌 없음
+	return false;
 }
 
 void Navigation::NavigationSystem::BuildWalkableGrid(WalkableGrid& grid, int32 width, int32 height, float cellSize, GameMath::Vector3 origin)

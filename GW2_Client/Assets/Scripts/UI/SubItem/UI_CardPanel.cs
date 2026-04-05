@@ -24,6 +24,11 @@ public class UI_CardPanel : UI_Base
         MyPlayerController.OnCardUsed -= HandleCardUsed;
         MyPlayerController.OnCardUsed += HandleCardUsed;
 
+        // 이미 수신된 핸드 데이터가 있으면 즉시 반영
+        var pending = MyPlayerController.GetPendingHandCardIds();
+        if (pending != null && pending.Count > 0)
+            _handCardIds = new List<int>(pending);
+
         RefreshUI();
     }
 

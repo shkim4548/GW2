@@ -6,7 +6,6 @@ using ServerCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.AssetImporters;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,7 +17,9 @@ public class PacketHandler
         int roomId = (int)enterGamePkt.Player.RoomId;
 
         var objectService = Bootstrapper.Instance.ObjectService;
-        Debug.Log($"[S_ENTER_GAME] objectId={enterGamePkt.Player.ObjectId} type={enterGamePkt.Player.ObjectType}");
+        //Debug.Log($"[S_ENTER_GAME] objectId={enterGamePkt.Player.ObjectId} type={enterGamePkt.Player.ObjectType}");
+        int myNetworkId = Bootstrapper.Instance.NetworkService.GetNetworkId();
+        bool isMyPlayer = (enterGamePkt.Player.ObjectId == myNetworkId);
         objectService.Add(enterGamePkt.Player, true);
 
         //   objectService.Add()가 Prefab 기본 위치로 생성하므로 명시적으로 세팅
@@ -39,8 +40,7 @@ public class PacketHandler
             if (bc != null)
                 bc.PosInfo = spawnPos;
 
-            Debug.Log($"[S_ENTER_GAMEHandler] objectId={objectId} " +
-                      $"spawnPos=({worldPos.x:F2},{worldPos.y:F2},{worldPos.z:F2})");
+            ///Debug.Log($"[S_ENTER_GAMEHandler] objectId={objectId} " + $"spawnPos=({worldPos.x:F2},{worldPos.y:F2},{worldPos.z:F2})");
         }
         else
         {
@@ -134,14 +134,20 @@ public class PacketHandler
         GameObject attacker = objectService.FindById((int)skillPkt.AttackerId);
         GameObject target = objectService.FindById((int)skillPkt.TargetId);
 
-        if (attacker == null) return;
+        if (attacker == null) 
+            return;
 
         // 터렛 공격
         TurretController tc = attacker.GetComponent<TurretController>();
-        if (tc != null) { tc.OnAttack((int)skillPkt.TargetId); return; }
+        if (tc != null) 
+        { 
+            tc.OnAttack((int)skillPkt.TargetId); 
+            return; 
+        }
 
         BaseController attackerBc = attacker.GetComponent<BaseController>();
-        if (attackerBc == null) return;
+        if (attackerBc == null) 
+            return;
 
         attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
 
@@ -415,7 +421,7 @@ public class PacketHandler
     internal static void S_GOLD_UPDATEHandler(PacketSession session, IMessage message)
     {
         S_GOLD_UPDATE pkt = message as S_GOLD_UPDATE;
-        Debug.Log($"[S_GOLD_UPDATE] gold={pkt.Gold}");
+        //Debug.Log($"[S_GOLD_UPDATE] gold={pkt.Gold}");
         UI_Store.OnGoldUpdate?.Invoke(pkt.Gold);
     }
 
@@ -437,8 +443,7 @@ public class PacketHandler
         S_BUFF_APPLIED pkt = message as S_BUFF_APPLIED;
         Debug.Log($"[S_BUFF_APPLIED] target={pkt.TargetId} type={pkt.BuffType} value={pkt.Value} duration={pkt.Duration}");
 
-        // 속도 버프는 MyPlayerController에 적용
-        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffSpeed)
+        if (pkt.BuffType == BuffType.BuffSpeed)
         {
             IObjectService objectService = Bootstrapper.Instance.ObjectService;
             GameObject go = objectService.FindById(pkt.TargetId);
@@ -446,23 +451,16 @@ public class PacketHandler
                 go.GetComponent<BaseController>()?.ApplySpeedBuff(pkt.Value, pkt.Duration);
         }
 
-        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffAttackSpeed)
-        {
-            IObjectService objectService = Bootstrapper.Instance.ObjectService;
-            GameObject go = objectService.FindById(pkt.TargetId);
-            go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
-        }
-
-        if (pkt.BuffType == Google.Protobuf.Enum.BuffType.BuffAttackSpeed)
+        if (pkt.BuffType == BuffType.BuffAttackSpeed)
         {
             IObjectService objectService = Bootstrapper.Instance.ObjectService;
             GameObject go = objectService.FindById(pkt.TargetId);
             go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
 
-            // MyPlayer라면 UI 갱신
             if (objectService.MyPlayer != null && objectService.MyPlayer.Id == (int)pkt.TargetId)
-                MyPlayerController.OnAttackSpeedBuffed?.Invoke(pkt.Value);
+                MyPlayerController.OnAttackSpeedBuffed?.Invoke(pkt.Value);  // ← 여기로 이동
         }
+
 
     }
 

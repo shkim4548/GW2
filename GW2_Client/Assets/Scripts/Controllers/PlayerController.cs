@@ -13,7 +13,6 @@ public class PlayerController : CreatureController
     public override void Init()
     {
         base.Init();
-
     }
 
     public override void UpdateIdle()
@@ -34,15 +33,17 @@ public class PlayerController : CreatureController
     // === Remote 보간 이동 === 
     private void InterpolateToServerPosition()
     {
-        // smooth damp
-        transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref _velocity, _positionSmoothTime);
+        Vector3 serverPos = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
 
-        // 회전
-        Vector3 direction = _serverPosition - transform.position;
-        if(direction.sqrMagnitude > 0.01f)
+        transform.position = Vector3.SmoothDamp(
+            transform.position, serverPos, ref _velocity, _positionSmoothTime);
+
+        Vector3 direction = serverPos - transform.position;
+        if (direction.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
         }
     }
 }

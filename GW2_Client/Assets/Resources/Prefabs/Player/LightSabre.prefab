@@ -1153,6 +1153,7 @@ GameObject:
   - component: {fileID: 2069326368673698190}
   - component: {fileID: 3435749176868243994}
   - component: {fileID: 7588203768497726169}
+  - component: {fileID: -2216941318565978588}
   m_Layer: 0
   m_Name: LightSabre
   m_TagString: PLAYER
@@ -1278,6 +1279,25 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &-2216941318565978588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2881095515875004147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99f4eb8d6ef677249ab6fc366b56ce24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attackEffect: {fileID: 0}
+  _sendPacketDelay: 0.2
+  _isMoving: 0
+  _positionSmoothTime: 0.1
+  _moveSpeed: 100
+  _rotationSpeed: 1
+  _campType: 0
 --- !u!1 &2942416188630266877
 GameObject:
   m_ObjectHideFlags: 0

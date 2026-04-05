@@ -86,6 +86,7 @@ namespace Data
         public string skill_id;  // 스킬 연결 ID
         public int damage;
         public int price;
+        public int target_type;  // 추가: 0=self, 1=point, 2=target
     }
 
     [Serializable]
