@@ -11,125 +11,155 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d0e9df70e6f32047a121e633cc995b1, type: 3}
   m_Name: SkillEffectData
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   entries:
   - skillId: 101
     effectPrefab: {fileID: 964191524692181603, guid: 91623a05e8a88fb4f9047c44ecd8189f, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 102
     effectPrefab: {fileID: 140436, guid: 97d3a78ae2a283a41991cab3feedb991, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 103
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 104
     effectPrefab: {fileID: 6611354391489944552, guid: 8dac3d6bcc0b4244e969fba3b747de9e, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 105
     effectPrefab: {fileID: 1005835247375216511, guid: dd6f0de2ae7a36e4b9f629957f9e18f7, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 106
     effectPrefab: {fileID: 503751429033758348, guid: 4f5a573e61f1d034b898918bae370ee3, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 1
   - skillId: 107
     effectPrefab: {fileID: 243556620537520828, guid: 1fe1f99efd01c6e40adda762355a459e, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 108
     effectPrefab: {fileID: 503751429033758348, guid: 4702d2f81e0f0d44e8fbce57765dfd7f, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 109
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 110
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 111
     effectPrefab: {fileID: 170337825718025491, guid: 3062cdcc2807e1541ac7299e98989404, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 112
     effectPrefab: {fileID: 170337825718025491, guid: 3062cdcc2807e1541ac7299e98989404, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 113
     effectPrefab: {fileID: 1708544336482566, guid: 5c36fed9c15e76e4d945e41340b5e4a8, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 114
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 115
     effectPrefab: {fileID: 7343370407008098344, guid: 67690a5ac9f66d24791208c79de2e448, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 116
     effectPrefab: {fileID: 2888976325767801123, guid: 563ba2c96fa7a044e8c24af35b1e52dd, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 117
     effectPrefab: {fileID: 7870668705215844770, guid: c3a270d8c9949a34eb2c83dfb762ae4c, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 118
     effectPrefab: {fileID: 5881981232274105075, guid: 5b1fd66f492af174eb82bfb12b89555f, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 119
     effectPrefab: {fileID: 4613937624784895985, guid: b8a43ceaa75105b499836920315a515f, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 120
     effectPrefab: {fileID: 111332, guid: a37767301a378cf4782a998b33f77123, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 121
     effectPrefab: {fileID: 1557210542833853509, guid: 70ea59419e227b44aae290b959c4d98c, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 122
     effectPrefab: {fileID: 7003059225076746717, guid: ec00a0a05e09c8b47937ca0aff695a2e, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 123
     effectPrefab: {fileID: 2888976325767801123, guid: 563ba2c96fa7a044e8c24af35b1e52dd, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 124
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 125
     effectPrefab: {fileID: 3019771676552475519, guid: 817d06cacf57b5943a3858287d0b61dc, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 1
   - skillId: 126
     effectPrefab: {fileID: 1688954165942588, guid: 711d95f752b0c214b9b86d92fb08d594, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 127
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0
   - skillId: 128
     effectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 2
   - skillId: 129
     effectPrefab: {fileID: 3054901163473534677, guid: 64dcf6fca16ad5a42ba3033c31f439d4, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 1
   - skillId: 130
     effectPrefab: {fileID: 1269658436619853312, guid: 9c7666218bd588c49bf304d258dbfc61, type: 3}
     hitEffectPrefab: {fileID: 0}
     duration: 2
+    spawnType: 0

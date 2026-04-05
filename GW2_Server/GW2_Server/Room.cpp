@@ -527,6 +527,10 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 	resPkt.set_skill_id(skillPkt.command_id());
 	resPkt.set_attacker_id(attacker->GetObjectId());
 	resPkt.set_target_id(skillPkt.target_id());
+	resPkt.set_pos_x(skillPkt.pos_x());
+	resPkt.set_pos_z(skillPkt.pos_z());
+	resPkt.set_dir_x(skillPkt.dir_x());
+	resPkt.set_dir_z(skillPkt.dir_z());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(resPkt));
 
 	// 6. S_HP_CHANGE 브로드캐스트

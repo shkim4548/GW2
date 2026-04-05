@@ -418,6 +418,8 @@ void Minion::UpdateChaseTarget(float deltaTime)
 			GConsoleLogger->WriteStdErr(Color::RED, L"[Minion::UpdateChaseTarget] minionSelf is nullptr\n");
 			return;
 		}
+		_path.clear();
+		_pathIndex = 0;
 		room->DoAsync(&Room::HandleChaseMove, minionSelf, targetPos, _moveSpeed, deltaTime, _laneId);
 		_lastMoveGoal = targetPos;
 		_repathCoolDown = 0.2f;
@@ -487,7 +489,7 @@ int32 Minion::GetTargetPriority(shared_ptr<Object> obj)
 	Protocol::ObjectType type = obj->GetObjectType();
 	if (type == Protocol::ObjectType::OBJECT_TYPE_MINION)
 	{
-		return 3;
+		return 2;
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_TURRET)
 	{
@@ -495,7 +497,7 @@ int32 Minion::GetTargetPriority(shared_ptr<Object> obj)
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_PLAYER)
 	{
-		return 2;
+		return 1;
 	}
 	else if (type == Protocol::ObjectType::OBJECT_TYPE_NEXUS)
 	{

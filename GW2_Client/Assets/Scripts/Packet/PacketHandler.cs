@@ -362,7 +362,7 @@ public class PacketHandler
     internal static void S_HP_CHANGEHandler(PacketSession session, IMessage message)
     {
         S_HP_CHANGE pkt = message as S_HP_CHANGE;
-        Debug.Log($"[S_HP_CHANGE] targetId={pkt.TargetId} hp={pkt.CurrentHp}/{pkt.MaxHp}");
+        //Debug.Log($"[S_HP_CHANGE] targetId={pkt.TargetId} hp={pkt.CurrentHp}/{pkt.MaxHp}");
 
         GameObject go = Bootstrapper.Instance.ObjectService.FindById(pkt.TargetId);
         if (go == null) 
