@@ -136,7 +136,7 @@ message S_HP_CHANGE
 
 message S_END_GAME
 {
-
+	CampType winner = 1;
 }
 
 message S_RESPAWN

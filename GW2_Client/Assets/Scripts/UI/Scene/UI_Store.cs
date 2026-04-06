@@ -103,6 +103,7 @@ public class UI_Store : UI_Popup
     {
         _selectedCardId = cardId;
         GetText((int)Texts.PriceText).text = $"{price} G";
+        GetButton((int)Buttons.Buy).interactable = true;
     }
 
     private void HandleDeckSync(List<int> deckCardIds)
@@ -144,7 +145,7 @@ public class UI_Store : UI_Popup
     public void HandleGoldUpdate(long gold)
     {
         _currentGold = gold;
-        GetText((int)Texts.CoinPriceText).text = $"{gold} G";
+        GetTMP((int)Texts.CoinPriceText).text = $"{gold} G";
     }
 
     private void OnDestroy()

@@ -3164,9 +3164,10 @@ class S_HP_CHANGE final :
 // -------------------------------------------------------------------
 
 class S_END_GAME final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:Protocol.S_END_GAME) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_END_GAME) */ {
  public:
   inline S_END_GAME() : S_END_GAME(nullptr) {}
+  ~S_END_GAME() override;
   explicit constexpr S_END_GAME(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   S_END_GAME(const S_END_GAME& from);
@@ -3239,15 +3240,27 @@ class S_END_GAME final :
   S_END_GAME* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<S_END_GAME>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const S_END_GAME& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const S_END_GAME& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
-  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_END_GAME& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const S_END_GAME& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_END_GAME* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -3258,6 +3271,8 @@ class S_END_GAME final :
   explicit S_END_GAME(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -3269,6 +3284,18 @@ class S_END_GAME final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kWinnerFieldNumber = 1,
+  };
+  // .Protocol.CampType winner = 1;
+  void clear_winner();
+  ::Protocol::CampType winner() const;
+  void set_winner(::Protocol::CampType value);
+  private:
+  ::Protocol::CampType _internal_winner() const;
+  void _internal_set_winner(::Protocol::CampType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_END_GAME)
  private:
   class _Internal;
@@ -3276,6 +3303,7 @@ class S_END_GAME final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  int winner_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -6960,6 +6988,26 @@ inline void S_HP_CHANGE::set_max_hp(int64_t value) {
 // -------------------------------------------------------------------
 
 // S_END_GAME
+
+// .Protocol.CampType winner = 1;
+inline void S_END_GAME::clear_winner() {
+  winner_ = 0;
+}
+inline ::Protocol::CampType S_END_GAME::_internal_winner() const {
+  return static_cast< ::Protocol::CampType >(winner_);
+}
+inline ::Protocol::CampType S_END_GAME::winner() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_END_GAME.winner)
+  return _internal_winner();
+}
+inline void S_END_GAME::_internal_set_winner(::Protocol::CampType value) {
+  
+  winner_ = value;
+}
+inline void S_END_GAME::set_winner(::Protocol::CampType value) {
+  _internal_set_winner(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_END_GAME.winner)
+}
 
 // -------------------------------------------------------------------
 

@@ -333,12 +333,13 @@ public class MyPlayerController : PlayerController
             //uiService.ShowPopupUI<UI_Store>();
             if (_storeUI != null)
             {
-                Debug.Log("Show Store UI");
+                Debug.Log("Close Store UI");
                 Bootstrapper.Instance.UIService.ClosePopupUI(_storeUI);
                 _storeUI = null;
             }
             else
             {
+                Debug.Log("Show Store UI");
                 _storeUI = Bootstrapper.Instance.UIService.ShowPopupUI<UI_Store>();
             }
         }

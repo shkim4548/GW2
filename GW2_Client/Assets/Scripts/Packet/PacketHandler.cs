@@ -371,9 +371,12 @@ public class PacketHandler
 
     internal static void S_END_GAMEHandler(PacketSession session, IMessage message)
     {
+        S_END_GAME pkt = message as S_END_GAME;
         Debug.Log("[S_END_GAME] Game Over");
-    // TODO : 게임 종료 UI 표시
-    // Managers.UI.ShowPopupUI<UI_GameResult>();
+        // TODO : 게임 종료 UI 표시
+
+        IUIService uiService = Bootstrapper.Instance.UIService;
+        uiService.ShowPopupUI<UI_GameResult>();
     }
 
     internal static void S_RESPAWNHandler(PacketSession session, IMessage message)

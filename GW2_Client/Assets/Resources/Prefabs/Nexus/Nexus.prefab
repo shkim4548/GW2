@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 709758223023424800}
   - component: {fileID: 8423643181129577755}
   - component: {fileID: 56532346734973602}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 171426570826574353}
   - component: {fileID: 4462175922609465814}
   - component: {fileID: 3859496375332153770}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -203,7 +203,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5898907412930457967}
   - component: {fileID: 17855968468908188}
-  m_Layer: 11
+  m_Layer: 3
   m_Name: Mini Map Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286,7 +286,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3487415416052287957}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: SummonPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 3357798881417274069}
   - component: {fileID: 7274980269396201827}
   - component: {fileID: 8523392399420397041}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Nexus
   m_TagString: OBJECT
   m_Icon: {fileID: 0}
@@ -386,7 +386,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -536,7 +536,7 @@ GameObject:
   - component: {fileID: 6542474475367839372}
   - component: {fileID: 2309281948310144743}
   - component: {fileID: 7006614406876748883}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: HealthBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -611,7 +611,7 @@ GameObject:
   - component: {fileID: 2022332943800640640}
   - component: {fileID: 3430195054584759290}
   - component: {fileID: 8138483630152545159}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: HealthBarHitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -686,7 +686,7 @@ GameObject:
   - component: {fileID: 7506848351381618911}
   - component: {fileID: 2998524062302653265}
   - component: {fileID: 8456731346605735126}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: HealthBarHealEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -766,13 +766,29 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1051745248807356565, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051815499148794267, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2595050241021961625, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
       propertyPath: m_Name
       value: DomeNuke
       objectReference: {fileID: 0}
     - target: {fileID: 2595050241021961625, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595050241021961625, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595133934922684423, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2596992472637924043, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
       propertyPath: m_RootOrder
@@ -842,6 +858,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8892985421995105531, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8893641907050898075, guid: b85bcceaf4e6c6549846b7c992df679c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -863,6 +887,10 @@ PrefabInstance:
     - target: {fileID: 1768067461857696, guid: 6a70531d35c484f46b1671ef011384d2, type: 3}
       propertyPath: m_Name
       value: SM_Ship_Station_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768067461857696, guid: 6a70531d35c484f46b1671ef011384d2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1768067461857696, guid: 6a70531d35c484f46b1671ef011384d2, type: 3}
       propertyPath: m_IsActive
@@ -950,9 +978,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3487415417060689718}
     m_Modifications:
+    - target: {fileID: 3064826766059796233, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3064826767188772817, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064826767188772823, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4085881614033516910, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
       propertyPath: m_RootOrder
@@ -1010,9 +1046,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4087032684676196202, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4087279740170697700, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4087332520759330442, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4088921237727480460, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
       propertyPath: m_Name
       value: MegaBlackHole
+      objectReference: {fileID: 0}
+    - target: {fileID: 4088921237727480460, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4088921237727480460, guid: a6bcea9ae51e3364a87584acf16d49a0, type: 3}
       propertyPath: m_IsActive

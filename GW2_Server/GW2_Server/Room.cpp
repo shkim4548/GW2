@@ -326,13 +326,16 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 
 			for (auto& target : hits)
 			{
-				target->ApplyDamage(cardStat.damage);
+				bool died = target->ApplyDamage(cardStat.damage);
 
 				Protocol::S_HP_CHANGE hpPkt;
 				hpPkt.set_target_id(target->GetObjectId());
 				hpPkt.set_current_hp(target->GetHp());
 				hpPkt.set_max_hp(target->GetMaxHp());
 				Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+
+				if (died)
+					HandleRemoveObject(target->GetObjectId(), attacker->GetObjectId());
 			}
 		}
 
@@ -685,6 +688,9 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 
 void Room::UpdateRoom(float deltaTime)
 {
+	if (_isRunning == false)
+		return;
+
 	// 0. 미니언 스폰
 	_minionSpawnAccumulate += deltaTime;
 	if (_isRunning)
@@ -912,9 +918,7 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 {
 	NexusRef nexus = ObjectUtils::CreateNexus();
 	int32 objectId = nexus->GetObjectId();
-	GConsoleLogger->WriteStdOut(Color::YELLOW,
-		L"[SpawnNexus] objectId=%d team=%d pos=(%.2f,%.2f,%.2f)\n",
-		objectId, (int)team, pos._x, pos._y, pos._z);
+	GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[SpawnNexus] objectId=%d team=%d pos=(%.2f,%.2f,%.2f)\n",		objectId, (int)team, pos._x, pos._y, pos._z);
 	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
 	posInfo->set_x(pos._x);
 	posInfo->set_y(pos._y);
@@ -931,11 +935,15 @@ shared_ptr<Nexus> Room::SpawnNexus(GameMath::Vector3 pos, Protocol::CampType tea
 
 	_objects.emplace(objectId, nexus);
 	nexus->InitNexus(static_pointer_cast<Room>(shared_from_this()), team);
-
+	
 	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
-
-	GConsoleLogger->WriteStdOut(Color::YELLOW,
-		L"[SpawnNexus] Broadcast done objectId=%d\n", objectId);
+	Protocol::S_HP_CHANGE hpPkt;
+	hpPkt.set_target_id(objectId);
+	hpPkt.set_current_hp(nexus->GetHp());
+	hpPkt.set_max_hp(nexus->GetMaxHp());
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(hpPkt);
+	Broadcast(sendBuffer);
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[SpawnNexus] Broadcast done objectId=%d\n", objectId);
 	return nexus;
 }
 
@@ -1368,6 +1376,10 @@ void Room::HandleRemoveObject(int32 targetId, int32 attackerId)
 	}
 
 	_objects.erase(it);
+	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_NEXUS)
+	{
+		obj->OnDead();
+	}
 }
 
 void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
@@ -1394,9 +1406,14 @@ void Room::HandleTurretAttack(int32 attckerId, int32 targetId)
 
 void Room::HandleNexusDead(Protocol::CampType deadTeam)
 {
+	_isRunning = false;     // ← 추가: 즉시 전투 루프 정지
+
+	Protocol::CampType winner = (deadTeam == Protocol::CAMP_HUMAN) ? Protocol::CAMP_CYBORG : Protocol::CAMP_HUMAN;
+
 	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Room::HandleNexusDead] Game over\n");
 
 	Protocol::S_END_GAME endPkt;
+	endPkt.set_winner(winner);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(endPkt));
 }
 

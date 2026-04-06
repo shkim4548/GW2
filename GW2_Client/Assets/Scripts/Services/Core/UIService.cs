@@ -136,6 +136,7 @@ public class UIService : IUIService
         _popupStack.Push(popup);
 
         go.transform.SetParent(Root.transform);
+        SetCanvas(go, true);
 
         return popup;
     }
