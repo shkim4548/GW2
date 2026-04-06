@@ -186,7 +186,7 @@ public class MyPlayerController : PlayerController
         else
         {
             transform.position += direction * moveDistance;
-            Debug.Log("Actual moving");
+            //Debug.Log("Actual moving");
         }
 
         // 회전 반영
@@ -219,7 +219,27 @@ public class MyPlayerController : PlayerController
         // 좌클릭시 스킬 대기
         if (evt == Define.MouseEvent.LeftClick)
         {
-            if (_pendingSkillSlot >= 0 && !_pendingSkillIsTarget)
+            // target_type=2: 좌클릭으로 대상 선택
+            if (_pendingSkillSlot >= 0 && _pendingSkillIsTarget)
+            {
+                Ray skillRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit skillHit;
+                if (Physics.Raycast(skillRay, out skillHit, 100.0f, LayerMask.GetMask("Objects")))
+                {
+                    BaseController bc = skillHit.collider.gameObject.GetComponent<BaseController>();
+                    if (bc != null && bc._campType != _campType)
+                    {
+                        _target = skillHit.collider.gameObject;
+                        int tId = bc.Id;
+                        SendCardEvent(_pendingSkillSlot, _target.transform.position, tId);
+                    }
+                }
+                _pendingSkillSlot = -1;
+                _pendingSkillIsTarget = false;
+                State = MoveState.Idle;
+            }
+            // target_type=1: 좌클릭 지점 선택
+            else if (_pendingSkillSlot >= 0 && !_pendingSkillIsTarget)
             {
                 Ray skillRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit skillHit;
@@ -238,25 +258,6 @@ public class MyPlayerController : PlayerController
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-
-        // target_type == 2 우선 처리
-        if (_pendingSkillSlot >= 0 && _pendingSkillIsTarget)
-        {
-            if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
-            {
-                BaseController bc = hit.collider.gameObject.GetComponent<BaseController>();
-                if (bc != null && bc._campType != _campType)
-                {
-                    _target = hit.collider.gameObject;
-                    int tId = bc.Id;
-                    SendCardEvent(_pendingSkillSlot, _target.transform.position, tId);
-                }
-            }
-            _pendingSkillSlot = -1;
-            _pendingSkillIsTarget = false;
-            State = MoveState.Idle;
-            return;
-        }
 
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
         // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
@@ -297,7 +298,7 @@ public class MyPlayerController : PlayerController
             _target = null;
             State = MoveState.Run;
             // 상태 변화 확인
-            Debug.Log("Raycast Road");
+            //Debug.Log("Raycast Road");
             RequestMove(_destPos);
         }
         // 사거리 밖에 있다면, 추적시킨다.
@@ -494,7 +495,7 @@ public class MyPlayerController : PlayerController
         _clientMoveStartTime = movePacket.ClientTime;
 
         _networkService.Send(movePacket);
-        Debug.Log($"movePkt destPos, startPos: {nowPosition}, {this.transform.position}");
+        //Debug.Log($"movePkt destPos, startPos: {nowPosition}, {this.transform.position}");
     }
 
     public override void SetHp(float current, float max)

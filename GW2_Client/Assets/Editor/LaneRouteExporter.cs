@@ -12,8 +12,10 @@ public class LaneRouteExporter : EditorWindow
 
     // EditorWindow 필드 추가
     public Transform topLaneRoot;   // 씬에서 드래그
+    public Transform midLaneRoot;
     public Transform botLaneRoot;   // 씬에서 드래그
     public int topLaneId = 1;
+    public int midLaneId = 2;
     public int botLaneId = 3;
 
     [MenuItem("Tools/Lane/Lane Route Exporter (JSON)")]
@@ -38,13 +40,8 @@ public class LaneRouteExporter : EditorWindow
         topLaneRoot = (Transform)EditorGUILayout.ObjectField("Top Lane Root", topLaneRoot, typeof(Transform), true);
         topLaneId = EditorGUILayout.IntField("Top Lane Id", topLaneId);
 
-
-        if (GUILayout.Button("Preview (Console)"))
-        {
-            Debug.Log("Preview clicked");
-            Preview();
-        }
-        EditorGUILayout.Space();
+        midLaneRoot = (Transform)EditorGUILayout.ObjectField("Mid Lane Root", midLaneRoot, typeof(Transform), true);
+        midLaneId = EditorGUILayout.IntField("Mid Lane Id", midLaneId);
 
         botLaneRoot = (Transform)EditorGUILayout.ObjectField("Bot Lane Root", botLaneRoot, typeof(Transform), true);
         botLaneId = EditorGUILayout.IntField("Bot Lane Id", botLaneId);
@@ -53,6 +50,14 @@ public class LaneRouteExporter : EditorWindow
             Debug.Log("Export clicked");
             Export();
         }
+
+
+        if (GUILayout.Button("Preview (Console)"))
+        {
+            Debug.Log("Preview clicked");
+            Preview();
+        }
+        EditorGUILayout.Space();
     }
     private LaneRouteFile Collect()
     {

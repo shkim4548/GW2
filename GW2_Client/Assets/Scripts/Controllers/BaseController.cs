@@ -93,10 +93,9 @@ public class BaseController : MonoBehaviour
 
     public virtual void Init()
     {
-
         _animator = GetComponent<Animator>();
         _hpBar = GetComponentInChildren<WUI_HpBar>();
-        Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
+        //Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);
     }

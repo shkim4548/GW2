@@ -210,7 +210,7 @@ public class MinionController : BaseController
         // State를 Run으로 세팅 (Start() 이전에도 유효하도록 직접 세팅)
         PosInfo.State = Google.Protobuf.Enum.MoveState.Run;
 
-        Debug.Log($"[MinionController] SetNavPath count={path.Count} startIdx={_navIndex} moveSpeed={_moveSpeed:F1}");
+        //Debug.Log($"[MinionController] SetNavPath count={path.Count} startIdx={_navIndex} moveSpeed={_moveSpeed:F1}");
     }
 
     public void SetMoveSpeed(float speed)
@@ -219,7 +219,7 @@ public class MinionController : BaseController
         if (speed > 0.0f)
         {
             _moveSpeed = speed;
-            Debug.Log($"[MinionController] SetMoveSpeed: {speed:F1} (유닛/초 단위 확인 필요)");
+            //Debug.Log($"[MinionController] SetMoveSpeed: {speed:F1} (유닛/초 단위 확인 필요)");
         }
     }
 
@@ -237,7 +237,7 @@ public class MinionController : BaseController
 
         // State를 Idle로 전환
         State = Google.Protobuf.Enum.MoveState.Idle;
-        Debug.Log($"[MinionController] Arrived at destination. pos={transform.position}");
+        //Debug.Log($"[MinionController] Arrived at destination. pos={transform.position}");
     }
 
     private void StopNavPath()

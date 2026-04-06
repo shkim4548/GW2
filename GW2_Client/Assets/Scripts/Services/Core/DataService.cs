@@ -25,10 +25,10 @@ public class DataService : IDataService
         CardDict = LoadJson<Data.CardInfoList, int, Data.CardInfo>("Json/Stats");
         CardIcons = Resources.Load<CardIconSO>("Data/CardIconSO");  // Ãß°¡
         CardIcons?.Init();
-        foreach (KeyValuePair<int, Data.CardInfo> card in CardDict)
-        {
-            Debug.Log($"{card.Key}, {card.Value.name}");
-        }
+        //foreach (KeyValuePair<int, Data.CardInfo> card in CardDict)
+        //{
+        //    Debug.Log($"{card.Key}, {card.Value.name}");
+        //}
     }
 
     private Dictionary<Key, Value> LoadJson<Loader, Key, Value>(string path)

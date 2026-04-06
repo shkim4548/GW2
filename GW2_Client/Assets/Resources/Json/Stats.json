@@ -18,8 +18,8 @@
     },
     {
       "type": "turret",
-      "hp": 3000,
-      "max_hp": 3000,
+      "hp": 1000,
+      "max_hp": 1000,
       "attack_damage": 150,
       "attack_speed": 1.0,
       "attack_range": 6.0,
@@ -50,9 +50,9 @@
     },
     {
       "type": "Police",
-      "hp": 600,
-      "max_hp": 600,
-      "attack_damage": 60,
+      "hp": 1200,
+      "max_hp": 1200,
+      "attack_damage": 120,
       "attack_speed": 1.0,
       "attack_range": 5.0,
       "attack_interval": 1.0,

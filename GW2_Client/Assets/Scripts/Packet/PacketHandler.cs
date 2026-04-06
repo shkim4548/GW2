@@ -247,8 +247,7 @@ public class PacketHandler
 
             mc.SetServerRefPos(serverPos, endMovePkt.ServerTime);
 
-            Debug.Log($"[S_MOVE_END] Minion {targetId} " +
-                      $"serverFinalPos=({serverPos.x:F2},{serverPos.z:F2})");
+            //Debug.Log($"[S_MOVE_END] Minion {targetId} " + $"serverFinalPos=({serverPos.x:F2},{serverPos.z:F2})");
             return; // ← navPath 이동 및 상태에 일절 간섭하지 않음
         }
 

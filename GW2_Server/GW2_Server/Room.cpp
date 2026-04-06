@@ -1029,7 +1029,6 @@ void Room::CollectEnemiesInRange(const shared_ptr<Object> requester, float range
 
 void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, float speed, float deltaTime, uint8 laneId, int32 wpIndex)
 {
-	// _pathPending은 이 함수가 종료될 때 반드시 해제되어야 함 (성공/실패 무관)
 	struct PendingGuard {
 		shared_ptr<Minion>& m;
 		~PendingGuard() {
@@ -1042,9 +1041,6 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] minion is nullptr\n");
 		return;
 	}
-	// DEBUG
-	GameMath::Vector3 debugPos = minion->GetPosVector();
-	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] startworld = %.3f, %.3f\n", debugPos._x, debugPos._z);
 
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	shared_ptr<Navigation::WalkableGrid> gridPtr = _roomWalkableGrid.lock();
@@ -1075,24 +1071,28 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		return;
 	}
 
-	// start cell
+	// --- 시작 위치 ---
 	const GameMath::Vector3& startPos = minion->GetPosVector();
 	GameMath::Vector3 tStartPos = startPos;
 	const uint8 startLane = navSystem->GetLaneId(grid, tStartPos);
-
-	// [CHANGED] 기존: startLane==0이면 즉시 return
-	// [CHANGED] 변경: isOffLane 플래그로 처리, 가장 가까운 waypoint로 우회 경로 탐색
 	bool isOffLane = (startLane == 0);
-	GameMath::Vector3 resolvedTarget;
 
+	// --- 시작 그리드 변환 ---
+	int32 sx = 0, sz = 0, tx = 0, tz = 0;
+	if (!navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(start) fail\n");
+		return;
+	}
+
+	// --- 목표 waypoint 결정 ---
+	GameMath::Vector3 resolvedTarget;
 	if (isOffLane)
 	{
-		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[Room::HandleMinionMove] startLane=0 (off-lane). objId=%d -> finding nearest WP\n", minion->GetObjectId());
-
-		// [CHANGED] 가장 가까운 waypoint 탐색 (Euclidean distance)
+		// 레인 밖에 있을 때: wpIndex 이후 가장 가까운 waypoint로 유도
 		float minDist = FLT_MAX;
-		int32 nearestIdx = 0;
-		for (int32 i = 0; i < static_cast<int32>(route->waypoints.size()); ++i)
+		int32 nearestIdx = wpIndex;
+		for (int32 i = wpIndex; i < static_cast<int32>(route->waypoints.size()); ++i)
 		{
 			const GameMath::Vector3& wp = route->waypoints[i];
 			float dx = wp._x - startPos._x;
@@ -1105,139 +1105,70 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 			}
 		}
 		resolvedTarget = route->waypoints[nearestIdx];
-		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[Room::HandleMinionMove] off-lane nearest WP[%d]=(%.2f,%.2f)\n", nearestIdx, resolvedTarget._x, resolvedTarget._z);
 	}
-
-	int32 sx = 0, sz = 0, tx = 0, tz = 0;
-	if (!navSystem->WorldToGrid(grid, startPos._x, startPos._z, sx, sz))
+	else
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(start) fail\n");
-		return;
+		resolvedTarget = route->waypoints[wpIndex];
 	}
 
-	// [CHANGED] 기존: 항상 route->waypoints[wpIndex]를 target으로 사용 + targetLane 검증
-	// [CHANGED] 변경: isOffLane이면 nearest WP를 target으로, targetLane 검증 skip
-	if (!isOffLane)
-	{
-		const GameMath::Vector3& targetPos = route->waypoints[wpIndex];
-		GameMath::Vector3 tTargetPos = targetPos;
-		const uint8 targetLane = navSystem->GetLaneId(grid, tTargetPos);
-		if (targetLane != 0 && targetLane != minionLaneId)
-		{
-			GConsoleLogger->WriteStdErr(Color::YELLOW,
-				L"[Room::HandleMinionMove] targetLane invalid. objId=%d wp=%d allowLane=%d targetLane=%d target=(%.2f,%.2f)\n",
-				minion->GetObjectId(), wpIndex, minionLaneId, targetLane, targetPos._x, targetPos._z);
-			return;
-		}
-		resolvedTarget = targetPos;
-	}
-
+	// --- 목표 그리드 변환 ---
 	if (!navSystem->WorldToGrid(grid, resolvedTarget._x, resolvedTarget._z, tx, tz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] WorldToGrid(target) fail\n");
 		return;
 	}
 
-	// --- A* PathFinding ---
-	// [CHANGED] 기존: 항상 minionLaneId 필터 사용
-	// [CHANGED] 변경: isOffLane이면 laneId=0 (필터 없음) 으로 중앙 구간 통과 허용
+	// --- 필터 결정 ---
+	// A*: isOffLane이거나 목표 셀이 중립(laneId=0)이면 레인 필터 해제
+	// SmoothPath: 항상 minionLaneId로 제한 (레인 경계 직선 통과 방지)
 	uint8 pathLaneFilter = (isOffLane || grid.At(tx, tz).laneId == 0) ? 0 : minionLaneId;
+	uint8 smoothLaneFilter = minionLaneId;
 
+	// --- A* 경로 탐색 ---
 	vector<Navigation::GridCell*> gridPath;
-	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] sx : %d, sz : %d, tx : %d, tz : %d, laneFilter : %d\n", sx, sz, tx, tz, pathLaneFilter);
-
-	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, pathLaneFilter); // [CHANGED]
-
-	//GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleMinionMove] FindPath ok=%d gridPathSize=%d\n", ok ? 1 : 0, static_cast<int32>(gridPath.size()));
-
+	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, pathLaneFilter);
 	if (!ok || gridPath.empty())
 	{
-		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed (lane filtered or no path)\n");
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::HandleMinionMove] FindPath failed\n");
 		return;
 	}
 
 	// --- GridPath -> NavPath (world space) ---
-	if (!gridPath.empty())
-	{
-		Navigation::GridCell* first = gridPath.front();
-		Navigation::GridCell* last = gridPath.back();
-		float wx0 = grid.origin._x + (first->x + 0.5f) * grid.cellSize;
-		float wz0 = grid.origin._z + (first->z + 0.5f) * grid.cellSize;
-		float wx1 = grid.origin._x + (last->x + 0.5f) * grid.cellSize;
-		float wz1 = grid.origin._z + (last->z + 0.5f) * grid.cellSize;
-		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[DIAG] gridPath[0]=(%d,%d) world=(%.2f,%.2f)  gridPath[last]=(%d,%d) world=(%.2f,%.2f)\n",			first->x, first->z, wx0, wz0,			last->x, last->z, wx1, wz1);
-		//GConsoleLogger->WriteStdOut(Color::YELLOW,	L"[DIAG] startPos=(%.2f,%.2f) destPos=(%.2f,%.2f) resolvedTarget=(%.2f,%.2f)\n", startPos._x, startPos._z, dest._x, dest._z, resolvedTarget._x, resolvedTarget._z);
-	}
-
 	vector<GameMath::Vector3> navPath;
-	navPath.reserve(gridPath.size());
+	navPath.reserve(gridPath.size() + 2);
 	navPath.push_back(startPos);
-
-	int successCount = 0;
-	int failCount = 0;
 
 	for (Navigation::GridCell* cell : gridPath)
 	{
-#if 1
 		GameMath::Vector3 wp;
 		wp._x = grid.origin._x + (cell->x + 0.5f) * grid.cellSize;
 		wp._z = grid.origin._z + (cell->z + 0.5f) * grid.cellSize;
 		wp._y = 0.0f;
 		navPath.push_back(wp);
-		++successCount;
-#else
-		GameMath::Vector3 wp;
-		if (navSystem->GridToWorld(grid, cell->x, cell->z, wp))
-		{
-			navPath.push_back(wp);
-			++successCount;
-		}
-		else
-		{
-			++failCount;
-			const Navigation::GridCell& c = grid.At(cell->x, cell->z);
-			GConsoleLogger->WriteStdErr(
-				Color::RED,
-				L"[Room::HandleMinionMove] GridToWorld failed for (%d,%d) walkable=%d laneId=%d\n",
-				cell->x, cell->z,
-				c.walkable ? 1 : 0,
-				c.laneId);
-		}
-#endif
 	}
-
-	//GConsoleLogger->WriteStdOut(Color::GREEN,	L"[Room::HandleMinionMove] navPath built. success=%d fail=%d\n",		successCount,		failCount);
-
-	if (navPath.empty())
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] navPath is empty AFTER conversion\n");
-		return;
-	}
-
 	navPath.push_back(dest);
 
 	if (navPath.empty())
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMinionMove] navPath is empty\n");
 		return;
+	}
 
-	// Path Smoothing
-	// [CHANGED] 기존: minionLaneId 필터로 스무딩
-	// [CHANGED] 변경: pathLaneFilter 사용 (off-lane이면 0, 정상이면 minionLaneId)
-	size_t beforeSize = navPath.size();
-	navPath = SmoothPath(navPath, grid, navSystem, pathLaneFilter); // [CHANGED]
-	//GConsoleLogger->WriteStdOut(Color::GREEN, L"[SmoothPath] %zu → %zu nodes\n", beforeSize, navPath.size());
+	// --- Path Smoothing ---
+	navPath = SmoothPath(navPath, grid, navSystem, smoothLaneFilter);
 
-	// --- 미니언에 이동 경로 전달 ---
+	// --- 미니언에 경로 전달 ---
 	minion->RequestMove(navPath);
 
-	// S_MINION_MOVE 브로드캐스트
+	// --- S_MINION_MOVE 브로드캐스트 ---
 	Protocol::S_MINION_MOVE minionMovePkt;
 	minionMovePkt.set_object_id(minion->GetObjectId());
 	minionMovePkt.set_speed(minion->GetMoveSpeed());
 
 	Protocol::PosInfo* startPosInfo = minionMovePkt.mutable_start_pos();
-	startPosInfo->set_x(minion->GetPosVector()._x);
-	startPosInfo->set_y(minion->GetPosVector()._y);
-	startPosInfo->set_z(minion->GetPosVector()._z);
+	startPosInfo->set_x(startPos._x);
+	startPosInfo->set_y(startPos._y);
+	startPosInfo->set_z(startPos._z);
 
 	for (const auto& wp : navPath)
 	{
@@ -1246,9 +1177,8 @@ void Room::HandleMinionMove(shared_ptr<Minion> minion, GameMath::Vector3 dest, f
 		pathPoint->set_y(wp._y);
 		pathPoint->set_z(wp._z);
 	}
-
-	SendBufferRef minionMoveBuffer = ClientPacketHandler::MakeSendBuffer(minionMovePkt);
-	Broadcast(minionMoveBuffer);
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[HandleMinionMove] OK objId=%d pathSize=%zu\n", minion->GetObjectId(), navPath.size());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(minionMovePkt));
 }
 
 
