@@ -35,6 +35,7 @@ void Player::InitPlayer(shared_ptr<Room> room)
         _statInfo.set_max_hp(stat.maxHp);
         _statInfo.set_attack(stat.attackDamage);
         _statInfo.set_attack_range(stat.attackRange);
+        _statInfo.set_speed(stat.moveSpeed);
         _attackInterval = stat.attackInterval;
     }
     else
@@ -46,9 +47,7 @@ void Player::InitPlayer(shared_ptr<Room> room)
         _statInfo.set_attack_range(15.0f);
     }
 
-    GConsoleLogger->WriteStdOut(Color::GREEN,
-        L"[InitPlayer] hp=%llu atk=%llu\n",
-        _statInfo.hp(), _statInfo.attack());
+    //GConsoleLogger->WriteStdOut(Color::GREEN, L"[InitPlayer] hp=%llu atk=%llu\n", _statInfo.hp(), _statInfo.attack());
     
     _gold = 500;  // √ ±‚ ∞ÒµÂ
     _cardManager.InitDeck(*this);

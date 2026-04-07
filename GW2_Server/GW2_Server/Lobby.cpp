@@ -178,8 +178,16 @@ void Lobby::EnterRoom(int32 roomId, int64 playerId)
 		GConsoleLogger->WriteStdErr(Color::RED, L"[EnterRoom] player is nullptr\n");
 		return;
 	}
-	_lobbyPlayers.erase(playerId);
-	_rooms[roomId]->Enter(player);
+
+    auto it = _rooms.find(roomId);      // ← 추가
+    if (it == _rooms.end())             // ← 추가
+    {
+        GConsoleLogger->WriteStdErr(Color::RED, L"[EnterRoom] room %d not found\n", roomId);
+        return;
+    }
+
+    _lobbyPlayers.erase(playerId);
+    it->second->Enter(player);          // ← _rooms[roomId] 대신
 }
 
 void Lobby::RunRooms()

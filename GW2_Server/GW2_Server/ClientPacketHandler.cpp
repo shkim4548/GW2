@@ -42,15 +42,23 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_EnterGame] OnRecv Packet\n");
-	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_EnterGame] Request player id : ");
-	cout << pkt.playerindex() << endl;
-	// TEMP : For test
 	shared_ptr<Room> room = GLobby->GetRoomById(pkt.roomid()).lock();
-	room->SetIsRunning(true);
+	if (!room) 
+		return true;
+
+	int32 mode = pkt.game_mode();
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] mode : %d", mode);
+	if (mode == 0)       
+		room->SetMaxPlayers(1);
+	else if (mode == 1)  
+		room->SetMaxPlayers(2);
+	else if (mode == 2)  
+		room->SetMaxPlayers(4);
+
+	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());  // Enter 내부에서 정원 체크
 	return true;
 }
+
 
 bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 {

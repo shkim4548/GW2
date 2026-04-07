@@ -46,6 +46,15 @@ public class MyPlayerController : PlayerController
 
     public static Action<Google.Protobuf.Struct.StatInfo> OnStatInfoUpdate;
     public static Action<float> OnAttackSpeedBuffed;
+    
+    private static Google.Protobuf.Struct.StatInfo _pendingStatInfo = null;
+    public static void SetPendingStatInfo(Google.Protobuf.Struct.StatInfo stat)
+    {
+        _pendingStatInfo = stat;
+        OnStatInfoUpdate?.Invoke(stat);
+    }
+    public static Google.Protobuf.Struct.StatInfo GetPendingStatInfo() => _pendingStatInfo;
+
 
     public static void SetPendingHandSync(List<int> cardIds)
     {
@@ -70,8 +79,16 @@ public class MyPlayerController : PlayerController
         _inputService.KeyAction -= OnKeyEvent;
         _inputService.KeyAction += OnKeyEvent;
 
+
         Id = _networkService.GetNetworkId();
         //_campType = Google.Protobuf.Enum.CampType.CampHuman;
+
+        OnStatInfoUpdate -= OnStatReceived;
+        OnStatInfoUpdate += OnStatReceived;
+
+        var pending = GetPendingStatInfo();
+        if (pending != null)
+            OnStatReceived(pending);
 
         IUIService uiService = Bootstrapper.Instance.UIService;
         uiService.ShowSceneUI<UI_GameScene>();
@@ -311,6 +328,9 @@ public class MyPlayerController : PlayerController
     // 현재는 사용하지 않는다.
     public void OnKeyEvent()
     {
+        if (State == MoveState.Die)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             TryUseCardSlot(0);
@@ -549,5 +569,11 @@ public class MyPlayerController : PlayerController
     {
         yield return new WaitForSeconds(duration);
         _attackSpeedMult = 1.0f;
+    }
+
+    private void OnStatReceived(Google.Protobuf.Struct.StatInfo stat)
+    {
+        if (stat.Speed > 0)
+            _moveSpeed = stat.Speed;
     }
 }

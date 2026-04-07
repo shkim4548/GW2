@@ -27,6 +27,8 @@ public:
 	void SetRoomName(string roomName) { _roomName = roomName; }
 	string GetRoomName() { return _roomName; }
 	void SetIsRunning(bool isRunning) { _isRunning = isRunning; }
+	void SetMaxPlayers(int32 playerCount) { _maxPlayers = playerCount; }
+	int32 GetMaxPlayers() { return _maxPlayers; }
 
 	unordered_map<int32, ObjectRef> GetRoomObjects() { return _objects; }
 
@@ -133,7 +135,8 @@ private:
 
 	// Game Loop
 	bool _gameStarted = false;
-	unordered_map<int32, int32> _pendingSelections; // playerType ¡æ playerId
+	unordered_map<int32, int32> _pendingSelections;
+	int32 _maxPlayers = 2;
 };
 
 //extern shared_ptr<Room> GRoom;

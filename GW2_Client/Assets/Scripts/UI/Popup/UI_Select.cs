@@ -35,7 +35,9 @@ public class UI_Select : UI_Popup
         OnCharSelected -= HandleCharSelected;
         OnCharSelected += HandleCharSelected;
 
-        _roomId = PlayerPrefs.GetInt("CurrentRoomId", 0);
+        //_roomId = PlayerPrefs.GetInt("CurrentRoomId", 0);
+        //_roomId = Bootstrapper.Instance.NetworkService.GetRoomId();
+        _roomId = 0;
     }
 
     private void OnClickChar(PlayerType type)

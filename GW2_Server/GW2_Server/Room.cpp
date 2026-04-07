@@ -64,7 +64,7 @@ bool Room::Enter(PlayerRef gameObject)
 	_players.emplace(objectId, gameObject);
 	shared_ptr<Room> roomSelf = static_pointer_cast<Room>(shared_from_this());
 	gameObject->InitPlayer(roomSelf);
-	_isRunning = true;
+	//_isRunning = true;
 
 	Protocol::S_HAND_SYNC handPkt;
 	handPkt.set_player_id(objectId);
@@ -111,7 +111,11 @@ bool Room::Enter(PlayerRef gameObject)
 	}
 	
 	objectInfo->set_allocated_pos_info(posInfo);
+	Protocol::StatInfo* stat = new Protocol::StatInfo();
+	*stat = gameObject->GetStatInfo();
+	objectInfo->set_allocated_stat_info(stat);
 	enterPkt.set_allocated_player(objectInfo);
+
 	//objectInfo->set_allocated_pos_info(posInfo);
 	//enterPkt.set_allocated_player(objectInfo);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
@@ -145,6 +149,14 @@ bool Room::Enter(PlayerRef gameObject)
 		SpawnBaron();
 	}
 
+	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[TEMP] _playersSize : %d, maxPlayers : %d\n", _players.size(), _maxPlayers);
+	if (_maxPlayers > 0 && (int32)_players.size() >= _maxPlayers)
+	{
+		GConsoleLogger->WriteStdOut(Color::GREEN, L"SetIsRunning Block\n");
+		SetIsRunning(true);
+		Protocol::S_START_GAME startGamePkt;
+		Broadcast(ClientPacketHandler::MakeSendBuffer(startGamePkt));
+	}
 	return true;
 }
 

@@ -40,6 +40,8 @@ public class PacketHandler
             if (bc != null)
                 bc.PosInfo = spawnPos;
 
+            if (isMyPlayer && enterGamePkt.Player.StatInfo != null)
+                MyPlayerController.SetPendingStatInfo(enterGamePkt.Player.StatInfo);
             ///Debug.Log($"[S_ENTER_GAMEHandler] objectId={objectId} " + $"spawnPos=({worldPos.x:F2},{worldPos.y:F2},{worldPos.z:F2})");
         }
         else
@@ -355,7 +357,7 @@ public class PacketHandler
 
     internal static void S_START_GAMEHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        Debug.Log("[S_START_GAME] All players joined. Game starting.");
     }
 
     internal static void S_HP_CHANGEHandler(PacketSession session, IMessage message)

@@ -29,6 +29,10 @@ public class UI_StatusBox : UI_Base
         MyPlayerController.OnStatInfoUpdate -= HandleStatInfo;
         MyPlayerController.OnStatInfoUpdate += HandleStatInfo;
 
+        var pending = MyPlayerController.GetPendingStatInfo();
+        if (pending != null)
+            HandleStatInfo(pending);
+
         MyPlayerController.OnAttackSpeedBuffed -= HandleAttackSpeedBuff;
         MyPlayerController.OnAttackSpeedBuffed += HandleAttackSpeedBuff;
 
@@ -67,7 +71,6 @@ public class UI_StatusBox : UI_Base
         GetTMP((int)Status.Strength_Text).text = _strength.ToString("F0");
         GetTMP((int)Status.Gold_Text).text = _gold.ToString();
     }
-
 
     private void OnDestroy()
     {

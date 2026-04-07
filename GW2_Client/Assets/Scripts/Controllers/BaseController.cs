@@ -21,7 +21,7 @@ public class BaseController : MonoBehaviour
     public float LastServerTime { get; set; }
     public bool _isMoving = false;
     public float _positionSmoothTime = 0.1f;
-    public float _moveSpeed = 100.0f;
+    public float _moveSpeed = 12.0f;
     public float _rotationSpeed = 1.0f;
 
     // === Server Navigation ===
@@ -68,6 +68,10 @@ public class BaseController : MonoBehaviour
             if (PosInfo.State == value)
                 return;
 
+            // Die에서 다른 상태로 전환 시 IsDead 자동 해제
+            if (PosInfo.State == MoveState.Die && value != MoveState.Die)
+                _animator?.SetBool("IsDead", false);
+
             PosInfo.State = value;
             UpdateAnimation();
         }
@@ -89,7 +93,6 @@ public class BaseController : MonoBehaviour
         // 상태머신 관리
         UpdateAnimation();
     }
-
 
     public virtual void Init()
     {

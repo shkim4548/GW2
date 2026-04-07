@@ -23,6 +23,7 @@ message C_ENTER_GAME
 {
 	int32 playerIndex = 1;
 	int32 roomId = 2;
+	int32 game_mode = 3;
 }
 
 message C_LEAVE_GAME
