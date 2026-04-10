@@ -38,6 +38,16 @@ message S_ENTER_GAME
 	ObjectInfo player = 2;
 }
 
+message S_SPAWN
+{
+	repeated ObjectInfo players = 1;
+}
+
+message S_DESPAWN
+{
+	int32 target_id = 1;
+}
+
 message C_START_GAME
 {
 }
@@ -92,8 +102,8 @@ message C_SKILL
 	int32 client_time = 5;
 	float     pos_x     = 6;
     float     pos_z     = 7;
-	float dir_x = 8;   // Ãß°¡: ½ºÅ³ ¹æÇâ (°í±òÇü ÇÊ¿ä)
-    float dir_z = 9;   // Ãß°¡
+	float dir_x = 8;   // ï¿½ß°ï¿½: ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½)
+    float dir_z = 9;   // ï¿½ß°ï¿½
 }
 
 message S_SKILL
@@ -103,11 +113,11 @@ message S_SKILL
 	int64 attacker_id = 3;
 	float current_hp = 4;
 	float max_hp = 5;
-	float pos_x = 3;            // Ãß°¡: ÀÌÆåÆ® À§Ä¡
-    float pos_z = 4;            // Ãß°¡
-    float dir_x = 5;            // Ãß°¡: ÀÌÆåÆ® ¹æÇâ
-    float dir_z = 6;            // Ãß°¡
-    repeated int64 hit_target_ids = 7;  // Ãß°¡: ÇÇ°Ý ´ë»ó ¸ñ·Ï
+	float pos_x = 3;            // ï¿½ß°ï¿½: ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Ä¡
+    float pos_z = 4;            // ï¿½ß°ï¿½
+    float dir_x = 5;            // ï¿½ß°ï¿½: ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+    float dir_z = 6;            // ï¿½ß°ï¿½
+    repeated int64 hit_target_ids = 7;  // ï¿½ß°ï¿½: ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 }
 
 message C_ENTER_LOBBY
@@ -118,7 +128,8 @@ message C_ENTER_LOBBY
 message S_ENTER_LOBBY
 {
 	int32 player_id = 1;
-	repeated RoomInfo room_infos = 2;
+	int32 room_id = 2;
+	repeated RoomInfo room_infos = 3;
 }
 
 message S_DIE

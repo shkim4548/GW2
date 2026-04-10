@@ -12,7 +12,9 @@ Object::~Object()
 
 void Object::FullHeal()
 {
-	_statInfo.set_hp(_statInfo.max_hp());
+	//_objectInfo.set_hp(_statInfo.max_hp());
+	uint64_t maxHp = _objectInfo.mutable_stat_info()->max_hp();
+	_objectInfo.mutable_stat_info()->set_hp(maxHp);
 	_isDead = false;
 }
 
@@ -33,7 +35,7 @@ bool Object::IsDead()
 void Object::SetPosInfo(Protocol::PosInfo posInfo)
 {
 	_posVector = GameMath::Vector3(posInfo.x(), posInfo.y(), posInfo.z());
-	_pos = posInfo;
+	_objectInfo.mutable_stat_info();
 }
 
 void Object::SetPosVector(GameMath::Vector3& posVector)
@@ -43,7 +45,8 @@ void Object::SetPosVector(GameMath::Vector3& posVector)
 	tPos.set_x(posVector._x);
 	tPos.set_y(posVector._y);
 	tPos.set_z(posVector._z);
-	_pos = tPos;
+	//_pos = tPos;
+	_objectInfo.mutable_stat_info()->CopyFrom(tPos);
 }
 
 void Object::SetPath(const NavPath& path)
@@ -69,9 +72,13 @@ void Object::UpdateMovement(float deltaTime)
 	GameMath::Vector3 delta = _movement.direction * _movement.speed * deltaTime;
 	_posVector = _posVector + delta;
 
-	_pos.set_x(_posVector._x);
-	_pos.set_y(_posVector._y);
-	_pos.set_z(_posVector._z);
+	//_pos.set_x(_posVector._x);
+	//_pos.set_y(_posVector._y);
+	//_pos.set_z(_posVector._z);
+	Protocol::PosInfo* tPosInfo = _objectInfo.mutable_pos_info();
+	tPosInfo->set_x(_posVector._x);
+	tPosInfo->set_y(_posVector._y);
+	tPosInfo->set_z(_posVector._z);
 }
 
 void Object::RequestMove(const vector<GameMath::Vector3>& path)
@@ -82,14 +89,16 @@ void Object::RequestMove(const vector<GameMath::Vector3>& path)
 		_isMoving = false;
 		_path.clear();
 		_pathIndex = 0;
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 		return;
 	}
 
 	_path = path;
 	_pathIndex = 0;
 	_isMoving = true;
-	_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	//_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	_objectInfo.mutable_pos_info()->set_state(Protocol::MoveState::MOVE_STATE_RUN);
 }
 
 void Object::RequestMoveFrom(const vector<GameMath::Vector3>& path, int32 startIndex)
@@ -99,7 +108,8 @@ void Object::RequestMoveFrom(const vector<GameMath::Vector3>& path, int32 startI
 		_isMoving = false;
 		_path.clear();
 		_pathIndex = 0;
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		_objectInfo.mutable_pos_info()->set_state(Protocol::MoveState::MOVE_STATE_IDLE);
 		return;
 	}
 
@@ -107,7 +117,8 @@ void Object::RequestMoveFrom(const vector<GameMath::Vector3>& path, int32 startI
 	// 현재 위치와 가장 가까운 지점부터 이동 시작 (뒤로 돌아가지 않음)
 	_pathIndex = max(0, min(startIndex, static_cast<int32>(path.size()) - 1));
 	_isMoving = true;
-	_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	//_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	_objectInfo.mutable_pos_info()->set_state(Protocol::MoveState::MOVE_STATE_RUN);
 }
 
 void Object::PostUpdate()
@@ -137,7 +148,7 @@ void Object::OnMoveBroadcastSent()
 void Object::AccumulateMoveTime(float deltaTime)
 {
 	// 이동 중일 때만 누적시킨다. 이 숫자를 보고 너무 자주 보내서 네트워크 터지지 않게한다.
-	if (_moveState == Protocol::MOVE_STATE_RUN)
+	if (_objectInfo.pos_info().state() == Protocol::MOVE_STATE_RUN)
 	{
 		_moveBroadcastElapsed += deltaTime;
 	}
@@ -152,7 +163,7 @@ bool Object::ShouldBroadcastMove() const
 	}
 
 	// 이동 중이거나, 강제 브로드캐스트가 요청된 상태라면 true
-	if (_moveState == Protocol::MoveState::MOVE_STATE_RUN)
+	if (_objectInfo.pos_info().state() == Protocol::MoveState::MOVE_STATE_RUN)
 		return true;
 
 	if (_forceBroadcastMove)
@@ -169,22 +180,21 @@ void Object::ResetBroadcastTimer()
 bool Object::ValidateMovement(float deltaTime)
 {
 	// 아직 기준점이 없다 -> 현재 위치를 초기 기준으로 삼고 통과한다.
-	if (_hasLastCheckPos == false)
-	{
+	//if (_hasLastCheckPos == false)
+	//{
 
-	}
+	//}
 	return false;
 }
 
 bool Object::ApplyDamage(uint64 dmg)
 {
-	uint64 cur = _statInfo.hp();
+	uint64 cur = _objectInfo.stat_info().hp();
 
 	uint64 after = (dmg >= cur) ? 0 : cur - dmg;
-	_statInfo.set_hp(after);
+	_objectInfo.mutable_stat_info()->set_hp(after);
 
-	GConsoleLogger->WriteStdErr(Color::GREEN,
-		L"[Object::ApplyDamage] cur=%llu dmg=%llu after=%llu\n", cur, dmg, after);
+	GConsoleLogger->WriteStdErr(Color::GREEN, L"[Object::ApplyDamage] cur=%llu dmg=%llu after=%llu\n", cur, dmg, after);
 
 	if (after == 0)
 		_isDead = true;

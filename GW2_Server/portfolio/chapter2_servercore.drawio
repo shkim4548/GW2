@@ -1,0 +1,555 @@
+<mxfile host="app.diagrams.net" version="21.0.0" type="device">
+
+  <!-- ============================================================
+       PAGE 1 : 서버 구동 흐름  (main → Session 사전 생성)
+       ============================================================ -->
+  <diagram name="서버 구동 흐름" id="ch2_p1">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1"
+      tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1"
+      pageWidth="1169" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="title" value="2장. 서버 코어 — 서버 구동 흐름 (main → Session 사전 생성)"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;
+                 fontSize=17;fontStyle=1;fontColor=#1a1a2e;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="20" width="1000" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- START -->
+        <mxCell id="s0" value="main() 진입"
+          style="ellipse;whiteSpace=wrap;html=1;
+                 fillColor=#1a1a2e;fontColor=#ffffff;strokeColor=#1a1a2e;
+                 fontSize=13;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="434" y="80" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- DB INIT -->
+        <mxCell id="s1" value="① DB 초기화
+GDBConnectionPool-&gt;Connect(ODBC 연결문자열)
+dbSync.Synchronize(&apos;GameDB.xml&apos;)  →  스키마 자동 동기화"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="284" y="170" width="500" height="65" as="geometry"/>
+        </mxCell>
+
+        <!-- PACKET HANDLER INIT -->
+        <mxCell id="s2" value="② ClientPacketHandler::Init()
+for i in 0..UINT16_MAX:  GPacketHandler[i] = Handle_INVALID
+GPacketHandler[PKT_C_MOVE]  = lambda → HandlePacket&lt;C_MOVE&gt;
+GPacketHandler[PKT_C_SKILL] = lambda → HandlePacket&lt;C_SKILL&gt;  ..."
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="275" width="700" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- SERVER SERVICE CREATION -->
+        <mxCell id="s3" value="③ ServerService 생성
+MakeShared&lt;ServerService&gt;(
+  NetAddress(127.0.0.1:7777),       ← 바인딩 주소·포트
+  MakeShared&lt;IocpCore&gt;(),           ← CreateIoCompletionPort() → IOCP 커널 오브젝트
+  MakeShared&lt;GameSession&gt;,          ← Session 팩토리 (클로저)
+  100                                ← maxSessionCount
+)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="390" width="800" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- SERVICE START -->
+        <mxCell id="s4" value="④ service-&gt;Start()"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#1565c0;fontColor=#ffffff;strokeColor=#0d47a1;
+                 fontSize=13;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="384" y="530" width="300" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- START ACCEPT GROUP BACKGROUND -->
+        <mxCell id="sa_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fffde7;strokeColor=#f9a825;opacity=50;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="610" width="1000" height="385" as="geometry"/>
+        </mxCell>
+        <mxCell id="sa_label" value="Listener::StartAccept(service) 내부"
+          style="text;html=1;fontSize=12;fontStyle=1;fontColor=#e65100;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="617" width="320" height="22" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sa1" value="A.  _socket = CreateSocket()  →  Listener 서버 소켓 생성 (WSASocket)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fff9c4;strokeColor=#f9a825;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="645" width="900" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sa2" value="B.  IocpCore::Register(Listener)  →  CreateIoCompletionPort(listener_socket, iocpHandle)  [Listener 소켓 IOCP 등록]"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fff9c4;strokeColor=#f9a825;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="695" width="900" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sa3" value="C.  SetReuseAddress() / SetLinger() / Bind(127.0.0.1:7777) / Listen()  →  포트 오픈, 연결 대기 시작"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fff9c4;strokeColor=#f9a825;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="745" width="900" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- REGISTER ACCEPT SUB-GROUP -->
+        <mxCell id="ra_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#e8f5e9;strokeColor=#43a047;opacity=60;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="795" width="900" height="185" as="geometry"/>
+        </mxCell>
+        <mxCell id="ra_label" value="D.  for i in 0 .. maxSessionCount(100):  RegisterAccept(acceptEvent)"
+          style="text;html=1;fontSize=11;fontStyle=1;fontColor=#2e7d32;"
+          vertex="1" parent="1">
+          <mxGeometry x="150" y="801" width="600" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ra1" value="service-&gt;CreateSession()
+─ _sessionFactory() → MakeShared&lt;GameSession&gt;()
+─ Session() 생성자 → _socket = CreateSocket()
+─ session-&gt;SetService(this)
+─ IocpCore::Register(session)  →  session 소켓 IOCP 등록"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;
+                 align=left;spacingLeft=8;"
+          vertex="1" parent="1">
+          <mxGeometry x="154" y="826" width="390" height="140" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ra2" value="AcceptEx(
+  listenerSocket,
+  session-&gt;GetSocket(),      ← 미리 생성된 소켓
+  recvBuffer.WritePos(),      ← 첫 수신 버퍼 포인터
+  &amp;acceptEvent               ← OVERLAPPED 구조체
+)
+→  WSA_IO_PENDING  (비동기 등록 완료)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;
+                 align=left;spacingLeft=8;"
+          vertex="1" parent="1">
+          <mxGeometry x="594" y="826" width="400" height="140" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ra_arrow" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;"
+          edge="1" source="ra1" target="ra2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- START RETURNS -->
+        <mxCell id="s5" value="_isRunning = true  /  service-&gt;Start() 반환"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="334" y="1020" width="400" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- PARALLEL BLOCK -->
+        <mxCell id="par_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;dashed=1;opacity=25;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="1090" width="1000" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="par_label" value="병렬 실행"
+          style="text;html=1;fontSize=11;fontStyle=3;fontColor=#ad1457;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="1095" width="80" height="18" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wt" value="⑤ 워커 스레드 × 5
+GThreadManager-&gt;Launch(DoWorkerJob)
+→ IocpCore::Dispatch(10ms) 루프 시작"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="1115" width="420" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lobby_init" value="⑥ GLobby-&gt;DoAsync(&amp;Lobby::LobbyInit)
+→ 내비게이션 / 레인 경로 초기화"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="564" y="1115" width="420" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- MAIN THREAD LOOP -->
+        <mxCell id="main_loop" value="⑦ Main Thread — 30 FPS 게임 루프
+deltaTime = clamp((now - lastTick) * 0.001f,  0.0f, 0.1f)
+if (deltaTime &gt;= 0.033f)  →  GLobby-&gt;LobbyUpdate(deltaTime)
+Sleep(1)   ← BusyLoop 방지"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e8f5e9;strokeColor=#43a047;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="1240" width="700" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="loop_back" value="while(true)"
+          style="edgeStyle=orthogonalEdgeStyle;html=1;
+                 strokeColor=#43a047;fontSize=10;fontStyle=2;
+                 exitX=0;exitY=0.5;exitDx=0;exitDy=0;
+                 entryX=0;entryY=0.5;entryDx=0;entryDy=0;"
+          edge="1" source="main_loop" target="main_loop" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="1280"/>
+              <mxPoint x="120" y="1280"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ARROWS (PAGE 1) -->
+        <mxCell id="a0" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s0"   target="s1"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s1"   target="s2"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s2"   target="s3"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s3"   target="s4"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s4"   target="sa1"       parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="sa1"  target="sa2"       parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="sa2"  target="sa3"       parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="sa3"  target="ra1"       parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="ra2"  target="s5"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s5"   target="wt"        parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="s5"  target="lobby_init" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="wt"  target="main_loop" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="lobby_init" target="main_loop" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ============================================================
+       PAGE 2 : 패킷 수신 · 역직렬화 · 스레드 분배 흐름
+       ============================================================ -->
+  <diagram name="패킷 수신·역직렬화·분배 흐름" id="ch2_p2">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1"
+      tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1"
+      pageWidth="1169" pageHeight="1854" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="t1" value="2장. 서버 코어 — 패킷 수신 · 역직렬화 · 스레드 분배 흐름"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;
+                 fontSize=17;fontStyle=1;fontColor=#1a1a2e;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="20" width="1000" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- CLIENT SEND -->
+        <mxCell id="p0" value="클라이언트  TCP 데이터 전송"
+          style="ellipse;whiteSpace=wrap;html=1;
+                 fillColor=#1a1a2e;fontColor=#ffffff;strokeColor=#1a1a2e;
+                 fontSize=12;"
+          vertex="1" parent="1">
+          <mxGeometry x="334" y="80" width="500" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- IOCP COMPLETION -->
+        <mxCell id="p1" value="IOCP 완료 통보 수신 (Recv 이벤트)
+GetQueuedCompletionStatus(iocpHandle, &amp;numOfBytes, &amp;key, &amp;iocpEvent, timeoutMs)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="170" width="800" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- DISPATCH -->
+        <mxCell id="p2" value="IocpCore::Dispatch()
+iocpEvent-&gt;owner  →  IocpObjectRef (Session)
+iocpObject-&gt;Dispatch(iocpEvent, numOfBytes)
+→ Session::Dispatch()  →  case EventType::Recv:  ProcessRecv(numOfBytes)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="265" width="800" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- RECV BUFFER GROUP -->
+        <mxCell id="rb_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#e3f2fd;strokeColor=#1565c0;opacity=40;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="368" width="1000" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="rb_title" value="Session::ProcessRecv()  —  RecvBuffer 처리"
+          style="text;html=1;fontSize=12;fontStyle=1;fontColor=#0d47a1;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="374" width="350" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rb1" value="RecvBuffer.OnWrite(numOfBytes)  →  _writePos += numOfBytes   (수신 바이트 반영)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="398" width="940" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="rb2" value="dataSize = DataSize()  =  _writePos - _readPos   (처리 대기 바이트 총량)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="446" width="940" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="rb3" value="processLen = OnRecv(ReadPos(), dataSize)   →   OnRead(processLen)   →   Clean()   →   RegisterRecv()"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="494" width="940" height="34" as="geometry"/>
+        </mxCell>
+
+        <!-- PACKETSESSION ONRECV -->
+        <mxCell id="ps1" value="PacketSession::OnRecv(buffer, dataSize)  —  패킷 경계 파싱 루프"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e1d5e7;strokeColor=#9673a6;
+                 fontSize=12;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="565" width="800" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- LOOP GROUP -->
+        <mxCell id="loop_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#f3e5f5;strokeColor=#9673a6;dashed=1;opacity=35;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="625" width="1000" height="310" as="geometry"/>
+        </mxCell>
+        <mxCell id="loop_label" value="while(true)"
+          style="text;html=1;fontSize=11;fontStyle=3;fontColor=#6a1b9a;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="630" width="80" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- DECISION 1 -->
+        <mxCell id="d1" value="dataSize &lt; sizeof(PacketHeader=4B) ?"
+          style="rhombus;whiteSpace=wrap;html=1;
+                 fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="309" y="653" width="550" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="d1_yes" value="YES → break"
+          style="text;html=1;fontSize=10;fontColor=#c62828;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="880" y="673" width="90" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- HEADER PARSE -->
+        <mxCell id="hp" value="header = *(PacketHeader*)(buffer + processLen)
+패킷 포맷:  [size : 2B][id : 2B][Protobuf data ...]
+header.size (전체 패킷 크기)  /  header.id (패킷 종류 ID)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="740" width="800" height="65" as="geometry"/>
+        </mxCell>
+
+        <!-- DECISION 2 -->
+        <mxCell id="d2" value="dataSize &lt; header.size ?"
+          style="rhombus;whiteSpace=wrap;html=1;
+                 fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="309" y="825" width="550" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2_yes" value="YES → break"
+          style="text;html=1;fontSize=10;fontColor=#c62828;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="880" y="845" width="90" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- ONRECVPACKET + processLen -->
+        <mxCell id="orp" value="OnRecvPacket(buffer + processLen, header.size)   /   processLen += header.size"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="910" width="800" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- LOOP BACK ARROW -->
+        <mxCell id="loop_back" value="루프 계속"
+          style="edgeStyle=orthogonalEdgeStyle;html=1;
+                 strokeColor=#9673a6;fontSize=10;fontStyle=2;
+                 exitX=0;exitY=0.5;exitDx=0;exitDy=0;
+                 entryX=0;entryY=0.5;entryDx=0;entryDy=0;"
+          edge="1" source="orp" target="d1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="930"/>
+              <mxPoint x="110" y="685"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- GAMESESSION -->
+        <mxCell id="gs1" value="GameSession::OnRecvPacket(buffer, len)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;
+                 fontSize=12;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="234" y="985" width="700" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- CLIENT PACKET HANDLER -->
+        <mxCell id="cph" value="ClientPacketHandler::HandlePacket(session, buffer, len)
+header = (PacketHeader*)buffer   →   header-&gt;id 추출"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="1070" width="800" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- GPACKETHANDLER TABLE -->
+        <mxCell id="gph" value="GPacketHandler[header-&gt;id](session, buffer, len)
+O(1) 테이블 조회  —  PacketHandlerFunc[UINT16_MAX] 배열 (Init()에서 id별 람다 등록)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="184" y="1165" width="800" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- HANDLEPACKET TEMPLATE GROUP -->
+        <mxCell id="hpt_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#e8f5e9;strokeColor=#43a047;opacity=40;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="1248" width="1000" height="155" as="geometry"/>
+        </mxCell>
+        <mxCell id="hpt_title" value="HandlePacket&lt;T&gt;() 템플릿  —  역직렬화"
+          style="text;html=1;fontSize=12;fontStyle=1;fontColor=#2e7d32;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="1254" width="300" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="hpt1" value="PacketType pkt   ←  Protobuf 메시지 객체 생성 (C_MOVE / C_SKILL / ...)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="1278" width="940" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="hpt2" value="pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader))
+→  Protobuf 역직렬화  (binary → C++ 구조체)   /   실패 시  return false"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;
+                 align=left;spacingLeft=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="1326" width="940" height="62" as="geometry"/>
+        </mxCell>
+
+        <!-- HANDLE_C_XXX -->
+        <mxCell id="hcx" value="Handle_C_XXX(session, pkt)  호출"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fff9c4;strokeColor=#f9a825;
+                 fontSize=12;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="309" y="1435" width="550" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- BRANCH GROUP -->
+        <mxCell id="br_bg" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;dashed=1;opacity=25;"
+          vertex="1" parent="1">
+          <mxGeometry x="84" y="1508" width="1000" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="br_label" value="분기"
+          style="text;html=1;fontSize=11;fontStyle=3;fontColor=#ad1457;"
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="1513" width="60" height="18" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="br1" value="즉시 처리  (워커 스레드)
+ex) Handle_C_LOGIN
+→ S_LOGIN 응답 생성 &amp; Send"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="104" y="1530" width="400" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="br2" value="room-&gt;DoAsync(&amp;Room::HandleXXX, ...)
+→ Room JobQueue 적재
+→ Room 스레드에서 직렬 실행
+ex) Handle_C_MOVE / Handle_C_SKILL"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fce4ec;strokeColor=#e91e63;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="564" y="1530" width="430" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- REGISTER RECV -->
+        <mxCell id="rrv" value="RegisterRecv()
+WSARecv(_socket, recvBuffer.WritePos(), &amp;_recvEvent, ...)  →  다음 패킷 비동기 수신 대기 (IOCP 재등록)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="134" y="1645" width="900" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- IOCP LOOP BACK -->
+        <mxCell id="iocp_loop" value="IOCP 루프 재진입"
+          style="edgeStyle=orthogonalEdgeStyle;html=1;
+                 strokeColor=#1565c0;fontSize=10;fontStyle=2;
+                 exitX=1;exitY=0.5;exitDx=0;exitDy=0;
+                 entryX=1;entryY=0.5;entryDx=0;entryDy=0;"
+          edge="1" source="rrv" target="p1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="1672"/>
+              <mxPoint x="1100" y="197"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ARROWS (PAGE 2) -->
+        <mxCell id="b0"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="p0"  target="p1"  parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b1"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="p1"  target="p2"  parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b2"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="p2"  target="rb1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b3"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="rb1" target="rb2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b4"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="rb2" target="rb3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b5"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="rb3" target="ps1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b6"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="ps1" target="d1"  parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b7"  value="NO" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontColor=#2e7d32;fontStyle=1;" edge="1" source="d1" target="hp"  parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b8"  style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="hp"  target="d2"  parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b9"  value="NO" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontColor=#2e7d32;fontStyle=1;" edge="1" source="d2" target="orp" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="orp" target="gs1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="gs1" target="cph" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="cph" target="gph" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b13" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="gph" target="hpt1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b14" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="hpt1" target="hpt2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b15" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="hpt2" target="hcx" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b16" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="hcx" target="br1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b17" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="hcx" target="br2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b18" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="br1" target="rrv" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b19" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="br2" target="rrv" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

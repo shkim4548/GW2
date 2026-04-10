@@ -10,15 +10,15 @@ public:
 
 	void InitPlayer(shared_ptr<Room> room);
 
-	void SetPlayerId(int32 id) { _objectId = id; }
+	void SetPlayerId(int32 id) { _objectInfo.set_object_id(id); }
 	void SetSession(GameSessionRef session) { _session = session; }
 
 	// Player 타입 지정
 	void SetPlayerType(Protocol::PlayerType type) { _playerType = type; }
 	Protocol::PlayerType GetPlayerType() const { return _playerType; }
 
-	int64 GetPlayerId() { return _objectId; }
-	Protocol::CampType GetCampType() { return _campType; }
+	int64 GetPlayerId() { return _objectInfo.object_id(); }
+	Protocol::CampType GetCampType() { return static_cast<Protocol::CampType>(_objectInfo.team_flag()); }
 	weak_ptr<GameSession> GetSession() { return _session.load(); }
 
 	// Contents

@@ -6,10 +6,11 @@
 
 Turret::Turret()
 {
-	_objectType = Protocol::OBJECT_TYPE_TURRET;
-	_statInfo.set_hp(3000);
-	_statInfo.set_max_hp(3000);
-	_statInfo.set_attack(150);
+	SetObjectType(Protocol::OBJECT_TYPE_TURRET);
+	Protocol::StatInfo* tstat = _objectInfo.mutable_stat_info();
+	tstat->set_hp(3000);
+	tstat->set_max_hp(3000);
+	tstat->set_attack(150);
 }
 
 Turret::~Turret()
@@ -24,14 +25,17 @@ void Turret::InitTurret(shared_ptr<Room> room, Protocol::CampType team)
 		GConsoleLogger->WriteStdErr(Color::RED, L"Turret Room is nullptr\n");
 	}
 	_teamId = static_cast<uint8>(team);
-	_campType = team;
+	//_campType = team;
+	SetCampType(team);
 
 	UnitStat stat = GLobby->GetUnitStat("turret");
 	if (stat.hp > 0)
 	{
-		_statInfo.set_hp(stat.hp);
-		_statInfo.set_max_hp(stat.maxHp);
-		_statInfo.set_attack(stat.attackDamage);
+		Protocol::StatInfo* tstat = _objectInfo.mutable_stat_info();
+		tstat->set_hp(stat.hp);
+		tstat->set_max_hp(stat.maxHp);
+		tstat->set_attack(stat.attackDamage);
+		
 		_attackInterval = stat.attackInterval;
 		_attackRangeSq = stat.attackRange * stat.attackRange;
 	}
@@ -104,7 +108,7 @@ bool Turret::IsValidTarget(shared_ptr<Object> target) const
 	}
 
 	// ÆÀ Ã¼Å©: °°Àº ÆÀÀÌ¸é ¹«È¿ Å¸°Ù
-	if (target->GetTeamFlag() == _campType)
+	if (target->GetTeamFlag() == GetTeamFlag())
 	{
 		return false;
 	}
@@ -121,7 +125,8 @@ void Turret::FireCall(shared_ptr<Object> target)
 	if (room == nullptr)
 		return;
 
-	uint64 dmg = _statInfo.attack();
+	//uint64 dmg = _statInfo.attack();
+	uint64 dmg = _objectInfo.stat_info().attack();
 	bool died = target->ApplyDamage(dmg);
 
 	room->DoAsync(&Room::HandleTurretAttack, this->GetObjectId(), target->GetObjectId());
@@ -163,7 +168,7 @@ weak_ptr<Object> Turret::AcquireTarget()
 			continue;
 		}
 
-		if (obj->GetTeamFlag() == _campType)
+		if (obj->GetTeamFlag() == GetTeamFlag())
 		{
 			continue;
 		}

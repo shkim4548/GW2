@@ -17,6 +17,7 @@ public class BaseController : MonoBehaviour
 
     // === Server Pos ===
     public int Id { get; set; }
+    public int RoomId { get; set; }
     public float _sendPacketDelay = 0.2f;
     public float LastServerTime { get; set; }
     public bool _isMoving = false;
@@ -98,6 +99,7 @@ public class BaseController : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _hpBar = GetComponentInChildren<WUI_HpBar>();
+        Id = Bootstrapper.Instance.NetworkService.GetNetworkId();
         //Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);

@@ -127,7 +127,7 @@ void Lobby::OnClientEnter(PlayerRef player)
 
 	int64 id = player->GetPlayerId();
 	cout << "[OnClientEnter] GetPlayerId : " << id << '\n';
-	_lobbyPlayers[id] = player;
+    _lobbyPlayers.emplace(id, player);
 	cout << "lobbyPlayer size : " << _lobbyPlayers.size() << '\n';
 
 	// TODO : RoomId 선택 혹은 랜덤 수를 넣을 수 있도록 해줘야한다.
@@ -170,24 +170,24 @@ void Lobby::DeleteRoom(int32 roomId)
 
 void Lobby::EnterRoom(int32 roomId, int64 playerId)
 {
-	// Lobby에서 빼주고, Room에 플레이어를 넣어주자.
-	PlayerRef player = _lobbyPlayers[playerId];
-	if (player == nullptr)
+	// Lobby에서 빼주고, Room에 플레이어를 넣어주자.    
+    unordered_map<int32, PlayerRef>::iterator playerIter = _lobbyPlayers.find(playerId);
+	if (playerIter == _lobbyPlayers.end())
 	{
 		// 에러 발생 부분
-		GConsoleLogger->WriteStdErr(Color::RED, L"[EnterRoom] player is nullptr\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Lobby::EnterRoom] player is nullptr\n");
 		return;
 	}
-
-    auto it = _rooms.find(roomId);      // ← 추가
-    if (it == _rooms.end())             // ← 추가
+    PlayerRef player = playerIter->second;
+    auto it = _rooms.find(roomId);      
+    if (it == _rooms.end())             
     {
         GConsoleLogger->WriteStdErr(Color::RED, L"[EnterRoom] room %d not found\n", roomId);
         return;
     }
 
     _lobbyPlayers.erase(playerId);
-    it->second->Enter(player);          // ← _rooms[roomId] 대신
+    it->second->Enter(player);
 }
 
 void Lobby::RunRooms()

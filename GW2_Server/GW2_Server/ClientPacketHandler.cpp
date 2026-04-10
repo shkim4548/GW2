@@ -23,9 +23,6 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 // DB는 우선 빼고, 간단하게 닉네임만 던져주자
 bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 {
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Handle_C_Login] LoginPacketRecv : ");
-	cout << pkt.nickname() << endl;
-	
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
 	Protocol::S_LOGIN replyLoginPkt;
@@ -47,7 +44,7 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 		return true;
 
 	int32 mode = pkt.game_mode();
-	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] mode : %d", mode);
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] mode : %d\n", mode);
 	if (mode == 0)       
 		room->SetMaxPlayers(1);
 	else if (mode == 1)  
@@ -55,6 +52,7 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	else if (mode == 2)  
 		room->SetMaxPlayers(4);
 
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] try enter player id : %d\n", pkt.playerindex());
 	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());  // Enter 내부에서 정원 체크
 	return true;
 }
@@ -95,27 +93,27 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	{
 		// 현재 에러가 발생하는 부분은 여기거든
 		//cout << roomId << endl;
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] room is nullptr\n");
 		return false;
 	}
 	
 	// Room을 얻어내고 해당 Room에서 player를 가져온다
 	int32 playerId = pkt.object_id();
+	cout << "playerId : " << playerId << '\n';
 	PlayerRef player = room->GetPlayerById(playerId).lock();
 	if (player == nullptr)
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] player is nullptr");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_MOVE] player is nullptr\n");
 		return false;
 	}
 
 	//DEBUG
 	// startPos
-	cout << "[Handle_C_MOVE] StartPos " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
+	//cout << "[Handle_C_MOVE] StartPos " << pkt.start_pos().x() << ", " << pkt.start_pos().y() << ", " << pkt.start_pos().z() << '\n';
 	// targetPos
-	cout << "[Handle_C_MOVE] TargetPos " << pkt.target_pos().x() << ", " << pkt.target_pos().y() << ", " << pkt.target_pos().z() << '\n';
+	//cout << "[Handle_C_MOVE] TargetPos " << pkt.target_pos().x() << ", " << pkt.target_pos().y() << ", " << pkt.target_pos().z() << '\n';
 
 	room->DoAsync(&Room::HandleMovePlayer, pkt);
-	//room->HandleMovePlayer(player, pkt);
 	return true;
 }
 
@@ -134,9 +132,12 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 		roomInfo->set_rommname(room->GetRoomName());
 	}
 	// TODO : RoomId HardCoding
-	PlayerRef newPlayer =  GLobby->GetLobbyPlayers()[1];
-	lobbyPkt.set_player_id(newPlayer->GetPlayerId());
-	cout << newPlayer->GetPlayerId() << endl;
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef newPlayer = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
+	GLobby->OnClientEnter(newPlayer);
+
+	if (newPlayer == nullptr) 
+		return false;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(lobbyPkt);
 	session->Send(sendBuffer);
@@ -188,10 +189,14 @@ bool Handle_C_CONFIRM_CHARACTER(PacketSessionRef& session, Protocol::C_CONFIRM_C
 	GConsoleLogger->WriteStdOut(Color::WHITE, L"Confirm Character\n");
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 	PlayerRef player = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
-	if (player == nullptr) return false;
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Handle_C_CONFIRM_CHARACTER] player objectId=%d\n", player ? player->GetObjectId() : -1);
+
+	if (player == nullptr) 
+		return false;
 
 	shared_ptr<Room> room = GLobby->GetRoomById(pkt.room_id()).lock();
-	if (room == nullptr) return false;
+	if (room == nullptr) 
+		return false;
 
 	room->DoAsync(&Room::HandleConfirmCharacter, player, pkt.player_type());
 	return true;

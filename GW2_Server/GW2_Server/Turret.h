@@ -14,7 +14,7 @@ public:
 
 	// Setters
 	void SetTeamId(uint8 teamId) { _teamId = teamId; }
-	void SetTurretId(int32 turretId) { _objectId = turretId; }
+	void SetTurretId(int32 turretId) { _objectInfo.set_object_id(turretId); }
 
 private:
 	virtual void UpdateController(float deltaTime) override;

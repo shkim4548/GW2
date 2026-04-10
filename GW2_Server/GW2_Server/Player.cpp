@@ -6,7 +6,8 @@
 
 Player::Player()
 {
-    _objectType = Protocol::ObjectType::OBJECT_TYPE_PLAYER;
+    //_objectType = Protocol::ObjectType::OBJECT_TYPE_PLAYER;
+    SetObjectType(Protocol::ObjectType::OBJECT_TYPE_PLAYER);
 }
 
 Player::~Player()
@@ -29,22 +30,23 @@ void Player::InitPlayer(shared_ptr<Room> room)
     }
 
     UnitStat stat = GLobby->GetUnitStat(statKey);
+    Protocol::StatInfo* tStatInfo = _objectInfo.mutable_stat_info();
     if (stat.hp > 0)
     {
-        _statInfo.set_hp(stat.hp);
-        _statInfo.set_max_hp(stat.maxHp);
-        _statInfo.set_attack(stat.attackDamage);
-        _statInfo.set_attack_range(stat.attackRange);
-        _statInfo.set_speed(stat.moveSpeed);
+        tStatInfo->set_hp(stat.hp);
+        tStatInfo->set_max_hp(stat.maxHp);
+        tStatInfo->set_attack(stat.attackDamage);
+        tStatInfo->set_attack_range(stat.attackRange);
+        tStatInfo->set_speed(stat.moveSpeed);
         _attackInterval = stat.attackInterval;
     }
     else
     {
         // fallback
-        _statInfo.set_hp(1000);
-        _statInfo.set_max_hp(1000);
-        _statInfo.set_attack(30);
-        _statInfo.set_attack_range(15.0f);
+        tStatInfo->set_hp(1000);
+        tStatInfo->set_max_hp(1000);
+        tStatInfo->set_attack(30);
+        tStatInfo->set_attack_range(15.0f);
     }
 
     //GConsoleLogger->WriteStdOut(Color::GREEN, L"[InitPlayer] hp=%llu atk=%llu\n", _statInfo.hp(), _statInfo.attack());
@@ -103,8 +105,8 @@ void Player::UpdateController(float deltaTime)
 
     if (_attackCooldown > 0.0f)
         _attackCooldown -= deltaTime;
-
-    if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
+    
+    if (GetMoveState() == (Protocol::MoveState::MOVE_STATE_RUN))
     {
         _movement.speed = 0.f;
         return;
@@ -112,7 +114,8 @@ void Player::UpdateController(float deltaTime)
 
     if (_pathIndex >= static_cast<int32>(_path.size()))
     {
-        _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+        //_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+        SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
         _isMoving = false;
         _movement.speed = 0.f;
         return;
@@ -153,7 +156,8 @@ void Player::UpdateController(float deltaTime)
 
     if (_pathIndex >= static_cast<int32>(_path.size()))
     {
-        _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+        //_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+        SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
         _isMoving = false;
         _movement.speed = 0.f;
     }
@@ -173,5 +177,6 @@ void Player::OnDead()
         return;
     }
 
-    room->DoAsync(&Room::HandleRemoveObject, _objectId, -1);
+    int32 objectId = _objectInfo.object_id();
+    room->DoAsync(&Room::HandleRemoveObject, objectId, -1);
 }

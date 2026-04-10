@@ -12,29 +12,35 @@ public:
 	Object();
 	virtual ~Object();
 
-	int32 GetObjectId() { return _objectId; }
-	Protocol::PosInfo GetPosInfo() { return _pos; }
+	int32 GetObjectId() { return _objectInfo.object_id(); }
+	Protocol::PosInfo GetPosInfo() { return _objectInfo.pos_info(); }
 	GameMath::Vector3 GetPosVector() const { return _posVector; }
-	Protocol::StatInfo GetStatInfo() const { return _statInfo; }
-	Protocol::MoveState GetMoveState() const { return _moveState; }
-	Protocol::ObjectType GetObjectType() const { return _objectType; }
-	Protocol::CampType GetTeamFlag() const { return _campType; }
-	float GetHp() { return _statInfo.hp(); }
-	float GetYaw() { return _pos.yaw(); }
+	Protocol::StatInfo GetStatInfo() const { return _objectInfo.stat_info(); }
+	Protocol::MoveState GetMoveState() const { return _objectInfo.pos_info().state(); }
+	Protocol::ObjectType GetObjectType() const { return _objectInfo.object_type(); }
+	Protocol::CampType GetTeamFlag() const { return static_cast<Protocol::CampType>(_objectInfo.team_flag());	}
+	
+
+	float GetHp() { return _objectInfo.stat_info().hp(); }
+	float GetYaw() { return _objectInfo.pos_info().yaw(); }
 	bool GetIsDead() { return _isDead; }
+
+
+
 	void FullHeal();
 	uint64 Heal(uint64 amount);
 	// TODO : 사망 여부 체크 로직 필요
 	bool IsDead();
 
-	void SetObjectId(int64 id) { _objectId = id; }
+	void SetObjectId(int64 id) { _objectInfo.set_object_id(id); }
 	void SetPosInfo(Protocol::PosInfo posInfo);
 	void SetPosVector(GameMath::Vector3& posVector);
-	void SetMoveState(Protocol::MoveState moveState) { _moveState = moveState; }
+	void SetMoveState(Protocol::MoveState moveState) { _objectInfo.mutable_pos_info()->set_state(moveState); }
 	void SetIsMoving(bool isMoving) { _isMoving = isMoving; }
-	void SetRoomId(int32 roomId) { _roomId = roomId; }
+	void SetRoomId(int32 roomId) { _objectInfo.set_room_id(roomId); }
 	void SetIsDead(bool isDead) { _isDead = isDead; }
-	void SetCampType(Protocol::CampType camp) { _campType = camp; }
+	void SetCampType(Protocol::CampType camp) { _objectInfo.set_team_flag(camp); }
+	void SetObjectType(Protocol::ObjectType type) { _objectInfo.set_object_type(type); }
 
 	// Navigation
 	void SetPath(const NavPath& path);
@@ -58,60 +64,43 @@ public:
 	bool ValidateMovement(float deltaTime);
 	
 	// TYPE HELPER
-	bool IsPlayer() const { return _objectType == Protocol::ObjectType::OBJECT_TYPE_PLAYER; }
-	bool IsMinion() const {	return _objectType == Protocol::ObjectType::OBJECT_TYPE_MINION; }
-	bool IsTurret() const {	return _objectType == Protocol::ObjectType::OBJECT_TYPE_TURRET; }
-	bool IsNexus()  const {	return _objectType == Protocol::ObjectType::OBJECT_TYPE_NEXUS;	}
+	bool IsPlayer() const { return _objectInfo.object_type() == Protocol::ObjectType::OBJECT_TYPE_PLAYER; }
+	bool IsMinion() const {	return _objectInfo.object_type() == Protocol::ObjectType::OBJECT_TYPE_MINION; }
+	bool IsTurret() const {	return _objectInfo.object_type() == Protocol::ObjectType::OBJECT_TYPE_TURRET; }
+	bool IsNexus()  const {	return _objectInfo.object_type() == Protocol::ObjectType::OBJECT_TYPE_NEXUS;	}
 	
 	// STATE HELPER
 	bool GetIsMoving() { return _isMoving; }
 
 	// STAT HELPER
 	bool ApplyDamage(uint64 dmg);
-	uint64_t GetHp()    const { return _statInfo.hp(); }
-	uint64_t GetMaxHp() const { return _statInfo.max_hp(); }
-	void SetHp(uint64_t hp) { _statInfo.set_hp(hp); }
-	void SetMaxHp(uint64_t hp) { _statInfo.set_max_hp(hp); }
+	uint64_t GetHp()    const { return _objectInfo.stat_info().hp(); }
+	uint64_t GetMaxHp() const { return _objectInfo.stat_info().max_hp(); }
+	void SetHp(uint64_t hp) { _objectInfo.mutable_stat_info()->set_hp(hp); }
+	void SetMaxHp(uint64_t hp) { _objectInfo.mutable_stat_info()->set_max_hp(hp); }
 
 	// Debug
-	int32 GetRoomId() { return _roomId; }
+	int32 GetRoomId() { return _objectInfo.room_id(); }
 	virtual void OnDead() = 0;
 
-protected:
-
 public:
-	NavPath _path;
-	size_t  _pathIndex = 0;
+	NavPath  _path;
+	size_t   _pathIndex = 0;
+	bool    _isStunned = false;
+	float   _stunTimer = 0.0f;
+	Protocol::ObjectInfo _objectInfo;
 
-	bool  _isStunned = false;
-	float _stunTimer = 0.0f;
 protected:
-	int32 _objectId = 0;
-	Protocol::PosInfo _pos;
-	Protocol::StatInfo _statInfo;
-	GameMath::Vector3 _posVector;
-	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
 
-	bool _isMoving = false;
-	Protocol::MoveState _moveState = Protocol::MoveState::MOVE_STATE_IDLE;
-	Protocol::ObjectType _objectType = Protocol::ObjectType::OBJECT_TYPE_NONE;
-	Protocol::CampType _campType = Protocol::CampType::CAMP_NEUTURAL;
-	float _moveSpeed = 100.0f;
+	GameMath::Vector3  _posVector;      
 	GameMath::Movement _movement;
-	weak_ptr<Room> _room;
-	int32 _roomId = -1;
-
-	mutable float _moveBroadcastElapsed = 0.0f;
-	static constexpr float MOVE_BROADCAST_INTERVAL = 0.1f;
-	bool _forceBroadcastMove = false;  // ★ 추가
-
-
-private:
-	// === 이동상태 이상 탐지 === 
-	GameMath::Vector3 _lastCheckPos;
-	bool _hasLastCheckPos = false;
-	bool _isDead = false;
-
+	weak_ptr<Room>     _room;
+	weak_ptr<Navigation::NavigationSystem> _navigationSystem;
+	float   _moveSpeed = 100.0f;
+	float   _moveBroadcastElapsed = 0.0f;
+	bool    _forceBroadcastMove = false;
+	bool    _isMoving = false;
+	bool    _isDead = false;
 
 };
 

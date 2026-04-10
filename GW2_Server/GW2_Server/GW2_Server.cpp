@@ -51,11 +51,7 @@ int main()
 
 	ClientPacketHandler::Init();
 	// ServerService는 책임이 IOCP에 한정되어야한다.
-	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress(L"127.0.0.1", 7777),
-		MakeShared<IocpCore>(),
-		MakeShared<GameSession>, // TODO : SessionManager 등
-		100);
+	ServerServiceRef service = MakeShared<ServerService>(NetAddress(L"127.0.0.1", 7777), MakeShared<IocpCore>(), 	MakeShared<GameSession>, 100);
 
 	ASSERT_CRASH(service->Start());
 

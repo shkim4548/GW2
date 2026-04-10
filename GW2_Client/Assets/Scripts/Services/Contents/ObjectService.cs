@@ -31,6 +31,8 @@ public class ObjectService : IObjectService
     public void Add(ObjectInfo info, bool myPlayer = false)
     {
         int objectId = info.ObjectId;
+        //int objectId = Bootstrapper.Instance.NetworkService.GetNetworkId();
+        Debug.Log($"[ObjectService::Add] objectId : {objectId}");
         int roomId = info.RoomId;
         GameObject go;
         if (_objects.TryGetValue(objectId, out go))

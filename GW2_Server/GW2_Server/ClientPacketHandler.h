@@ -13,29 +13,31 @@ enum : uint16
 	PKT_S_ENTER_GAME = 1004,
 	PKT_C_START_GAME = 1005,
 	PKT_S_START_GAME = 1006,
-	PKT_C_MOVE = 1007,
-	PKT_S_MOVE = 1008,
-	PKT_S_MOVE_END = 1009,
-	PKT_S_MINION_MOVE = 1010,
-	PKT_C_SKILL = 1011,
-	PKT_S_SKILL = 1012,
-	PKT_C_ENTER_LOBBY = 1013,
-	PKT_S_ENTER_LOBBY = 1014,
-	PKT_S_DIE = 1015,
-	PKT_S_HP_CHANGE = 1016,
-	PKT_S_END_GAME = 1017,
-	PKT_S_RESPAWN = 1018,
-	PKT_S_HAND_SYNC = 1019,
-	PKT_S_DRAW_CARD = 1020,
-	PKT_S_GOLD_UPDATE = 1021,
-	PKT_C_BUY_CARD = 1022,
-	PKT_C_REMOVE_CARD = 1023,
-	PKT_S_BUY_RESULT = 1024,
-	PKT_C_SELECT_CHARACTER = 1025,
-	PKT_S_CHARACTER_SELECTED = 1026,
-	PKT_C_CONFIRM_CHARACTER = 1027,
-	PKT_S_BUFF_APPLIED = 1028,
-	PKT_S_STUN = 1029,
+	PKT_S_SPAWN = 1007,
+	PKT_S_DESPAWN = 1008,
+	PKT_C_MOVE = 1009,
+	PKT_S_MOVE = 1010,
+	PKT_S_MOVE_END = 1011,
+	PKT_S_MINION_MOVE = 1012,
+	PKT_C_SKILL = 1013,
+	PKT_S_SKILL = 1014,
+	PKT_C_ENTER_LOBBY = 1015,
+	PKT_S_ENTER_LOBBY = 1016,
+	PKT_S_DIE = 1017,
+	PKT_S_HP_CHANGE = 1018,
+	PKT_S_END_GAME = 1019,
+	PKT_S_RESPAWN = 1020,
+	PKT_S_HAND_SYNC = 1021,
+	PKT_S_DRAW_CARD = 1022,
+	PKT_S_GOLD_UPDATE = 1023,
+	PKT_C_BUY_CARD = 1024,
+	PKT_C_REMOVE_CARD = 1025,
+	PKT_S_BUY_RESULT = 1026,
+	PKT_C_SELECT_CHARACTER = 1027,
+	PKT_S_CHARACTER_SELECTED = 1028,
+	PKT_C_CONFIRM_CHARACTER = 1029,
+	PKT_S_BUFF_APPLIED = 1030,
+	PKT_S_STUN = 1031,
 };
 
 // Custom Handlers
@@ -80,6 +82,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_LOGIN& pkt) { return MakeSendBuffer(pkt, PKT_S_LOGIN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_START_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_START_GAME); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_SPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_SPAWN); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_DESPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_DESPAWN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MOVE_END& pkt) { return MakeSendBuffer(pkt, PKT_S_MOVE_END); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_MINION_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_S_MINION_MOVE); }

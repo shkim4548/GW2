@@ -1,0 +1,319 @@
+<mxfile host="app.diagrams.net" version="21.0.0" type="device">
+  <diagram name="전체 아키텍처" id="arch-overview">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== Title ===== -->
+        <mxCell id="title" value="GW2 Server — 전체 시스템 아키텍처"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;
+                 fontSize=22;fontStyle=1;fontColor=#1a1a2e;"
+          vertex="1" parent="1">
+          <mxGeometry x="227" y="20" width="1200" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== ① Client Layer ===== -->
+        <mxCell id="client_bg" value="① Client Layer"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#f0f4f8;strokeColor=#90a4ae;
+                 fontStyle=1;fontSize=13;fontColor=#37474f;
+                 verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="1574" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="unity" value="&lt;b&gt;Unity Client (C#)&lt;/b&gt;&lt;br&gt;
+          NetworkManager&lt;br&gt;
+          Protobuf 직렬화 / TCP 송수신"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;
+                 fontSize=12;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="677" y="110" width="300" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Client → Session arrow -->
+        <mxCell id="arr_client_net" value="TCP / Protobuf"
+          style="edgeStyle=orthogonalEdgeStyle;html=1;
+                 fontSize=11;fontStyle=2;fontColor=#1565c0;
+                 strokeColor=#1565c0;"
+          edge="1" source="unity" target="cell_session" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== ② Network Layer ===== -->
+        <mxCell id="net_bg" value="② Network Layer  (ServerCore)"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e3f2fd;strokeColor=#1565c0;
+                 fontStyle=1;fontSize=13;fontColor=#0d47a1;
+                 verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="250" width="1574" height="155" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_iocp" value="&lt;b&gt;IocpCore&lt;/b&gt;&lt;br&gt;
+          IOCP 커널 오브젝트&lt;br&gt;
+          Dispatch() 루프"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="65" y="278" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_listener" value="&lt;b&gt;Listener&lt;/b&gt;&lt;br&gt;
+          AcceptEx 슬롯 × 100&lt;br&gt;
+          비동기 연결 수락"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="305" y="278" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_session" value="&lt;b&gt;Session / PacketSession&lt;/b&gt;&lt;br&gt;
+          RecvBuffer (링버퍼)&lt;br&gt;
+          SendQueue + RegisterSend"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="545" y="278" width="220" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_gamesession" value="&lt;b&gt;GameSession&lt;/b&gt;&lt;br&gt;
+          OnConnected → SessionManager&lt;br&gt;
+          OnRecvPacket 진입점"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="810" y="278" width="220" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_handler" value="&lt;b&gt;ClientPacketHandler&lt;/b&gt;&lt;br&gt;
+          GPacketHandler[id] 테이블&lt;br&gt;
+          Protobuf 역직렬화"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="1080" y="278" width="220" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Network inner arrows -->
+        <mxCell id="arr_n1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;"
+          edge="1" source="cell_iocp" target="cell_listener" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_n2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;"
+          edge="1" source="cell_listener" target="cell_session" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_n3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;"
+          edge="1" source="cell_session" target="cell_gamesession" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_n4" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;"
+          edge="1" source="cell_gamesession" target="cell_handler" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Network → GameLogic arrow -->
+        <mxCell id="arr_net_logic" value="DoAsync / HandlePacket"
+          style="edgeStyle=orthogonalEdgeStyle;html=1;
+                 fontSize=11;fontStyle=2;fontColor=#2e7d32;
+                 strokeColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;
+                 entryX=0.5;entryY=0;entryDx=0;entryDy=0;"
+          edge="1" source="cell_handler" target="cell_room" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== ③ Game Logic Layer ===== -->
+        <mxCell id="logic_bg" value="③ Game Logic Layer"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#e8f5e9;strokeColor=#2e7d32;
+                 fontStyle=1;fontSize=13;fontColor=#1b5e20;
+                 verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="1574" height="170" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_lobby" value="&lt;b&gt;Lobby&lt;/b&gt;&lt;br&gt;
+          룸 목록 관리&lt;br&gt;
+          플레이어 입장 처리"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="65" y="490" width="175" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_room" value="&lt;b&gt;Room ★&lt;/b&gt;&lt;br&gt;
+          게임 룸 / 오브젝트 관리&lt;br&gt;
+          Broadcast / UpdateRoom"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;
+                 fontSize=11;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="275" y="490" width="185" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_player" value="&lt;b&gt;Player&lt;/b&gt;&lt;br&gt;
+          이동 / 스킬 / 카드&lt;br&gt;
+          경로 추종 (_path)"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="495" y="490" width="175" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_minion" value="&lt;b&gt;Minion&lt;/b&gt;&lt;br&gt;
+          AI 상태머신&lt;br&gt;
+          IDLE→추적→공격→복귀"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="705" y="490" width="175" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_objects" value="&lt;b&gt;Turret / Nexus / Baron&lt;/b&gt;&lt;br&gt;
+          게임 오브젝트&lt;br&gt;
+          공격 / 피격 처리"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="915" y="490" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_object_base" value="&lt;b&gt;Object (Base)&lt;/b&gt;&lt;br&gt;
+          enable_shared_from_this&lt;br&gt;
+          공통 인터페이스"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="1150" y="490" width="175" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Object base inheritance arrows -->
+        <mxCell id="arr_obj1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;dashed=1;endArrow=open;endFill=0;"
+          edge="1" source="cell_lobby" target="cell_object_base" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_obj2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;dashed=1;endArrow=open;endFill=0;"
+          edge="1" source="cell_player" target="cell_object_base" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_obj3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;dashed=1;endArrow=open;endFill=0;"
+          edge="1" source="cell_minion" target="cell_object_base" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Logic → Systems arrow -->
+        <mxCell id="arr_logic_sys" value=""
+          style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b45309;
+                 exitX=0.5;exitY=1;exitDx=0;exitDy=0;
+                 entryX=0.5;entryY=0;entryDx=0;entryDy=0;"
+          edge="1" source="cell_room" target="cell_nav" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== ④ Core Systems Layer ===== -->
+        <mxCell id="sys_bg" value="④ Core Systems"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fffde7;strokeColor=#f57f17;
+                 fontStyle=1;fontSize=13;fontColor=#e65100;
+                 verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="690" width="1574" height="145" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_nav" value="&lt;b&gt;NavigationSystem&lt;/b&gt;&lt;br&gt;
+          WalkableGrid (NavMesh→격자)&lt;br&gt;
+          A* FindPath / 레인 필터링"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="65" y="720" width="260" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_jobqueue" value="&lt;b&gt;JobQueue / DoAsync&lt;/b&gt;&lt;br&gt;
+          Thread-safe 커맨드 패턴&lt;br&gt;
+          스레드 간 크로스 호출 해결"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="370" y="720" width="260" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_threadmgr" value="&lt;b&gt;ThreadManager&lt;/b&gt;&lt;br&gt;
+          워커 스레드 × 5&lt;br&gt;
+          DistributeReservedJobs"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="675" y="720" width="260" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_sendbuf" value="&lt;b&gt;SendBufferManager&lt;/b&gt;&lt;br&gt;
+          풀 기반 송신 버퍼&lt;br&gt;
+          Scatter-Gather WSASend"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;"
+          vertex="1" parent="1">
+          <mxGeometry x="980" y="720" width="260" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Systems → DB arrow -->
+        <mxCell id="arr_sys_db" value=""
+          style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6a1b9a;
+                 exitX=0.5;exitY=1;exitDx=0;exitDy=0;
+                 entryX=0.5;entryY=0;entryDx=0;entryDy=0;"
+          edge="1" source="cell_threadmgr" target="cell_db" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== ⑤ Data Layer ===== -->
+        <mxCell id="db_bg" value="⑤ Data Layer"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#f3e5f5;strokeColor=#6a1b9a;
+                 fontStyle=1;fontSize=13;fontColor=#4a148c;
+                 verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="890" width="1574" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cell_db" value="&lt;b&gt;SQL Server (LocalDB)&lt;/b&gt;&lt;br&gt;
+          DBConnectionPool / DBBind&lt;br&gt;
+          GameDB.xml 스키마 동기화"
+          style="rounded=1;whiteSpace=wrap;html=1;
+                 fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;"
+          vertex="1" parent="1">
+          <mxGeometry x="577" y="915" width="500" height="65" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== 범례 ===== -->
+        <mxCell id="legend_bg" value="범례"
+          style="rounded=0;whiteSpace=wrap;html=1;
+                 fillColor=#fafafa;strokeColor=#bdbdbd;
+                 fontStyle=1;fontSize=11;verticalAlign=top;align=left;
+                 spacingLeft=8;spacingTop=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="1370" y="720" width="220" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="leg1" value="네트워크 계층"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="1380" y="745" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="게임 로직"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="1380" y="778" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="핵심 시스템"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="1380" y="811" width="120" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

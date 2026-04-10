@@ -12,15 +12,15 @@ public:
 	Minion();
 	virtual ~Minion();
 	void InitMinion(shared_ptr<Room> room);
-	void SetMinionId(int32 id) { _objectId = id; }
-	int32 GetMinionId() { return _objectId; }
+	void SetMinionId(int32 id) { _objectInfo.set_object_id(id); }
+	int32 GetMinionId() { return _objectInfo.object_id(); }
 	uint8 GetLaneId() { return _laneId; }
 	int32 GetCurrentWaypointIndex() { return _currentWaypointIndex; }
 	float GetMoveSpeed() { return _moveSpeed; }
 
 	void SetMinionTarget(vector<weak_ptr<Object>>& targets);
 	void SetMinionLaneId(uint8 laneId) { _laneId = laneId; }
-	void SetMinionTeam(Protocol::CampType camp) { _campType = camp; }
+	void SetMinionTeam(Protocol::CampType camp) { _objectInfo.set_team_flag(camp); }
 
 	weak_ptr<Object> FindBestTarget(vector<weak_ptr<Object>> targets);
 	void ClearPathPending() { _pathPending = false; 	}

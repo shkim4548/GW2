@@ -6,7 +6,8 @@
 
 Nexus::Nexus()
 {
-	_objectType = Protocol::OBJECT_TYPE_NEXUS;
+	//_objectType = Protocol::OBJECT_TYPE_NEXUS;
+	_objectInfo.set_object_type(Protocol::OBJECT_TYPE_NEXUS);
 }
 
 Nexus::~Nexus()
@@ -16,18 +17,23 @@ Nexus::~Nexus()
 void Nexus::InitNexus(shared_ptr<Room> room, Protocol::CampType team)
 {
 	_room = room;
-	_campType = team;
+	//_campType = team;
+	SetCampType(team);
 
 	UnitStat stat = GLobby->GetUnitStat("Nexus");
 	if (stat.hp > 0)
 	{
-		_statInfo.set_hp(stat.hp);
-		_statInfo.set_max_hp(stat.maxHp);
+		//_statInfo.set_hp(stat.hp);
+		//_statInfo.set_max_hp(stat.maxHp);
+		_objectInfo.mutable_stat_info()->set_hp(stat.hp);
+		_objectInfo.mutable_stat_info()->set_max_hp(stat.maxHp);
 	}
 	else
 	{
-		_statInfo.set_hp(5000);
-		_statInfo.set_max_hp(5000);
+		//_statInfo.set_hp(5000);
+		//_statInfo.set_max_hp(5000);
+		_objectInfo.mutable_stat_info()->set_hp(5000);
+		_objectInfo.mutable_stat_info()->set_max_hp(5000);
 	}
 }
 
@@ -38,5 +44,5 @@ void Nexus::OnDead()
 	{
 		return;
 	}
-	room->DoAsync(&Room::HandleNexusDead, _campType);
+	room->DoAsync(&Room::HandleNexusDead, GetTeamFlag());
 }

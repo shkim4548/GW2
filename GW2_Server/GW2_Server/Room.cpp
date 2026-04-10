@@ -30,12 +30,12 @@ Room::~Room()
 
 bool Room::Enter(PlayerRef gameObject)
 {
-	if (gameObject == nullptr) 
+	if (gameObject == nullptr)
 		return false;
 
 	int32 objectId = gameObject->GetObjectId();
 
-	// 1. 팀 자동 배정 (입장 순서 기준)
+	// 1. 팀 자동 배정 (캐릭터 종류 기준)
 	Protocol::CampType assignedTeam;
 	switch (gameObject->GetPlayerType())
 	{
@@ -49,116 +49,79 @@ bool Room::Enter(PlayerRef gameObject)
 		break;
 	default:
 		assignedTeam = Protocol::CAMP_HUMAN;
+		GConsoleLogger->WriteStdErr(Color::YELLOW, L"[Room::Enter] gameObject's team is invalid id: %d\n", gameObject->_objectInfo.object_id());
 		break;
 	}
+
 	// 2. 스폰 위치 팀별 설정
 	GameMath::Vector3 spawnPos =
 		(assignedTeam == Protocol::CAMP_HUMAN)
 		? GameMath::Vector3(-60.0f, 0.0f, 0.0f)
 		: GameMath::Vector3(60.0f, 0.0f, 0.0f);
+
+	// 3. _objectInfo 완전 초기화 — 이후 CopyFrom의 기준이 됨
 	gameObject->SetPosVector(spawnPos);
 	gameObject->SetCampType(assignedTeam);
-
-	// 3. Room 등록 및 초기화
-	_objects.emplace(objectId, gameObject);
-	_players.emplace(objectId, gameObject);
-	shared_ptr<Room> roomSelf = static_pointer_cast<Room>(shared_from_this());
-	gameObject->InitPlayer(roomSelf);
-	//_isRunning = true;
-
-	Protocol::S_HAND_SYNC handPkt;
-	handPkt.set_player_id(objectId);
-	for (int32 cardId : gameObject->_hand)
-	{
-		handPkt.add_card_ids(cardId);
-	}
-
-	auto session = gameObject->GetSession().lock();
-	if (session)
-		session->Send(ClientPacketHandler::MakeSendBuffer(handPkt));
-
-	// 4. 신규 플레이어에게 기존 오브젝트 동기화
-	SyncObjectsToPlayer(gameObject);
-
-	// 5. 신규 플레이어 정보를 기존 플레이어들에게 브로드캐스트
-	Protocol::S_ENTER_GAME enterPkt;
-	Protocol::ObjectInfo* objectInfo = new Protocol::ObjectInfo();
-	Protocol::PosInfo* posInfo = new Protocol::PosInfo();
-	objectInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
-	objectInfo->set_object_id(objectId);
-	objectInfo->set_team_flag(assignedTeam);
-	posInfo->set_x(spawnPos._x);
-	posInfo->set_y(spawnPos._y);
-	posInfo->set_z(spawnPos._z);
+	gameObject->_objectInfo.set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+	gameObject->_objectInfo.set_room_id(_roomId);
 
 	switch (gameObject->GetPlayerType())
 	{
-	case Protocol::PLAYER_TYPE_POLICE:       
-		objectInfo->set_name("Police");
-		break;
-	case Protocol::PLAYER_TYPE_FIREFIGHTER:
-		objectInfo->set_name("FireFighter"); 
-		break;
-	case Protocol::PLAYER_TYPE_MONK:         
-		objectInfo->set_name("Monk");        
-		break;
-	case Protocol::PLAYER_TYPE_LIGHTSABRE:   
-		objectInfo->set_name("LightSabre");
-		break;
-	default:
-		objectInfo->set_name("Police");
-		break;
+	case Protocol::PLAYER_TYPE_POLICE:      gameObject->_objectInfo.set_name("Police");      break;
+	case Protocol::PLAYER_TYPE_FIREFIGHTER: gameObject->_objectInfo.set_name("FireFighter"); break;
+	case Protocol::PLAYER_TYPE_MONK:        gameObject->_objectInfo.set_name("Monk");        break;
+	case Protocol::PLAYER_TYPE_LIGHTSABRE:  gameObject->_objectInfo.set_name("LightSabre");  break;
+	default:                                gameObject->_objectInfo.set_name("Police");       break;
 	}
-	
-	objectInfo->set_allocated_pos_info(posInfo);
-	Protocol::StatInfo* stat = new Protocol::StatInfo();
-	*stat = gameObject->GetStatInfo();
-	objectInfo->set_allocated_stat_info(stat);
-	enterPkt.set_allocated_player(objectInfo);
 
-	//objectInfo->set_allocated_pos_info(posInfo);
-	//enterPkt.set_allocated_player(objectInfo);
-	Broadcast(ClientPacketHandler::MakeSendBuffer(enterPkt));
+	// 4. Room 등록 및 초기화 (InitPlayer에서 stat_info 세팅됨)
+	_objects.emplace(objectId, gameObject);
+	_players.emplace(objectId, gameObject);
+	gameObject->InitPlayer(static_pointer_cast<Room>(shared_from_this()));
 
-	// 6. 최초 입장 시 터렛/넥서스 스폰
-	if (!_gameStarted)
+	// 5. 핸드 카드 동기화
+	auto session = gameObject->GetSession().lock();
+	if (session)
 	{
-		_gameStarted = true;
-
-		// HUMAN 터렛
-		SpawnTurret(GameMath::Vector3(-15, 0.5, -25.5), Protocol::CAMP_HUMAN);
-		SpawnTurret(GameMath::Vector3(-52.81, 0.5, -22.93), Protocol::CAMP_HUMAN);
-		SpawnTurret(GameMath::Vector3(-65.26, 2, -4.28), Protocol::CAMP_HUMAN);
-		SpawnTurret(GameMath::Vector3(-65.26, 2, 4.73), Protocol::CAMP_HUMAN);
-		SpawnTurret(GameMath::Vector3(-51.2, 0.5, 22.31), Protocol::CAMP_HUMAN);
-		SpawnTurret(GameMath::Vector3(-10.93, 0.5, 25.1), Protocol::CAMP_HUMAN);
-
-		// CYBORG 터렛
-		SpawnTurret(GameMath::Vector3(11.69, 0.5, -25.51), Protocol::CAMP_CYBORG);
-		SpawnTurret(GameMath::Vector3(47.1, 0.5, -22.6), Protocol::CAMP_CYBORG);
-		SpawnTurret(GameMath::Vector3(64.2, 2, -4.5), Protocol::CAMP_CYBORG);
-		SpawnTurret(GameMath::Vector3(64.2, 2, 4.5), Protocol::CAMP_CYBORG);
-		SpawnTurret(GameMath::Vector3(50.9, 0.5, 22.1), Protocol::CAMP_CYBORG);
-		SpawnTurret(GameMath::Vector3(13, 0.5, 25.3), Protocol::CAMP_CYBORG);
-
-		// 넥서스
-		SpawnNexus(GameMath::Vector3(-70.5f, 2.3f, 0.0f), Protocol::CAMP_HUMAN);
-		SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
-
-		// 바론 구현
-		SpawnBaron();
+		Protocol::S_HAND_SYNC handPkt;
+		handPkt.set_player_id(objectId);
+		for (int32 cardId : gameObject->_hand)
+			handPkt.add_card_ids(cardId);
+		session->Send(ClientPacketHandler::MakeSendBuffer(handPkt));
 	}
 
-	GConsoleLogger->WriteStdOut(Color::YELLOW, L"[TEMP] _playersSize : %d, maxPlayers : %d\n", _players.size(), _maxPlayers);
+	// 6. 기존 플레이어들에게 신규 입장 브로드캐스트 (본인 제외)
+	{
+		Protocol::S_SPAWN spawnPkt;
+		spawnPkt.add_players()->CopyFrom(gameObject->_objectInfo);
+		Broadcast(ClientPacketHandler::MakeSendBuffer(spawnPkt), objectId);
+	}
+
+	// 7. 신규 플레이어에게 기존 오브젝트 전체 동기화
+	//    CopyFrom으로 object_type / name / pos_info / stat_info(현재 HP) / team_flag 모두 포함
+	//    → SyncObjectsToPlayer 대체 (S_ENTER_GAME + S_HP_CHANGE 분리 방식 제거)
+	if (session)
+	{
+		Protocol::S_SPAWN syncPkt;
+		for (auto& [id, obj] : _objects)
+		{
+			if (id == objectId) continue;   // 본인 제외
+			syncPkt.add_players()->CopyFrom(obj->_objectInfo);
+		}
+		session->Send(ClientPacketHandler::MakeSendBuffer(syncPkt));
+	}
+
+	// 8. 정원 충족 시 게임 시작
 	if (_maxPlayers > 0 && (int32)_players.size() >= _maxPlayers)
 	{
-		GConsoleLogger->WriteStdOut(Color::GREEN, L"SetIsRunning Block\n");
 		SetIsRunning(true);
-		Protocol::S_START_GAME startGamePkt;
-		Broadcast(ClientPacketHandler::MakeSendBuffer(startGamePkt));
+		Protocol::S_START_GAME startpkt;
+		Broadcast(ClientPacketHandler::MakeSendBuffer(startpkt));
 	}
+
 	return true;
 }
+
 
 
 void Room::Leave(int32 playerId)
@@ -1655,6 +1618,7 @@ void Room::HandleSelectCharacter(PlayerRef player, Protocol::PlayerType type)
 void Room::HandleConfirmCharacter(PlayerRef player, Protocol::PlayerType type)
 {
 	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Room::HandleConfirmCharacter] Called\n");
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[HandleConfirmCharacter] player objectId=%d\n", player->GetObjectId());  // ← 추가
 
 	player->SetPlayerType(type);
 	_pendingSelections.erase(player->GetObjectId());

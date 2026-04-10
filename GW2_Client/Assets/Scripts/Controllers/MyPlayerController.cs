@@ -31,7 +31,6 @@ public class MyPlayerController : PlayerController
     private int _clientMoveStartTime;
     private bool _needsCorrection = false;
 
-    public int RoomId { get; set; }
 
     // === UI Delegate ===
     public static Action<float, float> OnHpChanged;
@@ -499,6 +498,8 @@ public class MyPlayerController : PlayerController
         movePacket.StartPos = new PosInfo();
         movePacket.RoomId = RoomId;
         movePacket.ObjectId = Id;
+        Debug.Log(movePacket.ObjectId);
+        Debug.Log(movePacket.RoomId);
 
         // Start Position
         movePacket.StartPos.X = transform.position.x;

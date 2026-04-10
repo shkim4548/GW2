@@ -13,8 +13,8 @@ public:
 	virtual ~Baron();
 
 	void InitBaron(shared_ptr<Room> room, GameMath::Vector3 spawnPos);
-	void SetBaronId(int32 id) { _objectId = id; }
-	int32 GetBaronId() { return _objectId; }
+	void SetBaronId(int32 id) { _objectInfo.set_object_id(id); }
+	int32 GetBaronId() { return _objectInfo.object_id(); }
 	float GetMoveSpeed() { return _moveSpeed; }
 	float GetDetectionRange() { return _detectionRange; }
 

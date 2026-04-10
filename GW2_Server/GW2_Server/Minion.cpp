@@ -8,19 +8,20 @@
 Minion::Minion()
 {
 	_minionState = Protocol::MinionState::MINION_IDLE;
-	_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
-	_objectType = Protocol::ObjectType::OBJECT_TYPE_MINION;
+	//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+	SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
+	//_objectType = Protocol::ObjectType::OBJECT_TYPE_MINION;
+	_objectInfo.set_object_type(Protocol::ObjectType::OBJECT_TYPE_MINION);
 
 	_currentWaypointIndex = 0;
 	_repathCoolDown = 0.0f;
 	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 
 	// Stat 초기화
-	_statInfo.set_hp(100);
-	_statInfo.set_max_hp(100);
-	_statInfo.set_attack(10);
-
-
+	Protocol::StatInfo* tStat = _objectInfo.mutable_stat_info();
+	tStat->set_hp(100);
+	tStat->set_max_hp(100);
+	tStat->set_attack(10);
 }
 
 Minion::~Minion()
@@ -33,14 +34,11 @@ void Minion::InitMinion(shared_ptr<Room> room)
 	//_room = room;
 
 	UnitStat stat = GLobby->GetUnitStat("minion");
-	GConsoleLogger->WriteStdOut(Color::GREEN,
-		L"[InitMinion] hp=%llu atk=%.1f range=%.1f interval=%.1f speed=%.1f detect=%.1f\n",
-		stat.hp, (float)stat.attackDamage,
-		stat.attackRange, stat.attackInterval,
-		stat.moveSpeed, stat.detectionRange);
+	GConsoleLogger->WriteStdOut(Color::GREEN, L"[InitMinion] hp=%llu atk=%.1f range=%.1f interval=%.1f speed=%.1f detect=%.1f\n",	stat.hp, (float)stat.attackDamage,	stat.attackRange, stat.attackInterval, stat.moveSpeed, stat.detectionRange);
 
-	_statInfo.set_hp(stat.hp);
-	_statInfo.set_max_hp(stat.maxHp);
+	Protocol::StatInfo* tStat = _objectInfo.mutable_stat_info();
+	tStat->set_hp(stat.hp);
+	tStat->set_max_hp(stat.maxHp);
 	_attackRange = stat.attackRange;
 	_attackInterval = stat.attackInterval;
 	_moveSpeed = stat.moveSpeed;
@@ -126,7 +124,7 @@ void Minion::UpdateController(float deltaTime)
 
 void Minion::UpdateMovement(float deltaTime)
 {
-	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
+	if (GetMoveState() != Protocol::MoveState::MOVE_STATE_RUN)
 	{
 		_movement.speed = 0.0f;
 		return;
@@ -134,7 +132,8 @@ void Minion::UpdateMovement(float deltaTime)
 
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
 		_isMoving = false;
 		_movement.speed = 0.0f;
 		return;
@@ -142,6 +141,7 @@ void Minion::UpdateMovement(float deltaTime)
 
 	const float kArriveEpsilon = 1e-4f;
 	float remainMoveDist = _moveSpeed * deltaTime;
+	Protocol::PosInfo* tPosInfo = _objectInfo.mutable_pos_info();
 
 	while (remainMoveDist > 0.0f && _pathIndex < static_cast<int32>(_path.size()))
 	{
@@ -149,7 +149,6 @@ void Minion::UpdateMovement(float deltaTime)
 		GameMath::Vector3 dir = target - _posVector;
 		const float dist = dir.Length();
 
-		// Ÿ�� ��忡 ����� ����
 		if (dist <= kArriveEpsilon)
 		{
 			_posVector = target;
@@ -157,7 +156,6 @@ void Minion::UpdateMovement(float deltaTime)
 			continue;
 		}
 
-		// �̹� �����ӿ� target���� ���� ���� -> target���� �̵��ϰ� ���� ����
 		if (dist <= remainMoveDist)
 		{
 			_posVector = target;
@@ -166,20 +164,17 @@ void Minion::UpdateMovement(float deltaTime)
 			continue;
 		}
 
-		// target������ �� ���Ƿ�, �� �������� remainMoveDist ��ŭ�� �̵��Ѵ�
 		dir = dir.Normalized();
 		GameMath::Vector3 delta = dir * remainMoveDist;
 		_posVector = _posVector + delta;
 
-		// PosInfo ����ȭ
-		_pos.set_x(_posVector._x);
-		_pos.set_y(_posVector._y);
-		_pos.set_z(_posVector._z);
-		SetPosInfo(_pos);
+		tPosInfo->set_x(_posVector._x);
+		tPosInfo->set_y(_posVector._y);
+		tPosInfo->set_z(_posVector._z);
+		SetPosInfo(*tPosInfo);
 		// �̵��� ���� ����
 		_isMoving = true;
 		_movement.speed = _moveSpeed;
-		// �̵� �� (remainMoveDist ���� �� return ����)
 		//GConsoleLogger->WriteStdOut(Color::GREEN,
 		//	L"[Minion::UpdateMovement] moving. posVector=(%.3f, %.3f) pathIndex=%d\n",
 		//	_posVector._x, _posVector._z, _pathIndex);
@@ -191,14 +186,15 @@ void Minion::UpdateMovement(float deltaTime)
 	//	_pathIndex, static_cast<int32>(_path.size()));
 
 	// path�� �� �Һ��� ���
-	_pos.set_x(_posVector._x);
-	_pos.set_y(_posVector._y);
-	_pos.set_z(_posVector._z);
-	SetPosInfo(_pos);
+	tPosInfo->set_x(_posVector._x);
+	tPosInfo->set_y(_posVector._y);
+	tPosInfo->set_z(_posVector._z);
+	SetPosInfo(*tPosInfo);
 
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
 		_isMoving = false;
 		_movement.speed = 0.0f;
 		_repathCoolDown = 0.0f;
@@ -316,7 +312,8 @@ void Minion::UpdateLaneTrace(float deltaTime)
 		_movement.speed = 0.0f;
 
 		MarkForceBroadcastMove();
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
 
 		if (_currentWaypointIndex + 1 < static_cast<int32>(route->waypoints.size()))
 		{
@@ -594,10 +591,11 @@ void Minion::ClearChaseTarget()
 void Minion::OnDead()
 {
 	// TODO : 플레이어에게 보상 지급
-	// 여기서 nullptr
+	int32 roomId = _objectInfo.room_id();
+	int32 id = _objectInfo.object_id();
 	shared_ptr<Room> room = _room.lock();
 	if (room == nullptr)
-		room = GLobby->GetRoomById(_roomId).lock();  // fallback
+		room = GLobby->GetRoomById(roomId).lock();  // fallback
 
 	if (room == nullptr)
 	{
@@ -605,5 +603,5 @@ void Minion::OnDead()
 		return;
 	}
 
-	room->DoAsync(&Room::HandleRemoveObject, _objectId, -1);
+	room->DoAsync(&Room::HandleRemoveObject, id, -1);
 }

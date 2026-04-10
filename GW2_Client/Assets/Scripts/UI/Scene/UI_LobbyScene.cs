@@ -51,7 +51,7 @@ public class UI_LobbyScene : UI_Scene
     private void SendEnterGame(int mode)
     {
         C_ENTER_GAME pkt = new C_ENTER_GAME();
-        pkt.RoomId = 0;   // 현재 하드코딩된 roomId 유지
+        pkt.RoomId = Bootstrapper.Instance.NetworkService.GetRoomId();   // 현재 하드코딩된 roomId 유지
         pkt.PlayerIndex = Bootstrapper.Instance.NetworkService.GetNetworkId();
         pkt.GameMode = mode;
         Bootstrapper.Instance.NetworkService.Send(pkt);

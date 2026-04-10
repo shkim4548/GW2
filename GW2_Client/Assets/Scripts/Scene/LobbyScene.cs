@@ -19,7 +19,7 @@ public class LobbyScene : BaseScene
         C_ENTER_LOBBY enterLobbyRequest = new C_ENTER_LOBBY();
         //var networkService = DI.Container.Resolve<INetworkService>();
         //networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
-        _networkService.SetNetworkId(1);
+        //_networkService.SetNetworkId(1);
         _networkService.Send(enterLobbyRequest);
     }
 

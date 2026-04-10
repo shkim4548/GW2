@@ -11,8 +11,10 @@ const vector<int32> Baron::REWARD_CARDS = { 105, 111, 118, 119, 129 };
 Baron::Baron()
 {
 	_baronState = Protocol::BaronState::BARON_IDLE;
-	_objectType = Protocol::ObjectType::OBJECT_TYPE_BARON;
-	_campType = Protocol::CampType::CAMP_NEUTURAL;
+	//_objectType = Protocol::ObjectType::OBJECT_TYPE_BARON;
+	SetObjectType(Protocol::ObjectType::OBJECT_TYPE_BARON);
+	//_campType = Protocol::CampType::CAMP_NEUTURAL;
+	SetCampType(Protocol::CampType::CAMP_NEUTURAL);
 	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.f, FLT_MIN);
 }
 
@@ -26,14 +28,16 @@ void Baron::InitBaron(shared_ptr<Room> room, GameMath::Vector3 spawnPos)
 	_spawnPos = spawnPos;
 	_destPos = spawnPos;
 
-	_pos.set_x(spawnPos._x);
-	_pos.set_y(spawnPos._y);
-	_pos.set_z(spawnPos._z);
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	tPos->set_x(spawnPos._x);
+	tPos->set_y(spawnPos._y);
+	tPos->set_z(spawnPos._z);
 
 	UnitStat stat = GLobby->GetUnitStat("baron");
-	_statInfo.set_hp(stat.hp);
-	_statInfo.set_max_hp(stat.maxHp);
-	_statInfo.set_attack(stat.attackDamage);
+	Protocol::StatInfo* tStat = _objectInfo.mutable_stat_info();
+	tStat->set_hp(stat.hp);
+	tStat->set_max_hp(stat.maxHp);
+	tStat->set_attack(stat.attackDamage);
 	_attackRange = stat.attackRange;
 	_attackInterval = stat.attackInterval;
 	_moveSpeed = stat.moveSpeed;
@@ -88,7 +92,9 @@ void Baron::UpdateController(float deltaTime)
 
 void Baron::UpdateMovement(float deltaTime)
 {
-	if (_moveState != Protocol::MoveState::MOVE_STATE_RUN)
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	
+	if (tPos->state() != Protocol::MoveState::MOVE_STATE_RUN)
 	{
 		_movement.speed = 0.f;
 		return;
@@ -96,7 +102,7 @@ void Baron::UpdateMovement(float deltaTime)
 
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
-		_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+		tPos->set_state(Protocol::MoveState::MOVE_STATE_RUN);
 		_isMoving = false;
 		_movement.speed = 0.0f;
 		return;
@@ -126,23 +132,24 @@ void Baron::UpdateMovement(float deltaTime)
 
 		dir = dir.Normalized();
 		_posVector = _posVector + dir * remain;
-		_pos.set_x(_posVector._x);
-		_pos.set_y(_posVector._y);
-		_pos.set_z(_posVector._z);
-		SetPosInfo(_pos);
+		tPos->set_x(_posVector._x);
+		tPos->set_y(_posVector._y);
+		tPos->set_z(_posVector._z);
+		SetPosInfo(*tPos);
 		_isMoving = true;
 		_movement.speed = _moveSpeed;
 		
 		return;
 	}
 
-	_pos.set_x(_posVector._x);
-	_pos.set_y(_posVector._y);
-	_pos.set_z(_posVector._z);
-	SetPosInfo(_pos);
+	tPos->set_x(_posVector._x);
+	tPos->set_y(_posVector._y);
+	tPos->set_z(_posVector._z);
+	SetPosInfo(*tPos);
 	if (_pathIndex >= static_cast<int32>(_path.size()))
 	{
-		_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+		tPos->set_state(Protocol::MoveState::MOVE_STATE_IDLE);
 		_isMoving = false;
 		_movement.speed = 0.0f;
 	}
@@ -152,7 +159,9 @@ void Baron::RequestMove(vector<GameMath::Vector3> path)
 {
 	_path = path;
 	_pathIndex = 0;
-	_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	//_moveState = Protocol::MoveState::MOVE_STATE_RUN;
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	tPos->set_state(Protocol::MoveState::MOVE_STATE_RUN);
 }
 
 
@@ -239,7 +248,9 @@ void Baron::UpdateCombat(float deltaTime)
 	// 공격 범위 내
 	_path.clear();
 	_pathIndex = 0;
-	_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+	tPos->set_state(Protocol::MoveState::MOVE_STATE_IDLE);
 
 	// 스킬2 : 독장판, 일시뎀
 	if (_skill2Timer <= 0.0f)
@@ -336,19 +347,22 @@ void Baron::ResetBaron()
 	_skill2Timer = SKILL2_INTERVAL;
 	_attackCooldown = 0.0f;
 	_baronState = Protocol::BaronState::BARON_IDLE;
-	_statInfo.set_hp(_statInfo.max_hp());
+	_objectInfo.mutable_stat_info()->set_hp(_objectInfo.stat_info().max_hp());
+	//_objectInfo.set_hp
 	_path.clear();
 	_pathIndex = 0;
 	_isMoving = false;
-	_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+	//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
+	SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
 	_repathCoolDown = 0.0f;
 	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
 	SetPosVector(_spawnPos);
 
-	_pos.set_x(_spawnPos._x);
-	_pos.set_y(_spawnPos._y);
-	_pos.set_z(_spawnPos._z);
-	SetPosInfo(_pos);
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	tPos->set_x(_spawnPos._x);
+	tPos->set_y(_spawnPos._y);
+	tPos->set_z(_spawnPos._z);
+	SetPosInfo(*tPos);
 }
 
 void Baron::OnDead()

@@ -91,7 +91,9 @@
     <ClCompile Include="CardManager.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
-    <ClCompile Include="Baron.cpp" />
+    <ClCompile Include="Baron.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -160,7 +162,9 @@
     <ClInclude Include="CardManager.h">
       <Filter>GameContents</Filter>
     </ClInclude>
-    <ClInclude Include="Baron.h" />
+    <ClInclude Include="Baron.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Tools\PacketGenerator\MakeExe.bat">

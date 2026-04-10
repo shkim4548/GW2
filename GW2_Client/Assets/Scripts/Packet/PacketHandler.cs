@@ -14,40 +14,10 @@ public class PacketHandler
     public static void S_ENTER_GAMEHandler(PacketSession session, IMessage message)
     {
         S_ENTER_GAME enterGamePkt = message as S_ENTER_GAME;
-        int roomId = (int)enterGamePkt.Player.RoomId;
+        Debug.Log(enterGamePkt.Player.ObjectType);
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
-        var objectService = Bootstrapper.Instance.ObjectService;
-        //Debug.Log($"[S_ENTER_GAME] objectId={enterGamePkt.Player.ObjectId} type={enterGamePkt.Player.ObjectType}");
-        int myNetworkId = Bootstrapper.Instance.NetworkService.GetNetworkId();
-        bool isMyPlayer = (enterGamePkt.Player.ObjectId == myNetworkId);
         objectService.Add(enterGamePkt.Player, true);
-
-        //   objectService.Add()가 Prefab 기본 위치로 생성하므로 명시적으로 세팅
-        int objectId = enterGamePkt.Player.ObjectId;
-        GameObject go = objectService.FindById(objectId);
-        if (go != null)
-        {
-            PosInfo spawnPos = enterGamePkt.Player.PosInfo;
-            Vector3 worldPos = new Vector3(spawnPos.X, spawnPos.Y, spawnPos.Z);
-            //go.transform.position = worldPos;
-
-            NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
-            if (agent != null) agent.Warp(worldPos);
-            else go.transform.position = worldPos;
-
-            // BaseController PosInfo도 동기화
-            BaseController bc = go.GetComponent<BaseController>();
-            if (bc != null)
-                bc.PosInfo = spawnPos;
-
-            if (isMyPlayer && enterGamePkt.Player.StatInfo != null)
-                MyPlayerController.SetPendingStatInfo(enterGamePkt.Player.StatInfo);
-            ///Debug.Log($"[S_ENTER_GAMEHandler] objectId={objectId} " + $"spawnPos=({worldPos.x:F2},{worldPos.y:F2},{worldPos.z:F2})");
-        }
-        else
-        {
-            Debug.LogWarning($"[S_ENTER_GAMEHandler] objectId={objectId} not found after Add()");
-        }
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)
@@ -63,7 +33,7 @@ public class PacketHandler
         //var networkService = DI.Container.Resolve<INetworkService>();
         var networkService = Bootstrapper.Instance.NetworkService;
         networkService.SetNetworkId(recvLoginpkt.PlayerIndex);
-        Debug.Log(networkService.GetNetworkId());
+        Debug.Log($"S_LOGIN : {networkService.GetNetworkId()}");
         networkService.Send(enterLobbyRequest);
 
         // 버튼 콜백등 호출 빈도가 낮은 부분은 Lazy Resolve
@@ -187,7 +157,13 @@ public class PacketHandler
 
     public static void S_SPAWNHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_SPAWN spawnPacket = message as S_SPAWN;
+        Debug.Log("spawn");
+        foreach (ObjectInfo obj in spawnPacket.Players)
+        {
+            IObjectService objectService = Bootstrapper.Instance.ObjectService;
+            objectService.Add(obj, myPlayer: false);
+        }
     }
 
     public static void S_TESTHandler(PacketSession session, IMessage message)
@@ -200,6 +176,7 @@ public class PacketHandler
         S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
         var networkService = Bootstrapper.Instance.NetworkService;
         networkService.SetNetworkId(lobbyPkt.PlayerId);
+        //networkService.SetRoomId(lobbyPkt.RoomId);
         
         // DEBUG
         for(int i = 0; i< lobbyPkt.RoomInfos.Count; ++i)
@@ -474,5 +451,10 @@ public class PacketHandler
         GameObject go = Bootstrapper.Instance.ObjectService.FindById(pkt.TargetId);
         if (go == null) return;
         go.GetComponent<BaseController>()?.ApplyStun(pkt.Duration);
+    }
+
+    internal static void S_DESPAWNHandler(PacketSession session, IMessage message)
+    {
+        throw new NotImplementedException();
     }
 }
