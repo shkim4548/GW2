@@ -35,7 +35,7 @@ public:
 	CardStat GetCardStat(int32 cardId);
 	const unordered_map<int32, CardStat>& GetCardStats() const { return _cardStats; }
 
-
+	RoomRef FindOrCreateRoom(int32 gameMode, int32 maxPlayers);
 	RoomRef MakeRoom(string roomName);
 	void DeleteRoom(int32 roomId);
 	void EnterRoom(int32 roomId, int64 playerId);

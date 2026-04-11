@@ -18,6 +18,8 @@ public class PacketHandler
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
         objectService.Add(enterGamePkt.Player, true);
+        //IUIService uIService = Bootstrapper.Instance.UIService;
+        //uIService.ClosePopupUI();
     }
 
     public static void S_LOGINHandler(PacketSession session, IMessage message)
@@ -456,5 +458,23 @@ public class PacketHandler
     internal static void S_DESPAWNHandler(PacketSession session, IMessage message)
     {
         throw new NotImplementedException();
+    }
+
+    internal static void S_FIND_GAMEHandler(PacketSession session, IMessage message)
+    {
+        S_FIND_GAME pkt = message as S_FIND_GAME;
+        Debug.Log($"S_FIND_GAMEHandler roomId={pkt.RoomId}");
+
+        INetworkService network = Bootstrapper.Instance.NetworkService;
+        network.SetRoomId(pkt.RoomId);
+
+        // 받은 roomId로 C_ENTER_GAME 즉시 전송
+        C_ENTER_GAME enterPkt = new C_ENTER_GAME();
+        enterPkt.RoomId = pkt.RoomId;
+        enterPkt.PlayerIndex = network.GetNetworkId();
+        enterPkt.GameMode = network.GetGameMode();  // ← 아래에서 저장한 값 사용
+        network.Send(enterPkt);
+
+        Bootstrapper.Instance.SceneService.LoadScene(Define.Scene.GameScene);
     }
 }

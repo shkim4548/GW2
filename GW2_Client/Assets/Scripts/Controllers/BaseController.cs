@@ -32,11 +32,9 @@ public class BaseController : MonoBehaviour
     protected float _correctionThreshold = 1.0f;
 
     protected Animator _animator;
+    public CampType CampType { get; set; }
 
     PosInfo _posInfo = new PosInfo();
-
-    // 진영 구분용 enum
-    public CampType _campType = new CampType();
 
     public PosInfo PosInfo
     {
@@ -99,7 +97,7 @@ public class BaseController : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _hpBar = GetComponentInChildren<WUI_HpBar>();
-        Id = Bootstrapper.Instance.NetworkService.GetNetworkId();
+        //Id = Bootstrapper.Instance.NetworkService.GetNetworkId();
         //Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);

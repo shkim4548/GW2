@@ -15,6 +15,8 @@ public interface INetworkService
     public int GetNetworkId();
     public void SetRoomId(int roomId);
     public int GetRoomId();
+    public int GetGameMode();
+    public void SetGameMode(int gameMode);
 }
 
 public class NetworkService : INetworkService
@@ -22,6 +24,7 @@ public class NetworkService : INetworkService
     ServerSession _session = new ServerSession();
     int _networkId = -1;
     int _roomId = -1;
+    int _gameMode = -1;
 
     public void Send(IMessage packet)
     {
@@ -84,5 +87,15 @@ public class NetworkService : INetworkService
     public int GetRoomId()
     {
         return _roomId;
+    }
+
+    public int GetGameMode()
+    {
+        return _gameMode;
+    }
+
+    public void SetGameMode(int gameMode)
+    {
+        _gameMode = gameMode;
     }
 }

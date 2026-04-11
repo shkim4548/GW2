@@ -27,8 +27,12 @@ public:
 	void SetRoomName(string roomName) { _roomName = roomName; }
 	string GetRoomName() { return _roomName; }
 	void SetIsRunning(bool isRunning) { _isRunning = isRunning; }
-	void SetMaxPlayers(int32 playerCount) { _maxPlayers = playerCount; }
+	void SetMaxPlayers(int32 playerCount) { _maxPlayers = playerCount; cout << "playerCount : " << playerCount << endl; }
 	int32 GetMaxPlayers() { return _maxPlayers; }
+
+	void  SetGameMode(int32 mode) { _gameMode = mode; }
+	int32 GetGameMode() const { 	return _gameMode; }
+	int32 GetPlayerCount() const {	return (int32)_players.size(); }
 
 	unordered_map<int32, ObjectRef> GetRoomObjects() { return _objects; }
 
@@ -84,13 +88,12 @@ private:
 	void HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::GridCell*>& gridPath, const GameMath::Vector3& startWorld, const GameMath::Vector3& endWorld);
 	void BroadcastMoving(const ObjectRef& obj);
 	void BroadcastMovingEnd(const ObjectRef& obj);
-
+	void StartGame();
 
 	weak_ptr<Navigation::LaneRoute> GetLaneRoute(int32 laneId) const;
 	void SetLaneRoute(int32 laneId, shared_ptr<Navigation::LaneRoute> route);
 	// static
 	static vector<GameMath::Vector3> SmoothPath(const vector<GameMath::Vector3>& path, const Navigation::WalkableGrid& grid, shared_ptr<Navigation::NavigationSystem> navSystem, uint8 laneId);
-	void StartGame();
 	void SyncObjectsToPlayer(PlayerRef newPlayer);
 
 private:
@@ -137,6 +140,7 @@ private:
 	bool _gameStarted = false;
 	unordered_map<int32, int32> _pendingSelections;
 	int32 _maxPlayers = 2;
+	int32 _gameMode = -1;
 };
 
 //extern shared_ptr<Room> GRoom;

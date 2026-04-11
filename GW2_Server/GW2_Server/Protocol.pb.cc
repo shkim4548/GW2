@@ -469,8 +469,32 @@ struct S_STUNDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT S_STUNDefaultTypeInternal _S_STUN_default_instance_;
+constexpr C_FIND_GAME::C_FIND_GAME(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : game_mode_(0){}
+struct C_FIND_GAMEDefaultTypeInternal {
+  constexpr C_FIND_GAMEDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~C_FIND_GAMEDefaultTypeInternal() {}
+  union {
+    C_FIND_GAME _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT C_FIND_GAMEDefaultTypeInternal _C_FIND_GAME_default_instance_;
+constexpr S_FIND_GAME::S_FIND_GAME(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : room_id_(0){}
+struct S_FIND_GAMEDefaultTypeInternal {
+  constexpr S_FIND_GAMEDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~S_FIND_GAMEDefaultTypeInternal() {}
+  union {
+    S_FIND_GAME _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT S_FIND_GAMEDefaultTypeInternal _S_FIND_GAME_default_instance_;
 }  // namespace Protocol
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_Protocol_2eproto[32];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_Protocol_2eproto[34];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -760,6 +784,20 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_STUN, target_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_STUN, duration_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_FIND_GAME, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_FIND_GAME, game_mode_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_FIND_GAME, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_FIND_GAME, room_id_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -794,6 +832,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 259, -1, -1, sizeof(::Protocol::C_CONFIRM_CHARACTER)},
   { 267, -1, -1, sizeof(::Protocol::S_BUFF_APPLIED)},
   { 277, -1, -1, sizeof(::Protocol::S_STUN)},
+  { 285, -1, -1, sizeof(::Protocol::C_FIND_GAME)},
+  { 292, -1, -1, sizeof(::Protocol::S_FIND_GAME)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -829,6 +869,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::Protocol::_C_CONFIRM_CHARACTER_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::Protocol::_S_BUFF_APPLIED_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::Protocol::_S_STUN_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::Protocol::_C_FIND_GAME_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::Protocol::_S_FIND_GAME_default_instance_),
 };
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -894,8 +936,10 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "PLIED\022\021\n\ttarget_id\030\001 \001(\005\022%\n\tbuff_type\030\002 "
   "\001(\0162\022.Protocol.BuffType\022\r\n\005value\030\003 \001(\002\022\020"
   "\n\010duration\030\004 \001(\002\"-\n\006S_STUN\022\021\n\ttarget_id\030"
-  "\001 \001(\005\022\020\n\010duration\030\002 \001(\002B\033\252\002\030Google.Proto"
-  "buf.Protocolb\006proto3"
+  "\001 \001(\005\022\020\n\010duration\030\002 \001(\002\" \n\013C_FIND_GAME\022\021"
+  "\n\tgame_mode\030\001 \001(\005\"\036\n\013S_FIND_GAME\022\017\n\007room"
+  "_id\030\001 \001(\005B\033\252\002\030Google.Protobuf.Protocolb\006"
+  "proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -903,8 +947,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 2540, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
-  &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 32,
+  false, false, 2606, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 34,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
 };
@@ -8464,6 +8508,362 @@ void S_STUN::InternalSwap(S_STUN* other) {
       file_level_metadata_Protocol_2eproto[31]);
 }
 
+// ===================================================================
+
+class C_FIND_GAME::_Internal {
+ public:
+};
+
+C_FIND_GAME::C_FIND_GAME(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_FIND_GAME)
+}
+C_FIND_GAME::C_FIND_GAME(const C_FIND_GAME& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  game_mode_ = from.game_mode_;
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_FIND_GAME)
+}
+
+inline void C_FIND_GAME::SharedCtor() {
+game_mode_ = 0;
+}
+
+C_FIND_GAME::~C_FIND_GAME() {
+  // @@protoc_insertion_point(destructor:Protocol.C_FIND_GAME)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void C_FIND_GAME::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void C_FIND_GAME::ArenaDtor(void* object) {
+  C_FIND_GAME* _this = reinterpret_cast< C_FIND_GAME* >(object);
+  (void)_this;
+}
+void C_FIND_GAME::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void C_FIND_GAME::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void C_FIND_GAME::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_FIND_GAME)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  game_mode_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_FIND_GAME::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 game_mode = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          game_mode_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_FIND_GAME::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_FIND_GAME)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 game_mode = 1;
+  if (this->_internal_game_mode() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_game_mode(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_FIND_GAME)
+  return target;
+}
+
+size_t C_FIND_GAME::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_FIND_GAME)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 game_mode = 1;
+  if (this->_internal_game_mode() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_game_mode());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_FIND_GAME::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    C_FIND_GAME::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_FIND_GAME::GetClassData() const { return &_class_data_; }
+
+void C_FIND_GAME::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<C_FIND_GAME *>(to)->MergeFrom(
+      static_cast<const C_FIND_GAME &>(from));
+}
+
+
+void C_FIND_GAME::MergeFrom(const C_FIND_GAME& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_FIND_GAME)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_game_mode() != 0) {
+    _internal_set_game_mode(from._internal_game_mode());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_FIND_GAME::CopyFrom(const C_FIND_GAME& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_FIND_GAME)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_FIND_GAME::IsInitialized() const {
+  return true;
+}
+
+void C_FIND_GAME::InternalSwap(C_FIND_GAME* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(game_mode_, other->game_mode_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_FIND_GAME::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[32]);
+}
+
+// ===================================================================
+
+class S_FIND_GAME::_Internal {
+ public:
+};
+
+S_FIND_GAME::S_FIND_GAME(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:Protocol.S_FIND_GAME)
+}
+S_FIND_GAME::S_FIND_GAME(const S_FIND_GAME& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  room_id_ = from.room_id_;
+  // @@protoc_insertion_point(copy_constructor:Protocol.S_FIND_GAME)
+}
+
+inline void S_FIND_GAME::SharedCtor() {
+room_id_ = 0;
+}
+
+S_FIND_GAME::~S_FIND_GAME() {
+  // @@protoc_insertion_point(destructor:Protocol.S_FIND_GAME)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void S_FIND_GAME::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void S_FIND_GAME::ArenaDtor(void* object) {
+  S_FIND_GAME* _this = reinterpret_cast< S_FIND_GAME* >(object);
+  (void)_this;
+}
+void S_FIND_GAME::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void S_FIND_GAME::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void S_FIND_GAME::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.S_FIND_GAME)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  room_id_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* S_FIND_GAME::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 room_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* S_FIND_GAME::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.S_FIND_GAME)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 room_id = 1;
+  if (this->_internal_room_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_room_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.S_FIND_GAME)
+  return target;
+}
+
+size_t S_FIND_GAME::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.S_FIND_GAME)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 room_id = 1;
+  if (this->_internal_room_id() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_room_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S_FIND_GAME::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    S_FIND_GAME::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_FIND_GAME::GetClassData() const { return &_class_data_; }
+
+void S_FIND_GAME::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<S_FIND_GAME *>(to)->MergeFrom(
+      static_cast<const S_FIND_GAME &>(from));
+}
+
+
+void S_FIND_GAME::MergeFrom(const S_FIND_GAME& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Protocol.S_FIND_GAME)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_room_id() != 0) {
+    _internal_set_room_id(from._internal_room_id());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void S_FIND_GAME::CopyFrom(const S_FIND_GAME& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.S_FIND_GAME)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool S_FIND_GAME::IsInitialized() const {
+  return true;
+}
+
+void S_FIND_GAME::InternalSwap(S_FIND_GAME* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(room_id_, other->room_id_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata S_FIND_GAME::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[33]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
@@ -8562,6 +8962,12 @@ template<> PROTOBUF_NOINLINE ::Protocol::S_BUFF_APPLIED* Arena::CreateMaybeMessa
 }
 template<> PROTOBUF_NOINLINE ::Protocol::S_STUN* Arena::CreateMaybeMessage< ::Protocol::S_STUN >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_STUN >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_FIND_GAME* Arena::CreateMaybeMessage< ::Protocol::C_FIND_GAME >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_FIND_GAME >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::S_FIND_GAME* Arena::CreateMaybeMessage< ::Protocol::S_FIND_GAME >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::S_FIND_GAME >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

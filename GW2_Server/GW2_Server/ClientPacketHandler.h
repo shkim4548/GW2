@@ -38,6 +38,8 @@ enum : uint16
 	PKT_C_CONFIRM_CHARACTER = 1029,
 	PKT_S_BUFF_APPLIED = 1030,
 	PKT_S_STUN = 1031,
+	PKT_C_FIND_GAME = 1032,
+	PKT_S_FIND_GAME = 1033,
 };
 
 // Custom Handlers
@@ -53,6 +55,7 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 	bool Handle_C_REMOVE_CARD(PacketSessionRef& session, Protocol::C_REMOVE_CARD& pkt);
 	bool Handle_C_SELECT_CHARACTER(PacketSessionRef& session, Protocol::C_SELECT_CHARACTER& pkt);
 	bool Handle_C_CONFIRM_CHARACTER(PacketSessionRef& session, Protocol::C_CONFIRM_CHARACTER& pkt);
+	bool Handle_C_FIND_GAME(PacketSessionRef& session, Protocol::C_FIND_GAME& pkt);
 
 class ClientPacketHandler
 {
@@ -72,6 +75,7 @@ public:
 		GPacketHandler[PKT_C_REMOVE_CARD] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_REMOVE_CARD>(Handle_C_REMOVE_CARD, session, buffer, len); };
 		GPacketHandler[PKT_C_SELECT_CHARACTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_SELECT_CHARACTER>(Handle_C_SELECT_CHARACTER, session, buffer, len); };
 		GPacketHandler[PKT_C_CONFIRM_CHARACTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_CONFIRM_CHARACTER>(Handle_C_CONFIRM_CHARACTER, session, buffer, len); };
+		GPacketHandler[PKT_C_FIND_GAME] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_FIND_GAME>(Handle_C_FIND_GAME, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -100,6 +104,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_CHARACTER_SELECTED& pkt) { return MakeSendBuffer(pkt, PKT_S_CHARACTER_SELECTED); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BUFF_APPLIED& pkt) { return MakeSendBuffer(pkt, PKT_S_BUFF_APPLIED); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_STUN& pkt) { return MakeSendBuffer(pkt, PKT_S_STUN); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_FIND_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_FIND_GAME); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

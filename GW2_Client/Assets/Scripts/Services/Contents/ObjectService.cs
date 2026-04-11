@@ -35,6 +35,7 @@ public class ObjectService : IObjectService
         Debug.Log($"[ObjectService::Add] objectId : {objectId}");
         int roomId = info.RoomId;
         GameObject go;
+
         if (_objects.TryGetValue(objectId, out go))
             return;
 
@@ -66,8 +67,8 @@ public class ObjectService : IObjectService
 
                 MyPlayer = go.GetComponent<MyPlayerController>();
                 MyPlayer.Id = objectId;
+                Debug.Log(MyPlayer.Id);
                 MyPlayer.RoomId = (int)roomId;
-                MyPlayer._campType = (CampType)info.TeamFlag;
                 MyPlayer.CampType = (CampType)info.TeamFlag;
                 MyPlayerController.OnStatInfoUpdate?.Invoke(info.StatInfo);
             }
@@ -76,7 +77,7 @@ public class ObjectService : IObjectService
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.transform.position = initPos;
                 pc.Id = objectId;
-                pc._campType = (CampType)info.TeamFlag;
+                pc.CampType = (CampType)info.TeamFlag;
             }
 
             _objects.Add(objectId, go);
@@ -102,7 +103,7 @@ public class ObjectService : IObjectService
             MinionController mc = go.GetComponent<MinionController>();
             mc.transform.position = initPos;
             mc.Id = objectId;
-            mc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+            mc.CampType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             // TODO : Adding RoomId
             _objects.Add(objectId, go);
         }
@@ -120,7 +121,7 @@ public class ObjectService : IObjectService
             TurretController tc = go.GetComponent<TurretController>();
             tc.transform.position = initPos;
             tc.Id = objectId;
-            tc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+            tc.CampType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             _objects.Add(objectId, go);
         }
         else if(objectType == ObjectType.Nexus)
@@ -142,7 +143,7 @@ public class ObjectService : IObjectService
             NexusController nc = go.GetComponent<NexusController>();
             nc.transform.position = initPos;
             nc.Id = objectId;
-            nc._campType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
+            nc.CampType = (Google.Protobuf.Enum.CampType)info.TeamFlag;
             _objects.Add(objectId, go);
         }
         else if (objectType == ObjectType.Baron)
@@ -158,7 +159,7 @@ public class ObjectService : IObjectService
             BaronController bc = go.GetComponent<BaronController>();
             bc.transform.position = initPos;
             bc.Id = objectId;
-            bc._campType = CampType.CampNeutural;
+            bc.CampType = CampType.CampNeutural;
             _objects.Add(objectId, go);
         }
 

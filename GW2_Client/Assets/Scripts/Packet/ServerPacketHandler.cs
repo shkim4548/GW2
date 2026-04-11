@@ -40,6 +40,8 @@ public enum PacketId : ushort
         PKT_C_CONFIRM_CHARACTER = 1029,
         PKT_S_BUFF_APPLIED = 1030,
         PKT_S_STUN = 1031,
+        PKT_C_FIND_GAME = 1032,
+        PKT_S_FIND_GAME = 1033,
 }
 
 public class PacketManager
@@ -105,6 +107,8 @@ public class PacketManager
         _handler.Add((ushort)PacketId.PKT_S_BUFF_APPLIED, PacketHandler.S_BUFF_APPLIEDHandler);
         _onRecv.Add((ushort)PacketId.PKT_S_STUN, MakePacket<S_STUN>);
         _handler.Add((ushort)PacketId.PKT_S_STUN, PacketHandler.S_STUNHandler);
+        _onRecv.Add((ushort)PacketId.PKT_S_FIND_GAME, MakePacket<S_FIND_GAME>);
+        _handler.Add((ushort)PacketId.PKT_S_FIND_GAME, PacketHandler.S_FIND_GAMEHandler);
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

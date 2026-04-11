@@ -8,6 +8,6 @@ public class BaronController : MinionController
     public override void Init()
     {
         base.Init();
-        _campType = CampType.CampNeutural;
+        CampType = CampType.CampNeutural;
     }
 }

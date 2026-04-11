@@ -11,5 +11,5 @@
 #include "asio.hpp"
 
 #include "framework.h"
-
+#include "CorePch.h"
 #endif //PCH_H

@@ -40,20 +40,29 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
 	shared_ptr<Room> room = GLobby->GetRoomById(pkt.roomid()).lock();
-	if (!room) 
+	if (!room)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[C_ENTER_GAME] room not found roomId=%d\n", pkt.roomid());
 		return true;
+	}
 
 	int32 mode = pkt.game_mode();
 	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] mode : %d\n", mode);
-	if (mode == 0)       
-		room->SetMaxPlayers(1);
-	else if (mode == 1)  
-		room->SetMaxPlayers(2);
-	else if (mode == 2)  
-		room->SetMaxPlayers(4);
+	if (mode == 0) room->SetMaxPlayers(1);
+	else if (mode == 1) room->SetMaxPlayers(2);
+	else if (mode == 2) room->SetMaxPlayers(4);
 
-	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] try enter player id : %d\n", pkt.playerindex());
-	GLobby->EnterRoom(pkt.roomid(), pkt.playerindex());  // Enter 내부에서 정원 체크
+	// playerindex 대신 session에서 직접 플레이어 조회
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
+	if (player == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[C_ENTER_GAME] player is nullptr\n");
+		return false;
+	}
+
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[C_ENTER_GAME] enter playerId=%d\n", player->GetPlayerId());
+	//room->DoAsync(&Room::Enter, player);
 	return true;
 }
 
@@ -99,7 +108,6 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	
 	// Room을 얻어내고 해당 Room에서 player를 가져온다
 	int32 playerId = pkt.object_id();
-	cout << "playerId : " << playerId << '\n';
 	PlayerRef player = room->GetPlayerById(playerId).lock();
 	if (player == nullptr)
 	{
@@ -124,24 +132,16 @@ bool Handle_C_ENTER_LOBBY(PacketSessionRef& session, Protocol::C_ENTER_LOBBY& pk
 	Protocol::S_ENTER_LOBBY lobbyPkt;
 
 	unordered_map<int32, RoomRef> rooms = GLobby->GetRoomList();
-	vector<int32> roomIds;
 	for (auto& [roomId, room] : rooms)
 	{
 		Protocol::RoomInfo* roomInfo = lobbyPkt.add_room_infos();
 		roomInfo->set_roomid(roomId);
 		roomInfo->set_rommname(room->GetRoomName());
 	}
-	// TODO : RoomId HardCoding
-	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
-	PlayerRef newPlayer = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
-	GLobby->OnClientEnter(newPlayer);
 
-	if (newPlayer == nullptr) 
-		return false;
+	// GLobby->OnClientEnter(newPlayer); ← 이 줄 제거
 
-	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(lobbyPkt);
-	session->Send(sendBuffer);
-
+	session->Send(ClientPacketHandler::MakeSendBuffer(lobbyPkt));
 	return true;
 }
 
@@ -175,10 +175,12 @@ bool Handle_C_SELECT_CHARACTER(PacketSessionRef& session, Protocol::C_SELECT_CHA
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 	PlayerRef player = dynamic_pointer_cast<Player>(gameSession->_currentPlayer.load());
-	if (player == nullptr) return false;
+	if (player == nullptr) 
+		return false;
 
 	shared_ptr<Room> room = GLobby->GetRoomById(pkt.room_id()).lock();
-	if (room == nullptr) return false;
+	if (room == nullptr) 
+		return false;
 
 	room->DoAsync(&Room::HandleSelectCharacter, player, pkt.player_type());
 	return true;
@@ -198,6 +200,26 @@ bool Handle_C_CONFIRM_CHARACTER(PacketSessionRef& session, Protocol::C_CONFIRM_C
 	if (room == nullptr) 
 		return false;
 
-	room->DoAsync(&Room::HandleConfirmCharacter, player, pkt.player_type());
+	room->DoAsync(&Room::HandleConfirmCharacter, player, pkt.player_type());	
+	return true;
+}
+
+bool Handle_C_FIND_GAME(PacketSessionRef& session, Protocol::C_FIND_GAME& pkt)
+{
+	int32 mode = pkt.game_mode();
+	int32 maxPlayers = (mode == 0) ? 1 : (mode == 1) ? 2 : 4;
+
+	RoomRef room = GLobby->FindOrCreateRoom(mode, maxPlayers);
+	if (room == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Handle_C_FIND_GAME] room is nullptr\n");
+		return false;
+	}
+
+	Protocol::S_FIND_GAME replyPkt;
+	replyPkt.set_room_id(room->GetRoomId());
+	session->Send(ClientPacketHandler::MakeSendBuffer(replyPkt));
+
+	GConsoleLogger->WriteStdOut(Color::WHITE, L"[Handle_C_FIND_GAME] mode=%d -> roomId=%d\n", mode, room->GetRoomId());
 	return true;
 }

@@ -229,3 +229,13 @@ message S_STUN
     int32 target_id = 1;
     float duration  = 2;
 }
+
+message C_FIND_GAME
+{
+	int32 game_mode = 1;
+}
+
+message S_FIND_GAME
+{
+	int32 room_id = 1;
+}

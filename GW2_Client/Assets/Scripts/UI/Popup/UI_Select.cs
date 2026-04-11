@@ -37,7 +37,7 @@ public class UI_Select : UI_Popup
 
         //_roomId = PlayerPrefs.GetInt("CurrentRoomId", 0);
         //_roomId = Bootstrapper.Instance.NetworkService.GetRoomId();
-        _roomId = 0;
+        _roomId = Bootstrapper.Instance.NetworkService.GetRoomId();
     }
 
     private void OnClickChar(PlayerType type)

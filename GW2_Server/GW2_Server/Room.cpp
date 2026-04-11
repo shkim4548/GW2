@@ -54,11 +54,7 @@ bool Room::Enter(PlayerRef gameObject)
 	}
 
 	// 2. 스폰 위치 팀별 설정
-	GameMath::Vector3 spawnPos =
-		(assignedTeam == Protocol::CAMP_HUMAN)
-		? GameMath::Vector3(-60.0f, 0.0f, 0.0f)
-		: GameMath::Vector3(60.0f, 0.0f, 0.0f);
-
+	GameMath::Vector3 spawnPos = (assignedTeam == Protocol::CAMP_HUMAN) ? GameMath::Vector3(-60.0f, 0.0f, 0.0f) : GameMath::Vector3(60.0f, 0.0f, 0.0f);
 	// 3. _objectInfo 완전 초기화 — 이후 CopyFrom의 기준이 됨
 	gameObject->SetPosVector(spawnPos);
 	gameObject->SetCampType(assignedTeam);
@@ -90,6 +86,22 @@ bool Room::Enter(PlayerRef gameObject)
 		session->Send(ClientPacketHandler::MakeSendBuffer(handPkt));
 	}
 
+	// 입장 사실을 신입 플레이어에게 알린다
+	if (auto player = dynamic_pointer_cast<Player>(gameObject))
+	{
+		Protocol::S_ENTER_GAME enterGamePkt;
+		enterGamePkt.set_success(true);
+
+		Protocol::ObjectInfo* playerInfo = new Protocol::ObjectInfo();
+		playerInfo->CopyFrom(gameObject->_objectInfo);
+		playerInfo->set_object_type(Protocol::OBJECT_TYPE_PLAYER);
+		enterGamePkt.set_allocated_player(playerInfo);
+
+		SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(enterGamePkt);
+		if (auto session = player->GetSession().lock())
+			session->Send(sendBuffer);
+	}
+
 	// 6. 기존 플레이어들에게 신규 입장 브로드캐스트 (본인 제외)
 	{
 		Protocol::S_SPAWN spawnPkt;
@@ -97,6 +109,9 @@ bool Room::Enter(PlayerRef gameObject)
 		Broadcast(ClientPacketHandler::MakeSendBuffer(spawnPkt), objectId);
 	}
 
+	cout << _maxPlayers << endl;
+
+	StartGame();
 	// 7. 신규 플레이어에게 기존 오브젝트 전체 동기화
 	//    CopyFrom으로 object_type / name / pos_info / stat_info(현재 HP) / team_flag 모두 포함
 	//    → SyncObjectsToPlayer 대체 (S_ENTER_GAME + S_HP_CHANGE 분리 방식 제거)
@@ -163,6 +178,7 @@ void Room::RoomInit(unordered_map<int32, shared_ptr<Navigation::LaneRoute>> rout
 		GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Room::RoomInit] laneId=%d, waypoints=%d\n",
 			laneId, static_cast<int32>(route->waypoints.size()));
 	}
+
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)
@@ -384,7 +400,7 @@ bool Room::HandleSkill(ObjectRef attacker, Protocol::C_SKILL skillPkt)
 	const float attackRange = (skillId == 1)
 		? attacker->GetStatInfo().attack_range()   // 평타: 캐릭터 사거리
 		: cardStat.range;                          // 카드: CardStat.range
-	GameMath::Vector3 attackerPos = attacker->GetPosVector();
+	GameMath::Vector3 attackerPos(skillPkt.pos_x(), 0.f, skillPkt.pos_z()); // ← 변경
 	GameMath::Vector3 targetPos = target->GetPosVector();
 	const float effectiveRange = (skillId == 1)
 		? attackRange + 2.0f    // ← 위치 동기화 오차 보정 (이동속도 12 × 50ms RTT ≈ 0.6 + 안전마진)
@@ -541,9 +557,23 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	GameMath::Vector3 startWorld(startPos.x(), startPos.y(), startPos.z());
 	GameMath::Vector3 endWorld(endPos.x(), endPos.y(), endPos.z());
 
-	//cout << "[Room::HandleMovePlayer] Before FindPath" << endl;
-	// World -> Grid
-	int32 sx, sz, tx, tz;
+	// ① 클라이언트 신고 위치로 서버 포지션 즉시 갱신 (WorldToGrid 결과 무관)
+	int32 playerId = movePkt.object_id();
+	auto it = _players.find(playerId);          // operator[] 대신 find 사용
+	if (it == _players.end())
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayer] player not found id=%d\n", playerId);
+		return;
+	}
+	PlayerRef player = it->second;
+	if (player == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayer] player is nullptr\n");
+		return;
+	}
+	player->SetPosVector(startWorld);   // ← 이 한 줄이 핵심
+
+	// ② 이하 기존 pathfinding 로직 유지
 	shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
 	if (navSystem == nullptr)
 	{
@@ -551,40 +581,29 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 		return;
 	}
 
-	Navigation::WalkableGrid& grid = _navigationSystem.lock()->GetGridCells();
-	if (!_navigationSystem.lock()->WorldToGrid(grid, startWorld, sx, sz))
+	Navigation::WalkableGrid& grid = navSystem->GetGridCells();
+	int32 sx, sz, tx, tz;
+	if (!navSystem->WorldToGrid(grid, startWorld, sx, sz))
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail (start)\n");
+		return;  // 위치는 이미 갱신됐으므로 pathfinding만 포기
+	}
+	if (!navSystem->WorldToGrid(grid, endWorld, tx, tz))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail (end)\n");
 		return;
 	}
 
-	if (!_navigationSystem.lock()->WorldToGrid(grid, endWorld, tx, tz))
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail\n");
-		return;
-	}
-
-	// PathFinding
 	vector<Navigation::GridCell*> gridPath;
-	bool ok = _navigationSystem.lock()->FindPath(grid, sx, sz, tx, tz, gridPath, 0);
-
+	bool ok = navSystem->FindPath(grid, sx, sz, tx, tz, gridPath, 0);
 	if (!ok || gridPath.empty())
 	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] GridCell is nullptr\n");
-		// TODO : 이동 실패 구현
+		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] FindPath Fail\n");
 		return;
 	}
 
-	int32 playerId = movePkt.object_id();
-	weak_ptr<Player> player = _players[playerId];
-	if (player.lock() == nullptr)
-	{
-		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] player is nullptr\n");
-		// TODO : 이동 실패 구현
-		return;
-	}
-	//cout << "End of HandleMovePlayer" << endl;
-	HandleMovePlayerInternal(player.lock(), gridPath, startWorld, endWorld);
+	// 나머지 기존 코드 (_players[] 부분 제거하고 위의 player 변수 그대로 사용)
+	HandleMovePlayerInternal(player, gridPath, startWorld, endWorld);
 }
 
 bool Room::HandleSpawnMinion(MinionRef minion)
@@ -1924,6 +1943,30 @@ vector<GameMath::Vector3> Room::SmoothPath(const vector<GameMath::Vector3>& path
 
 void Room::StartGame()
 {
+	// 맵 오브젝트의 스폰
+	// HUMAN 터렛
+	SpawnTurret(GameMath::Vector3(-15, 0.5, -25.5), Protocol::CAMP_HUMAN);
+	SpawnTurret(GameMath::Vector3(-52.81, 0.5, -22.93), Protocol::CAMP_HUMAN);
+	SpawnTurret(GameMath::Vector3(-65.26, 2, -4.28), Protocol::CAMP_HUMAN);
+	SpawnTurret(GameMath::Vector3(-65.26, 2, 4.73), Protocol::CAMP_HUMAN);
+	SpawnTurret(GameMath::Vector3(-51.2, 0.5, 22.31), Protocol::CAMP_HUMAN);
+	SpawnTurret(GameMath::Vector3(-10.93, 0.5, 25.1), Protocol::CAMP_HUMAN);
+
+	// CYBORG 터렛
+	SpawnTurret(GameMath::Vector3(11.69, 0.5, -25.51), Protocol::CAMP_CYBORG);
+	SpawnTurret(GameMath::Vector3(47.1, 0.5, -22.6), Protocol::CAMP_CYBORG);
+	SpawnTurret(GameMath::Vector3(64.2, 2, -4.5), Protocol::CAMP_CYBORG);
+	SpawnTurret(GameMath::Vector3(64.2, 2, 4.5), Protocol::CAMP_CYBORG);
+	SpawnTurret(GameMath::Vector3(50.9, 0.5, 22.1), Protocol::CAMP_CYBORG);
+	SpawnTurret(GameMath::Vector3(13, 0.5, 25.3), Protocol::CAMP_CYBORG);
+
+	// 넥서스
+	SpawnNexus(GameMath::Vector3(-70.5f, 2.3f, 0.0f), Protocol::CAMP_HUMAN);
+	SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
+
+	// 바론 구현
+	SpawnBaron();
+	// 전원에게 맵 오브젝트 동기화
 }
 
 void Room::SyncObjectsToPlayer(PlayerRef newPlayer)

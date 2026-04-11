@@ -113,8 +113,8 @@ void Lobby::LobbyInit()
     StatLoader statLoader;
     statLoader.LoadCardStatsFromJson("../Data/Stats.json", _cardStats);
 
-    shared_ptr<Room> room = MakeRoom("TestRoom");
-    room->DoAsync(&Room::RoomInit, _route);
+    //shared_ptr<Room> room = MakeRoom("TestRoom");
+    //room->DoAsync(&Room::RoomInit, _route);
 
     GConsoleLogger->WriteStdErr(Color::YELLOW, L"[LobbyInit] Make Room roomCnt: ");
 }
@@ -153,6 +153,27 @@ weak_ptr<Room> Lobby::GetRoomById(int32 roomId)
     return it->second;
 }
 
+RoomRef Lobby::FindOrCreateRoom(int32 gameMode, int32 maxPlayers)
+{
+    // 동일 gameMode이고 자리 있는 방 탐색
+    for (auto& [roomId, room] : _rooms)
+    {
+        if (room->GetGameMode() == gameMode && room->GetPlayerCount() < room->GetMaxPlayers())
+        {
+            GConsoleLogger->WriteStdOut(Color::WHITE, L"[FindOrCreateRoom] JOIN roomId=%d\n", roomId);
+            return room;
+        }
+    }
+
+    // 없으면 새 방 생성
+    RoomRef newRoom = MakeRoom("GameRoom");
+    newRoom->SetGameMode(gameMode);
+    newRoom->SetMaxPlayers(maxPlayers);
+    newRoom->DoAsync(&Room::RoomInit, _route);
+    GConsoleLogger->WriteStdOut(Color::WHITE, L"[FindOrCreateRoom] CREATE roomId=%d\n", newRoom->GetRoomId());
+    return newRoom;
+}
+
 RoomRef Lobby::MakeRoom(string roomName)
 {
 	// 방을 하나 만들어서 로비의 목록에 저장한다.
@@ -160,6 +181,7 @@ RoomRef Lobby::MakeRoom(string roomName)
 	newRoom->SetRoomName(roomName);
 	newRoom->SetRoomId(_id);
 	_rooms.emplace(_id, newRoom);
+    ++_id;
 	return newRoom;
 }
 

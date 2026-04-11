@@ -16,14 +16,6 @@ public class GameScene : BaseScene
         //INetworkService network = DI.Container.Resolve<INetworkService>();
         INetworkService network = Bootstrapper.Instance.NetworkService;
 
-        //_resourceService.Instantiate("Player/Police");
-        // TODO : 하드코딩된 RoomId 변경
-        //C_ENTER_GAME enterGamePkt = new C_ENTER_GAME();
-        ////enterGamePkt.PlayerIndex = network.GetNetworkId();
-        //enterGamePkt.PlayerIndex = 1;
-        //enterGamePkt.RoomId = 0;
-        //network.Send(enterGamePkt);
-
         IUIService uiService = Bootstrapper.Instance.UIService;
         //uiService.ShowSceneUI<UI_GameScene>();
         uiService.ShowPopupUI<UI_Select>();

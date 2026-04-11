@@ -38,7 +38,6 @@ public class MyPlayerController : PlayerController
 
     private UI_Store _storeUI = null;
     private int _pendingSkillSlot = -1; // -1 = 스킬 대기 없음
-    public CampType CampType { get; set; }
 
     // HandSync 버퍼 (UI 생성 전 패킷 도착 대비)
     private static List<int> _pendingHandCardIds = new List<int>();
@@ -79,7 +78,7 @@ public class MyPlayerController : PlayerController
         _inputService.KeyAction += OnKeyEvent;
 
 
-        Id = _networkService.GetNetworkId();
+        //Id = _networkService.GetNetworkId();
         //_campType = Google.Protobuf.Enum.CampType.CampHuman;
 
         OnStatInfoUpdate -= OnStatReceived;
@@ -243,7 +242,7 @@ public class MyPlayerController : PlayerController
                 if (Physics.Raycast(skillRay, out skillHit, 100.0f, LayerMask.GetMask("Objects")))
                 {
                     BaseController bc = skillHit.collider.gameObject.GetComponent<BaseController>();
-                    if (bc != null && bc._campType != _campType)
+                    if (bc != null && bc.CampType != CampType)
                     {
                         _target = skillHit.collider.gameObject;
                         int tId = bc.Id;
@@ -281,7 +280,7 @@ public class MyPlayerController : PlayerController
         {
             Debug.Log("Raycast Objects hit");
             // 진영이 다르고 사거리 내에 있다면 상태를 전이시킨다.
-            if (hit.collider.gameObject.GetComponent<BaseController>()._campType != this._campType)
+            if (hit.collider.gameObject.GetComponent<BaseController>().CampType != this.CampType)
             {
                 // TEMP
                 _target = hit.collider.gameObject;
@@ -479,8 +478,10 @@ public class MyPlayerController : PlayerController
         attackPkt.TargetId = targetId;
         attackPkt.CommandId = 1;
         attackPkt.ClientTime = GetClientTime();
+        attackPkt.PosX = transform.position.x;
+        attackPkt.PosZ = transform.position.z;
         _networkService.Send(attackPkt);
-        Debug.Log($"[MyPlayer] SendAttackPacket targetId={targetId}");
+        //Debug.Log($"[MyPlayer] SendAttackPacket targetId={targetId}");
     }
 
 
@@ -498,8 +499,9 @@ public class MyPlayerController : PlayerController
         movePacket.StartPos = new PosInfo();
         movePacket.RoomId = RoomId;
         movePacket.ObjectId = Id;
-        Debug.Log(movePacket.ObjectId);
-        Debug.Log(movePacket.RoomId);
+        //Debug.Log($"SendMovePacket : {movePacket.ObjectId}");
+        //Debug.Log($"SendMovePacket : {Id}");
+        //Debug.Log(movePacket.RoomId);
 
         // Start Position
         movePacket.StartPos.X = transform.position.x;
