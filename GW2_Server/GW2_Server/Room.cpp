@@ -111,7 +111,6 @@ bool Room::Enter(PlayerRef gameObject)
 
 	cout << _maxPlayers << endl;
 
-	StartGame();
 	// 7. 신규 플레이어에게 기존 오브젝트 전체 동기화
 	//    CopyFrom으로 object_type / name / pos_info / stat_info(현재 HP) / team_flag 모두 포함
 	//    → SyncObjectsToPlayer 대체 (S_ENTER_GAME + S_HP_CHANGE 분리 방식 제거)
@@ -129,6 +128,7 @@ bool Room::Enter(PlayerRef gameObject)
 	// 8. 정원 충족 시 게임 시작
 	if (_maxPlayers > 0 && (int32)_players.size() >= _maxPlayers)
 	{
+		StartGame();
 		SetIsRunning(true);
 		Protocol::S_START_GAME startpkt;
 		Broadcast(ClientPacketHandler::MakeSendBuffer(startpkt));
@@ -745,7 +745,8 @@ void Room::UpdateRoom(float deltaTime)
 			continue;
 
 		bool wasMoving = obj->GetIsMoving();
-
+		
+		obj->UpdateController(deltaTime);      // _isMoving이 여기서 바뀔 수 있음
 		obj->UpdateMovement(deltaTime);
 
 		bool isMoving = obj->GetIsMoving();
@@ -1593,9 +1594,12 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	Protocol::S_MOVE_END endMovePkt;
 	endMovePkt.set_object_id(obj->GetObjectId());
 	Protocol::PosInfo* pos = endMovePkt.mutable_server_pos_info();
-	*pos = obj->GetPosInfo();
+
+	GameMath::Vector3 pv = obj->GetPosVector();
+	pos->set_x(pv._x);
+	pos->set_y(pv._y);
+	pos->set_z(pv._z);
 	pos->set_state(obj->GetMoveState());
-	//cout << pos->state() << endl;
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);
 	Broadcast(sendBuffer);

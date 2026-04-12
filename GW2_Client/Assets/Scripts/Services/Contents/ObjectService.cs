@@ -76,6 +76,7 @@ public class ObjectService : IObjectService
             {
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.transform.position = initPos;
+                pc.PosInfo = info.PosInfo;   // ← 추가: 보간 기준점 초기화
                 pc.Id = objectId;
                 pc.CampType = (CampType)info.TeamFlag;
             }

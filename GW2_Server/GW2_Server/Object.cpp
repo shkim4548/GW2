@@ -35,7 +35,7 @@ bool Object::IsDead()
 void Object::SetPosInfo(Protocol::PosInfo posInfo)
 {
 	_posVector = GameMath::Vector3(posInfo.x(), posInfo.y(), posInfo.z());
-	_objectInfo.mutable_pos_info();
+	_objectInfo.mutable_pos_info()->CopyFrom(posInfo);
 }
 
 void Object::SetPosVector(GameMath::Vector3& posVector)

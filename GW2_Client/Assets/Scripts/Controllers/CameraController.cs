@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
 
         if (_player == null)
         {
-            Debug.LogError("[CameraController] MyPlayer Controller is nullptr");
+            Debug.Log("[CameraController] MyPlayer Controller is nullptr");
             return;
         }
 

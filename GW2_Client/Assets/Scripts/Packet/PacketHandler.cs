@@ -161,9 +161,9 @@ public class PacketHandler
     {
         S_SPAWN spawnPacket = message as S_SPAWN;
         Debug.Log("spawn");
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
         foreach (ObjectInfo obj in spawnPacket.Players)
         {
-            IObjectService objectService = Bootstrapper.Instance.ObjectService;
             objectService.Add(obj, myPlayer: false);
         }
     }
