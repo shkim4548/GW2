@@ -116,8 +116,8 @@ public class MyPlayerController : PlayerController
             {
                 // 타겟이 이동했으면 다시 추적
                 _chaseToAttack = true;
-                State = MoveState.Run;
                 RequestMove(_target.transform.position);
+                State = MoveState.Run;
             }
         }
 
@@ -311,10 +311,10 @@ public class MyPlayerController : PlayerController
             _moveToDest = true;
             _chaseToAttack = false;  // 이동 명령 시 추적 취소
             _target = null;
+            RequestMove(_destPos);
             State = MoveState.Run;
             // 상태 변화 확인
             //Debug.Log("Raycast Road");
-            RequestMove(_destPos);
         }
         // 사거리 밖에 있다면, 추적시킨다.
         else

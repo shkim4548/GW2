@@ -105,12 +105,6 @@ void Player::UpdateController(float deltaTime)
 
     if (_attackCooldown > 0.0f)
         _attackCooldown -= deltaTime;
-    
-    if (GetMoveState() == (Protocol::MoveState::MOVE_STATE_RUN))
-    {
-        _movement.speed = 0.f;
-        return;
-    }
 
     if (_pathIndex >= static_cast<int32>(_path.size()))
     {
@@ -146,12 +140,22 @@ void Player::UpdateController(float deltaTime)
         }
 
         dir = dir.Normalized();
-        _movement.direction = dir;
-        _movement.speed = _moveSpeed;
-
-        // 여기서 remainMoveDist만큼 이동하는 건 Movement에게 맡김
-        // (혹은 remainMoveDist를 고려해서 speed 설정)
+        _posVector = _posVector + dir * remainMoveDist;
+        Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+        tPos->set_x(_posVector._x);
+        tPos->set_y(_posVector._y);
+        tPos->set_z(_posVector._z);
+        _movement.speed = 0.0f;
         return;
+
+    }
+
+    // while 루프 끝나고, 아래 if 블록 바로 전에 삽입:
+    {
+        Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+        tPos->set_x(_posVector._x);
+        tPos->set_y(_posVector._y);
+        tPos->set_z(_posVector._z);
     }
 
     if (_pathIndex >= static_cast<int32>(_path.size()))

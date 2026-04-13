@@ -1150,7 +1150,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3199915583482539066}
   - component: {fileID: 729455986911387452}
-  - component: {fileID: 2069326368673698190}
   - component: {fileID: 3435749176868243994}
   - component: {fileID: 7588203768497726169}
   - component: {fileID: -2216941318565978588}
@@ -1207,28 +1206,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!195 &2069326368673698190
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2881095515875004147}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.3
-  m_Speed: 6
-  m_Acceleration: 70
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!54 &3435749176868243994
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1295,9 +1272,7 @@ MonoBehaviour:
   _sendPacketDelay: 0.2
   _isMoving: 0
   _positionSmoothTime: 0.1
-  _moveSpeed: 100
   _rotationSpeed: 1
-  _campType: 0
 --- !u!1 &2942416188630266877
 GameObject:
   m_ObjectHideFlags: 0

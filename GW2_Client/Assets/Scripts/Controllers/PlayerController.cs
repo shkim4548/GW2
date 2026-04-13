@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class PlayerController : CreatureController
 {
     private float interpolationSpeed = 10.0f;
+    [SerializeField] private float _remoteSpeed = 12.0f;
 
     private Vector3 _serverPosition;
     private Vector3 _velocity;
@@ -34,9 +35,9 @@ public class PlayerController : CreatureController
     private void InterpolateToServerPosition()
     {
         Vector3 serverPos = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
-
-        transform.position = Vector3.SmoothDamp(
-            transform.position, serverPos, ref _velocity, _positionSmoothTime);
+        // snap 조건 제거 - 목적지는 멀 수 있음
+        transform.position = Vector3.MoveTowards(
+            transform.position, serverPos, _remoteSpeed * Time.deltaTime);
 
         Vector3 direction = serverPos - transform.position;
         if (direction.sqrMagnitude > 0.01f)
@@ -46,4 +47,5 @@ public class PlayerController : CreatureController
                 transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
         }
     }
+
 }

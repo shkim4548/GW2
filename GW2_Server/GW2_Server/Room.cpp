@@ -586,11 +586,20 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	if (!navSystem->WorldToGrid(grid, startWorld, sx, sz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail (start)\n");
+		player->_path.clear();
+		player->_pathIndex = 0;
+		player->SetMoveState(Protocol::MOVE_STATE_IDLE);
+		player->SetIsMoving(false);
 		return;  // 위치는 이미 갱신됐으므로 pathfinding만 포기
 	}
 	if (!navSystem->WorldToGrid(grid, endWorld, tx, tz))
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail (end)\n");
+		// 이전 경로 폐기, startWorld 위치에서 정지
+		player->_path.clear();
+		player->_pathIndex = 0;
+		player->SetMoveState(Protocol::MOVE_STATE_IDLE);
+		player->SetIsMoving(false);
 		return;
 	}
 
@@ -678,6 +687,7 @@ void Room::HandleMovePlayerInternal(PlayerRef player, std::vector<Navigation::Gr
 	player->_path = move(worldPath);
 	player->_pathIndex = 0;
 	player->SetIsMoving(true);
+	player->MarkForceBroadcastMove();  // ← 추가: 다음 틱에 즉시 S_MOVE 전송
 }
 
 void Room::UpdateRoom(float deltaTime)
@@ -727,15 +737,6 @@ void Room::UpdateRoom(float deltaTime)
 			if (_waveSpawnCount >= WAVE_MINION_COUNT)
 				_isSpawningWave = false;
 		}
-	}
-
-	// 1) Controller Phase
-	for (auto& [id, obj] : _objects)
-	{
-		if (obj == nullptr)
-			continue;
-
-		obj->UpdateController(deltaTime);
 	}
 
 	// 2) Movement + Broadcast Phase
@@ -1574,18 +1575,27 @@ void Room::HandleRespawnPlayer(int32 playerId)
 
 void Room::BroadcastMoving(const ObjectRef& obj)
 {
-	// Moving Start
 	Protocol::S_MOVE movePkt;
 	movePkt.set_object_id(obj->GetObjectId());
-	// TODO : POS는 & 형태로 가져오는 것이 유리할 것이다
 	Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
-	*pos = obj->GetPosInfo();
-	pos->set_state(obj->GetMoveState());
-	//cout << obj->GetObjectId() << " : " <<  pos->state() << endl;
-	obj->OnMoveBroadcastSent(); // 타이머/플래그 리셋
 
-	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(movePkt);
-	Broadcast(sendBuffer);
+	// Player는 목적지를 전송, 나머지는 현재 위치 그대로
+	if (obj->IsPlayer() && !obj->_path.empty())
+	{
+		const auto& dest = obj->_path.back();
+		pos->set_x(dest._x);
+		pos->set_y(dest._y);
+		pos->set_z(dest._z);
+		pos->set_state(obj->GetMoveState());
+	}
+	else
+	{
+		*pos = obj->GetPosInfo();
+		pos->set_state(obj->GetMoveState());
+	}
+
+	obj->OnMoveBroadcastSent();
+	Broadcast(ClientPacketHandler::MakeSendBuffer(movePkt));
 }
 
 void Room::BroadcastMovingEnd(const ObjectRef& obj)
@@ -1969,7 +1979,7 @@ void Room::StartGame()
 	SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
 
 	// 바론 구현
-	SpawnBaron();
+	//SpawnBaron();
 	// 전원에게 맵 오브젝트 동기화
 }
 

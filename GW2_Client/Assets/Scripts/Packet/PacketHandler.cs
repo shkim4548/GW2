@@ -49,6 +49,8 @@ public class PacketHandler
         S_MOVE movePkt = message as S_MOVE;
         var objectService = Bootstrapper.Instance.ObjectService;
 
+        Debug.Log($"[S_MOVE RECV] ObjectId={movePkt.ObjectId} MyId={objectService.MyPlayer?.Id}"); // ← 진입 즉시
+
         int targetId = movePkt.ObjectId;
         GameObject go = objectService.FindById(targetId);
         if (go == null)
@@ -91,13 +93,14 @@ public class PacketHandler
         pos.X = movePkt.ServerPosInfo.X;
         pos.Y = movePkt.ServerPosInfo.Y;
         pos.Z = movePkt.ServerPosInfo.Z;
+        pos.State = movePkt.ServerPosInfo.State;
 
+        bc._isMoving = true;
         bc.PosInfo = pos;
         bc.LastServerTime = movePkt.ServerTime;
-        bc._isMoving = true;
-        bc.State = movePkt.ServerPosInfo.State;
-        //Debug.Log($"[S_MOVEHandler] Player {targetId} " +
-        //          $"serverPos=({pos.X:F2},{pos.Y:F2},{pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
+        //bc.State = movePkt.ServerPosInfo.State;
+        Debug.Log($"[S_MOVEHandler] Player {targetId} " +
+                  $"serverPos=({pos.X:F2},{pos.Y:F2},{pos.Z:F2}) state={movePkt.ServerPosInfo.State}");
     }
 
     public static void S_SKILLHandler(PacketSession session, IMessage message)
@@ -246,7 +249,8 @@ public class PacketHandler
         bc._isMoving = false;
         bc.transform.position = playerServerPos;
         bc.State = endMovePkt.ServerPosInfo.State;
-        Debug.Log(endMovePkt.ServerPosInfo.State);
+        //Debug.Log(endMovePkt.ServerPosInfo.State);
+        Debug.Log($"[S_MOVE_END] Player {targetId} snap to ({playerServerPos.x:F2},{playerServerPos.y:F2},{playerServerPos.z:F2}) from ({clientPosBefore.x:F2},{clientPosBefore.y:F2},{clientPosBefore.z:F2})");
     }
 
     internal static void S_MOVE_STARTHandler(PacketSession session, IMessage message)
@@ -374,8 +378,10 @@ public class PacketHandler
         //bc.transform.position = pos;
 
         NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
-        if (agent != null) agent.Warp(pos);
-        else bc.transform.position = pos;
+        if (agent != null) 
+            agent.Warp(pos);
+        else 
+            bc.transform.position = pos;
 
         bc.SetHp(pkt.CurrentHp, pkt.MaxHp);
         bc.State = MoveState.Idle;
