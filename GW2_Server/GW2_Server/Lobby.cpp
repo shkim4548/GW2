@@ -265,7 +265,8 @@ void Lobby::LobbyUpdate(float deltaTime)
             cout << roomId << endl;
             continue;
         }
-        room->UpdateRoom(deltaTime);
+        //room->UpdateRoom(deltaTime);
+        room->DoAsync(&Room::UpdateRoom, deltaTime);
     }
 
     // Room Á¤¸®
