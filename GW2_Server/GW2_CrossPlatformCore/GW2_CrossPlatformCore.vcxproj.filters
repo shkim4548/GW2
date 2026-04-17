@@ -7,6 +7,9 @@
     <Filter Include="Main">
       <UniqueIdentifier>{69674a69-92fa-4854-baf4-6b6c1ffed2fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{73c7b923-60c5-4b1a-9d5a-b5e86df6474e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetAddress.h">
@@ -24,6 +27,50 @@
     <ClInclude Include="Types.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="IoCore.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Container.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadLockProfiler.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Lock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Job.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalQueue.h" />
+    <ClInclude Include="Session.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="LockQueue.h" />
+    <ClInclude Include="JobTimer.h" />
+    <ClInclude Include="CoreTLS.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMacro.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreGlobal.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h" />
+    <ClInclude Include="JobQueue.h" />
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetAddress.cpp">
@@ -32,11 +79,42 @@
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="AsioTest.cpp">
+    <ClCompile Include="IoCore.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadLockProfiler.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Lock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPool.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Job.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalQueue.cpp" />
+    <ClCompile Include="Session.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreTLS.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="GW2_CrossPlatformCore.cpp">
+    <ClCompile Include="CoreGlobal.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp" />
+    <ClCompile Include="JobQueue.cpp" />
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="LockQueue.cpp" />
+    <ClCompile Include="Service.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

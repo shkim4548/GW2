@@ -9,17 +9,36 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
+#include <queue>
+#include <stack>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
+#include <array>
 #include <memory>
 #include <functional>
 #include <thread>
 #include <mutex>
 #include <atomic>
-#include <queue>
-#include <set>
+#include <chrono>
 
 using namespace std;
 
-// 플랫폼별 최소 헤더 (게임 로직에서 직접 쓰는 것만)
+// 플랫폼별 최소 헤더
 #ifdef _WIN32
-#include <windows.h>   // HANDLE 등 아직 쓰는 곳이 있으면 유지
+#include <windows.h>
 #endif
+
+// 프로젝트 기반 헤더 (의존 순서 엄수)
+#include "Types.h"
+#include "Container.h"
+#include "CoreMacro.h"
+#include "CoreGlobal.h"
+#include "CoreTLS.h"
+#include "Lock.h"
+#include "ObjectPool.h"
+#include "LockQueue.h"
+#include "JobTimer.h"
+#include "JobQueue.h"
