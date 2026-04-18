@@ -1587,6 +1587,15 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 		pos->set_y(dest._y);
 		pos->set_z(dest._z);
 		pos->set_state(obj->GetMoveState());
+
+		const auto curr = obj->GetPosVector();
+		float dx = dest._x - curr._x;
+		float dz = dest._z - curr._z;
+		if (dx * dx + dz * dz > 0.0001f)
+		{
+			float yaw = atan2f(dx, dz) * (180.0f / 3.14159265f);
+			pos->set_yaw(yaw);
+		}
 	}
 	else
 	{
