@@ -14,7 +14,7 @@ using SessionFactory = function<SessionRef(void)>;
 	Service
 --------------*/
 
-class Service
+class Service : public enable_shared_from_this<Service>
 {
 public:
 	Service(ServiceType type, NetAddress address, IoCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
@@ -66,7 +66,7 @@ public:
 class ServerService : public Service
 {
 public:
-	ServerService(NetAddress targetAddress, IoCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
+	ServerService(NetAddress address, IoCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
 	virtual ~ServerService() { }
 
 	virtual bool Start() override;

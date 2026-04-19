@@ -71,7 +71,9 @@
     <ClInclude Include="Service.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Listener.h" />
+    <ClInclude Include="Listener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetAddress.cpp">
@@ -117,6 +119,8 @@
     <ClCompile Include="Service.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Listener.cpp" />
+    <ClCompile Include="Listener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
