@@ -93,7 +93,8 @@ public class PacketHandler
         pos.X = movePkt.ServerPosInfo.X;
         pos.Y = movePkt.ServerPosInfo.Y;
         pos.Z = movePkt.ServerPosInfo.Z;
-        pos.State = movePkt.ServerPosInfo.State;
+        //pos.State = movePkt.ServerPosInfo.State;
+        pos.State = MoveState.Run;   // ← S_MOVE는 항상 "이동 중", IDLE S_MOVE 방어
         pos.Yaw = movePkt.ServerPosInfo.Yaw;
 
         bc._isMoving = true;
@@ -204,6 +205,9 @@ public class PacketHandler
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
         int targetId = endMovePkt.ObjectId;
+        if (objectService.MyPlayer != null && objectService.MyPlayer.Id == targetId)
+            return;
+
         GameObject go = objectService.FindById(targetId);
         if (go == null)
         {
