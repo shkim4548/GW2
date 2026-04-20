@@ -1,4 +1,3 @@
-#include "IoCore.h"
 #ifndef GOOGLE_PROTOBUF_STUBS_CALLBACK_H_
 #define GOOGLE_PROTOBUF_STUBS_CALLBACK_H_
 

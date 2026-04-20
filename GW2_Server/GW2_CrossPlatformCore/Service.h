@@ -74,6 +74,6 @@ public:
 	bool GetIsRunning() { return _isRunning; }
 
 private:
-	ListenRef _listener = nullptr;
+	ListenerRef _listener = nullptr;
 	Atomic<bool> _isRunning = false;;
 };
