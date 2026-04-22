@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN // ���� ������ �ʴ� ������ Windows ������� �����մϴ�.
 
 #ifdef _DEBUG
@@ -9,6 +10,7 @@
 #pragma comment(lib, "ServerCore\\Release\\TR_ServerCore.lib")
 #pragma comment(lib, "Protobuf\\Release\\libprotobuf.lib")
 #endif
+#endif	// end of _WIN32 
 
 #include "CorePch.h"
 #include "Enum.pb.h"
