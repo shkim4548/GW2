@@ -28,11 +28,7 @@ namespace GameServerAdmin.Controllers.Public
         [HttpPost]
         public async Task<ActionResult<CommentResponse>> CreateComment(long postId, [FromBody] CreateCommentRequest request)  
         {
-            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
-            if (string.IsNullOrWhiteSpace(userIdValue))
-                return Unauthorized();
-
-            var authorId = long.Parse(userIdValue);
+            var authorId = _userContext.ActorId;
 
             var response = await _commentService.CreateCommentAsync(postId, authorId, request);
             return CreatedAtAction(
@@ -46,9 +42,12 @@ namespace GameServerAdmin.Controllers.Public
         /// 대댓글 작성
         /// POST /api/posts/{postId}/comments/{commentId}/replies
         /// </summary>
+        [Authorize]
         [HttpPost("{commentId}/replies")]
-        public async Task<ActionResult<ReplyResponse>> CreateReply([FromRoute] int postId, [FromRoute] int commentId, [FromBody] CreateReplyRequest request, [FromQuery] int authorId)
+        public async Task<ActionResult<ReplyResponse>> CreateReply([FromRoute] int postId, [FromRoute] int commentId, [FromBody] CreateReplyRequest request)
         {
+            var authorId = _userContext.ActorId;
+
             var response = await _commentService.CreateReplyAsync(postId, commentId, authorId, request);
             return CreatedAtAction(
                 nameof(GetComments),
@@ -61,9 +60,11 @@ namespace GameServerAdmin.Controllers.Public
         /// 댓글 수정
         /// PUT /api/posts/{postId}/comments/{commentId}
         /// </summary>
+        [Authorize]
         [HttpPut("{commentId}")]
-        public async Task<ActionResult<CommentResponse>> UpdateComment([FromRoute] int postId, [FromRoute] int commentId, [FromBody] UpdateCommentRequest request, [FromQuery] int authorId)
+        public async Task<ActionResult<CommentResponse>> UpdateComment([FromRoute] int postId, [FromRoute] int commentId, [FromBody] UpdateCommentRequest request)
         {
+            var authorId = _userContext.ActorId;
             var response = await _commentService.UpdateCommentAsync(postId, commentId, authorId, request);
             return Ok(response);
         }
@@ -74,8 +75,10 @@ namespace GameServerAdmin.Controllers.Public
         /// </summary>
         [Authorize]
         [HttpDelete("{commentId}")]
-        public async Task<IActionResult> DeleteComment([FromRoute] long postId, [FromRoute] long commentId, [FromQuery] long authorId)
+        public async Task<IActionResult> DeleteComment([FromRoute] long postId, [FromRoute] long commentId)
         {
+            var authorId = _userContext.ActorId;
+
             await _commentService.DeleteCommentAsync(postId, commentId, authorId, _userContext.ActorType);
             return NoContent();
         }

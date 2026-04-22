@@ -101,8 +101,9 @@ public class UI_Store : UI_Popup
 
     private void OnCardSelected(int cardId, int price)
     {
+        Debug.Log("OnCardSelected");
         _selectedCardId = cardId;
-        GetText((int)Texts.PriceText).text = $"{price} G";
+        GetTMP((int)Texts.PriceText).text = $"{price} G";
         GetButton((int)Buttons.Buy).interactable = true;
     }
 

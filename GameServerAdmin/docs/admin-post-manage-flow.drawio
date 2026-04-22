@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram name="AdminPostManageFlow" id="admin-post-manage-flow">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Admin UI — Post 관리 전체 흐름" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="800" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===== 공통: Admin 진입 + Authorize ===== -->
+        <mxCell id="10" value="Admin&#xa;/admin/ui/posts 접근" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="650" y="80" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="11" value="[Authorize(Policy=&quot;AdminOnly&quot;)]&#xa;Admin 권한 확인" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="645" y="170" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="12" value="403 Forbidden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="980" y="195" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e10_11" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="10" target="11" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_12" value="권한 없음" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== 목록 페이지 (진입점) ===== -->
+        <mxCell id="20" value="GET /admin/ui/posts&#xa;AdminUiPostController.Index()&#xa;AdminPostListQuery (page, pageSize, isDeleted)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="295" width="340" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="21" value="AdminPostService&#xa;.GetAdminPostListAsync(query)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;isDeleted 필터 + 페이징 적용&#xa;MaxPageSize = 200 상한" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="605" y="400" width="330" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="22" value="게시글 목록 View 표시&#xa;(삭제된 글 포함 여부 선택 가능)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="625" y="530" width="300" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e11_20" value="권한 확인" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20_21" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="20" target="21" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21_22" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="21" target="22" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 목록에서 선택 분기 -->
+        <mxCell id="23" value="Admin이 목록에서 항목 선택" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="620" y="625" width="300" height="75" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e22_23" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="22" target="23" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- =============================================
+             흐름 1: 상세 조회
+        ============================================= -->
+        <mxCell id="30" value="GET /admin/ui/posts/{id}&#xa;AdminUiPostController.Detail(id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="760" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="31" value="AdminPostService&#xa;.GetPostDetailForAdminAsync(id)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━&#xa;삭제된 글도 조회 가능" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="855" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="32" value="상세 View 표시&#xa;(DeletedAt 포함)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="975" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e23_30" value="상세 보기" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="23" target="30" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30_31" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="30" target="31" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e31_32" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="31" target="32" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- =============================================
+             흐름 2: 수정
+        ============================================= -->
+        <mxCell id="40" value="GET /admin/ui/posts/{id}/edit&#xa;AdminUiPostController.Edit(id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="370" y="760" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="41" value="수정 폼 View 표시&#xa;(기존 Title / Content 채워진 상태)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="370" y="855" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="42" value="POST /admin/ui/posts/{id}/edit&#xa;[ValidateAntiForgeryToken]&#xa;ModelState.IsValid 검사" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="358" y="940" width="265" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="43" value="id != model.PostId ?&#xa;→ BadRequest()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="960" width="140" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="44" value="AdminPostService.UpdateAsync(request)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;App Validation → Post 조회&#xa;IsDeleted 확인 → post.Update()&#xa;SaveChangesAsync()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="358" y="1060" width="265" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="45" value="Redirect → 상세 페이지" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="1190" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e23_40" value="수정" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="23" target="40" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e40_41" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="40" target="41" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e41_42" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="41" target="42" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e42_43" value="id 불일치" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="42" target="43" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e42_44" value="통과" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="42" target="44" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e44_45" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="44" target="45" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- =============================================
+             흐름 3: 삭제 관리 (Soft → Restore → Hard)
+        ============================================= -->
+        <mxCell id="50" value="삭제 관련 작업 선택" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="755" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e23_50" value="삭제 / 복구" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="23" target="50" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Soft Delete -->
+        <mxCell id="60" value="POST /admin/ui/posts/{id}/soft-delete&#xa;[ValidateAntiForgeryToken]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="895" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="61" value="AdminPostService.SoftDeleteAsync(id)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;post.SoftDelete()&#xa;Status = Deleted, IsDeleted = true&#xa;SaveChangesAsync()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="700" y="990" width="260" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="62" value="Redirect → 목록 페이지" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="1120" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e50_60" value="소프트 딜리트" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="50" target="60" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e60_61" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="60" target="61" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e61_62" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="61" target="62" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Restore -->
+        <mxCell id="70" value="POST /admin/ui/posts/{id}/restore&#xa;[ValidateAntiForgeryToken]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="895" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="71" value="AdminPostService.RestoreAsync(id)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;IsDeleted 확인 (아니면 예외)&#xa;post.Restore()&#xa;Status = Active, IsDeleted = false&#xa;SaveChangesAsync()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="990" width="260" height="105" as="geometry" />
+        </mxCell>
+
+        <mxCell id="72" value="Redirect → 목록 페이지" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="1135" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e50_70" value="복구" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="50" target="70" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e70_71" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="70" target="71" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e71_72" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="71" target="72" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Hard Delete -->
+        <mxCell id="80" value="POST /admin/ui/posts/{id}/hard-delete&#xa;[ValidateAntiForgeryToken]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="895" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="81" value="AdminPostService.HardDeleteAsync(id)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;IsDeleted == false → 예외 (순서 강제)&#xa;&quot;Must be soft-deleted before hard delete&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;_db.Posts.Remove(post)&#xa;SaveChangesAsync() — 영구 삭제" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="990" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="82" value="Redirect → 목록 페이지" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="1150" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="83" value="InvalidPostStateException&#xa;→ 400 Bad Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="1040" width="180" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e50_80" value="하드 딜리트" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="50" target="80" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e80_81" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="80" target="81" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e81_82" value="IsDeleted == true" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="81" target="82" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e81_83" value="IsDeleted == false" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="81" target="83" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== 삭제 순서 강제 안내 ===== -->
+        <mxCell id="90" value="삭제 순서 강제 정책&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Active  ──[SoftDelete]──→  Deleted  ──[HardDelete]──→  영구 삭제&#xa;         ←──[Restore]───                                            &#xa;&#xa;HardDelete는 반드시 SoftDelete 이후에만 가능" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="700" y="1230" width="560" height="95" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
