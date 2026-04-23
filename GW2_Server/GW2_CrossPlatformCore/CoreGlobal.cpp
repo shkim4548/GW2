@@ -4,6 +4,7 @@
 #include "DeadLockProfiler.h"
 #include "SendBuffer.h"
 #include "GlobalQueue.h"
+#include "IoCore.h"
 #include "JobTimer.h"
 
 ThreadManager*      GThreadManager      = nullptr;
@@ -11,6 +12,8 @@ SendBufferManager*  GSendBufferManager  = nullptr;
 GlobalQueue*        GGlobalQueue        = nullptr;
 JobTimer*           GJobTimer           = nullptr;
 DeadLockProfiler*   GDeadLockProfiler   = nullptr;
+
+IoCore*             GIoCore = nullptr;
 
 class CoreGlobal
 {
@@ -22,6 +25,7 @@ public:
         GGlobalQueue        = new GlobalQueue();
         GJobTimer           = new JobTimer();
         GDeadLockProfiler   = new DeadLockProfiler();
+        GIoCore             = new IoCore();
     }
 
     ~CoreGlobal()
@@ -31,5 +35,6 @@ public:
         delete GGlobalQueue;
         delete GJobTimer;
         delete GDeadLockProfiler;
+        delete GIoCore;
     }
 } GCoreGlobal;

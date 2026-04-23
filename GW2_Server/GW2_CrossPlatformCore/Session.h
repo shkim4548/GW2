@@ -16,7 +16,7 @@ class Session : public enable_shared_from_this<Session>
 	enum { BUFFER_SIZE = 0x10000 };
 
 public:
-	Session(asio::io_context& ioc);
+	Session();
 	virtual ~Session();
 
 public:
@@ -75,5 +75,5 @@ struct PacketHeader
 class PacketSession : public Session
 {
 public:
-	PacketSession(asio::io_context& ioc);
+	PacketSession();
 };
