@@ -13,6 +13,6 @@ void IoUtils::Clear()
     if (GIoCore)
     {
         GIoCore->Stop();
-        //GIoCore.reset();
+        GIoCore = nullptr;
     }
 }

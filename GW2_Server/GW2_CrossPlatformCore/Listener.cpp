@@ -50,7 +50,7 @@ bool Listener::StartAccept(shared_ptr<ServerService> service)
 
 void Listener::CloseSocket()
 {
-	if (!_acceptor.has_value() && _acceptor->is_open())
+	if (_acceptor.has_value() && _acceptor->is_open())
 	{
 		asio::error_code ec;
 		_acceptor->close();
@@ -59,7 +59,7 @@ void Listener::CloseSocket()
 
 void Listener::RegisterAccept()
 {
-	if (!_acceptor.has_value() || _acceptor->is_open())
+	if (!_acceptor.has_value() || !_acceptor->is_open())
 	{
 		return;
 	}

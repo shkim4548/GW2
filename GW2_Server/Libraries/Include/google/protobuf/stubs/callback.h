@@ -127,10 +127,6 @@ class PROTOBUF_EXPORT FunctionClosure0 : public Closure {
     : function_(function), self_deleting_(self_deleting) {}
   ~FunctionClosure0();
 
-  inline IoCore::IoCore()
-  {
-  }
-
   void Run() override {
     bool needs_delete = self_deleting_;  // read in case callback deletes
     function_();
