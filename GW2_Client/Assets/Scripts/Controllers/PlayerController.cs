@@ -46,6 +46,11 @@ public class PlayerController : CreatureController
             transform.rotation = Quaternion.Slerp(
                 transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
         }
+        else
+        {
+            Quaternion serverRotation = Quaternion.Euler(0f, PosInfo.Yaw, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, serverRotation, interpolationSpeed * Time.deltaTime);
+        }
     }
 
 }

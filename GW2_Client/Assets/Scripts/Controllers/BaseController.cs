@@ -47,6 +47,7 @@ public class BaseController : MonoBehaviour
             _posInfo.X = value.X;
             _posInfo.Y = value.Y;
             _posInfo.Z = value.Z;
+            _posInfo.Yaw = value.Yaw;
 
             // State setter를 통해 UpdateAnimation()까지 호출
             State = value.State;
@@ -121,24 +122,23 @@ public class BaseController : MonoBehaviour
         switch (State)
         {
             case MoveState.Die:
-                SetDeadAnim();       // ← 추가
+                SetDeadAnim();       
                 UpdateDead();
                 break;
             case MoveState.Idle:
-                SetMoveAnim(false);  // ← 추가
+                SetMoveAnim(false);  
                 UpdateIdle();
                 break;
             case MoveState.Run:
-                SetMoveAnim(true);   // ← 추가
+                SetMoveAnim(true);   
                 UpdateMoving();
                 break;
             case MoveState.Skill:
-                //_animator.CrossFade("SKILL", 0.1f);
+                SetMoveAnim(false); // _isMoving 초기화
                 UpdateSkill();
                 break;
             case MoveState.None:
-                //_animator.CrossFade("Idle", 0.1f, _baseLayer);
-                //_animator.CrossFade("Idle", 0.1f, _lowerLayer);
+                SetMoveAnim(false);                
                 break;
         }
     }

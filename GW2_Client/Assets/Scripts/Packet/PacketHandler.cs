@@ -93,6 +93,7 @@ public class PacketHandler
         pos.X = movePkt.ServerPosInfo.X;
         pos.Y = movePkt.ServerPosInfo.Y;
         pos.Z = movePkt.ServerPosInfo.Z;
+        pos.Yaw = movePkt.ServerPosInfo.Yaw;
         pos.State = movePkt.ServerPosInfo.State;
 
         bc._isMoving = true;
