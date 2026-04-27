@@ -34,17 +34,22 @@ public class PlayerController : CreatureController
     // === Remote 보간 이동 === 
     private void InterpolateToServerPosition()
     {
-        Vector3 serverPos = new Vector3(PosInfo.X, PosInfo.Y, PosInfo.Z);
+        Vector3 serverPos = new Vector3(PosInfo.X, transform.position.y, PosInfo.Z);
         // snap 조건 제거 - 목적지는 멀 수 있음
         transform.position = Vector3.MoveTowards(
             transform.position, serverPos, _remoteSpeed * Time.deltaTime);
 
-        Vector3 direction = serverPos - transform.position;
+        Vector3 direction = new Vector3(PosInfo.X - transform.position.x, 0f, PosInfo.Z - transform.position.z);
         if (direction.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // 목적지에 거의 도달 → 서버 yaw로 최종 회전 정렬
+            Quaternion targetRotation = Quaternion.Euler(0f, PosInfo.Yaw, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
         }
         else
         {

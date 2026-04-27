@@ -48,7 +48,6 @@ public class BaseController : MonoBehaviour
             _posInfo.Y = value.Y;
             _posInfo.Z = value.Z;
             _posInfo.Yaw = value.Yaw;
-
             // State setter를 통해 UpdateAnimation()까지 호출
             State = value.State;
         }

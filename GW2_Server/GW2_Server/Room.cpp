@@ -590,16 +590,19 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 		player->_pathIndex = 0;
 		player->SetMoveState(Protocol::MOVE_STATE_IDLE);
 		player->SetIsMoving(false);
+		BroadcastMovingEnd(player);
 		return;  // 위치는 이미 갱신됐으므로 pathfinding만 포기
 	}
 	if (!navSystem->WorldToGrid(grid, endWorld, tx, tz))
 	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleMovePlayer] WorldToGrid Fail (end) playerId=%d wasMoving=%d\n", player->GetObjectId(), (int)player->GetIsMoving());
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] WorldToGrid Fail (end)\n");
 		// 이전 경로 폐기, startWorld 위치에서 정지
 		player->_path.clear();
 		player->_pathIndex = 0;
 		player->SetMoveState(Protocol::MOVE_STATE_IDLE);
 		player->SetIsMoving(false);
+		BroadcastMovingEnd(player);
 		return;
 	}
 
@@ -608,6 +611,11 @@ void Room::HandleMovePlayer(Protocol::C_MOVE movePkt)
 	if (!ok || gridPath.empty())
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"[Room::HandleMovePlayer] FindPath Fail\n");
+		player->_path.clear();
+		player->_pathIndex = 0;
+		player->SetMoveState(Protocol::MOVE_STATE_IDLE);
+		player->SetIsMoving(false);
+		BroadcastMovingEnd(player);
 		return;
 	}
 
@@ -756,12 +764,24 @@ void Room::UpdateRoom(float deltaTime)
 
 		if (obj->ShouldBroadcastMove())
 		{
+			if (obj->IsPlayer())
+			{
+				GConsoleLogger->WriteStdOut(Color::YELLOW, L"[Broadcast] S_MOVE sent objectId=%d isMoving=%d\n",	obj->GetObjectId(), (int)obj->GetIsMoving());
+			}
+
 			BroadcastMoving(obj);
 			obj->ResetBroadcastTimer();
 		}
 
 		if (wasMoving && !isMoving)
+		{
+			if (obj->IsPlayer())
+				GConsoleLogger->WriteStdOut(Color::YELLOW,
+					L"[Broadcast] S_MOVE_END sent objectId=%d\n",
+					obj->GetObjectId());
+
 			BroadcastMovingEnd(obj);
+		}
 
 		obj->PostUpdate();
 	}
@@ -1587,6 +1607,15 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 		pos->set_y(dest._y);
 		pos->set_z(dest._z);
 		pos->set_state(obj->GetMoveState());
+
+		const auto curr = obj->GetPosVector();
+		float dx = dest._x - curr._x;
+		float dz = dest._z - curr._z;
+		if (dx * dx + dz * dz > 0.0001f)
+		{
+			float yaw = atan2f(dx, dz) * (180.0f / 3.14159265f);
+			pos->set_yaw(yaw);
+		}
 	}
 	else
 	{

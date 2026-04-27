@@ -197,6 +197,8 @@ public class MyPlayerController : PlayerController
         {
             transform.position = waypoint;
             _pathIndex++;
+            if(_pathIndex >= _path.Count)
+                StopMovement();
         }
         else
         {

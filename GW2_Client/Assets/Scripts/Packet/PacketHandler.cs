@@ -204,6 +204,9 @@ public class PacketHandler
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
         int targetId = endMovePkt.ObjectId;
+        if (objectService.MyPlayer != null && objectService.MyPlayer.Id == targetId)
+            return;
+
         GameObject go = objectService.FindById(targetId);
         if (go == null)
         {
@@ -248,7 +251,7 @@ public class PacketHandler
 
         bc.PosInfo = finalPos;
         bc._isMoving = false;
-        bc.transform.position = playerServerPos;
+        bc.transform.position = new Vector3(playerServerPos.x, bc.transform.position.y, playerServerPos.z);
         bc.State = endMovePkt.ServerPosInfo.State;
         //Debug.Log(endMovePkt.ServerPosInfo.State);
         Debug.Log($"[S_MOVE_END] Player {targetId} snap to ({playerServerPos.x:F2},{playerServerPos.y:F2},{playerServerPos.z:F2}) from ({clientPosBefore.x:F2},{clientPosBefore.y:F2},{clientPosBefore.z:F2})");
