@@ -11,6 +11,9 @@
             font-family: 'Noto Sans KR', sans-serif;
             background: #f5f6f7;
             font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .site-header {
@@ -220,7 +223,7 @@
         </nav>
     </header>
 
-    <div class="container-lg py-4">
+    <div class="container-lg py-4 flex-grow-1">
         <main>
             @RenderBody()
         </main>
