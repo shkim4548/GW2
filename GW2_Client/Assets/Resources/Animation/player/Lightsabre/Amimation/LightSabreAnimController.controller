@@ -58,7 +58,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 03b3f33a3b15b1c40a2acb159677939c, type: 3}
+  m_Motion: {fileID: 7400000, guid: 4631682af51c14849848e47a820440a0, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -215,7 +215,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PoliceAnimController
+  m_Name: LightSabreAnimController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: IsMoving
@@ -276,7 +276,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 2738cbab7aa2f3841a23a1a498cea8ab, type: 2}
+  m_Motion: {fileID: 7400000, guid: 131b09b5417744c42816ddc0760671b3, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -328,7 +328,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 0}
+  m_Motion: {fileID: 7400000, guid: 58160b6f0e22b664295e8b0f0ce4fb75, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -406,7 +406,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 8ac329656fe9bb34da3cad248965c9a5, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: 7efe495edf5b13f4084b9eb48c86e8ad, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

@@ -255,7 +255,7 @@ public class BaseController : MonoBehaviour
     {
         if (EffectService.Instance == null) 
             return;
-        EffectService.Instance.SpawnEffect(skillId, attackerPos, worldPos, dir);
+        EffectService.Instance.SpawnEffect(skillId, attackerPos, worldPos, dir, transform);
     }
 
     // 이동 상태 반영 — UpdateMoving/UpdateIdle에서 호출

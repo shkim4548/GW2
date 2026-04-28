@@ -533,34 +533,30 @@ public class MyPlayerController : PlayerController
     private void SendCardEvent(int slotIndex, Vector3 worldPos, int targetId = 0)
     {
         int cardId = UI_CardPanel.GetCardIdAtSlot(slotIndex);
-        if (cardId < 0) 
+        if (cardId < 0)
             return;
 
-        SetSkillAnim(true);                         //
-        StartCoroutine(ResetSkillAnim(1.5f));       // (클립 길이에 맞게 조정)
+        SetSkillAnim(true);
+        StartCoroutine(ResetSkillAnim(1.5f));
 
-        // 타겟 있으면 ID, 없으면 0 (논타겟)
-        //int targetId = (_target != null) ? _target.GetComponent<BaseController>().Id : 0;
+        // dir 먼저 계산
+        Vector3 toClick = (worldPos - transform.position);
+        toClick.y = 0f;
+        Vector3 dir = toClick.sqrMagnitude > 0.001f ? toClick.normalized : transform.forward;
 
         C_SKILL pkt = new C_SKILL();
         pkt.RoomId = RoomId;
         pkt.AttackerId = Id;
-        pkt.TargetId = targetId;   // 0 = 논타겟, 0 아님 = 타겟팅
+        pkt.TargetId = targetId;
         pkt.CommandId = cardId;
         pkt.ClientTime = GetClientTime();
         pkt.PosX = worldPos.x;
         pkt.PosZ = worldPos.z;
-        Vector3 forward = transform.forward;
-        pkt.DirX = forward.x;
-        pkt.DirZ = forward.z;
+        pkt.DirX = dir.x;   // ← forward 대신 클릭 방향
+        pkt.DirZ = dir.z;   // ← forward 대신 클릭 방향
         _networkService.Send(pkt);
 
-        // 수정 후
-        Vector3 toClick = (worldPos - transform.position);
-        toClick.y = 0f;
-        Vector3 dir = toClick.sqrMagnitude > 0.001f ? toClick.normalized : transform.forward;
         PlaySkillEffect(cardId, transform.position, worldPos, dir);
-
         OnCardUsed?.Invoke(slotIndex);
     }
 

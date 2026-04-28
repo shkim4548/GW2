@@ -32,7 +32,7 @@ AnimatorStateMachine:
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 60, y: 160, z: 0}
-  m_EntryPosition: {x: 40, y: 60, z: 0}
+  m_EntryPosition: {x: 70, y: -10, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 6878916963919361204}
@@ -58,7 +58,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 03b3f33a3b15b1c40a2acb159677939c, type: 3}
+  m_Motion: {fileID: 7400000, guid: fc733e79576f0af42b5f478fb1962d16, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -215,7 +215,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PoliceAnimController
+  m_Name: FirefighterAnimController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: IsMoving
@@ -276,7 +276,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 2738cbab7aa2f3841a23a1a498cea8ab, type: 2}
+  m_Motion: {fileID: -203655887218126122, guid: 9ce2df7a9663c144f8f61f126dfe8820, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -328,7 +328,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 0}
+  m_Motion: {fileID: -203655887218126122, guid: fc40921fa5fc0db4d97aee385998e6dc, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -406,7 +406,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 8ac329656fe9bb34da3cad248965c9a5, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: d375579e6c798704d804daa572b7f886, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

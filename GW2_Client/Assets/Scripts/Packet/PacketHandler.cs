@@ -138,7 +138,9 @@ public class PacketHandler
         Vector3 effectPos = attacker.transform.position;
         Vector3 dir = (target != null)
             ? (target.transform.position - effectPos).normalized
-            : attacker.transform.forward;
+            : (skillPkt.DirX != 0f || skillPkt.DirZ != 0f)
+                ? new Vector3(skillPkt.DirX, 0f, skillPkt.DirZ).normalized
+                : attacker.transform.forward;
 
         if (skillId == 1)
         {

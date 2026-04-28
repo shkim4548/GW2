@@ -58,7 +58,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 03b3f33a3b15b1c40a2acb159677939c, type: 3}
+  m_Motion: {fileID: 7400000, guid: f94a79999b387f7498f731650bbaf4ee, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -215,7 +215,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PoliceAnimController
+  m_Name: MonkAnimController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: IsMoving
@@ -276,7 +276,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 2738cbab7aa2f3841a23a1a498cea8ab, type: 2}
+  m_Motion: {fileID: 7400000, guid: 08331a39dc987724ead3c4b7caed2444, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -328,7 +328,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 0}
+  m_Motion: {fileID: 7400000, guid: f5557093fbd20754ab7d8ea59796882d, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -406,7 +406,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 8ac329656fe9bb34da3cad248965c9a5, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: de18c79ae6cf95f4ebdff621f3f14d6a, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
