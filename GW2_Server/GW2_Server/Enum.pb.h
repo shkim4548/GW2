@@ -172,7 +172,7 @@ inline bool MinionState_Parse(
 }
 enum BaronState : int {
   BARON_IDLE = 0,
-  BARON_PATROL = 1,
+  BARON_RETURN = 1,
   BARON_COMBAT = 2,
   BARON_DEAD = 3,
   BaronState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),

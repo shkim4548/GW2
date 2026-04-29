@@ -37,7 +37,7 @@ namespace Google.Protobuf.Enum {
             "X0RJRRAFKnIKC01pbmlvblN0YXRlEg8KC01JTklPTl9JRExFEAASFQoRTUlO",
             "SU9OX0xJTkVfVFJBQ0UQARIXChNNSU5JT05fQ0hBU0VfVEFSR0VUEAISEQoN",
             "TUlOSU9OX0FUVEFDSxADEg8KC01JTklPTl9ERUFEEAQqUAoKQmFyb25TdGF0",
-            "ZRIOCgpCQVJPTl9JRExFEAASEAoMQkFST05fUEFUUk9MEAESEAoMQkFST05f",
+            "ZRIOCgpCQVJPTl9JRExFEAASEAoMQkFST05fUkVUVVJOEAESEAoMQkFST05f",
             "Q09NQkFUEAISDgoKQkFST05fREVBRBADKk0KCENhbXBUeXBlEg0KCUNBTVBf",
             "Tk9ORRAAEg4KCkNBTVBfSFVNQU4QARIPCgtDQU1QX0NZQk9SRxACEhEKDUNB",
             "TVBfTkVVVFVSQUwQAyoeCglDZWxsRmxhZ3MSEQoNQ0VMTF9XQUxLQUJMRRAA",
@@ -90,7 +90,7 @@ namespace Google.Protobuf.Enum {
 
   public enum BaronState {
     [pbr::OriginalName("BARON_IDLE")] BaronIdle = 0,
-    [pbr::OriginalName("BARON_PATROL")] BaronPatrol = 1,
+    [pbr::OriginalName("BARON_RETURN")] BaronReturn = 1,
     [pbr::OriginalName("BARON_COMBAT")] BaronCombat = 2,
     [pbr::OriginalName("BARON_DEAD")] BaronDead = 3,
   }
