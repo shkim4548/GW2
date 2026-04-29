@@ -44,7 +44,7 @@ enum MinionState
 enum BaronState
 {
 	BARON_IDLE = 0;
-	BARON_PATROL = 1;
+	BARON_RETURN = 1;
 	BARON_COMBAT = 2;
 	BARON_DEAD = 3;
 }

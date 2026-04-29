@@ -17,6 +17,7 @@ public:
 	int32 GetBaronId() { return _objectInfo.object_id(); }
 	float GetMoveSpeed() { return _moveSpeed; }
 	float GetDetectionRange() { return _detectionRange; }
+	Protocol::BaronState GetBaronState() {	return _baronState;	}
 
 
 	void SetLaneRoute(shared_ptr<Navigation::LaneRoute> route);
@@ -27,15 +28,16 @@ public:
 	// virtuals
 	virtual void UpdateController(float deltaTime) override;
 	virtual void UpdateMovement(float deltaTime) override;
+	virtual void OnDead() override;
 
 	void RequestMove(vector<GameMath::Vector3> path);
 protected:
-	virtual void OnDead() override;
 
 private:
 	void UpdateIdle(float deltaTime);
 	//void UpdatePatrol(float deltaTime);
 	void UpdateCombat(float deltaTime);
+	void UpdateReturn(float deltaTime);
 
 	shared_ptr<Object> SelectTarget();
 	bool HasLivingAggroTarget();
@@ -44,6 +46,7 @@ private:
 public:
 	// MID LINE(중앙 공원)
 	uint8 _laneId = 2;
+	static const vector<int32> REWARD_CARDS;
 
 private:
 	Protocol::BaronState _baronState = Protocol::BaronState::BARON_IDLE;
@@ -83,6 +86,5 @@ private:
 	GameMath::Vector3 _destPos;
 
 	// 보상 카드 풀
-	static const vector<int32> REWARD_CARDS;
 };
 

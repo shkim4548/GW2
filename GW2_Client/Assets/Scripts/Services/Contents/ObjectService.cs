@@ -161,6 +161,7 @@ public class ObjectService : IObjectService
             bc.transform.position = initPos;
             bc.Id = objectId;
             bc.CampType = CampType.CampNeutural;
+            bc.Init();
             _objects.Add(objectId, go);
         }
 

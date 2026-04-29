@@ -1,9 +1,10 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Baron.h"
 #include "Lobby.h"
 #include "Room.h"
 #include "NavigationSystem.h"
 #include "StatLoader.h"
+#include "ClientPacketHandler.h"
 
 const vector<int32> Baron::REWARD_CARDS = { 105, 111, 118, 119, 129 };
 // Cannon, Grenade, Lava, MissileBomb, WindBlade
@@ -48,7 +49,7 @@ void Baron::InitBaron(shared_ptr<Room> room, GameMath::Vector3 spawnPos)
 void Baron::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 {
 	_route = route;
-	// ½ºÆù À§Ä¡´Â À¯ÀÏÇÑ wp
+	// ìŠ¤í° ìœ„ì¹˜ëŠ” ìœ ì¼í•œ wp
 	if (route && !route->waypoints.empty())
 	{
 		_currentWaypointIndex = static_cast<int32>(route->waypoints.size()) / 2;
@@ -57,9 +58,9 @@ void Baron::SetLaneRoute(shared_ptr<Navigation::LaneRoute> route)
 
 void Baron::OnHit(int32 attackerId)
 {
-	// ÇöÀç ½Ã°¢À» ±â·Ï (´õ ÃÖ±Ù = ´õ Å« °ª = SelectTarget¿¡¼­ ¿ì¼± ¼±ÅÃ)
-		// ¶Ç´Â ´Ü¼øÈ÷ Ä«¿îÆ® ¹æ½ÄÀ¸·Î ++
-	_aggroTable[attackerId] += 1.0f;  // ÇÇ°İ È½¼ö ´©Àû ¹æ½Ä
+	// í˜„ì¬ ì‹œê°ì„ ê¸°ë¡ (ë” ìµœê·¼ = ë” í° ê°’ = SelectTargetì—ì„œ ìš°ì„  ì„ íƒ)
+		// ë˜ëŠ” ë‹¨ìˆœíˆ ì¹´ìš´íŠ¸ ë°©ì‹ìœ¼ë¡œ ++
+	_aggroTable[attackerId] += 1.0f;  // í”¼ê²© íšŸìˆ˜ ëˆ„ì  ë°©ì‹
 
 	if (_baronState == Protocol::BaronState::BARON_IDLE)
 	{
@@ -84,7 +85,7 @@ void Baron::UpdateController(float deltaTime)
 	switch (_baronState)
 	{
 	case Protocol::BaronState::BARON_IDLE:   UpdateIdle(deltaTime);   break;
-	//case Protocol::BaronState::BARON_PATROL: UpdatePatrol(deltaTime); break;
+	case Protocol::BaronState::BARON_RETURN: UpdateReturn(deltaTime); break;
 	case Protocol::BaronState::BARON_COMBAT: UpdateCombat(deltaTime); break;
 	case Protocol::BaronState::BARON_DEAD:   break;
 	}
@@ -178,7 +179,7 @@ void Baron::UpdateIdle(float deltaTime)
 
 //void Baron::UpdatePatrol(float deltaTime)
 //{
-//	// ÁÖº¯ Å½»ö
+//	// ì£¼ë³€ íƒìƒ‰
 //	shared_ptr<Room> room = _room.lock();
 //	if (room == nullptr)
 //		return;
@@ -189,7 +190,7 @@ void Baron::UpdateIdle(float deltaTime)
 //		return;
 //	}
 //
-//	// ¿şÀÌ Æ÷ÀÎÆ® ¼øÂû
+//	// ì›¨ì´ í¬ì¸íŠ¸ ìˆœì°°
 //}
 
 void Baron::UpdateCombat(float deltaTime)
@@ -197,7 +198,7 @@ void Baron::UpdateCombat(float deltaTime)
 	shared_ptr<Room> room = _room.lock();
 	if (room == nullptr) return;
 
-	// _currentTarget À¯È¿¼º È®ÀÎ ÈÄ ÀçÅ½»ö
+	// _currentTarget ìœ íš¨ì„± í™•ì¸ í›„ ì¬íƒìƒ‰
 	shared_ptr<Object> target = _currentTarget.lock();
 	if (target == nullptr || target->IsDead())
 	{
@@ -212,11 +213,11 @@ void Baron::UpdateCombat(float deltaTime)
 	}
 	_aggroElapsed = 0.0f;
 
-	// ½ºÅ³ Å¸ÀÌ¸Ó °¨¼Ò -> Å¸°ÙÀÌ ÀÖÀ» ¶§¸¸
+	// ìŠ¤í‚¬ íƒ€ì´ë¨¸ ê°ì†Œ -> íƒ€ê²Ÿì´ ìˆì„ ë•Œë§Œ
 	_skill1Timer -= deltaTime;
 	_skill2Timer -= deltaTime;
 
-	// ¸®½Ã Ã¼Å© : ½ºÆù Æ÷ÀÎÆ®·ÎºÎÅÍ ³Ê¹« ¸Ö¾îÁö¸é ¸®¼Â µÈ´Ù.
+	// ë¦¬ì‹œ ì²´í¬ : ìŠ¤í° í¬ì¸íŠ¸ë¡œë¶€í„° ë„ˆë¬´ ë©€ì–´ì§€ë©´ ë¦¬ì…‹ ëœë‹¤.
 	GameMath::Vector3 nowPos = GetPosVector();
 	float distFromSpawn = GameMath::Vector3::GetDistTanceXZ(nowPos, _spawnPos);
 	if (distFromSpawn > _leashRange)
@@ -228,7 +229,7 @@ void Baron::UpdateCombat(float deltaTime)
 	GameMath::Vector3 targetPos = target->GetPosVector();
 	float distToTarget = GameMath::Vector3::GetDistTanceXZ(nowPos, targetPos);
 
-	// °ø°İ ¹üÀ§ ¹Û -> Ãß°İ
+	// ê³µê²© ë²”ìœ„ ë°– -> ì¶”ê²©
 	if (distToTarget > _attackRange)
 	{
 		_repathCoolDown -= deltaTime;
@@ -245,14 +246,14 @@ void Baron::UpdateCombat(float deltaTime)
 		return;
 	}
 
-	// °ø°İ ¹üÀ§ ³»
+	// ê³µê²© ë²”ìœ„ ë‚´
 	_path.clear();
 	_pathIndex = 0;
 	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
 	//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	tPos->set_state(Protocol::MoveState::MOVE_STATE_IDLE);
 
-	// ½ºÅ³2 : µ¶ÀåÆÇ, ÀÏ½Ãµ©
+	// ìŠ¤í‚¬2 : ë…ì¥íŒ, ì¼ì‹œë€
 	if (_skill2Timer <= 0.0f)
 	{
 		shared_ptr<Baron> self = dynamic_pointer_cast<Baron>(shared_from_this());
@@ -261,7 +262,7 @@ void Baron::UpdateCombat(float deltaTime)
 		return;
 	}
 
-	// ½ºÅ³1 : AOE ½½·¥
+	// ìŠ¤í‚¬1 : AOE ìŠ¬ë¨
 	if (_skill1Timer <= 0.0f)
 	{
 		shared_ptr<Baron> self = dynamic_pointer_cast<Baron>(shared_from_this());
@@ -270,7 +271,7 @@ void Baron::UpdateCombat(float deltaTime)
 		return;
 	}
 
-	// ÆòÅ¸
+	// í‰íƒ€
 	_attackCooldown -= deltaTime;
 	if (_attackCooldown <= 0.0f)
 	{
@@ -280,51 +281,91 @@ void Baron::UpdateCombat(float deltaTime)
 	}
 }
 
-shared_ptr<Object> Baron::SelectTarget()
+void Baron::UpdateReturn(float deltaTime)
 {
 	shared_ptr<Room> room = _room.lock();
 	if (room == nullptr)
+		return;
+
+	GameMath::Vector3 nowPos = GetPosVector();
+	float distToSpawn = GameMath::Vector3::GetDistTanceXZ(nowPos, _spawnPos);
+
+	// spawnPos ë„ë‹¬ -> IDLE + HP íšŒë³µ ë¸Œë¡œë“œ ìºìŠ¤íŠ¸
+	if (distToSpawn < 1.0f)
+	{
+		_baronState = Protocol::BaronState::BARON_IDLE;
+		_objectInfo.mutable_stat_info()->set_hp(_objectInfo.stat_info().max_hp());
+		SetPosVector(_spawnPos);
+
+		// HP ë³µêµ¬ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+		Protocol::S_HP_CHANGE hpPkt;
+		hpPkt.set_target_id(GetObjectId());
+		hpPkt.set_current_hp(GetMaxHp());
+		hpPkt.set_max_hp(GetMaxHp());
+		room->Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
+		return;
+	}
+
+	// ê²½ë¡œ íƒìƒ‰ í›„ ì´ë™
+	_repathCoolDown -= deltaTime;
+	bool goalChanged = (_lastMoveGoal - _spawnPos).Length() > 0.5f;
+	bool shouldRequest = !_pathPending && (_path.empty() || goalChanged) && _repathCoolDown <= 0.0f;
+	if (shouldRequest)
+	{
+		_pathPending = true;
+		shared_ptr<Baron> self = dynamic_pointer_cast<Baron>(shared_from_this());
+		room->DoAsync(&Room::HandleBaronChase, self, _spawnPos, _moveSpeed, deltaTime);
+		_lastMoveGoal = _spawnPos;
+		_repathCoolDown = 0.5f;
+	}
+}
+
+shared_ptr<Object> Baron::SelectTarget()
+{
+	shared_ptr<Room> room = _room.lock();
+	if (room == nullptr) 
 		return nullptr;
 
 	auto objects = room->GetRoomObjects();
+	GameMath::Vector3 myPos = GetPosVector();
 
-	// aggro Å×ÀÌºí¿¡¼­ °¡Àå ÃÖ±Ù ÇÇ°İ »ıÁ¸ ÇÃ·¹ÀÌ¾î
+	// aggroTable ìš°ì„  â€” leash range ë‚´ ëŒ€ìƒë§Œ
 	int32 bestId = -1;
 	float bestTime = -1.f;
 	for (auto& [id, t] : _aggroTable)
 	{
 		auto it = objects.find(id);
-		if (it == objects.end() || it->second->IsDead())
+		if (it == objects.end() || it->second->IsDead()) 
 			continue;
 
-		if (t > bestTime)
+		GameMath::Vector3 targetPos = it->second->GetPosVector();
+		float d = GameMath::Vector3::GetDistTanceXZ(myPos, targetPos);
+		if (d > _leashRange) 
+			continue;   // â† leash range ë°–ì´ë©´ ë¬´ì‹œ
+
+		if (t > bestTime) 
 		{
-			bestTime = t;
-			bestId = id;
+			bestTime = t; bestId = id;
 		}
 	}
 
 	if (bestId != -1)
 	{
 		auto it = objects.find(bestId);
-		if (it != objects.end())
+		if (it != objects.end()) 
 			return it->second;
 	}
 
-	// detection range ³» °¡Àå °¡±î¿î ÇÃ·¹ÀÌ¾î
-	GameMath::Vector3 myPos = GetPosVector();
+	// detection range ë‚´ ê°€ì¥ ê°€ê¹Œìš´ í”Œë ˆì´ì–´ (ê¸°ì¡´ ë¡œì§ ìœ ì§€)
 	shared_ptr<Object> nearest;
 	float minDist = FLT_MAX;
 	for (auto& [id, obj] : objects)
 	{
-		if (obj->GetTeamFlag() == Protocol::CampType::CAMP_NEUTURAL)
-			continue;
+		if (obj->GetTeamFlag() == Protocol::CampType::CAMP_NEUTURAL) continue;
+		if (obj->IsDead() || obj->IsPlayer() == false) continue;
 
-		if (obj->IsDead() || obj->IsPlayer() == false)
-			continue;
-
-		GameMath::Vector3 targetVec = obj->GetPosVector();
-		float d = GameMath::Vector3::GetDistTanceXZ(myPos, targetVec);
+		GameMath::Vector3 targetPos = obj->GetPosVector();
+		float d = GameMath::Vector3::GetDistTanceXZ(myPos, targetPos);
 		if (d < _detectionRange && d < minDist)
 		{
 			minDist = d;
@@ -346,23 +387,15 @@ void Baron::ResetBaron()
 	_skill1Timer = SKILL1_INTERVAL;
 	_skill2Timer = SKILL2_INTERVAL;
 	_attackCooldown = 0.0f;
-	_baronState = Protocol::BaronState::BARON_IDLE;
-	_objectInfo.mutable_stat_info()->set_hp(_objectInfo.stat_info().max_hp());
-	//_objectInfo.set_hp
 	_path.clear();
 	_pathIndex = 0;
 	_isMoving = false;
-	//_moveState = Protocol::MoveState::MOVE_STATE_IDLE;
 	SetMoveState(Protocol::MoveState::MOVE_STATE_IDLE);
 	_repathCoolDown = 0.0f;
 	_lastMoveGoal = GameMath::Vector3(FLT_MAX, 0.0f, FLT_MAX);
-	SetPosVector(_spawnPos);
 
-	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
-	tPos->set_x(_spawnPos._x);
-	tPos->set_y(_spawnPos._y);
-	tPos->set_z(_spawnPos._z);
-	SetPosInfo(*tPos);
+	// ì¦‰ì‹œ ìœ„ì¹˜ ë³€ê²½ ì œê±° â†’ UpdateReturnì—ì„œ ê²½ë¡œ ë”°ë¼ ì´ë™
+	_baronState = Protocol::BaronState::BARON_RETURN;  // â† IDLE â†’ RETURN
 }
 
 void Baron::OnDead()

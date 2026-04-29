@@ -816,17 +816,20 @@ void Room::UpdateRoom(float deltaTime)
 		_baron->UpdateController(deltaTime);
 		_baron->UpdateMovement(deltaTime);
 
-		// 탐지 범위 내 플레이어 → OnHit(aggro 등록)
-		GameMath::Vector3 baronPos = _baron->GetPosVector();
-		for (auto& [id, player] : _players)
+		// RETURN 중에는 aggro 등록 안 함
+		if (_baron->GetBaronState() != Protocol::BaronState::BARON_RETURN)
 		{
-			if (player->IsDead()) 
-				continue;
+			GameMath::Vector3 baronPos = _baron->GetPosVector();
+			for (auto& [id, player] : _players)
+			{
+				if (player->IsDead()) 
+					continue;
 
-			GameMath::Vector3 nowPlayerPos = player->GetPosVector();
-			float dist = GameMath::Vector3::GetDistTanceXZ(baronPos, nowPlayerPos);
-			if (dist <= _baron->GetDetectionRange())
-				_baron->OnHit(id);
+				GameMath::Vector3 tPos = player->GetPosVector();
+				float dist = GameMath::Vector3::GetDistTanceXZ(baronPos, tPos);
+				if (dist <= _baron->GetDetectionRange())
+					_baron->OnHit(id);
+			}
 		}
 	}
 }
@@ -992,6 +995,13 @@ shared_ptr<Baron> Room::SpawnBaron()
 	pkt.set_allocated_player(info);
 	_objects.emplace(baron->GetBaronId(), baron);
 	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
+
+	Protocol::S_HP_CHANGE initHp;
+	initHp.set_target_id(baron->GetBaronId());
+	initHp.set_current_hp(baron->GetHp());
+	initHp.set_max_hp(baron->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(initHp));
+
 	return baron;
 }
 
@@ -1392,6 +1402,23 @@ void Room::HandleRemoveObject(int32 targetId, int32 attackerId)
 	}
 
 	_objects.erase(it);
+	// 바론 처치시
+	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_BARON)
+	{
+		_baron->OnDead();
+		_baron = nullptr;
+
+		// 처치한 플레이어의 팀에 카드 분배
+		auto attacker = _players.find(attackerId);
+		if (attacker != _players.end())
+		{
+			Protocol::CampType camp = attacker->second->GetCampType();
+			for (int32 cardId : Baron::REWARD_CARDS)
+				GiveCardReward(camp, cardId);
+		}
+		return;
+	}
+
 	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_NEXUS)
 	{
 		obj->OnDead();
@@ -1437,30 +1464,77 @@ void Room::HandleBaronChase(shared_ptr<Baron> baron, GameMath::Vector3 dest, flo
 {
 	if (baron == nullptr || baron->IsDead())
 		return;
+	const shared_ptr<Navigation::NavigationSystem> navSystem = _navigationSystem.lock();
+	const shared_ptr<Navigation::WalkableGrid> grid = _roomWalkableGrid.lock();
+	if (navSystem == nullptr || grid == nullptr)
+	{
+		baron->ClearPathPending();
+		return;
+	}
+	GameMath::Vector3 startPos = baron->GetPosVector();
 
-	// 단일 waypoint
-	vector<GameMath::Vector3> path = { dest };
-	baron->RequestMove(path);
+	// ① WorldToGrid 변환
+	int32 sx = 0, sz = 0, tx = 0, tz = 0;
+	if (!navSystem->WorldToGrid(*grid, startPos._x, startPos._z, sx, sz))
+	{
+		baron->ClearPathPending();
+		return;
+	}
+	if (!navSystem->WorldToGrid(*grid, dest._x, dest._z, tx, tz))
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"[HandleBaronChase] dest (%.2f, %.2f) not in navmesh → snap\n", dest._x, dest._z);
+		baron->ClearPathPending();
+		return;
+	}
+
+	// ② A* — laneId=0 (필터 없음)
+	vector<Navigation::GridCell*> rawPath;
+	bool findPathRes = navSystem->FindPath(*grid, sx, sz, tx, tz, rawPath, 0);
+	if (!findPathRes || rawPath.empty())
+	{
+		baron->ClearPathPending();
+		return;
+	}
+
+	// ③ GridCell → 월드 좌표
+	vector<GameMath::Vector3> navPath;
+	navPath.reserve(rawPath.size() + 1);
+	for (Navigation::GridCell* cell : rawPath)
+	{
+		GameMath::Vector3 wp;
+		wp._x = grid->origin._x + (cell->x + 0.5f) * grid->cellSize;
+		wp._z = grid->origin._z + (cell->z + 0.5f) * grid->cellSize;
+		wp._y = 0.0f;
+		navPath.push_back(wp);
+	}
+	navPath.push_back(dest);
+
+	// ④ SmoothPath
+	navPath = SmoothPath(navPath, *grid, navSystem, 0);
+	baron->RequestMove(navPath);
 	baron->ClearPathPending();
 
-	// S_MINON_MOVE 브로드캐스트
+	// S_MINION_MOVE
 	Protocol::S_MINION_MOVE pkt;
 	pkt.set_object_id(baron->GetObjectId());
+	pkt.set_speed(speed);
 
-	GameMath::Vector3 startPos = baron->GetPosVector();
 	Protocol::PosInfo* startInfo = pkt.mutable_start_pos();
 	startInfo->set_x(startPos._x);
 	startInfo->set_y(startPos._y);
 	startInfo->set_z(startPos._z);
 
-	Protocol::PosInfo* wp = pkt.add_nav_path();
-	wp->set_x(dest._x);
-	wp->set_y(dest._y);
-	wp->set_z(dest._z);
+	for (auto& wp : navPath)
+	{
+		Protocol::PosInfo* p = pkt.add_nav_path();
+		p->set_x(wp._x);
+		p->set_y(wp._y);
+		p->set_z(wp._z);
+	}
 
-	Broadcast(ClientPacketHandler::MakeSendBuffer(pkt));
+	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(pkt);
+	Broadcast(sendBuffer);
 }
-
 void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
 {
 	if (baron == nullptr || baron->IsDead())
@@ -1473,25 +1547,29 @@ void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
 	shared_ptr<Object> target = it->second;
 
 	int32 damage = baron->GetStatInfo().attack();
-	//int32 defense = target->GetStatInfo().defense()
 	int32 final = max(1, damage);
 	int32 newHp = std::max(0, static_cast<int32>(target->GetStatInfo().hp() - final));
 
-	Protocol::StatInfo stat = target->GetStatInfo();
-	stat.set_hp(newHp);
-	target->SetHp(newHp);
+	target->SetHp(newHp);  // 서버 HP 갱신
 
+	// 이펙트/애니메이션 트리거
 	Protocol::S_SKILL skillPkt;
 	skillPkt.set_attacker_id(baron->GetObjectId());
 	skillPkt.set_target_id(targetId);
-	skillPkt.set_skill_id(1);
+	skillPkt.set_skill_id(200);  // 바론 평타 전용 ID (1이면 플레이어 스킬1과 혼용됨)
 	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
+
+	// HP바 갱신 ← 이게 빠진 것
+	Protocol::S_HP_CHANGE hpPkt;
+	hpPkt.set_target_id(targetId);
+	hpPkt.set_current_hp(newHp);
+	hpPkt.set_max_hp(target->GetMaxHp());
+	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 
 	// 사망 처리
 	if (newHp <= 0)
 		HandleRemoveObject(targetId, baron->GetObjectId());
 }
-
 void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
 {
 	if (baron == nullptr || baron->IsDead())
@@ -1508,6 +1586,9 @@ void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
 	Protocol::S_SKILL skillPkt;
 	skillPkt.set_attacker_id(baron->GetObjectId());
 	skillPkt.set_skill_id(commandId);
+	skillPkt.set_pos_x(baronPos._x);   
+	skillPkt.set_pos_z(baronPos._z);   
+
 	Broadcast(ClientPacketHandler::MakeSendBuffer(skillPkt));
 
 	// 범위 내 플레이어 전원 데미지
@@ -1534,11 +1615,13 @@ void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
 
 		Protocol::StatInfo stat = obj->GetStatInfo();
 		stat.set_hp(newHp);
+
 		obj->SetHp(newHp);
 
 		Protocol::S_HP_CHANGE hpPkt;
 		hpPkt.set_target_id(id);
 		hpPkt.set_current_hp(newHp);
+		hpPkt.set_max_hp(obj->GetMaxHp());
 		Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 
 		if (newHp <= 0)
@@ -2008,7 +2091,7 @@ void Room::StartGame()
 	SpawnNexus(GameMath::Vector3(72.5f, 2.3f, 0.0f), Protocol::CAMP_CYBORG);
 
 	// 바론 구현
-	//SpawnBaron();
+	SpawnBaron();
 	// 전원에게 맵 오브젝트 동기화
 }
 
