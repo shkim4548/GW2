@@ -36,17 +36,18 @@ void Object::SetPosInfo(Protocol::PosInfo posInfo)
 {
 	_posVector = GameMath::Vector3(posInfo.x(), posInfo.y(), posInfo.z());
 	_objectInfo.mutable_pos_info()->CopyFrom(posInfo);
+
 }
 
 void Object::SetPosVector(GameMath::Vector3& posVector)
 {
 	_posVector = GameMath::Vector3(posVector._x, posVector._y, posVector._z);
-	Protocol::PosInfo tPos;
-	tPos.set_x(posVector._x);
-	tPos.set_y(posVector._y);
-	tPos.set_z(posVector._z);
+	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
+	tPos->set_x(posVector._x);
+	tPos->set_y(posVector._y);
+	tPos->set_z(posVector._z);
 	//_pos = tPos;
-	_objectInfo.mutable_pos_info()->CopyFrom(tPos);
+	//_objectInfo.mutable_pos_info()->CopyFrom(tPos);
 }
 
 void Object::SetPath(const NavPath& path)
@@ -148,14 +149,19 @@ void Object::OnMoveBroadcastSent()
 void Object::AccumulateMoveTime(float deltaTime)
 {
 	// 이동 중일 때만 누적시킨다. 이 숫자를 보고 너무 자주 보내서 네트워크 터지지 않게한다.
-	if (_objectInfo.pos_info().state() == Protocol::MOVE_STATE_RUN)
-	{
+	//if (_objectInfo.pos_info().state() == Protocol::MOVE_STATE_RUN)
+	//{
+	//	_moveBroadcastElapsed += deltaTime;
+	//}
+	if (_isMoving)  // state 대신 _isMoving 사용
 		_moveBroadcastElapsed += deltaTime;
-	}
 }
 
 bool Object::ShouldBroadcastMove() const
 {
+	if (!_isMoving)
+		return false;
+
 	// 평상시에는 기존 조건 유지
 	if (!_forceBroadcastMove && _moveBroadcastElapsed < MOVE_BROADCAST_INTERVAL)
 	{
@@ -163,7 +169,7 @@ bool Object::ShouldBroadcastMove() const
 	}
 
 	// 이동 중이거나, 강제 브로드캐스트가 요청된 상태라면 true
-	if (_objectInfo.pos_info().state() == Protocol::MoveState::MOVE_STATE_RUN)
+	if (_isMoving)
 		return true;
 
 	if (_forceBroadcastMove)

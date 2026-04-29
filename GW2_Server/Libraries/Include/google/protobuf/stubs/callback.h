@@ -1,4 +1,3 @@
-#include "IoCore.h"
 #ifndef GOOGLE_PROTOBUF_STUBS_CALLBACK_H_
 #define GOOGLE_PROTOBUF_STUBS_CALLBACK_H_
 
@@ -127,10 +126,6 @@ class PROTOBUF_EXPORT FunctionClosure0 : public Closure {
   FunctionClosure0(FunctionType function, bool self_deleting)
     : function_(function), self_deleting_(self_deleting) {}
   ~FunctionClosure0();
-
-  inline IoCore::IoCore()
-  {
-  }
 
   void Run() override {
     bool needs_delete = self_deleting_;  // read in case callback deletes
