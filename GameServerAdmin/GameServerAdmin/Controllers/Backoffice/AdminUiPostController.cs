@@ -1,4 +1,5 @@
 ﻿using GameServerAdmin.Application.Posts;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Models.Posts.AdminApi;
 using GameServerAdmin.Models.Posts.AdminUi;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,40 @@ namespace GameServerAdmin.Controllers.BackOffice;
 public class AdminUiPostController : Controller
 {
     private readonly IAdminPostService _postService;
+    private readonly IUserContext _userContext;
 
-    public AdminUiPostController(IAdminPostService postService)
+    public AdminUiPostController(IAdminPostService postService, IUserContext userContext)
     {
         _postService = postService;
+        _userContext = userContext;
+    }
+
+    [HttpGet("/admin/ui/posts/create")]
+    public IActionResult Create()
+    {
+        ViewData["Title"] = "게시글 작성";
+        return View("~/Views/AdminPost/Create.cshtml", new AdminPostCreateViewModel());
+    }
+
+    [HttpPost("/admin/ui/posts/create")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(AdminPostCreateViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View("~/Views/AdminPost/Create.cshtml", model);
+
+        var request = new AdminPostCreateRequest
+        {
+            PostType   = model.PostType,
+            Title      = model.Title,
+            Content    = model.Content,
+            AuthorType = "ADMIN",
+            AuthorId   = _userContext.ActorId,
+            AuthorName = User.Identity!.Name ?? "Admin"
+        };
+
+        var postId = await _postService.CreateAsync(request);
+        return RedirectToAction(nameof(Detail), new { id = postId });
     }
 
     // GET /admin/Index  (기본 라우트)

@@ -28,9 +28,14 @@ namespace GameServerAdmin.Application.Comments.Admin
             _db = db;
         }
 
-        public Task DeleteCommentAsync(int commentId)
+        public async Task DeleteCommentAsync(int commentId)
         {
-            throw new NotImplementedException();
+            var comment = await _db.Comments.FindAsync(commentId);
+            if (comment == null)
+                throw new CommentNotFoundException(commentId);
+
+            comment.SoftDelete();
+            await _db.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<AdminCommentListItemDto>> GetAllCommentsAsync(AdminCommentListQuery query)
@@ -145,7 +150,7 @@ namespace GameServerAdmin.Application.Comments.Admin
                     .Where(c => c.ParentCommentId == commentId)
                     .ToListAsync();
 
-                _db.Comments.RemoveRange(comment);
+                _db.Comments.RemoveRange(replies);
             }
 
             _db.Comments.Remove(comment);

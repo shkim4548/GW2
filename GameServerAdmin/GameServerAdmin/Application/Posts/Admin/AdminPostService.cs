@@ -1,6 +1,7 @@
 ﻿using GameServerAdmin.Common.Exceptions.Post;
 using GameServerAdmin.Common.Exceptions.Validation;
 using GameServerAdmin.Common.Models;
+using GameServerAdmin.Common.Security;
 using GameServerAdmin.Domain.Posts;
 using GameServerAdmin.Infrastructure.Persistence;
 using GameServerAdmin.Models.Posts.AdminApi;
@@ -10,6 +11,7 @@ namespace GameServerAdmin.Application.Posts;
 
 public interface IAdminPostService
 {
+    Task<long> CreateAsync(AdminPostCreateRequest request);
     Task UpdateAsync(AdminPostUpdateRequest request);
     Task SoftDeleteAsync(int postId);
     Task RestoreAsync(int postId);
@@ -32,6 +34,37 @@ public sealed class AdminPostService : IAdminPostService
     public AdminPostService(AppDbContext db)
     {
         _db = db;
+    }
+
+    public async Task<long> CreateAsync(AdminPostCreateRequest request)
+    {
+        var errors = new FieldErrorCollection();
+
+        if (string.IsNullOrWhiteSpace(request.PostType))
+            errors.AddError(nameof(request.PostType), "PostType is required.");
+        if (string.IsNullOrWhiteSpace(request.Title))
+            errors.AddError(nameof(request.Title), "Title is required.");
+        if (string.IsNullOrWhiteSpace(request.Content))
+            errors.AddError(nameof(request.Content), "Content is required.");
+
+        if (errors.Any())
+            throw new RequestValidationException(errors);
+
+        if (!Enum.TryParse<ActorType>(request.AuthorType, ignoreCase: true, out var authorType))
+            authorType = ActorType.ADMIN;
+
+        var post = new Post(
+            request.PostType,
+            request.Title,
+            request.Content,
+            authorType,
+            request.AuthorId,
+            request.AuthorName
+        );
+
+        _db.Posts.Add(post);
+        await _db.SaveChangesAsync();
+        return post.PostId;
     }
 
     public async Task UpdateAsync(AdminPostUpdateRequest request)
