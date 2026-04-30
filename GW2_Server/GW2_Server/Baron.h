@@ -65,6 +65,7 @@ private:
 	static constexpr float SKILL2_INTERVAL = 15.0f;
 	static constexpr float SKILL2_RANGE = 6.0f;
 	static constexpr float SKILL2_DAMAGE = 150.0f;
+	static constexpr float SPAWN_Y_OFFSET = 1.5f;
 
 	// aggro: objectId → 마지막 피격 시각
 	unordered_map<int32, float> _aggroTable;

@@ -168,7 +168,7 @@ public class MinionController : BaseController
     // -----------------
     //  Setters
     // -----------------
-    public void SetServerRefPos(Vector3 serverPos, int serverTime)
+    public virtual void SetServerRefPos(Vector3 serverPos, int serverTime)
     {
         _serverRefPos = serverPos;
         _serverRefTime = serverTime;
@@ -177,7 +177,7 @@ public class MinionController : BaseController
 
     // NavPath Helper
 
-    public void SetNavPath(List<Vector3> path)
+    public virtual void SetNavPath(List<Vector3> path)
     {
         if (path == null || path.Count == 0)
         {

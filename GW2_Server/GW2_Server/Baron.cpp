@@ -158,9 +158,11 @@ void Baron::UpdateMovement(float deltaTime)
 
 void Baron::RequestMove(vector<GameMath::Vector3> path)
 {
+	for (auto& p : path)
+		p._y += SPAWN_Y_OFFSET;
+
 	_path = path;
 	_pathIndex = 0;
-	//_moveState = Protocol::MoveState::MOVE_STATE_RUN;
 	Protocol::PosInfo* tPos = _objectInfo.mutable_pos_info();
 	tPos->set_state(Protocol::MoveState::MOVE_STATE_RUN);
 }
