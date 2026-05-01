@@ -34,20 +34,11 @@ public class NetworkService : INetworkService
 
     public void Init()
     {
-        // DNS (Domain Name System)
-        string host = Dns.GetHostName();
-        IPHostEntry ipHost = Dns.GetHostEntry(host);
-        //IPAddress ipAddr = ipHost.AddressList[0];
-        //IPAddress ipAddr = IPAddress.Parse("192.168.75.2");
-        IPAddress ipAddr = IPAddress.Parse("127.0.0.1");
-        //IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
-        //IPAddress ipAddr = IPAddress.Loopback;
-        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
-        Connector connector = new Connector();
+        IPAddress ipAddr = IPAddress.Parse(ConfigService.GameServerIp);
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, ConfigService.GameServerPort);
 
-        connector.Connect(endPoint,
-            () => { return _session; },
-            1);
+        Connector connector = new Connector();
+        connector.Connect(endPoint, () => { return _session; }, 1);
     }
 
     public void Update()

@@ -67,7 +67,7 @@ int main()
 
 #ifdef _WIN32
     ServerServiceRef service = MakeShared<ServerService>(
-        NetAddress(L"127.0.0.1", 7777),
+        NetAddress(L"0.0.0.0", 7777),
         MakeShared<IocpCore>(),
         MakeShared<GameSession>,
         100);
@@ -76,7 +76,7 @@ int main()
     GIoCore = ioCore.get();
 
     ServerServiceRef service = make_shared<ServerService>(
-        NetAddress("127.0.0.1", 7777),
+        NetAddress("0.0.0.0", 7777),
         ioCore,
         []() { return make_shared<GameSession>(); },
         100);
