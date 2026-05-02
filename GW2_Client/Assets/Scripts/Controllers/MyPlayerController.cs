@@ -61,6 +61,24 @@ public class MyPlayerController : PlayerController
 
     public static List<int> GetPendingHandCardIds() => _pendingHandCardIds;
 
+    // Die 시 입력 잠금 (S_DIEHandler에서 직접 호출)
+    public void LockInput()
+    {
+        if (_inputService == null) return;
+        _inputService.MouseAction -= OnMouseEvent;
+        _inputService.KeyAction   -= OnKeyEvent;
+    }
+
+    // 리스폰 시 입력 복원 (S_RESPAWNHandler에서 직접 호출)
+    public void RestoreInput()
+    {
+        if (_inputService == null) return;
+        _inputService.MouseAction -= OnMouseEvent;
+        _inputService.MouseAction += OnMouseEvent;
+        _inputService.KeyAction   -= OnKeyEvent;
+        _inputService.KeyAction   += OnKeyEvent;
+    }
+
     public override void Init()
     {
         base.Init();
@@ -93,7 +111,10 @@ public class MyPlayerController : PlayerController
         
         _navAgent = GetComponent<NavMeshAgent>();
         if (_navAgent != null)
+        {
             _navAgent.updateRotation = false;  // 추가: 수동 회전 제어 사용
+            _navAgent.updatePosition = false;  // ← 추가
+        }
 
         if (_pendingHandCardIds.Count > 0)
             UI_CardPanel.OnHandSync?.Invoke(_pendingHandCardIds);
@@ -230,7 +251,7 @@ public class MyPlayerController : PlayerController
 
     public void OnMouseEvent(Define.MouseEvent evt)
     {
-        if (State == MoveState.Die) 
+        if (!IsAlive)
             return;
 
         // 좌클릭시 스킬 대기
@@ -243,10 +264,11 @@ public class MyPlayerController : PlayerController
                 RaycastHit skillHit;
                 if (Physics.Raycast(skillRay, out skillHit, 100.0f, LayerMask.GetMask("Objects")))
                 {
-                    BaseController bc = skillHit.collider.gameObject.GetComponent<BaseController>();
+                    BaseController bc = skillHit.collider.gameObject.GetComponent<BaseController>()
+                                     ?? skillHit.collider.gameObject.GetComponentInParent<BaseController>();
                     if (bc != null && bc.CampType != CampType)
                     {
-                        _target = skillHit.collider.gameObject;
+                        _target = bc.gameObject;
                         int tId = bc.Id;
                         SendCardEvent(_pendingSkillSlot, _target.transform.position, tId);
                     }
@@ -277,26 +299,28 @@ public class MyPlayerController : PlayerController
         RaycastHit hit;
 
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
-        // CreatureController 상속 받는 물건임을 확인시 적인지를 다시한번 판단.
+
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Objects")))
         {
             Debug.Log("Raycast Objects hit");
-            // 진영이 다르고 사거리 내에 있다면 상태를 전이시킨다.
-            if (hit.collider.gameObject.GetComponent<BaseController>().CampType != this.CampType)
+
+            BaseController bc = hit.collider.gameObject.GetComponent<BaseController>()
+                             ?? hit.collider.gameObject.GetComponentInParent<BaseController>();
+            if (bc == null)
+                return;
+
+            if (bc.CampType != this.CampType)
             {
-                // TEMP
-                _target = hit.collider.gameObject;
+                _target = bc.gameObject;
                 float dist = Vector3.Distance(transform.position, _target.transform.position);
                 Debug.Log($"TryAttackTarget before dist : {dist}, range : {_attackRange}");
-                if(dist <= _attackRange)
+                if (dist <= _attackRange)
                 {
-                    // 사거리 내부면 바로 공격
                     TryAttackTarget();
                     Debug.Log("TryAttackTarget");
                 }
                 else
                 {
-                    // 사거리 밖이다.
                     _chaseToAttack = true;
                     _lastTargetPos = _target.transform.position;
                     _chaseCooldown = 0.0f;
@@ -305,20 +329,16 @@ public class MyPlayerController : PlayerController
                     Debug.Log("TryAttackTarget else block");
                 }
             }
-            
         }
         else if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Road")))
         {
             _destPos = hit.point;
             _moveToDest = true;
-            _chaseToAttack = false;  // 이동 명령 시 추적 취소
+            _chaseToAttack = false;
             _target = null;
             RequestMove(_destPos);
             State = MoveState.Run;
-            // 상태 변화 확인
-            //Debug.Log("Raycast Road");
         }
-        // 사거리 밖에 있다면, 추적시킨다.
         else
         {
             Debug.Log("OnMouseEvent Else block");
@@ -328,7 +348,7 @@ public class MyPlayerController : PlayerController
     // 현재는 사용하지 않는다.
     public void OnKeyEvent()
     {
-        if (State == MoveState.Die)
+        if (!IsAlive)
             return;
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -445,6 +465,10 @@ public class MyPlayerController : PlayerController
 
         if (_navAgent != null)
             _navAgent.ResetPath();
+
+        // Die 상태에서는 Idle 전환 금지
+        // (Die 진입 시 StopMovement 호출 → Idle 덮어쓰기 → PosInfo.State=Idle →
+        //  S_RESPAWN의 State=Idle 세팅이 no-op → 입력 잠금 해제 불가 버그 방지)
         State = MoveState.Idle;
     }
 
@@ -576,5 +600,15 @@ public class MyPlayerController : PlayerController
     {
         if (stat.Speed > 0)
             _moveSpeed = stat.Speed;
+    }
+    public void ClearMovement()
+    {
+        _target = null;
+        _chaseToAttack = false;
+        _isMoving = false;
+        _path.Clear();
+        _pathIndex = 0;
+        if (_navAgent != null)
+            _navAgent.ResetPath();
     }
 }

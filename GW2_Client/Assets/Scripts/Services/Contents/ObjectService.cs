@@ -67,6 +67,7 @@ public class ObjectService : IObjectService
 
                 MyPlayer = go.GetComponent<MyPlayerController>();
                 MyPlayer.Id = objectId;
+                MyPlayer.SpawnPosition = initPos;   // ÏµúÏ¥à Ïä§Ìè∞ ÏúÑÏπò Ï†ÄÏû•
                 Debug.Log(MyPlayer.Id);
                 MyPlayer.RoomId = (int)roomId;
                 MyPlayer.CampType = (CampType)info.TeamFlag;
@@ -76,7 +77,8 @@ public class ObjectService : IObjectService
             {
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.transform.position = initPos;
-                pc.PosInfo = info.PosInfo;   // °Á √ﬂ∞°: ∫∏∞£ ±‚¡ÿ¡° √ ±‚»≠
+                pc.SpawnPosition = initPos;   // ÏµúÏ¥à Ïä§Ìè∞ ÏúÑÏπò Ï†ÄÏû•
+                pc.PosInfo = info.PosInfo;
                 pc.Id = objectId;
                 pc.CampType = (CampType)info.TeamFlag;
             }

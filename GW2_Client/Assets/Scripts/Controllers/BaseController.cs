@@ -18,6 +18,19 @@ public class BaseController : MonoBehaviour
     // === Server Pos ===
     public int Id { get; set; }
     public int RoomId { get; set; }
+    public Vector3 SpawnPosition { get; set; }
+    public bool IsAlive { get; private set; } = true;
+    public void SetAlive(bool alive)
+    {
+        IsAlive = alive;
+        SetBodyActive(alive);
+        if (alive)
+        {
+            _isMoving = false;
+            PosInfo.State = MoveState.Idle;
+        }
+    }
+
     public float _sendPacketDelay = 0.2f;
     public float LastServerTime { get; set; }
     public bool _isMoving = false;
@@ -88,7 +101,7 @@ public class BaseController : MonoBehaviour
 
     public void Update()
     {
-        _inputService.OnUpdate();
+        //_inputService.OnUpdate();
         // 상태머신 관리
         UpdateAnimation();
     }
@@ -154,6 +167,8 @@ public class BaseController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         SetSkillAnim(false);
+        if (State == MoveState.Skill)       
+            State = MoveState.Idle;         
     }
 
     protected int GetClientTime()
@@ -282,5 +297,19 @@ public class BaseController : MonoBehaviour
         _animator?.SetBool("IsDead", true);
     }
 
+    // Die 시 메시 숨기기 / Respawn 시 메시 표시
+    public void SetBodyActive(bool active)
+    {
+        Transform meshRoot = transform.Find("CharacterMesh");
+        if (meshRoot != null)
+        {
+            meshRoot.gameObject.SetActive(active);
+        }
+        else
+        {
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+                r.enabled = active;
+        }
+    }
 
 }

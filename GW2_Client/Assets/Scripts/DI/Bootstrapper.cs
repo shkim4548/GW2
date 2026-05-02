@@ -45,6 +45,7 @@ public class Bootstrapper : MonoBehaviour
 
     void Update()
     {
+        InputService.OnUpdate();
         NetworkService.Update();
     }
 }

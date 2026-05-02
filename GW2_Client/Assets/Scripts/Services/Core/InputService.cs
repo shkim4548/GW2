@@ -28,9 +28,9 @@ public class InputService : IInputService
         if (Input.anyKey && KeyAction != null)
             KeyAction.Invoke();
 
-        if(MouseAction != null)
+        if (MouseAction != null)
         {
-            if(Input.GetMouseButton(1))
+            if (Input.GetMouseButton(1))
             {
                 MouseAction.Invoke(Define.MouseEvent.Press);
                 _pressed = true;
@@ -38,8 +38,17 @@ public class InputService : IInputService
             else
             {
                 if (_pressed)
-                    MouseAction.Invoke(Define.MouseEvent.Click);
-                _pressed = false;
+                {
+                    try
+                    {
+                        MouseAction.Invoke(Define.MouseEvent.Click);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"[InputService] MouseAction.Click exception: {e}");
+                    }
+                }
+                _pressed = false;   // 예외 여부와 무관하게 항상 초기화
             }
 
             if (Input.GetMouseButtonDown(0))

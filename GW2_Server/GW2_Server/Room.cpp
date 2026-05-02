@@ -1397,6 +1397,9 @@ void Room::HandleRemoveObject(int32 targetId, int32 attackerId)
 	if (obj->GetObjectType() == Protocol::OBJECT_TYPE_PLAYER)
 	{
 		obj->SetIsDead(true);
+		obj->_path.clear();       
+		obj->_pathIndex = 0;      
+		obj->SetIsMoving(false);  
 		_respawnTimers[targetId] = 5.0f; // 5초
 		return;
 	}
@@ -1657,13 +1660,20 @@ void Room::HandleRespawnPlayer(int32 playerId)
 	if (it == _objects.end()) return;
 
 	shared_ptr<Object> player = it->second;
+
+	// 서버 상태 초기화
+	player->SetIsDead(false);
 	player->FullHeal();
+	player->_path.clear();        
+	player->_pathIndex = 0;       
+	player->SetIsMoving(false);   
+	player->SetMoveState(Protocol::MOVE_STATE_IDLE);
 
 	// 팀별 스폰 위치
 	GameMath::Vector3 spawnPos =
 		(player->GetTeamFlag() == static_cast<uint8>(Protocol::CAMP_HUMAN))
 		? GameMath::Vector3{ -60.0f, 0.0f, 0.0f }
-	: GameMath::Vector3{ 60.0f, 0.0f, 0.0f };
+		: GameMath::Vector3{ 60.0f, 0.0f, 0.0f };
 	player->SetPosVector(spawnPos);
 
 	Protocol::S_RESPAWN pkt;

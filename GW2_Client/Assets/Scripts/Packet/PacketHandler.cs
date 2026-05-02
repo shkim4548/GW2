@@ -60,7 +60,7 @@ public class PacketHandler
         }
 
         // 내 플레이어는 처리하지 않음
-        if (objectService.MyPlayer.Id == movePkt.ObjectId)
+        if (objectService.MyPlayer != null && objectService.MyPlayer.Id == movePkt.ObjectId)
             return;
 
         BaseController bc = go.GetComponent<BaseController>();
@@ -94,7 +94,8 @@ public class PacketHandler
         pos.Y = movePkt.ServerPosInfo.Y;
         pos.Z = movePkt.ServerPosInfo.Z;
         pos.Yaw = movePkt.ServerPosInfo.Yaw;
-        pos.State = movePkt.ServerPosInfo.State;
+        //pos.State = movePkt.ServerPosInfo.State;
+        pos.State = MoveState.Run;
 
         bc._isMoving = true;
         bc.PosInfo = pos;
@@ -129,7 +130,6 @@ public class PacketHandler
 
         attackerBc.State = Google.Protobuf.Enum.MoveState.Skill;
 
-        // 내 플레이어가 공격한 경우 → 로컬에서 이미 재생했으므로 스킵
         if (objectService.MyPlayer != null &&
             objectService.MyPlayer.Id == (int)skillPkt.AttackerId)
             return;
@@ -144,21 +144,19 @@ public class PacketHandler
 
         if (skillId == 1)
         {
-            // 평타: 기존 이펙트 재생
             attackerBc.PlayAttackEffect(target);
-            attackerBc.SetAttackAnim(true);                                  
-            attackerBc.StartCoroutine(attackerBc.ResetAttackAnim(1.0f));    
+            attackerBc.SetAttackAnim(true);
+            attackerBc.StartCoroutine(attackerBc.ResetAttackAnim(1.0f));
         }
         else
         {
-            // 카드 스킬: EffectManager 통해 재생
             Vector3 worldPos = (target != null)
                 ? target.transform.position
-                : new Vector3(skillPkt.PosX, 0f, skillPkt.PosZ);   // AOE는 패킷의 pos 사용
+                : new Vector3(skillPkt.PosX, 0f, skillPkt.PosZ);
 
             attackerBc.PlaySkillEffect(skillId, effectPos, worldPos, dir);
-            attackerBc.SetSkillAnim(true);                                   
-            attackerBc.StartCoroutine(attackerBc.ResetSkillAnim(1.5f));     
+            attackerBc.SetSkillAnim(true);
+            attackerBc.StartCoroutine(attackerBc.ResetSkillAnim(1.5f));
         }
     }
 
@@ -170,6 +168,20 @@ public class PacketHandler
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
         foreach (ObjectInfo obj in spawnPacket.Players)
         {
+            // 이미 존재하는 오브젝트 = 리스폰 케이스 (Die 상태에서 재등장)
+            GameObject existing = objectService.FindById(obj.ObjectId);
+            if (existing != null)
+            {
+                BaseController bc = existing.GetComponent<BaseController>();
+                if (bc != null)
+                {
+                    Vector3 respawnPos = new Vector3(obj.PosInfo.X, obj.PosInfo.Y, obj.PosInfo.Z);
+                    existing.transform.position = respawnPos;
+                    bc._isMoving = false;
+                    bc.State = MoveState.Idle;
+                }
+                continue;
+            }
             objectService.Add(obj, myPlayer: false);
         }
     }
@@ -325,22 +337,31 @@ public class PacketHandler
         // 내 플레이어가 죽은 경우
         if (objectService.MyPlayer != null && objectService.MyPlayer.Id == diePkt.TargetId)
         {
-            objectService.MyPlayer.State = MoveState.Die;
-            // death 카운트 (서버가 이미 집계하므로 UI에만 반영)
-            // 단순히 +1: 서버 동기화 패킷 없으면 클라 자체 카운트
-            UI_KDA.OnKdaUpdate?.Invoke(0, 1, 0); // death +1 (delta 방식은 아래 참고)
+            objectService.MyPlayer.SetBodyActive(false);
+            objectService.MyPlayer.SetAlive(false);   // IsAlive=false + 메시 숨기기
+            objectService.MyPlayer.ClearMovement();
+            UI_KDA.OnKdaUpdate?.Invoke(0, 1, 0);
             return;
         }
 
         // 내 플레이어가 킬한 경우
         if (objectService.MyPlayer != null && objectService.MyPlayer.Id == diePkt.AttackerId)
-        {
-            UI_KDA.OnKdaUpdate?.Invoke(1, 0, 0); // kill +1
-        }
+            UI_KDA.OnKdaUpdate?.Invoke(1, 0, 0);
 
+        // Remote 오브젝트 처리
         GameObject go = objectService.FindById(diePkt.TargetId);
         if (go == null) return;
-        objectService.Remove(diePkt.TargetId);
+
+        if (go.GetComponent<PlayerController>() != null)
+        {
+            // 플레이어: 리스폰 있으므로 오브젝트 유지, 메시만 숨기기
+            go.GetComponent<BaseController>().SetAlive(false);
+        }
+        else
+        {
+            // 미니언 / 포탑 / 넥서스 등 리스폰 없는 오브젝트 제거
+            objectService.Remove(diePkt.TargetId);
+        }
     }
 
 
@@ -373,24 +394,31 @@ public class PacketHandler
     internal static void S_RESPAWNHandler(PacketSession session, IMessage message)
     {
         S_RESPAWN pkt = message as S_RESPAWN;
-
         IObjectService objectService = Bootstrapper.Instance.ObjectService;
 
         GameObject go = objectService.FindById(pkt.PlayerId);
         if (go == null) return;
 
         BaseController bc = go.GetComponent<BaseController>();
-        Vector3 pos = new Vector3(pkt.X, pkt.Y, pkt.Z);
-        //bc.transform.position = pos;
 
+        // 스폰 위치로 이동
         NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
-        if (agent != null) 
-            agent.Warp(pos);
-        else 
-            bc.transform.position = pos;
+        if (agent != null)
+        {
+            agent.Warp(bc.SpawnPosition);
+            agent.ResetPath();  // ← 추가
+        }
+        else
+            bc.transform.position = bc.SpawnPosition;
 
+        // 복구
+        bc.SetAlive(true);
         bc.SetHp(pkt.CurrentHp, pkt.MaxHp);
-        bc.State = MoveState.Idle;
+
+        // MyPlayer 입력 복원
+        MyPlayerController myPlayer = go.GetComponent<MyPlayerController>();
+        if (myPlayer != null)
+            myPlayer.RestoreInput();
     }
 
     internal static void S_HAND_SYNCHandler(PacketSession session, IMessage message)
@@ -469,7 +497,10 @@ public class PacketHandler
 
     internal static void S_DESPAWNHandler(PacketSession session, IMessage message)
     {
-        throw new NotImplementedException();
+        S_DESPAWN pkt = message as S_DESPAWN;
+        if (pkt == null) return;
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
+        objectService.Remove(pkt.TargetId);
     }
 
     internal static void S_FIND_GAMEHandler(PacketSession session, IMessage message)

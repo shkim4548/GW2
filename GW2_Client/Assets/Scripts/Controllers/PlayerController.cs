@@ -1,41 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.AI;
 
 public class PlayerController : CreatureController
 {
     private float interpolationSpeed = 10.0f;
     [SerializeField] private float _remoteSpeed = 12.0f;
 
-    private Vector3 _serverPosition;
-    private Vector3 _velocity;
-
     public override void Init()
     {
         base.Init();
     }
 
+    // Idle ìƒíƒœì—ì„œë„ ì„œë²„ Yawë¥¼ ë°˜ì˜
     public override void UpdateIdle()
     {
         base.UpdateIdle();
+        Quaternion targetRot = Quaternion.Euler(0f, PosInfo.Yaw, 0f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, interpolationSpeed * Time.deltaTime);
     }
 
     public override void UpdateMoving()
     {
         base.UpdateMoving();
-        if(_isMoving)
+        if (_isMoving)
         {
             InterpolateToServerPosition();
         }
-        // update animationÀº Base¿¡¼­ ÁøÇàÇØÁØ´Ù.
     }
 
-    // === Remote º¸°£ ÀÌµ¿ === 
+    // Remote í”Œë ˆì´ì–´ ìœ„ì¹˜ ë³´ê°„
     private void InterpolateToServerPosition()
     {
-        Vector3 serverPos = new Vector3(PosInfo.X, transform.position.y, PosInfo.Z);
-        // snap Á¶°Ç Á¦°Å - ¸ñÀûÁö´Â ¸Ö ¼ö ÀÖÀ½
+        float groundY = GetGroundY(PosInfo.X, PosInfo.Z);
+        Vector3 serverPos = new Vector3(PosInfo.X, groundY, PosInfo.Z);
+
         transform.position = Vector3.MoveTowards(
             transform.position, serverPos, _remoteSpeed * Time.deltaTime);
 
@@ -47,10 +47,21 @@ public class PlayerController : CreatureController
         }
         else
         {
-            // ¸ñÀûÁö¿¡ °ÅÀÇ µµ´Ş ¡æ ¼­¹ö yaw·Î ÃÖÁ¾ È¸Àü Á¤·Ä
             Quaternion targetRotation = Quaternion.Euler(0f, PosInfo.Yaw, 0f);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationSpeed * Time.deltaTime);
         }
     }
 
+    // NavMesh ê¸°ë°˜ ì§€í˜• Y ë³´ì • (ì–¸ë• ë“± ê³ ì €ì°¨ ì²˜ë¦¬)
+    private float GetGroundY(float x, float z)
+    {
+        NavMeshHit hit;
+        // í˜„ì¬ ìœ„ì¹˜ ê¸°ì¤€ ìœ„ì•„ë˜ 5f ë²”ìœ„ ë‚´ì—ì„œ NavMesh ìƒ˜í”Œë§
+        Vector3 samplePos = new Vector3(x, transform.position.y + 5f, z);
+        if (NavMesh.SamplePosition(samplePos, out hit, 10f, NavMesh.AllAreas))
+            return hit.position.y;
+
+        // NavMesh ìƒ˜í”Œë§ ì‹¤íŒ¨ ì‹œ í˜„ì¬ Y ìœ ì§€ (ì•ˆì „ fallback)
+        return transform.position.y;
+    }
 }
