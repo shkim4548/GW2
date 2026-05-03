@@ -1549,11 +1549,9 @@ void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
 
 	shared_ptr<Object> target = it->second;
 
-	int32 damage = baron->GetStatInfo().attack();
-	int32 final = max(1, damage);
-	int32 newHp = std::max(0, static_cast<int32>(target->GetStatInfo().hp() - final));
-
-	target->SetHp(newHp);  // 서버 HP 갱신
+	uint64 damage = baron->GetStatInfo().attack();
+	if (damage == 0) damage = 1;
+	bool died = target->ApplyDamage(damage);
 
 	// 이펙트/애니메이션 트리거
 	Protocol::S_SKILL skillPkt;
@@ -1565,12 +1563,12 @@ void Room::HandleBaronAttack(shared_ptr<Baron> baron, int32 targetId)
 	// HP바 갱신 ← 이게 빠진 것
 	Protocol::S_HP_CHANGE hpPkt;
 	hpPkt.set_target_id(targetId);
-	hpPkt.set_current_hp(newHp);
+	hpPkt.set_current_hp(baron->GetHp());
 	hpPkt.set_max_hp(target->GetMaxHp());
 	Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 
 	// 사망 처리
-	if (newHp <= 0)
+	if (died)
 		HandleRemoveObject(targetId, baron->GetObjectId());
 }
 void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
@@ -1612,22 +1610,16 @@ void Room::HandleBaronAoe(shared_ptr<Baron> baron, int32 skillType)
 		if (dist > aoeRange)
 			continue;
 
-		//int32 defense
-		int32 final = max(1, aoeDamage);
-		int32 newHp = max(0, static_cast<int32>(obj->GetStatInfo().hp() - final));
-
-		Protocol::StatInfo stat = obj->GetStatInfo();
-		stat.set_hp(newHp);
-
-		obj->SetHp(newHp);
+		uint64 aoeDamage64 = static_cast<uint64>(aoeDamage);
+		bool died = obj->ApplyDamage(aoeDamage64);
 
 		Protocol::S_HP_CHANGE hpPkt;
 		hpPkt.set_target_id(id);
-		hpPkt.set_current_hp(newHp);
+		hpPkt.set_current_hp(obj->GetHp());
 		hpPkt.set_max_hp(obj->GetMaxHp());
 		Broadcast(ClientPacketHandler::MakeSendBuffer(hpPkt));
 
-		if (newHp <= 0)
+		if (died)
 			HandleRemoveObject(id, baron->GetObjectId());
 	}
 }

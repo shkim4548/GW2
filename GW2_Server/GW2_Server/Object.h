@@ -21,7 +21,7 @@ public:
 	Protocol::CampType GetTeamFlag() const { return static_cast<Protocol::CampType>(_objectInfo.team_flag());	}
 	
 
-	float GetHp() { return _objectInfo.stat_info().hp(); }
+	//float GetHp() { return _objectInfo.stat_info().hp(); }
 	float GetYaw() { return _objectInfo.pos_info().yaw(); }
 	bool GetIsDead() { return _isDead; }
 

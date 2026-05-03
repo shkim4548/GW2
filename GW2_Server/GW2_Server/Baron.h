@@ -70,7 +70,7 @@ private:
 	// aggro: objectId → 마지막 피격 시각
 	unordered_map<int32, float> _aggroTable;
 	float _aggroElapsed = 0.0f;  // 타겟 없을 때 누적 시간
-	static constexpr float NO_TARGET_RESET = 10.0f;
+	static constexpr float NO_TARGET_RESET = 3.0f;
 
 	weak_ptr<Object> _currentTarget;
 

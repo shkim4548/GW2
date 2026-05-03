@@ -114,6 +114,9 @@ public class BaseController : MonoBehaviour
         //Debug.Log($"[BaseController.Init] _hpBar={(_hpBar != null ? "found" : "NULL")} on {gameObject.name}");
         if (_hpBar != null)
             _hpBar.SetHp(_hp, _maxHp);
+
+        if (_animator != null)
+            _animator.applyRootMotion = false;
     }
 
     public virtual void UpdateIdle() { }
