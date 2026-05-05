@@ -2,7 +2,9 @@
 
 // Asio 반드시 최상단
 #define ASIO_STANDALONE
+#ifdef _WIN32
 #define _WIN32_WINNT 0x0601
+#endif
 #include "asio.hpp"
 
 // 표준 라이브러리

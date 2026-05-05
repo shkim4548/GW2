@@ -1,5 +1,10 @@
 #pragma once
 
+// MSVC SAL 미지원 환경 대응
+#ifdef _MSC_VER
+#define __analysis_assume(expr)
+#endif
+
 #define OUT
 #define SETTER
 
