@@ -232,11 +232,27 @@ public class BaseController : MonoBehaviour
     {
 
     }
-
-    public void ApplySpeedBuff(float multiplier, float duration)
+    public virtual void ApplyBuff(BuffType buffType, float value, float duration)
     {
-        _moveSpeed *= multiplier;
-        StartCoroutine(RevertSpeedAfter(duration, multiplier));
+        switch (buffType)
+        {
+            case BuffType.BuffSpeed:
+                _moveSpeed *= value;
+                StartCoroutine(RevertBuffAfter(duration, () => _moveSpeed /= value));
+                break;
+            case BuffType.BuffAttack:
+            case BuffType.BuffDefense:
+            case BuffType.BuffAttackSpeed:
+                // 기본 구현 없음 — 서버가 실제 계산 담당
+                // MyPlayerController에서 필요 시 override
+                break;
+        }
+    }
+
+    protected IEnumerator RevertBuffAfter(float duration, System.Action revert)
+    {
+        yield return new WaitForSeconds(duration);
+        revert?.Invoke();
     }
 
     private IEnumerator RevertSpeedAfter(float duration, float multiplier)
@@ -255,11 +271,6 @@ public class BaseController : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
         // 스턴 해제 — 서버가 다음 이동 패킷 보낼 때 자연히 복구됨
-    }
-
-    public void ApplyAttackSpeedBuff(float multiplier, float duration)
-    {
-        StartCoroutine(RevertAttackSpeedAfter(duration, multiplier));
     }
 
     private IEnumerator RevertAttackSpeedAfter(float duration, float multiplier)

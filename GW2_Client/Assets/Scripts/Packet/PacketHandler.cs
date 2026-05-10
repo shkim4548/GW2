@@ -466,25 +466,17 @@ public class PacketHandler
         S_BUFF_APPLIED pkt = message as S_BUFF_APPLIED;
         Debug.Log($"[S_BUFF_APPLIED] target={pkt.TargetId} type={pkt.BuffType} value={pkt.Value} duration={pkt.Duration}");
 
-        if (pkt.BuffType == BuffType.BuffSpeed)
-        {
-            IObjectService objectService = Bootstrapper.Instance.ObjectService;
-            GameObject go = objectService.FindById(pkt.TargetId);
-            if (go != null)
-                go.GetComponent<BaseController>()?.ApplySpeedBuff(pkt.Value, pkt.Duration);
-        }
+        IObjectService objectService = Bootstrapper.Instance.ObjectService;
+        GameObject go = objectService.FindById(pkt.TargetId);
+        if (go == null) return;
 
-        if (pkt.BuffType == BuffType.BuffAttackSpeed)
-        {
-            IObjectService objectService = Bootstrapper.Instance.ObjectService;
-            GameObject go = objectService.FindById(pkt.TargetId);
-            go?.GetComponent<BaseController>()?.ApplyAttackSpeedBuff(pkt.Value, pkt.Duration);
+        BaseController bc = go.GetComponent<BaseController>();
+        bc?.ApplyBuff(pkt.BuffType, pkt.Value, pkt.Duration);
 
-            if (objectService.MyPlayer != null && objectService.MyPlayer.Id == (int)pkt.TargetId)
-                MyPlayerController.OnAttackSpeedBuffed?.Invoke(pkt.Value);  // ← 여기로 이동
-        }
-
-
+        bool isMyPlayer = objectService.MyPlayer != null
+                       && objectService.MyPlayer.Id == (int)pkt.TargetId;
+        if (isMyPlayer)
+            MyPlayerController.OnBuffApplied?.Invoke(pkt.BuffType, pkt.Value);
     }
 
     internal static void S_STUNHandler(PacketSession session, IMessage message)

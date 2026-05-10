@@ -1,3 +1,4 @@
+using Google.Protobuf.Enum;
 using Google.Protobuf.Struct;
 using TMPro;
 using UnityEngine;
@@ -25,19 +26,18 @@ public class UI_StatusBox : UI_Base
     {
         Bind<TMP_Text>(typeof(Status));
 
-        // 이벤트 구독 (중복 방지)
         MyPlayerController.OnStatInfoUpdate -= HandleStatInfo;
         MyPlayerController.OnStatInfoUpdate += HandleStatInfo;
+
+        MyPlayerController.OnBuffApplied -= HandleBuffApplied;   // ← 단일 구독
+        MyPlayerController.OnBuffApplied += HandleBuffApplied;
+
+        UI_Store.OnGoldUpdate -= HandleGoldUpdate;
+        UI_Store.OnGoldUpdate += HandleGoldUpdate;
 
         var pending = MyPlayerController.GetPendingStatInfo();
         if (pending != null)
             HandleStatInfo(pending);
-
-        MyPlayerController.OnAttackSpeedBuffed -= HandleAttackSpeedBuff;
-        MyPlayerController.OnAttackSpeedBuffed += HandleAttackSpeedBuff;
-
-        UI_Store.OnGoldUpdate -= HandleGoldUpdate;
-        UI_Store.OnGoldUpdate += HandleGoldUpdate;
 
         Refresh();
     }
@@ -47,6 +47,26 @@ public class UI_StatusBox : UI_Base
         _attack = stat.Attack;
         _speed = stat.Speed;
         // Shield / Strength는 서버 미제공 → 유지
+        Refresh();
+    }
+
+    private void HandleBuffApplied(BuffType buffType, float value)
+    {
+        switch (buffType)
+        {
+            case BuffType.BuffAttack:
+                _attack *= value;       // 표시용 배율 적용
+                break;
+            case BuffType.BuffDefense:
+                _shield *= value;       // 기존 _shield 필드 활용
+                break;
+            case BuffType.BuffAttackSpeed:
+                _attackSpeed = value;   // 배율 직접 표시
+                break;
+            case BuffType.BuffSpeed:
+                _speed *= value;
+                break;
+        }
         Refresh();
     }
 
@@ -72,10 +92,12 @@ public class UI_StatusBox : UI_Base
         GetTMP((int)Status.Gold_Text).text = _gold.ToString();
     }
 
+
     private void OnDestroy()
     {
         MyPlayerController.OnStatInfoUpdate -= HandleStatInfo;
         MyPlayerController.OnAttackSpeedBuffed -= HandleAttackSpeedBuff;
         UI_Store.OnGoldUpdate -= HandleGoldUpdate;
     }
+
 }

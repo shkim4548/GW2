@@ -35,6 +35,7 @@ public class MyPlayerController : PlayerController
     // === UI Delegate ===
     public static Action<float, float> OnHpChanged;
     public static Action<int> OnCardUsed;
+    public static Action<BuffType, float> OnBuffApplied;
 
     private UI_Store _storeUI = null;
     private int _pendingSkillSlot = -1; // -1 = 스킬 대기 없음
@@ -611,4 +612,19 @@ public class MyPlayerController : PlayerController
         if (_navAgent != null)
             _navAgent.ResetPath();
     }
+    public override void ApplyBuff(BuffType buffType, float value, float duration)
+    {
+        base.ApplyBuff(buffType, value, duration);
+
+        switch (buffType)
+        {
+            case BuffType.BuffAttackSpeed:
+                _attackSpeedMult = value;
+                StartCoroutine(RevertBuffAfter(duration, () => _attackSpeedMult = 1.0f));
+                break;
+        }
+        // BuffAttack, BuffDefense는 서버가 계산 — 클라이언트는 UI 표시만
+    }
+
+    // 기존 ApplySpeedBuff, ApplyAttackSpeedBuff 제거
 }

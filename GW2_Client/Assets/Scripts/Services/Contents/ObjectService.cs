@@ -71,7 +71,8 @@ public class ObjectService : IObjectService
                 Debug.Log(MyPlayer.Id);
                 MyPlayer.RoomId = (int)roomId;
                 MyPlayer.CampType = (CampType)info.TeamFlag;
-                MyPlayerController.OnStatInfoUpdate?.Invoke(info.StatInfo);
+                //MyPlayerController.OnStatInfoUpdate?.Invoke(info.StatInfo);
+                MyPlayerController.SetPendingStatInfo(info.StatInfo);
             }
             else
             {
