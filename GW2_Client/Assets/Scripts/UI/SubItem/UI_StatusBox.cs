@@ -17,7 +17,7 @@ public class UI_StatusBox : UI_Base
 
     private float _attack = 0f;
     private float _shield = 0f;
-    private float _attackSpeed = 1f;   // ±âº» 1.0 (¹èÀ²)
+    private float _attackSpeed = 1f;   // ï¿½âº» 1.0 (ï¿½ï¿½ï¿½ï¿½)
     private float _speed = 0f;
     private float _strength = 0f;
     private long _gold = 0;
@@ -29,7 +29,7 @@ public class UI_StatusBox : UI_Base
         MyPlayerController.OnStatInfoUpdate -= HandleStatInfo;
         MyPlayerController.OnStatInfoUpdate += HandleStatInfo;
 
-        MyPlayerController.OnBuffApplied -= HandleBuffApplied;   // ¡ç ´ÜÀÏ ±¸µ¶
+        MyPlayerController.OnBuffApplied -= HandleBuffApplied;   // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         MyPlayerController.OnBuffApplied += HandleBuffApplied;
 
         UI_Store.OnGoldUpdate -= HandleGoldUpdate;
@@ -46,7 +46,7 @@ public class UI_StatusBox : UI_Base
     {
         _attack = stat.Attack;
         _speed = stat.Speed;
-        // Shield / Strength´Â ¼­¹ö ¹ÌÁ¦°ø ¡æ À¯Áö
+        // Shield / Strengthï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Refresh();
     }
 
@@ -55,13 +55,13 @@ public class UI_StatusBox : UI_Base
         switch (buffType)
         {
             case BuffType.BuffAttack:
-                _attack *= value;       // Ç¥½Ã¿ë ¹èÀ² Àû¿ë
+                _attack *= value;       // Ç¥ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 break;
             case BuffType.BuffDefense:
-                _shield *= value;       // ±âÁ¸ _shield ÇÊµå È°¿ë
+                _shield = value * 100f;
                 break;
             case BuffType.BuffAttackSpeed:
-                _attackSpeed = value;   // ¹èÀ² Á÷Á¢ Ç¥½Ã
+                _attackSpeed = value;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
                 break;
             case BuffType.BuffSpeed:
                 _speed *= value;

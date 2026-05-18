@@ -219,7 +219,25 @@ public class PacketHandler
 
         int targetId = endMovePkt.ObjectId;
         if (objectService.MyPlayer != null && objectService.MyPlayer.Id == targetId)
+        {
+            MyPlayerController myPlayer = objectService.MyPlayer;
+            Vector3 serverPos = new Vector3(
+                endMovePkt.ServerPosInfo.X,
+                myPlayer.transform.position.y,
+                endMovePkt.ServerPosInfo.Z);
+
+            float differ = Vector3.Distance(myPlayer.transform.position, serverPos);
+            if (differ > 3.0f)
+            {
+                NavMeshAgent agent = myPlayer.GetComponent<NavMeshAgent>();
+                if (agent != null)
+                    agent.Warp(serverPos);
+                else
+                    myPlayer.transform.position = serverPos;
+                myPlayer.ClearMovement();
+            }
             return;
+        }
 
         GameObject go = objectService.FindById(targetId);
         if (go == null)
