@@ -28,6 +28,22 @@
 3. **제안 형식**: 파일명, 줄 번호, 변경 전/후 코드를 명시한다.
 4. 서버 → 클라이언트 순서로 흐름을 추적한다.
 
+## 문서화 작업 규칙
+1. 문서는 `D:\Dev\unity\GW2\Docs\` 아래 마크다운(.md)으로 작성한다.
+2. 서버 동작을 기준으로 기술하고, 클라이언트는 연동 부분만 보조 설명한다.
+3. 작성 전 반드시 관련 파일을 실제로 읽어 최신 코드 기준으로 기술한다.
+4. 각 항목에 파일 경로와 함수명을 명시한다.
+
+## 문서 구조 (Docs/)
+| 파일명 | 내용 | 주요 참조 파일 |
+|--------|------|----------------|
+| `01_architecture.md` | 서버 전체 구조 — IOCP, JobQueue, Room/Player/Object 계층, 스레드 모델 | `Room.cpp/h`, `Object.h`, `Player.cpp/h`, `GW2_ServerCore` |
+| `02_packet_protocol.md` | 전체 패킷 목록, 서버 핸들러 흐름, 필드 정의 | `ClientPacketHandler.cpp`, `Protocol.pb.h`, `Struct.pb.h` |
+| `03_card_system.md` | Stats.json 스키마, HandleSkill 분기 전체 흐름 (target/non-target, AOE, 버프, Mobility) | `Room.cpp`, `Stats.json`(서버), `Lobby.cpp` |
+| `04_buff_system.md` | BuffType별 서버 계산 로직, 타이머 관리, 클라이언트 표시 연동 | `Room.cpp`, `Player.cpp/h`, `BaseController.cs`, `UI_StatusBox.cs` |
+| `05_movement.md` | 심화 — 서버 이동처리, A* 경로탐색, 미니언 상태머신, 클라이언트 예측, 텔레포트 | `Room.cpp`, `Minion.cpp/h`, `NavigationSystem.cpp/h`, `MyPlayerController.cs` |
+| `06_game_flow.md` | 서버 기준 세션 생명주기 — 로비 입장 → 게임 시작 → 사망/리스폰 → 게임 종료 | `Lobby.cpp`, `Room.cpp`, `PacketHandler.cs` |
+
 ## 주요 패킷 목록
 | 패킷 | 방향 | 설명 |
 |------|------|------|
@@ -59,28 +75,7 @@
 - `UI_Store.OnGoldUpdate: Action<long>` — 골드 변경 시 발동
 - `ObjectService.Add()` 에서 `MyPlayerController.SetPendingStatInfo()` 호출 → `_pendingStatInfo` 저장 후 Invoke (UI 생성 전 패킷 대비 버퍼)
 
-## 알려진 수정 완료 사항
-- `ObjectService.Add()`: `OnStatInfoUpdate?.Invoke()` → `SetPendingStatInfo()` 교체 (StatInfo 0 표시 버그 수정)
-
-## 현재 수정 대상 버그
-### 버그 1: UI_StatusBox 방어력(_shield)만 표시 오류
-- 증상: 공격력·속도·공격속도는 정상, 방어력만 잘못된 값(0 등)
-- 의심 지점: `BuffType.BuffDefense` 처리 경로, `StatInfo`에 Defense 필드 존재 여부, `UI_StatusBox._shield` 초기화 경로
-
-### 버그 2: Teleport 스킬 미작동
-- 증상: 텔레포트 카드 사용 시 정상 작동하지 않음
-- 의심 지점: 텔레포트 전용 패킷 유무, `S_SKILL` 처리 분기, 클라이언트 위치 강제 이동 로직
-
-## 진입 파일 목록 (현황 파악 시 우선 읽을 것)
-### 버그 1
-- `GW2_Client\Assets\Scripts\UI\SubItem\UI_StatusBox.cs`
-- `GW2_Client\Assets\Scripts\Controllers\BaseController.cs`
-- `GW2_Client\Assets\Scripts\Controllers\MyPlayerController.cs`
-- `GW2_Client\Assets\Scripts\Packet\PacketHandler.cs`
-- `GW2_Server\GW2_Server\Struct.pb.h` (StatInfo 필드 확인)
-
-### 버그 2
-- `GW2_Client\Assets\Scripts\Packet\PacketHandler.cs`
-- `GW2_Client\Assets\Scripts\Controllers\MyPlayerController.cs`
-- `GW2_Server\GW2_Server\Room.cpp` (텔레포트 스킬 처리)
-- `GW2_Server\GW2_Server\Data\Stats.json` (텔레포트 카드 정의)
+## 수정 완료 이력
+- `ObjectService.Add()`: `OnStatInfoUpdate?.Invoke()` → `SetPendingStatInfo()` 교체 (StatInfo 0 표시 버그)
+- 버그 1: `UI_StatusBox._shield` → `_shield = value * 100f` (BuffDefense 대입 처리)
+- 버그 2: `Stats.json` 카드 128 buff 필드 제거 + `S_MOVE_ENDHandler` Warp 처리 (NavMesh 텔레포트)

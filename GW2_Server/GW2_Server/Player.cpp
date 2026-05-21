@@ -38,6 +38,7 @@ void Player::InitPlayer(shared_ptr<Room> room)
         tStatInfo->set_attack(stat.attackDamage);
         tStatInfo->set_attack_range(stat.attackRange);
         tStatInfo->set_speed(stat.moveSpeed);
+        _moveSpeed = stat.moveSpeed;
         _attackInterval = stat.attackInterval;
     }
     else
@@ -47,6 +48,9 @@ void Player::InitPlayer(shared_ptr<Room> room)
         tStatInfo->set_max_hp(1000);
         tStatInfo->set_attack(30);
         tStatInfo->set_attack_range(15.0f);
+        tStatInfo->set_speed(12.0f);   // ← fallback 속도 추가
+        _moveSpeed = 12.0f;            // ← _moveSpeed 동기화
+
     }
 
     //GConsoleLogger->WriteStdOut(Color::GREEN, L"[InitPlayer] hp=%llu atk=%llu\n", _statInfo.hp(), _statInfo.attack());
