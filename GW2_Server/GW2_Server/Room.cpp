@@ -1685,7 +1685,7 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	Protocol::PosInfo* pos = movePkt.mutable_server_pos_info();
 
 	// Player는 목적지를 전송, 나머지는 현재 위치 그대로
-	if (obj->IsPlayer() && !obj->_path.empty())
+	/*if (obj->IsPlayer() && !obj->_path.empty())
 	{
 		const auto& dest = obj->_path.back();
 		pos->set_x(dest._x);
@@ -1706,7 +1706,9 @@ void Room::BroadcastMoving(const ObjectRef& obj)
 	{
 		*pos = obj->GetPosInfo();
 		pos->set_state(obj->GetMoveState());
-	}
+	}*/
+	*pos = obj->GetPosInfo();   // 플레이어도 현재 위치 전송
+	pos->set_state(obj->GetMoveState());
 
 	obj->OnMoveBroadcastSent();
 	Broadcast(ClientPacketHandler::MakeSendBuffer(movePkt));
@@ -1723,6 +1725,7 @@ void Room::BroadcastMovingEnd(const ObjectRef& obj)
 	pos->set_x(pv._x);
 	pos->set_y(pv._y);
 	pos->set_z(pv._z);
+	pos->set_yaw(obj->GetPosInfo().yaw());
 	pos->set_state(obj->GetMoveState());
 
 	SendBufferRef sendBuffer = ClientPacketHandler::MakeSendBuffer(endMovePkt);

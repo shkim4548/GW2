@@ -406,18 +406,17 @@ for sx, sy, color, name, desc in states:
     add_text(sl, desc, sx + 0.1, sy + 0.55, 1.9, 0.6,
              size=10, color=RGBColor(0xCC,0xEE,0xFF), align=PP_ALIGN.CENTER)
 
-# 전이 화살표 텍스트
+# 전이 화살표 텍스트 — 각 상태 박스(IDLE/LINE_TRACE/CHASE/ATTACK)와 겹치지 않는
+# 빈 공간(코너·박스 사이 간극)에만 배치. (x, y, w, h, text)
 arrows = [
-    # (x, y, text)
-    (1.75, 2.45, "적 없음\n+ wp 있음 →"),
-    (4.05, 1.35, "↑ 적 탐지"),
-    (4.05, 2.75, "leash 이탈 ↓"),
-    (6.35, 2.45, "→ 사거리 진입"),
-    (6.35, 3.0,  "← 사거리 이탈"),
-    (5.5,  1.0,  "타겟 사망 →"),
+    (2.45, 2.45, 1.40, 0.55, "적 없음\n+ wp 있음 →"),   # IDLE 우측 빈 공간
+    (5.30, 0.95, 1.60, 0.32, "타겟 사망 →"),             # LINE_TRACE·CHASE 위 빈 공간
+    (5.30, 1.30, 1.60, 0.32, "↑ 적 탐지"),
+    (5.30, 1.65, 2.60, 0.32, "사거리 진입 →  /  ← 이탈"),
+    (4.05, 2.75, 0.80, 0.32, "leash 이탈 ↓"),           # CHASE 시작 전(4.9)까지로 폭 축소
 ]
-for ax, ay, txt in arrows:
-    add_text(sl, txt, ax, ay, 1.4, 0.55,
+for ax, ay, aw, ah, txt in arrows:
+    add_text(sl, txt, ax, ay, aw, ah,
              size=9, color=SUBTEXT, align=PP_ALIGN.CENTER)
 
 # 하단 설명 박스들
@@ -486,17 +485,17 @@ flow = [
     (RGBColor(0xB0,0x4A,0x00), "데미지 계산 + 방어 감소"),
     (ORANGE, "S_HP_CHANGE + S_DIE"),
 ]
-fy = 1.35
+fy = 1.32
 for color, text in flow:
     if color is None:
-        add_text(sl, text, 4.75, fy, 4.85, 0.28,
+        add_text(sl, text, 4.75, fy, 4.85, 0.22,
                  size=10, color=SUBTEXT, align=PP_ALIGN.CENTER)
-        fy += 0.32
+        fy += 0.26
         continue
-    add_rect(sl, 4.75, fy, 4.85, 0.42, fill=color)
-    add_text(sl, text, 4.85, fy + 0.08, 4.65, 0.28,
+    add_rect(sl, 4.75, fy, 4.85, 0.30, fill=color)
+    add_text(sl, text, 4.85, fy + 0.04, 4.65, 0.22,
              size=10, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    fy += 0.46
+    fy += 0.34
 
 # ═══════════════════════════════════════════════════════════════
 # SLIDE 8 — 버프 시스템
@@ -552,15 +551,15 @@ flow_items = [
 fx = 0.5
 for item in flow_items:
     if item == "→":
-        add_text(sl, "→", fx, 3.9, 0.5, 0.4,
+        add_text(sl, "→", fx, 3.9, 0.45, 0.4,
                  size=16, bold=True, color=SUBTEXT, align=PP_ALIGN.CENTER)
-        fx += 0.5
+        fx += 0.45
         continue
-    add_rect(sl, fx, 3.78, 1.55, 1.22, fill=MID_BG,
+    add_rect(sl, fx, 3.78, 1.44, 1.22, fill=MID_BG,
              line_color=RGBColor(0xC5,0xCF,0xE8), line_w=0.5)
-    add_text(sl, item, fx + 0.08, 3.9, 1.4, 1.0,
+    add_text(sl, item, fx + 0.08, 3.9, 1.29, 1.0,
              size=9.5, color=DARK_TEXT, align=PP_ALIGN.CENTER)
-    fx += 1.6
+    fx += 1.49
 
 # BuffDefense 특이사항
 add_text(sl, "※ BuffDefense value: 0.3 = 30% 감소 비율.  UI 표시 시 ×100 변환 필요  (_shield = value × 100f)",
@@ -598,14 +597,14 @@ lifecycle = [
 ly = 1.35
 for color, text in lifecycle:
     if color is None:
-        add_text(sl, text, 1.7, ly, 0.4, 0.22,
-                 size=11, color=SUBTEXT, align=PP_ALIGN.CENTER)
-        ly += 0.25
+        add_text(sl, text, 1.7, ly, 0.4, 0.13,
+                 size=9, color=SUBTEXT, align=PP_ALIGN.CENTER)
+        ly += 0.16
         continue
-    add_rect(sl, 0.5, ly, 3.4, 0.38, fill=color)
-    add_text(sl, text, 0.6, ly + 0.07, 3.2, 0.26,
-             size=10, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    ly += 0.42
+    add_rect(sl, 0.5, ly, 3.4, 0.30, fill=color)
+    add_text(sl, text, 0.6, ly + 0.04, 3.2, 0.22,
+             size=9, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+    ly += 0.33
 
 # 우측 위: 게임 루프 UpdateRoom
 card(sl, 4.3, 0.85, 5.4, 2.3, accent=TEAL)
