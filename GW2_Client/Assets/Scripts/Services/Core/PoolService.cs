@@ -15,7 +15,6 @@ public interface IPoolService
 
 public class PoolService : IPoolService
 {
-    // 중첩클래스, PoolService만 사용하는 클래스가 되는 것이다
     class Pool
     {
         public GameObject Original { get; private set; }
@@ -63,7 +62,6 @@ public class PoolService : IPoolService
 
             poolable.gameObject.SetActive(true);
 
-            // DontDestroyOnLoad 해제 용도
             //if (parent == null)
             //poolable.transform.parent = Managers.Scene.CurretScene.transform;
 
@@ -79,31 +77,27 @@ public class PoolService : IPoolService
 
     public void Clear()
     {
-        throw new System.NotImplementedException();
     }
 
     public void CreatePool(GameObject original, int count = 5)
     {
-        throw new System.NotImplementedException();
     }
 
     public GameObject GetOriginal(string name)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 
     public void Init()
     {
-        throw new System.NotImplementedException();
     }
 
     public Poolable Pop(GameObject original, Transform parent = null)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 
     public void Push(Poolable poolable)
     {
-        throw new System.NotImplementedException();
     }
 }

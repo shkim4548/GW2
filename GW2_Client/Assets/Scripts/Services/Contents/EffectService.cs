@@ -25,7 +25,6 @@ public class EffectService : MonoBehaviour
         Debug.Log($"[EffectService] _map.Count={_map.Count}");
     }
 
-    // 시그니처 변경: attackerPos + worldPos 분리
     public void SpawnEffect(int skillId, Vector3 attackerPos, Vector3 worldPos, Vector3 dir, Transform attackerTransform = null)
     {
         if (!_map.TryGetValue(skillId, out var entry)) 
@@ -39,7 +38,6 @@ public class EffectService : MonoBehaviour
             _ => attackerPos,
         };
 
-        // ClickPoint(장판)는 방향 회전 없이 수평 유지
         Quaternion rot;
         if (entry.spawnType == EffectSpawnType.ClickPoint)
         {
@@ -57,13 +55,12 @@ public class EffectService : MonoBehaviour
 
         if (entry.spawnType == EffectSpawnType.Self && attackerTransform != null)
         {
-            // Self: 플레이어 자식으로 → 위치 고정 추적
             fx.transform.SetParent(attackerTransform, worldPositionStays: true);
         }
         else if (entry.spawnType == EffectSpawnType.Projectile)
         {
             StartCoroutine(MoveProjectile(fx, worldPos, entry.duration));
-            return; // MoveProjectile 내부에서 Destroy 처리
+            return;
         }
 
         Destroy(fx, entry.duration);

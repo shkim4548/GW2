@@ -40,7 +40,7 @@ public class Bootstrapper : MonoBehaviour
         DataService = new DataService();
 
         NetworkService.Init();
-        DataService.Init();                // Ãß°¡
+        DataService.Init();
     }
 
     void Update()

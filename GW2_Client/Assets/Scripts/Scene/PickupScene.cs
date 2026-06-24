@@ -6,7 +6,6 @@ public class PickupScene : BaseScene
 {
     public override void Clear()
     {
-        throw new System.NotImplementedException();
     }
 
     protected override void Init()

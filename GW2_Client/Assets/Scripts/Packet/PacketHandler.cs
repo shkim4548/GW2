@@ -186,11 +186,6 @@ public class PacketHandler
         }
     }
 
-    public static void S_TESTHandler(PacketSession session, IMessage message)
-    {
-        throw new NotImplementedException();
-    }
-
     public static void S_ENTER_LOBBYHandler(PacketSession session, IMessage message)
     {
         S_ENTER_LOBBY lobbyPkt = message as S_ENTER_LOBBY;
@@ -205,11 +200,6 @@ public class PacketHandler
             Debug.Log($"[S_ENTER_LOBBY] Lobby Packet RoomId : {lobbyPkt.RoomInfos[i].RoomId}");
             Debug.Log($"[S_ENTER_LOBBY] Lobby Packet RoomName : {lobbyPkt.RoomInfos[i].RommName}");
         }
-    }
-
-    internal static void S_MOVE_CORRECTHandler(PacketSession session, IMessage message)
-    {
-        throw new NotImplementedException();
     }
 
     public static void S_MOVE_ENDHandler(PacketSession session, IMessage message)
@@ -289,11 +279,6 @@ public class PacketHandler
         Debug.Log($"[S_MOVE_END] Player {targetId} snap to ({playerServerPos.x:F2},{playerServerPos.y:F2},{playerServerPos.z:F2}) from ({clientPosBefore.x:F2},{clientPosBefore.y:F2},{clientPosBefore.z:F2})");
     }
 
-    internal static void S_MOVE_STARTHandler(PacketSession session, IMessage message)
-    {
-        throw new NotImplementedException();
-    }
-
     internal static void S_MINION_MOVEHandler(PacketSession session, IMessage message)
     {
         S_MINION_MOVE minionMovePkt = message as S_MINION_MOVE;
@@ -340,11 +325,6 @@ public class PacketHandler
         // MinionController에 경로 전달 → 내부에서 Update마다 따라 이동
         mc.SetMoveSpeed(minionMovePkt.Speed);
         mc.SetNavPath(navPath);
-    }
-
-    internal static void S_ATTACKHandler(PacketSession session, IMessage message)
-    {
-        throw new NotImplementedException();
     }
 
     public static void S_DIEHandler(PacketSession session, IMessage message)

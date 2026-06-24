@@ -21,7 +21,6 @@ public abstract class UI_Base : MonoBehaviour
     {
         string[] names = Enum.GetNames(type);
         UnityEngine.Object[] objects = new UnityEngine.Object[names.Length];
-        // 중복체크 추가
         if (_objects.ContainsKey(typeof(T)) == false)
             _objects.Add(typeof(T), objects);
         else

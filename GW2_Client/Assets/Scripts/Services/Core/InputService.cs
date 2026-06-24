@@ -13,14 +13,13 @@ public interface IInputService
 public class InputService : IInputService
 {
     public bool _pressed = false;
-    private int _lastProcessedFrame = -1;   // ← 추가
+    private int _lastProcessedFrame = -1;
 
     public Action KeyAction { get; set; }
     public Action<Define.MouseEvent> MouseAction { get; set; }
 
     public void OnUpdate()
     {
-        // 같은 프레임에서 여러 컨트롤러가 호출해도 한 번만 처리
         if (Time.frameCount == _lastProcessedFrame)
             return;
         _lastProcessedFrame = Time.frameCount;
@@ -48,7 +47,7 @@ public class InputService : IInputService
                         Debug.LogError($"[InputService] MouseAction.Click exception: {e}");
                     }
                 }
-                _pressed = false;   // 예외 여부와 무관하게 항상 초기화
+                _pressed = false;
             }
 
             if (Input.GetMouseButtonDown(0))

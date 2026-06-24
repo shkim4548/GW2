@@ -10,7 +10,7 @@ public interface ILoader<Key, Value>
 public interface IDataService
 {
     Dictionary<int, Data.CardInfo> CardDict { get; }
-    CardIconSO CardIcons { get; }          // 추가
+    CardIconSO CardIcons { get; }
     void Init();
 }
 
@@ -23,7 +23,7 @@ public class DataService : IDataService
     public void Init()
     {
         CardDict = LoadJson<Data.CardInfoList, int, Data.CardInfo>("Json/Stats");
-        CardIcons = Resources.Load<CardIconSO>("Data/CardIconSO");  // 추가
+        CardIcons = Resources.Load<CardIconSO>("Data/CardIconSO");
         CardIcons?.Init();
         //foreach (KeyValuePair<int, Data.CardInfo> card in CardDict)
         //{

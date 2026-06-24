@@ -28,7 +28,6 @@ public class SceneService : ISceneService
 
     public void LoadScene(Define.Scene type)
     {
-        // TODO : Scene상의 모든 GameObject 삭제
 
         SceneManager.LoadScene(GetSceneName(type));
     }
