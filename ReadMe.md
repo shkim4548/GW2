@@ -9,7 +9,7 @@
 
 ---
 
-## 🎮 게임플레이 미리보기
+## 🎮 게임플레이 미리보기 : 아래 이미지 클릭시 시연 영상 재생
 
 [![GW2 Gameplay](https://img.youtube.com/vi/nmPksJASpEs/maxresdefault.jpg)](https://www.youtube.com/watch?v=nmPksJASpEs)
 
@@ -22,7 +22,7 @@
 | **장르** | 멀티플레이어 RTS/MOBA |
 | **개발 형태** | 1인 풀스택 (클라이언트 + 서버 전담), 졸업작품 기반 재개발 |
 | **개발 기간** | 2025.12 ~ 2026.05 |
-| **최대 플레이어** | n명 동시 접속 |
+| **최대 플레이어** | 4명 동시 접속 |
 
 ---
 
